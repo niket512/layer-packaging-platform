@@ -1,16 +1,32 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { LeadCaptureProvider } from "@/hooks/use-lead-capture";
+import Header from "@/components/landing/Header";
+import HeroSection from "@/components/landing/HeroSection";
+import ProblemSection from "@/components/landing/ProblemSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import PlatformFilmSection from "@/components/landing/PlatformFilmSection";
+import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
+import ComparisonSection from "@/components/landing/ComparisonSection";
+import FAQSection from "@/components/landing/FAQSection";
+import CTASection from "@/components/landing/CTASection";
+import Footer from "@/components/landing/Footer";
+import LeadCaptureModal from "@/components/landing/LeadCaptureModal";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+export default function Index() {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
+    <LeadCaptureProvider>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <HeroSection />
+        <ProblemSection />
+        <HowItWorksSection />
+        <PlatformFilmSection />
+        <CapabilitiesSection />
+        <ComparisonSection />
+        <FAQSection />
+        <CTASection />
+        <Footer />
+        <LeadCaptureModal />
+      </div>
+    </LeadCaptureProvider>
   );
-};
-
-const Index = PlaceholderIndex;
-
-export default Index;
+}
