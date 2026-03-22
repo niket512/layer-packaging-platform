@@ -5,9 +5,9 @@ import { useLeadCapture } from "@/hooks/use-lead-capture";
 
 const suggestions = [
   "Custom mailer boxes for skincare",
-  "Kraft pouches with zip lock",
-  "Rigid gift boxes with foil stamping",
-  "Corrugated shippers for glass bottles",
+  "Find verified packaging manufacturers in India",
+  "Source premium rigid boxes for a festive launch",
+  "Starting with packaging, expanding to wider manufacturing",
 ];
 
 export default function HeroSection() {
@@ -37,11 +37,11 @@ export default function HeroSection() {
       <div className="container relative">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-heading text-4xl font-bold leading-[1.08] tracking-tight text-heading text-balance sm:text-5xl lg:text-6xl">
-            Run your packaging through one operating layer
+            Run your D2C manufacturing through one operating layer
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-body text-pretty">
-            Search packaging needs with text or images. Match with verified manufacturers.
-            Coordinate sampling, approvals, payments, and shipment — all from a single platform.
+            Layer helps D2C brands source and manage manufacturing needs through one platform — starting with packaging.
+            Search with text or images, match with verified manufacturers, and coordinate approvals, payments, and shipment in one workflow.
           </p>
         </div>
 
@@ -56,7 +56,7 @@ export default function HeroSection() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Describe your packaging need..."
+              placeholder="Describe your manufacturing need..."
               className="flex-1 bg-transparent py-3 text-base text-heading outline-none placeholder:text-body-muted"
             />
             <input
