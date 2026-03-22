@@ -56,10 +56,10 @@ export default function PlatformFilmSection() {
         >
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">Platform film</p>
           <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight text-heading text-balance sm:text-4xl">
-            Cursor for D2C packaging teams
+            Cursor for D2C manufacturing teams
           </h2>
           <p className="mt-4 text-body">
-            Smart sourcing with AI — from your first prompt to verified manufacturer selection, approvals, and shipment tracking.
+            Smart sourcing with AI for D2C brands — from your first brief to verified manufacturer selection, approvals, and shipment tracking, starting with packaging.
           </p>
         </div>
 
@@ -96,7 +96,7 @@ export default function PlatformFilmSection() {
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">AI sourcing workspace</p>
                         <h3 className="mt-1 font-heading text-xl font-bold tracking-tight text-heading">
-                          Source packaging like your team uses Cursor
+                          Source manufacturing like your team uses Cursor
                         </h3>
                       </div>
                       <div className="rounded-full border border-border bg-background px-3 py-1 text-[11px] font-medium text-body-muted">
