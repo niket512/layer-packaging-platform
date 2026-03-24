@@ -37,11 +37,10 @@ export default function HeroSection() {
       <div className="container relative">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-heading text-4xl font-bold leading-[1.08] tracking-tight text-heading text-balance sm:text-5xl lg:text-6xl">
-            Run your D2C manufacturing through one operating layer
+            The sourcing OS for D2C brands
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-body text-pretty">
-            Layer helps D2C brands source and manage manufacturing needs through one platform — starting with packaging.
-            Search with text or images, match with verified manufacturers, and coordinate approvals, payments, and shipment in one workflow.
+            One platform to find, compare, and manage verified manufacturers for everything your brand needs — starting with packaging.
           </p>
         </div>
 
