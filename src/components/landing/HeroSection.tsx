@@ -40,7 +40,7 @@ export default function HeroSection() {
             The sourcing OS for D2C brands
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-body text-pretty">
-            One platform to find, compare, and manage verified manufacturers for everything your brand needs — starting with packaging.
+            Find verified manufacturers, manage orders, track shipments, and handle payments — all in one platform. Starting with packaging.
           </p>
         </div>
 
