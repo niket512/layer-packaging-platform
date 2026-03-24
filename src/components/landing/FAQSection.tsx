@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 const faqs = [
   {
     q: "What are the minimum order quantities on Layer?",
-    a: "Layer pools demand across brands and works with manufacturers who support flexible MOQs. Depending on the packaging type, minimums can start as low as 500 units.",
+    a: "Layer pools demand across brands and works with manufacturers who support flexible MOQs. Depending on the order and packaging type, minimums can start as low as 200 units.",
   },
   {
     q: "How does Layer ensure quality?",
