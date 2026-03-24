@@ -114,10 +114,9 @@ export default function PlatformFilmSection() {
               ))}
             </div>
 
-            {/* Orders table */}
-            <div className="p-5 sm:p-6">
-              <div className="flex items-center justify-between gap-4 pb-4">
-                <h3 className="font-heading text-base font-semibold text-heading">Active orders</h3>
+            <div className="p-4 sm:p-5">
+              <div className="flex items-center justify-between gap-4 pb-3">
+                <h3 className="font-heading text-sm font-semibold text-heading">Active orders</h3>
                 <span className="text-xs text-body-muted">4 orders</span>
               </div>
 
