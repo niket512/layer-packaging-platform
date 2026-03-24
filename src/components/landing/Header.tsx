@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useLeadCapture } from "@/hooks/use-lead-capture";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
@@ -10,8 +9,11 @@ const navLinks = [
   { label: "FAQ", href: "#faq" },
 ];
 
+const scrollToAccess = () => {
+  document.getElementById("request-access")?.scrollIntoView({ behavior: "smooth" });
+};
+
 export default function Header() {
-  const { openCapture } = useLeadCapture();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -21,7 +23,6 @@ export default function Header() {
           Layer
         </a>
 
-        {/* Desktop nav */}
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((l) => (
             <a
@@ -35,15 +36,14 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Button variant="ghost" size="sm" onClick={openCapture}>
+          <Button variant="ghost" size="sm" onClick={scrollToAccess}>
             Sign in
           </Button>
-          <Button variant="hero" size="sm" onClick={openCapture}>
+          <Button variant="hero" size="sm" onClick={scrollToAccess}>
             Request access
           </Button>
         </div>
 
-        {/* Mobile */}
         <button
           className="p-2 md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -68,10 +68,10 @@ export default function Header() {
             ))}
           </nav>
           <div className="mt-4 flex flex-col gap-2">
-            <Button variant="ghost" size="sm" onClick={() => { openCapture(); setMobileOpen(false); }}>
+            <Button variant="ghost" size="sm" onClick={() => { scrollToAccess(); setMobileOpen(false); }}>
               Sign in
             </Button>
-            <Button variant="hero" size="sm" onClick={() => { openCapture(); setMobileOpen(false); }}>
+            <Button variant="hero" size="sm" onClick={() => { scrollToAccess(); setMobileOpen(false); }}>
               Request access
             </Button>
           </div>
