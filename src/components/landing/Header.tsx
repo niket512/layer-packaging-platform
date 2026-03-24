@@ -11,6 +11,7 @@ const navLinks = [
 
 const scrollToAccess = () => {
   document.getElementById("request-access")?.scrollIntoView({ behavior: "smooth" });
+  window.dispatchEvent(new Event("open-access-form"));
 };
 
 export default function Header() {
