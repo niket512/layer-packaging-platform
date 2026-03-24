@@ -105,47 +105,8 @@ export default function HeroSection() {
           ))}
         </div>
 
-        {/* Platform preview */}
-        <div className="mx-auto mt-16 max-w-4xl">
-          <div className="rounded-2xl border border-border bg-surface-raised p-1 shadow-2xl shadow-primary/5">
-            <div className="rounded-xl bg-muted/50 p-6 md:p-8">
-              {/* Fake platform header */}
-              <div className="flex items-center gap-3 border-b border-border/60 pb-4">
-                <div className="h-2.5 w-2.5 rounded-full bg-primary/60" />
-                <div className="h-2.5 w-2.5 rounded-full bg-border" />
-                <div className="h-2.5 w-2.5 rounded-full bg-border" />
-                <div className="ml-4 h-3 w-40 rounded bg-border" />
-              </div>
 
-              {/* Fake interface rows */}
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {[
-                  { label: "Active orders", value: "12", sub: "3 in QC" },
-                  { label: "Manufacturers", value: "47", sub: "Verified" },
-                  { label: "Avg. lead time", value: "18d", sub: "↓ 22% vs Q3" },
-                ].map((card) => (
-                  <div key={card.label} className="rounded-lg border border-border/60 bg-surface-raised p-4">
-                    <p className="text-xs font-medium text-body-muted">{card.label}</p>
-                    <p className="mt-1 font-heading text-2xl font-bold text-heading">{card.value}</p>
-                    <p className="mt-0.5 text-xs text-body-muted">{card.sub}</p>
-                  </div>
-                ))}
-              </div>
 
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {["Custom mailer box — Skincare brand", "Kraft pouch — Tea brand"].map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-lg border border-border/40 bg-surface-raised px-4 py-3">
-                    <div className="h-8 w-8 rounded-md bg-amber-subtle" />
-                    <div>
-                      <p className="text-sm font-medium text-heading">{item}</p>
-                      <p className="text-xs text-body-muted">In production · 4 bids</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
