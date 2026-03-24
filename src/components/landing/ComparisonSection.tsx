@@ -19,11 +19,6 @@ const columns = [
     values: [false, false, false, false, false, false, false, false],
   },
   {
-    name: "Marketplaces",
-    sub: "Alibaba, etc.",
-    values: [false, true, false, false, false, false, false, false],
-  },
-  {
     name: "Traditional sourcing",
     sub: "Agents & brokers",
     values: [false, true, true, false, false, false, false, false],
