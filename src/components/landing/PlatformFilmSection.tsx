@@ -142,8 +142,7 @@ export default function PlatformFilmSection() {
                         />
                       </div>
 
-                    {/* Details grid */}
-                    <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                       <div>
                         <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-body-muted">Manufacturer</p>
                         <div className="mt-1 flex items-center gap-1.5">
