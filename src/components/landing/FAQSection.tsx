@@ -21,7 +21,7 @@ const faqs = [
   },
   {
     q: "What's the typical timeline from spec to delivery?",
-    a: "Sampling usually takes 7–12 days. Production timelines vary by packaging type but typically range from 15–25 days after sample approval. Layer tracks every milestone centrally.",
+    a: "Production timelines vary by packaging type but typically range from 3–28 days after sample approval. Layer tracks every milestone centrally.",
   },
   {
     q: "Can I reorder the same packaging later?",
