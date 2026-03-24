@@ -127,28 +127,21 @@ export default function PlatformFilmSection() {
                     key={order.name}
                     className="rounded-2xl border border-border/70 bg-background p-4 transition-shadow hover:shadow-md"
                   >
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      {/* Left: Order + manufacturer */}
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-start justify-between gap-3 sm:justify-start">
-                          <div>
-                            <p className="text-sm font-semibold text-heading">{order.name}</p>
-                            <p className="text-xs text-body-muted">{order.brand} · {order.units}</p>
-                          </div>
-                          <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${order.statusBg} ${order.statusColor}`}>
-                            {order.status}
-                          </span>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-heading">{order.name}</p>
+                          <p className="text-xs text-body-muted">{order.brand} · {order.units}</p>
                         </div>
-
-                        {/* Progress bar */}
-                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                          <div
-                            className="h-full rounded-full bg-primary transition-all duration-500"
-                            style={{ width: `${order.progress}%` }}
-                          />
-                        </div>
+                        <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${order.statusBg} ${order.statusColor}`}>
+                          {order.status}
+                        </span>
                       </div>
-                    </div>
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-primary transition-all duration-500"
+                          style={{ width: `${order.progress}%` }}
+                        />
+                      </div>
 
                     {/* Details grid */}
                     <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
