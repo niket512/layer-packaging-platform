@@ -76,10 +76,11 @@ export default function HeroSection() {
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="flex items-center gap-1.5 rounded-full p-2 text-body-muted transition-colors hover:bg-muted"
+                className="flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1.5 text-xs font-medium text-body-muted transition-all hover:border-primary/30 hover:bg-amber-subtle hover:text-heading"
                 title="Upload reference image"
               >
-                <ImagePlus className="h-5 w-5" />
+                <ImagePlus className="h-4 w-4" />
+                <span>Add image</span>
               </button>
               {fileName && (
                 <span className="text-xs text-body-muted truncate max-w-[120px]">{fileName}</span>
