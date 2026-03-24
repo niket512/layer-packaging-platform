@@ -101,7 +101,7 @@ export default function PlatformFilmSection() {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-2 gap-px border-b border-border/70 bg-border/40 sm:grid-cols-4">
+            <div className="grid grid-cols-3 gap-px border-b border-border/70 bg-border/40">
               {stats.map((s) => (
                 <div key={s.label} className="bg-background p-4 sm:p-5">
                   <div className="flex items-center gap-2">
