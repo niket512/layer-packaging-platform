@@ -4,7 +4,6 @@ import { Package, Factory, Truck, CreditCard, MapPin } from "lucide-react";
 const stats = [
   { label: "Active orders", value: "12", sub: "3 in QC", icon: Package },
   { label: "Manufacturers", value: "47", sub: "Verified", icon: Factory },
-  { label: "Avg. lead time", value: "18d", sub: "↓ 22% vs Q3", icon: Clock },
   { label: "Pending payments", value: "₹4.2L", sub: "2 due this week", icon: CreditCard },
 ];
 
