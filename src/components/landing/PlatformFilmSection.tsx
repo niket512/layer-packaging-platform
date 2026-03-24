@@ -1,5 +1,5 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { Package, Factory, Truck, CreditCard, Clock, CheckCircle2, AlertCircle, ArrowDownRight } from "lucide-react";
+import { Package, Factory, Truck, CreditCard, MapPin } from "lucide-react";
 
 const stats = [
   { label: "Active orders", value: "12", sub: "3 in QC", icon: Package },
