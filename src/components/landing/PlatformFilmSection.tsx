@@ -43,7 +43,7 @@ const orders = [
     status: "Shipped",
     statusColor: "text-emerald-600",
     statusBg: "bg-emerald-500/10",
-    shipDate: "Delivered 18 Mar",
+    shipDate: "Delivered 18 Mar · Mumbai, MH",
     payment: "₹2.1L cleared",
     progress: 100,
   },
