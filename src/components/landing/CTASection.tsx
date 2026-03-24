@@ -25,7 +25,7 @@ export default function CTASection() {
   };
 
   return (
-    <section ref={ref} id="request-access" className="bg-muted/40 py-24 md:py-32">
+    <section ref={ref} id="request-access" className="bg-muted/40 py-16 md:py-20">
       <div className="container">
         <div
           className={`mx-auto max-w-2xl rounded-3xl border border-border bg-surface-raised p-10 text-center shadow-lg shadow-primary/5 md:p-16 ${isVisible ? "animate-reveal-scale" : "opacity-0"}`}

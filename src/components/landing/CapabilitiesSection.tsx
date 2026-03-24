@@ -14,7 +14,7 @@ export default function CapabilitiesSection() {
   const { ref, isVisible } = useScrollReveal();
 
   return (
-    <section ref={ref} id="capabilities" className="py-24 md:py-32">
+    <section ref={ref} id="capabilities" className="py-16 md:py-20">
       <div className="container">
         <div
           className={`mx-auto max-w-2xl text-center transition-all duration-700 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
