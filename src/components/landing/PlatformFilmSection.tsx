@@ -1,10 +1,9 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { Package, Factory, Truck, CreditCard, Clock, CheckCircle2, AlertCircle, ArrowDownRight } from "lucide-react";
+import { Package, Factory, Truck, CreditCard, MapPin } from "lucide-react";
 
 const stats = [
   { label: "Active orders", value: "12", sub: "3 in QC", icon: Package },
   { label: "Manufacturers", value: "47", sub: "Verified", icon: Factory },
-  { label: "Avg. lead time", value: "18d", sub: "↓ 22% vs Q3", icon: Clock },
   { label: "Pending payments", value: "₹4.2L", sub: "2 due this week", icon: CreditCard },
 ];
 
@@ -44,7 +43,7 @@ const orders = [
     status: "Shipped",
     statusColor: "text-emerald-600",
     statusBg: "bg-emerald-500/10",
-    shipDate: "Delivered 18 Mar",
+    shipDate: "Delivered 18 Mar · Mumbai, MH",
     payment: "₹2.1L cleared",
     progress: 100,
   },
@@ -102,7 +101,7 @@ export default function PlatformFilmSection() {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-2 gap-px border-b border-border/70 bg-border/40 sm:grid-cols-4">
+            <div className="grid grid-cols-3 gap-px border-b border-border/70 bg-border/40">
               {stats.map((s) => (
                 <div key={s.label} className="bg-background p-4 sm:p-5">
                   <div className="flex items-center gap-2">
@@ -115,44 +114,35 @@ export default function PlatformFilmSection() {
               ))}
             </div>
 
-            {/* Orders table */}
-            <div className="p-5 sm:p-6">
-              <div className="flex items-center justify-between gap-4 pb-4">
-                <h3 className="font-heading text-base font-semibold text-heading">Active orders</h3>
+            <div className="p-4 sm:p-5">
+              <div className="flex items-center justify-between gap-4 pb-3">
+                <h3 className="font-heading text-sm font-semibold text-heading">Active orders</h3>
                 <span className="text-xs text-body-muted">4 orders</span>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {orders.map((order) => (
                   <div
                     key={order.name}
-                    className="rounded-2xl border border-border/70 bg-background p-4 transition-shadow hover:shadow-md"
+                    className="rounded-xl border border-border/70 bg-background p-3 transition-shadow hover:shadow-md"
                   >
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      {/* Left: Order + manufacturer */}
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-start justify-between gap-3 sm:justify-start">
-                          <div>
-                            <p className="text-sm font-semibold text-heading">{order.name}</p>
-                            <p className="text-xs text-body-muted">{order.brand} · {order.units}</p>
-                          </div>
-                          <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${order.statusBg} ${order.statusColor}`}>
-                            {order.status}
-                          </span>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-heading">{order.name}</p>
+                          <p className="text-xs text-body-muted">{order.brand} · {order.units}</p>
                         </div>
-
-                        {/* Progress bar */}
-                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                          <div
-                            className="h-full rounded-full bg-primary transition-all duration-500"
-                            style={{ width: `${order.progress}%` }}
-                          />
-                        </div>
+                        <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${order.statusBg} ${order.statusColor}`}>
+                          {order.status}
+                        </span>
                       </div>
-                    </div>
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-primary transition-all duration-500"
+                          style={{ width: `${order.progress}%` }}
+                        />
+                      </div>
 
-                    {/* Details grid */}
-                    <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                       <div>
                         <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-body-muted">Manufacturer</p>
                         <div className="mt-1 flex items-center gap-1.5">
