@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Search, ImagePlus, ArrowRight } from "lucide-react";
+import { ImagePlus, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLeadCapture } from "@/hooks/use-lead-capture";
 
