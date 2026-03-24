@@ -120,11 +120,11 @@ export default function PlatformFilmSection() {
                 <span className="text-xs text-body-muted">4 orders</span>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {orders.map((order) => (
                   <div
                     key={order.name}
-                    className="rounded-2xl border border-border/70 bg-background p-4 transition-shadow hover:shadow-md"
+                    className="rounded-xl border border-border/70 bg-background p-3 transition-shadow hover:shadow-md"
                   >
                       <div className="flex items-start justify-between gap-3">
                         <div>
