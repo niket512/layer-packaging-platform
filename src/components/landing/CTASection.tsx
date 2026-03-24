@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight } from "lucide-react";
@@ -10,6 +10,13 @@ export default function CTASection() {
   const [brand, setBrand] = useState("");
   const [email, setEmail] = useState("");
   const [requirement, setRequirement] = useState("");
+
+  // Auto-open form when triggered from other sections
+  useEffect(() => {
+    const handler = () => setShowForm(true);
+    window.addEventListener("open-access-form", handler);
+    return () => window.removeEventListener("open-access-form", handler);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
