@@ -48,34 +48,45 @@ export default function HeroSection() {
         {/* Search box */}
         <form
           onSubmit={handleSubmit}
-          className="mx-auto mt-12 max-w-2xl rounded-2xl border border-border bg-surface-raised p-2 shadow-lg shadow-primary/5 transition-shadow duration-300 hover:shadow-xl hover:shadow-primary/10"
+          className="mx-auto mt-12 max-w-2xl rounded-3xl border border-border bg-surface-raised shadow-lg shadow-primary/5 transition-shadow duration-300 hover:shadow-xl hover:shadow-primary/10"
         >
-          <div className="flex items-center gap-2">
-            <Search className="ml-3 h-5 w-5 shrink-0 text-body-muted" />
-            <input
-              type="text"
+          <div className="px-4 pt-4 pb-2">
+            <textarea
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  openCapture();
+                }
+              }}
               placeholder="Describe your manufacturing need..."
-              className="flex-1 bg-transparent py-3 text-base text-heading outline-none placeholder:text-body-muted"
+              rows={2}
+              className="w-full resize-none bg-transparent text-base text-heading outline-none placeholder:text-body-muted leading-relaxed"
             />
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleFile}
-            />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-medium text-body-muted transition-colors hover:bg-muted"
-              title="Upload reference image"
-            >
-              <ImagePlus className="h-4 w-4" />
-              <span className="hidden sm:inline">{fileName || "Image"}</span>
-            </button>
-            <Button type="submit" variant="hero" size="default" className="rounded-xl">
+          </div>
+          <div className="flex items-center justify-between px-3 pb-3">
+            <div className="flex items-center gap-1">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFile}
+              />
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="flex items-center gap-1.5 rounded-full p-2 text-body-muted transition-colors hover:bg-muted"
+                title="Upload reference image"
+              >
+                <ImagePlus className="h-5 w-5" />
+              </button>
+              {fileName && (
+                <span className="text-xs text-body-muted truncate max-w-[120px]">{fileName}</span>
+              )}
+            </div>
+            <Button type="submit" variant="hero" size="icon" className="rounded-full h-9 w-9">
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
