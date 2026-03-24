@@ -13,7 +13,7 @@ const faqs = [
   },
   {
     q: "What packaging categories does Layer support?",
-    a: "Layer currently supports corrugated boxes, mailer boxes, rigid boxes, pouches, labels, and flexible packaging. We're expanding categories every quarter.",
+    a: "Layer supports all kinds of packaging — corrugated boxes, mailer boxes, rigid boxes, pouches, labels, flexible packaging, and more. Whatever your brand needs, we can source it.",
   },
   {
     q: "How are manufacturers selected?",
