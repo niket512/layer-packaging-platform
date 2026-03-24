@@ -16,6 +16,7 @@ export default function HeroSection() {
 
   const scrollToAccess = () => {
     document.getElementById("request-access")?.scrollIntoView({ behavior: "smooth" });
+    window.dispatchEvent(new Event("open-access-form"));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
