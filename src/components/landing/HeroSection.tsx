@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { ImagePlus, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLeadCapture } from "@/hooks/use-lead-capture";
 
 const suggestions = [
   "Custom mailer boxes for skincare",
@@ -14,24 +13,26 @@ export default function HeroSection() {
   const [query, setQuery] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState("");
-  const { openCapture } = useLeadCapture();
+
+  const scrollToAccess = () => {
+    document.getElementById("request-access")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    openCapture();
+    scrollToAccess();
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFileName(file.name);
-      openCapture();
+      scrollToAccess();
     }
   };
 
   return (
     <section className="relative overflow-hidden pb-24 pt-20 md:pb-32 md:pt-28">
-      {/* Subtle ambient shape */}
       <div className="pointer-events-none absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
 
       <div className="container relative">
@@ -56,7 +57,7 @@ export default function HeroSection() {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  openCapture();
+                  scrollToAccess();
                 }
               }}
               placeholder="Describe your manufacturing need..."
@@ -97,16 +98,13 @@ export default function HeroSection() {
           {suggestions.map((s) => (
             <button
               key={s}
-              onClick={() => { setQuery(s); openCapture(); }}
+              onClick={() => { setQuery(s); scrollToAccess(); }}
               className="rounded-full border border-border bg-surface-raised px-3.5 py-1.5 text-xs font-medium text-body-muted transition-all duration-150 hover:border-primary/30 hover:bg-amber-subtle hover:text-heading active:scale-[0.97]"
             >
               {s}
             </button>
           ))}
         </div>
-
-
-
       </div>
     </section>
   );
