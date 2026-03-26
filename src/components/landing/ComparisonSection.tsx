@@ -9,25 +9,24 @@ const features = [
   "Payment tracking",
   "Shipment tracking",
   "Reorder workflows",
-  "Demand pooling",
 ];
 
 const columns = [
   {
     name: "Directories",
     sub: "IndiaMART, etc.",
-    values: [false, false, false, false, false, false, false, false],
+    values: [false, false, false, false, false, false, false],
   },
   {
     name: "Traditional sourcing",
     sub: "Agents & brokers",
-    values: [false, true, true, false, false, false, false, false],
+    values: [false, true, true, false, false, false, false],
   },
   {
     name: "Layer",
     sub: "Packaging infrastructure",
     highlight: true,
-    values: [true, true, true, true, true, true, true, true],
+    values: [true, true, true, true, true, true, true],
   },
 ];
 
