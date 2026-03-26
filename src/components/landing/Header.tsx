@@ -22,7 +22,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="container flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-2">
-          <img src={layerLogo} alt="Layer" width={28} height={28} />
+          <img src={layerLogo} alt="Layer" width={34} height={34} />
           <span className="font-heading text-xl font-bold tracking-tight text-heading">Layer</span>
         </a>
 
