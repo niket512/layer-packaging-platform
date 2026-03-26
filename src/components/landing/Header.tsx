@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import layerLogo from "@/assets/layer-logo.png";
 
 const navLinks = [
   { label: "How it works", href: "#how-it-works" },
@@ -20,8 +21,9 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="container flex h-16 items-center justify-between">
-        <a href="#" className="font-heading text-xl font-bold tracking-tight text-heading">
-          Layer
+        <a href="#" className="flex items-center gap-2">
+          <img src={layerLogo} alt="Layer" width={28} height={28} />
+          <span className="font-heading text-xl font-bold tracking-tight text-heading">Layer</span>
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">
