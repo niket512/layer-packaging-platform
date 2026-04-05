@@ -23,7 +23,7 @@ const columns = [
     values: [false, true, true, false, false, false, false],
   },
   {
-    name: "Layer",
+    name: "Snapit",
     sub: "Packaging infrastructure",
     highlight: true,
     values: [true, true, true, true, true, true, true],
