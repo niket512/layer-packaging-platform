@@ -6,13 +6,13 @@ const steps = [
     icon: FileText,
     num: "01",
     title: "Define your packaging spec",
-    desc: "Describe your packaging need with text or upload a reference image. Layer structures your requirements into a production-ready brief.",
+    desc: "Describe your packaging need with text or upload a reference image. Snapit structures your requirements into a production-ready brief.",
   },
   {
     icon: Users,
     num: "02",
     title: "Platform pools supply & capacity",
-    desc: "Layer matches your spec against verified manufacturers with available capacity, material inventory, and relevant experience.",
+    desc: "Snapit matches your spec against verified manufacturers with available capacity, material inventory, and relevant experience.",
   },
   {
     icon: ShieldCheck,

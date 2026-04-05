@@ -49,7 +49,7 @@ export default function LeadCaptureModal() {
           </div>
         ) : (
           <>
-            <h3 className="font-heading text-xl font-bold text-heading">Get started with Layer</h3>
+            <h3 className="font-heading text-xl font-bold text-heading">Get started with Snapit</h3>
             <p className="mt-2 text-sm text-body">
               Share your details and we'll reach out to set up your account.
             </p>
