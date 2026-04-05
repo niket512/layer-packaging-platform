@@ -12,7 +12,7 @@ const steps = [
     icon: Users,
     num: "02",
     title: "Platform pools supply & capacity",
-    desc: "Layer matches your spec against verified manufacturers with available capacity, material inventory, and relevant experience.",
+    desc: "Snapit matches your spec against verified manufacturers with available capacity, material inventory, and relevant experience.",
   },
   {
     icon: ShieldCheck,

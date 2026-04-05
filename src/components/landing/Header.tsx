@@ -23,7 +23,7 @@ export default function Header() {
       <div className="container flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-2">
           <img src={layerLogo} alt="Layer" width={42} height={42} />
-          <span className="font-heading text-xl font-bold tracking-tight text-heading">Layer</span>
+          <span className="font-heading text-xl font-bold tracking-tight text-heading">Snapit</span>
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">

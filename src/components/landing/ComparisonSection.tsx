@@ -44,7 +44,7 @@ export default function ComparisonSection() {
             Infrastructure, not just discovery
           </h2>
           <p className="mt-4 text-body">
-            Directories list suppliers. Marketplaces handle transactions. Layer runs the entire packaging workflow.
+            Directories list suppliers. Marketplaces handle transactions. Snapit runs the entire packaging workflow.
           </p>
         </div>
 
