@@ -16,7 +16,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="text-center">
-          <p className="text-xs text-body-muted">© {new Date().getFullYear()} Snapit. Packaging infrastructure for D2C brands.</p>
+          <p className="text-xs text-body-muted">© {new Date().getFullYear()} Snapit. The Sourcing OS for D2C brands.</p>
         </div>
       </div>
     </footer>
