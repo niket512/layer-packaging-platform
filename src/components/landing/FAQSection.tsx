@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 const faqs = [
   {
     q: "What are the minimum order quantities on Snapit?",
-    a: "Snapit pools demand across brands and works with manufacturers who support flexible MOQs. Depending on the order and packaging type, minimums can start as low as 200 units.",
+    a: "Snapit finds cost-efficient manufacturers who support flexible MOQs. Depending on the order and packaging type, minimums can start as low as 200 units.",
   },
   {
     q: "How does Snapit ensure quality?",
