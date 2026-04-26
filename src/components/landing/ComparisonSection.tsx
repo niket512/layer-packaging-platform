@@ -23,7 +23,7 @@ const columns = [
     values: [false, true, true, false, false, false, false],
   },
   {
-    name: "Snapit",
+    name: "Snaplogo",
     sub: "Packaging infrastructure",
     highlight: true,
     values: [true, true, true, true, true, true, true],
@@ -44,7 +44,7 @@ export default function ComparisonSection() {
             Infrastructure, not just discovery
           </h2>
           <p className="mt-4 text-body">
-            Directories list suppliers. Marketplaces handle transactions. Snapit runs the entire packaging workflow.
+            Directories list suppliers. Marketplaces handle transactions. Snaplogo runs the entire packaging workflow.
           </p>
         </div>
 

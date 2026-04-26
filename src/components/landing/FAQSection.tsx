@@ -4,28 +4,28 @@ import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
-    q: "What are the minimum order quantities on Snapit?",
-    a: "Snapit finds cost-efficient manufacturers who support flexible MOQs. Depending on the order and packaging type, minimums can start as low as 200 units.",
+    q: "What are the minimum order quantities on Snaplogo?",
+    a: "Snaplogo finds cost-efficient manufacturers who support flexible MOQs. Depending on the order and packaging type, minimums can start as low as 200 units.",
   },
   {
-    q: "How does Snapit ensure quality?",
-    a: "Every manufacturer on Snapit goes through a verification process. Production orders include structured QC checkpoints, and you approve samples before any bulk run begins.",
+    q: "How does Snaplogo ensure quality?",
+    a: "Every manufacturer on Snaplogo goes through a verification process. Production orders include structured QC checkpoints, and you approve samples before any bulk run begins.",
   },
   {
-    q: "What packaging categories does Snapit support?",
-    a: "Snapit supports all kinds of packaging — corrugated boxes, mailer boxes, rigid boxes, pouches, labels, flexible packaging, and more. Whatever your brand needs, we can source it.",
+    q: "What packaging categories does Snaplogo support?",
+    a: "Snaplogo supports all kinds of packaging — corrugated boxes, mailer boxes, rigid boxes, pouches, labels, flexible packaging, and more. Whatever your brand needs, we can source it.",
   },
   {
     q: "How are manufacturers selected?",
-    a: "Snapit matches your spec against verified manufacturers based on capability, capacity, material access, and past performance. You review options and select your preferred partner.",
+    a: "Snaplogo matches your spec against verified manufacturers based on capability, capacity, material access, and past performance. You review options and select your preferred partner.",
   },
   {
     q: "What's the typical timeline from spec to delivery?",
-    a: "Production timelines vary by packaging type but typically range from 3–28 days after sample approval. Snapit tracks every milestone centrally.",
+    a: "Production timelines vary by packaging type but typically range from 3–28 days after sample approval. Snaplogo tracks every milestone centrally.",
   },
   {
     q: "Can I reorder the same packaging later?",
-    a: "Yes. Snapit saves your approved specs, sample records, and manufacturer preferences. Reordering is a one-click workflow with no repeated briefing.",
+    a: "Yes. Snaplogo saves your approved specs, sample records, and manufacturer preferences. Reordering is a one-click workflow with no repeated briefing.",
   },
 ];
 

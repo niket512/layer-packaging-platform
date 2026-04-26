@@ -5,7 +5,7 @@ const capabilities = [
   { icon: TrendingDown, title: "Lower MOQs", desc: "We find cost-efficient manufacturers who support minimum order quantities that work for growing brands." },
   { icon: ShieldCheck, title: "Quality consistency", desc: "Verified manufacturers, standardised QC checkpoints, and auditable production records." },
   { icon: Zap, title: "Faster cycles", desc: "Structured briefs and matched capacity cut time-to-sample and time-to-production significantly." },
-  { icon: Users, title: "Fewer vendors", desc: "Stop juggling ten different contacts. Snapit consolidates your packaging supply chain into one interface." },
+  { icon: Users, title: "Fewer vendors", desc: "Stop juggling ten different contacts. Snaplogo consolidates your packaging supply chain into one interface." },
   { icon: Eye, title: "Full visibility", desc: "Track every order from sampling through shipment with real-time status and payment milestones." },
   { icon: RotateCcw, title: "Repeatable production", desc: "Save specs, approved samples, and manufacturer preferences. Reorder with one click." },
 ];
