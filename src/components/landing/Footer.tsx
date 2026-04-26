@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="flex items-center gap-6 text-xs text-body-muted">
             <a href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</a>
             <a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a>
-            <a href="mailto:contact@snaplogo.club" className="hover:text-foreground transition-colors">contact@snaplogo.club</a>
+            <a href="mailto:contact@snapit.club" className="hover:text-foreground transition-colors">contact@snapit.club</a>
           </div>
         </div>
         <div className="text-center">
