@@ -44,7 +44,7 @@ export default function CTASection() {
                 Ready to run packaging differently?
               </h2>
               <p className="mx-auto mt-4 max-w-md text-body text-pretty">
-                Share your details and we'll reach out to get you started on Snapit.
+                Share your details and we'll reach out to get you started on Snaplogo.
               </p>
 
               {!showForm ? (
