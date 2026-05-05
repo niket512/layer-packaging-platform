@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import layerLogo from "@/assets/layer-logo.png";
+import { useScrollSpy } from "@/hooks/use-scroll-spy";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "How it works", href: "#how-it-works" },
-  { label: "Platform film", href: "#platform-film" },
-  { label: "Capabilities", href: "#capabilities" },
-  { label: "FAQ", href: "#faq" },
+  { label: "How it works", href: "#how-it-works", id: "how-it-works" },
+  { label: "Platform", href: "#platform-film", id: "platform-film" },
+  { label: "Capabilities", href: "#capabilities", id: "capabilities" },
+  { label: "FAQ", href: "#faq", id: "faq" },
 ];
 
 const scrollToAccess = () => {
@@ -15,8 +17,14 @@ const scrollToAccess = () => {
   window.dispatchEvent(new Event("open-access-form"));
 };
 
+const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  e.preventDefault();
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+};
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const activeId = useScrollSpy(navLinks.map((l) => l.id));
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
@@ -31,9 +39,19 @@ export default function Header() {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-body-muted transition-colors duration-150 hover:text-heading"
+              onClick={(e) => handleNavClick(e, l.id)}
+              className={cn(
+                "relative text-sm font-medium transition-colors duration-150 hover:text-heading",
+                activeId === l.id ? "text-heading" : "text-body-muted",
+              )}
             >
               {l.label}
+              <span
+                className={cn(
+                  "absolute -bottom-1 left-0 h-0.5 rounded-full bg-primary transition-all duration-300",
+                  activeId === l.id ? "w-full" : "w-0",
+                )}
+              />
             </a>
           ))}
         </nav>
@@ -63,8 +81,14 @@ export default function Header() {
               <a
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium text-body-muted"
-                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "text-sm font-medium",
+                  activeId === l.id ? "text-primary" : "text-body-muted",
+                )}
+                onClick={(e) => {
+                  handleNavClick(e, l.id);
+                  setMobileOpen(false);
+                }}
               >
                 {l.label}
               </a>
