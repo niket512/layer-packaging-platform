@@ -58,11 +58,12 @@ export default function CTASection() {
             </div>
           ) : (
             <>
-              <h2 className="font-heading text-3xl font-bold tracking-tight text-heading text-balance sm:text-4xl">
-                Ready to run packaging differently?
+              <p className="text-sm font-semibold uppercase tracking-widest text-primary normal-case">Register with us</p>
+              <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight text-heading text-balance sm:text-4xl">
+                Built for D2C brands, startups & SMEs
               </h2>
               <p className="mx-auto mt-4 max-w-md text-body text-pretty">
-                Share your details and we'll reach out to get you started on Snaplogo.
+                Share your details and our team will reach out to onboard you onto Snaplogo.
               </p>
 
               {!showForm ? (
@@ -72,7 +73,7 @@ export default function CTASection() {
                   className="mt-8"
                   onClick={() => setShowForm(true)}
                 >
-                  Request access
+                  Register with us
                 </Button>
               ) : (
                 <form

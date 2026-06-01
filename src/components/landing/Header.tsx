@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import layerLogo from "@/assets/layer-logo.png";
+import layerLogo from "@/assets/snaplogo-blue.png";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "How it works", href: "#how-it-works", id: "how-it-works" },
   { label: "Platform", href: "#platform-film", id: "platform-film" },
-  { label: "Capabilities", href: "#capabilities", id: "capabilities" },
+  { label: "Catalog", href: "#what-you-can-order", id: "what-you-can-order" },
+  { label: "Comparison", href: "#comparison", id: "comparison" },
   { label: "FAQ", href: "#faq", id: "faq" },
 ];
 
@@ -61,7 +62,7 @@ export default function Header() {
             Sign in
           </Button>
           <Button variant="hero" size="sm" onClick={scrollToAccess}>
-            Request access
+            Register with us
           </Button>
         </div>
 
@@ -99,7 +100,7 @@ export default function Header() {
               Sign in
             </Button>
             <Button variant="hero" size="sm" onClick={() => { scrollToAccess(); setMobileOpen(false); }}>
-              Request access
+              Register with us
             </Button>
           </div>
         </div>

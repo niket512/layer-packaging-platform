@@ -1,4 +1,4 @@
-import layerLogo from "@/assets/layer-logo.png";
+import layerLogo from "@/assets/snaplogo-blue.png";
 
 export default function Footer() {
   return (

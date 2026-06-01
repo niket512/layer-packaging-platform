@@ -34,7 +34,7 @@ export default function ComparisonSection() {
   const { ref, isVisible } = useScrollReveal();
 
   return (
-    <section ref={ref} className="bg-muted/40 py-16 md:py-20">
+    <section ref={ref} id="comparison" className="bg-muted/40 py-16 md:py-20">
       <div className="container">
         <div
           className={`mx-auto max-w-2xl text-center transition-all duration-700 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}

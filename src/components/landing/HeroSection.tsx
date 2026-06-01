@@ -37,12 +37,12 @@ export default function HeroSection() {
       <div className="pointer-events-none absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
 
       <div className="container relative">
-        <div className="mx-auto max-w-3xl text-center">
-          <h1 className="font-heading text-4xl font-bold leading-[1.08] tracking-tight text-heading text-balance sm:text-5xl lg:text-6xl">
-            The sourcing OS for D2C brands
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="font-heading whitespace-nowrap text-3xl font-bold leading-[1.08] tracking-tight text-heading sm:text-5xl lg:text-6xl">
+            Source smarter. Faster. Better.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-body text-pretty">
-            Find verified manufacturers, manage orders, track shipments, and handle payments — all in one platform. Starting with packaging.
+            Find verified manufacturers, manage orders, track shipments, and handle payments seamlessly on one platform.
           </p>
         </div>
 
