@@ -1,69 +1,42 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 
 const faqs = [
-  {
-    q: "What are the minimum order quantities on Snaplogo?",
-    a: "Snaplogo finds cost-efficient manufacturers who support flexible MOQs. Depending on the order and packaging type, minimums can start as low as 200 units.",
-  },
-  {
-    q: "How does Snaplogo ensure quality?",
-    a: "Every manufacturer on Snaplogo goes through a verification process. Production orders include structured QC checkpoints, and you approve samples before any bulk run begins.",
-  },
-  {
-    q: "What packaging categories does Snaplogo support?",
-    a: "Snaplogo supports all kinds of packaging — corrugated boxes, mailer boxes, rigid boxes, pouches, labels, flexible packaging, and more. Whatever your brand needs, we can source it.",
-  },
-  {
-    q: "How are manufacturers selected?",
-    a: "Snaplogo matches your spec against verified manufacturers based on capability, capacity, material access, and past performance. You review options and select your preferred partner.",
-  },
-  {
-    q: "What's the typical timeline from spec to delivery?",
-    a: "Production timelines vary by packaging type but typically range from 3–28 days after sample approval. Snaplogo tracks every milestone centrally.",
-  },
-  {
-    q: "Can I reorder the same packaging later?",
-    a: "Yes. Snaplogo saves your approved specs, sample records, and manufacturer preferences. Reordering is a one-click workflow with no repeated briefing.",
-  },
+  { q: "What categories does Snaplogo cover?", a: "We're starting with flexible packaging (pouches, wrappers) for FMCG brands, with more categories coming soon." },
+  { q: "What MOQs can I expect?", a: "Our manufacturer network is specifically selected to work with smaller quantities suited for emerging D2C brands." },
+  { q: "How does pricing work?", a: "You receive a clear, itemised quote before committing to any order. No hidden charges or last-minute revisions." },
+  { q: "How do you ensure quality?", a: "All manufacturers on our platform are onboarded through a verification process. We also manage sample approvals before production begins." },
+  { q: "Is Snaplogo free to use?", a: "Getting started and discovering manufacturers is free. We'll share pricing details for managed services at sign-up." },
+  { q: "How long does an order typically take?", a: "Timelines vary by product and quantity, but we'll share a clear production and delivery estimate before your order is confirmed." },
 ];
 
 export default function FAQSection() {
   const { ref, isVisible } = useScrollReveal();
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section ref={ref} id="faq" className="py-16 md:py-20">
-      <div className="container">
-        <div
-          className={`mx-auto max-w-2xl text-center transition-all duration-700 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
-        >
-          <p className="text-sm font-semibold uppercase tracking-widest text-primary">FAQ</p>
-          <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight text-heading text-balance sm:text-4xl">
+    <section ref={ref} id="faq" className="py-14 md:py-[88px] bg-background">
+      <div className="mx-auto max-w-content px-6">
+        <div className={`mx-auto max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
+          <p className="label-eyebrow">FAQs</p>
+          <h2 className="mt-3 font-heading text-[32px] font-semibold tracking-tight text-foreground md:text-[38px]">
             Common questions
           </h2>
         </div>
 
-        <div
-          className={`mx-auto mt-14 max-w-2xl divide-y divide-border ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
-          style={{ animationDelay: "200ms" }}
-        >
+        <div className={`mx-auto mt-12 max-w-2xl ${isVisible ? "animate-reveal-up" : "opacity-0"}`} style={{ animationDelay: "150ms" }}>
           {faqs.map((faq, i) => (
-            <div key={i}>
+            <div key={i} className="border-b border-border">
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="flex w-full items-center justify-between py-5 text-left transition-colors"
+                className="flex w-full items-center justify-between py-5 text-left"
               >
-                <span className="pr-4 font-heading text-base font-semibold text-heading">{faq.q}</span>
-                <ChevronDown
-                  className={`h-5 w-5 shrink-0 text-body-muted transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""}`}
-                />
+                <span className="pr-4 font-heading text-base font-semibold text-foreground">{faq.q}</span>
+                {openIndex === i ? <Minus className="h-5 w-5 shrink-0 text-primary" /> : <Plus className="h-5 w-5 shrink-0 text-muted-foreground" />}
               </button>
-              <div
-                className={`overflow-hidden transition-all duration-300 ${openIndex === i ? "max-h-40 pb-5" : "max-h-0"}`}
-              >
-                <p className="text-sm leading-relaxed text-body">{faq.a}</p>
+              <div className={`overflow-hidden transition-all duration-300 ${openIndex === i ? "max-h-40 pb-5" : "max-h-0"}`}>
+                <p className="text-base leading-relaxed text-muted-foreground">{faq.a}</p>
               </div>
             </div>
           ))}

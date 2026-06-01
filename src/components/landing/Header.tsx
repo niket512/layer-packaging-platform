@@ -5,12 +5,11 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "How It Works", id: "how-it-works" },
-  { label: "Why Snaplogo", id: "why-snaplogo" },
-  { label: "For Brands", id: "capabilities" },
+  { label: "What We Offer", id: "what-we-offer" },
 ];
 
 const scrollToAccess = () => {
-  document.getElementById("request-access")?.scrollIntoView({ behavior: "smooth" });
+  document.getElementById("sign-up")?.scrollIntoView({ behavior: "smooth" });
   window.dispatchEvent(new Event("open-access-form"));
 };
 
@@ -33,10 +32,8 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 transition-all duration-300",
-        scrolled
-          ? "border-b border-border bg-background/70 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent",
+        "sticky top-0 z-50 bg-background transition-all duration-200",
+        scrolled ? "border-b border-border" : "border-b border-transparent",
       )}
     >
       <div className="mx-auto flex h-16 max-w-content items-center justify-between px-6">
@@ -50,16 +47,23 @@ export default function Header() {
               key={l.id}
               href={`#${l.id}`}
               onClick={(e) => handleNavClick(e, l.id)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               {l.label}
             </a>
           ))}
+          <a
+            href="#sign-up"
+            onClick={(e) => { e.preventDefault(); scrollToAccess(); }}
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          >
+            Sign Up
+          </a>
         </nav>
 
         <div className="hidden md:block">
           <Button variant="hero" size="pill" onClick={scrollToAccess}>
-            Get Early Access
+            Sign Up
           </Button>
         </div>
 
@@ -80,17 +84,14 @@ export default function Header() {
                 key={l.id}
                 href={`#${l.id}`}
                 className="text-sm font-medium text-muted-foreground"
-                onClick={(e) => {
-                  handleNavClick(e, l.id);
-                  setMobileOpen(false);
-                }}
+                onClick={(e) => { handleNavClick(e, l.id); setMobileOpen(false); }}
               >
                 {l.label}
               </a>
             ))}
           </nav>
           <Button variant="hero" size="pill" className="mt-4 w-full" onClick={() => { scrollToAccess(); setMobileOpen(false); }}>
-            Get Early Access
+            Sign Up
           </Button>
         </div>
       )}
