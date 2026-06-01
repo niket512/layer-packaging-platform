@@ -52,7 +52,7 @@ export default function CapabilitiesSection() {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
 
       <div className="container relative">
-        <div className={`mx-auto grid max-w-5xl gap-6 md:grid-cols-2 ${isVisible ? "" : "opacity-0"}`}>
+        <div className={`mx-auto grid max-w-5xl gap-6 md:grid-cols-2 lg:grid-cols-3 ${isVisible ? "" : "opacity-0"}`}>
           {points.map((p, i) => (
             <div
               key={p.title}
