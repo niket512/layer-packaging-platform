@@ -15,7 +15,14 @@ export default function CapabilitiesSection() {
   return (
     <section ref={ref} id="capabilities" className="py-14 md:py-20 bg-background">
       <div className="mx-auto max-w-content px-[5vw] md:px-8">
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className={`mx-auto max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
+          <p className="label-eyebrow">How Snaplogo Helps</p>
+          <h2 className="mt-3 font-heading text-[32px] font-semibold tracking-tight text-foreground md:text-[38px]">
+            Everything you need to procure with confidence
+          </h2>
+        </div>
+
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {tiles.map((t, i) => (
             <div
               key={t.title}

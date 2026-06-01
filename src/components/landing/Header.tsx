@@ -41,7 +41,7 @@ export default function Header() {
             Sign In
           </button>
           <Button variant="hero" size="pill" onClick={scrollToAccess}>
-            Create Account
+            Get Started
           </Button>
         </div>
       </div>

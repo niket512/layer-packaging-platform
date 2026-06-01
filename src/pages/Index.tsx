@@ -11,6 +11,7 @@ import FAQSection from "@/components/landing/FAQSection";
 import Footer from "@/components/landing/Footer";
 import ScrollProgress from "@/components/landing/ScrollProgress";
 import BackToTop from "@/components/landing/BackToTop";
+import SectionNav from "@/components/landing/SectionNav";
 
 export default function Index() {
   return (
@@ -18,6 +19,7 @@ export default function Index() {
       <ScrollProgress />
       <Header />
       <HeroSection />
+      <SectionNav />
       <CapabilitiesSection />
       <HowItWorksSection />
       <WhatWeOfferSection />
