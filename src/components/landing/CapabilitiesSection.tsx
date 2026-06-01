@@ -1,71 +1,39 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { TrendingDown, ShieldCheck, Zap, Users, Eye, RotateCcw } from "lucide-react";
-import bg from "@/assets/capabilities-bg.jpg";
+import { Search, Scale, Tag, FlaskConical, MessagesSquare, Truck } from "lucide-react";
 
-const points = [
-  {
-    icon: TrendingDown,
-    title: "Lower MOQs",
-    desc: "We find cost-efficient manufacturers who support minimum order quantities that work for growing brands.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Quality consistency",
-    desc: "Verified manufacturers, standardised QC checkpoints, and auditable production records.",
-  },
-  {
-    icon: Zap,
-    title: "Faster cycles",
-    desc: "Structured briefs and matched capacity cut time-to-sample and time-to-production significantly.",
-  },
-  {
-    icon: Users,
-    title: "Fewer vendors",
-    desc: "Stop juggling ten different contacts. Snaplogo consolidates your packaging supply chain into one interface.",
-  },
-  {
-    icon: Eye,
-    title: "Full visibility",
-    desc: "Track every order from sampling through shipment with real-time status and payment milestones.",
-  },
-  {
-    icon: RotateCcw,
-    title: "Repeatable production",
-    desc: "Save specs, approved samples, and manufacturer preferences. Reorder with one click.",
-  },
+const tiles = [
+  { icon: Search, title: "Manufacturer Discovery", desc: "Find vetted partners without wasting weeks on cold calls." },
+  { icon: Scale, title: "MOQ Flexibility", desc: "Access manufacturers who work with emerging brand volumes." },
+  { icon: Tag, title: "Transparent Pricing", desc: "No bait-and-switch. Clear quotes before commitment." },
+  { icon: FlaskConical, title: "Sample Management", desc: "Coordinate samples and approvals in one thread." },
+  { icon: MessagesSquare, title: "Order Coordination", desc: "We handle the back-and-forth so your team doesn't have to." },
+  { icon: Truck, title: "Shipment Tracking", desc: "End-to-end visibility from factory floor to your warehouse." },
 ];
 
 export default function CapabilitiesSection() {
   const { ref, isVisible } = useScrollReveal();
-
   return (
-    <section ref={ref} className="relative overflow-hidden py-16 md:py-24">
-      <img
-        src={bg}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-        width={1600}
-        height={900}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
+    <section ref={ref} id="capabilities" className="py-12 md:py-20">
+      <div className="mx-auto max-w-content px-6">
+        <div className={`max-w-2xl ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
+          <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-primary">Capabilities</p>
+          <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            Everything a brand needs to procure with confidence
+          </h2>
+        </div>
 
-      <div className="container relative">
-        <div className={`mx-auto grid max-w-5xl gap-6 md:grid-cols-2 lg:grid-cols-3 ${isVisible ? "" : "opacity-0"}`}>
-          {points.map((p, i) => (
+        <div className="mt-12 grid gap-5 md:grid-cols-2">
+          {tiles.map((t, i) => (
             <div
-              key={p.title}
-              className={`flex items-start gap-4 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
-              style={{ animationDelay: `${i * 120}ms` }}
+              key={t.title}
+              className={`flex h-full flex-col rounded-2xl border border-border bg-card p-7 transition-colors hover:border-primary/40 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
+              style={{ animationDelay: `${i * 70}ms` }}
             >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <p.icon className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                <t.icon className="h-5 w-5" />
               </div>
-              <div>
-                <h3 className="font-heading text-lg font-semibold text-heading">{p.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-body">{p.desc}</p>
-              </div>
+              <h3 className="mt-5 font-heading text-xl font-semibold text-foreground">{t.title}</h3>
+              <p className="mt-2 text-base leading-relaxed text-muted-foreground">{t.desc}</p>
             </div>
           ))}
         </div>

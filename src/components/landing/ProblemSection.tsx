@@ -1,59 +1,38 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { AlertTriangle, Layers, Eye, ShieldAlert } from "lucide-react";
+import { Search, BadgeDollarSign, RadioTower, Zap } from "lucide-react";
 
-const problems = [
-  {
-    icon: AlertTriangle,
-    title: "High MOQs lock out growing brands",
-    desc: "Most manufacturers set minimums that don't fit early-stage D2C volumes, forcing brands to overpay or overstock.",
-  },
-  {
-    icon: Layers,
-    title: "Too many vendors, no single thread",
-    desc: "Brands juggle separate conversations with designers, material suppliers, printers, and converters.",
-  },
-  {
-    icon: Eye,
-    title: "Poor visibility across the chain",
-    desc: "No single view of where a packaging order stands — sampling, production, QC, or shipment.",
-  },
-  {
-    icon: ShieldAlert,
-    title: "Quality is inconsistent",
-    desc: "Without standardised QC and verified manufacturer data, every reorder is a gamble.",
-  },
+const pains = [
+  { icon: Search, title: "Manufacturer Discovery", desc: "Talking to 100 suppliers to find one that fits." },
+  { icon: BadgeDollarSign, title: "Unfair Pricing", desc: "40–50% premiums for small quantities. Advance payments with no guarantees." },
+  { icon: RadioTower, title: "Zero Visibility", desc: "Once the order is placed, you're in the dark on status, quality, and timelines." },
+  { icon: Zap, title: "Coordination Overload", desc: "Managing manufacturers across WhatsApp, calls, and emails — with no single source of truth." },
 ];
 
 export default function ProblemSection() {
   const { ref, isVisible } = useScrollReveal();
 
   return (
-    <section ref={ref} className="bg-muted/40 py-16 md:py-20">
-      <div className="container">
-        <div
-          className={`mx-auto max-w-2xl text-center transition-all duration-700 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
-        >
-          <p className="text-sm font-semibold uppercase tracking-widest text-primary">The problem</p>
-          <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight text-heading text-balance sm:text-4xl">
-            Packaging execution is broken for D2C
+    <section ref={ref} className="py-12 md:py-20">
+      <div className="mx-auto max-w-content px-6">
+        <div className={`max-w-2xl ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
+          <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-primary">The Problem</p>
+          <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            Procurement the way it runs today is broken
           </h2>
-          <p className="mt-4 text-body text-pretty">
-            Fragmented supply chains, opaque pricing, and manual coordination make packaging one of the hardest parts of scaling a consumer brand in India.
-          </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-5xl gap-5 sm:grid-cols-2">
-          {problems.map((p, i) => (
+        <div className="mt-12 grid gap-5 md:grid-cols-2">
+          {pains.map((p, i) => (
             <div
               key={p.title}
-              className={`group rounded-2xl border border-border bg-surface-raised p-7 shadow-sm transition-all duration-500 hover:shadow-md hover:shadow-primary/5 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
-              style={{ animationDelay: `${150 + i * 80}ms` }}
+              className={`rounded-2xl border border-border bg-card p-7 shadow-sm transition-colors hover:border-primary/40 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
+              style={{ animationDelay: `${i * 80}ms` }}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-subtle text-primary transition-transform duration-300 group-hover:scale-105">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
                 <p.icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-4 font-heading text-lg font-semibold text-heading">{p.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-body">{p.desc}</p>
+              <h3 className="mt-5 font-heading text-xl font-semibold text-foreground">{p.title}</h3>
+              <p className="mt-2 text-base leading-relaxed text-muted-foreground">{p.desc}</p>
             </div>
           ))}
         </div>
