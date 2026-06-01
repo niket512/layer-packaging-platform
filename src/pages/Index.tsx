@@ -1,11 +1,10 @@
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
+import ProblemSection from "@/components/landing/ProblemSection";
+import SolutionSection from "@/components/landing/SolutionSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
-import PlatformFilmSection from "@/components/landing/PlatformFilmSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
-import WhatYouCanOrderSection from "@/components/landing/WhatYouCanOrderSection";
-import ComparisonSection from "@/components/landing/ComparisonSection";
-import FAQSection from "@/components/landing/FAQSection";
+import SocialProofSection from "@/components/landing/SocialProofSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
 import ScrollProgress from "@/components/landing/ScrollProgress";
@@ -17,13 +16,12 @@ export default function Index() {
       <ScrollProgress />
       <Header />
       <HeroSection />
-      <CapabilitiesSection />
+      <ProblemSection />
+      <SolutionSection />
       <HowItWorksSection />
-      <WhatYouCanOrderSection />
-      <PlatformFilmSection />
+      <CapabilitiesSection />
+      <SocialProofSection />
       <CTASection />
-      <ComparisonSection />
-      <FAQSection />
       <Footer />
       <BackToTop />
     </div>

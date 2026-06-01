@@ -1,110 +1,49 @@
-import { useState, useRef } from "react";
-import { ImagePlus, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CheckCircle2 } from "lucide-react";
 
-const suggestions = [
-  "Custom mailer boxes for skincare",
-  "Find verified packaging manufacturers in India",
-  "Source premium rigid boxes for a festive launch",
-  "Starting with packaging, expanding to wider manufacturing",
-];
+const scrollTo = (id: string) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+};
+
+const scrollToAccess = () => {
+  scrollTo("request-access");
+  window.dispatchEvent(new Event("open-access-form"));
+};
+
+const trust = ["Verified Manufacturers", "Flexible MOQs", "End-to-End Tracking"];
 
 export default function HeroSection() {
-  const [query, setQuery] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState("");
-
-  const scrollToAccess = () => {
-    document.getElementById("request-access")?.scrollIntoView({ behavior: "smooth" });
-    window.dispatchEvent(new Event("open-access-form"));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    scrollToAccess();
-  };
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-      scrollToAccess();
-    }
-  };
-
   return (
-    <section className="relative overflow-hidden pb-24 pt-20 md:pb-32 md:pt-28">
-      <div className="pointer-events-none absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
+    <section className="relative overflow-hidden pt-20 pb-20 md:pt-28 md:pb-32">
+      <div className="pointer-events-none absolute inset-0 gradient-mesh" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
 
-      <div className="container relative">
-        <div className="mx-auto max-w-4xl text-center">
-          <h1 className="font-heading text-4xl font-bold leading-[1.08] tracking-tight text-heading sm:text-5xl lg:text-6xl">
-            <span className="text-heading">Source </span>
-            <span className="text-primary">smarter. Faster. Better</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-body text-pretty">
-            Find verified manufacturers, manage orders, track shipments, and handle payments seamlessly on one platform.
-          </p>
+      <div className="relative mx-auto max-w-content px-6 text-center">
+        <h1 className="font-heading text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-[56px]">
+          Source Smarter. Faster. Better.
+        </h1>
+        <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
+          The procurement platform built for D2C brands. Discover verified manufacturers, coordinate orders, and track delivery — all in one place.
+        </p>
+
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Button variant="hero" size="pill" onClick={scrollToAccess}>
+            Get Early Access
+          </Button>
+          <Button variant="hero-outline" size="pill" onClick={() => scrollTo("how-it-works")}>
+            See How It Works
+          </Button>
         </div>
 
-        {/* Search box */}
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto mt-12 max-w-2xl rounded-3xl border border-border bg-surface-raised shadow-lg shadow-primary/5 transition-shadow duration-300 hover:shadow-xl hover:shadow-primary/10"
-        >
-          <div className="px-4 pt-4 pb-2">
-            <textarea
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  scrollToAccess();
-                }
-              }}
-              placeholder="Describe your manufacturing need..."
-              rows={2}
-              className="w-full resize-none bg-transparent text-base text-heading outline-none placeholder:text-body-muted leading-relaxed"
-            />
-          </div>
-          <div className="flex items-center justify-between px-3 pb-3">
-            <div className="flex items-center gap-1">
-              <input
-                ref={fileRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFile}
-              />
-              <button
-                type="button"
-                onClick={() => fileRef.current?.click()}
-                className="flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1.5 text-xs font-medium text-body-muted transition-all hover:border-primary/30 hover:bg-amber-subtle hover:text-heading"
-                title="Upload reference image"
-              >
-                <ImagePlus className="h-4 w-4" />
-                <span>Add image</span>
-              </button>
-              {fileName && (
-                <span className="text-xs text-body-muted truncate max-w-[120px]">{fileName}</span>
-              )}
-            </div>
-            <Button type="submit" variant="hero" size="icon" className="rounded-full h-9 w-9">
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </form>
-
-        {/* Suggestion chips */}
-        <div className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-2">
-          {suggestions.map((s) => (
-            <button
-              key={s}
-              onClick={() => { setQuery(s); scrollToAccess(); }}
-              className="rounded-full border border-border bg-surface-raised px-3.5 py-1.5 text-xs font-medium text-body-muted transition-all duration-150 hover:border-primary/30 hover:bg-amber-subtle hover:text-heading active:scale-[0.97]"
-            >
-              {s}
-            </button>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-xs text-muted-foreground">
+          {trust.map((t, i) => (
+            <span key={t} className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-secondary" />
+                {t}
+              </span>
+              {i < trust.length - 1 && <span className="text-border">·</span>}
+            </span>
           ))}
         </div>
       </div>

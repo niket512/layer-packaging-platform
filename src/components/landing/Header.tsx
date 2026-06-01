@@ -1,14 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import layerLogo from "@/assets/snaplogo-blue.png";
-import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "How it works", href: "#how-it-works", id: "how-it-works" },
-  { label: "Platform", href: "#what-you-can-order", id: "what-you-can-order" },
-  { label: "FAQ", href: "#faq", id: "faq" },
+  { label: "How It Works", id: "how-it-works" },
+  { label: "Why Snaplogo", id: "why-snaplogo" },
+  { label: "For Brands", id: "capabilities" },
 ];
 
 const scrollToAccess = () => {
@@ -23,49 +21,50 @@ const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const activeId = useScrollSpy(navLinks.map((l) => l.id));
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="container flex h-16 items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
-          <img src={layerLogo} alt="Snaplogo" width={52} height={52} />
-          <span className="font-heading text-xl font-bold tracking-tight text-heading">Snaplogo</span>
+    <header
+      className={cn(
+        "sticky top-0 z-50 transition-all duration-300",
+        scrolled
+          ? "border-b border-border bg-background/70 backdrop-blur-xl"
+          : "border-b border-transparent bg-transparent",
+      )}
+    >
+      <div className="mx-auto flex h-16 max-w-content items-center justify-between px-6">
+        <a href="#" className="font-heading text-lg font-bold tracking-tight text-foreground">
+          Snaplogo
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((l) => (
             <a
-              key={l.href}
-              href={l.href}
+              key={l.id}
+              href={`#${l.id}`}
               onClick={(e) => handleNavClick(e, l.id)}
-              className={cn(
-                "relative text-sm font-medium transition-colors duration-150 hover:text-heading",
-                activeId === l.id ? "text-heading" : "text-body-muted",
-              )}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {l.label}
-              <span
-                className={cn(
-                  "absolute -bottom-1 left-0 h-0.5 rounded-full bg-primary transition-all duration-300",
-                  activeId === l.id ? "w-full" : "w-0",
-                )}
-              />
             </a>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
-          <Button variant="ghost" size="sm" onClick={scrollToAccess}>
-            Sign in
-          </Button>
-          <Button variant="hero" size="sm" onClick={scrollToAccess}>
-            Register with us
+        <div className="hidden md:block">
+          <Button variant="hero" size="pill" onClick={scrollToAccess}>
+            Get Early Access
           </Button>
         </div>
 
         <button
-          className="p-2 md:hidden"
+          className="p-2 md:hidden text-foreground"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -74,16 +73,13 @@ export default function Header() {
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-border/40 bg-background px-6 pb-6 pt-4 md:hidden">
+        <div className="border-t border-border bg-background px-6 pb-6 pt-4 md:hidden">
           <nav className="flex flex-col gap-4">
             {navLinks.map((l) => (
               <a
-                key={l.href}
-                href={l.href}
-                className={cn(
-                  "text-sm font-medium",
-                  activeId === l.id ? "text-primary" : "text-body-muted",
-                )}
+                key={l.id}
+                href={`#${l.id}`}
+                className="text-sm font-medium text-muted-foreground"
                 onClick={(e) => {
                   handleNavClick(e, l.id);
                   setMobileOpen(false);
@@ -93,14 +89,9 @@ export default function Header() {
               </a>
             ))}
           </nav>
-          <div className="mt-4 flex flex-col gap-2">
-            <Button variant="ghost" size="sm" onClick={() => { scrollToAccess(); setMobileOpen(false); }}>
-              Sign in
-            </Button>
-            <Button variant="hero" size="sm" onClick={() => { scrollToAccess(); setMobileOpen(false); }}>
-              Register with us
-            </Button>
-          </div>
+          <Button variant="hero" size="pill" className="mt-4 w-full" onClick={() => { scrollToAccess(); setMobileOpen(false); }}>
+            Get Early Access
+          </Button>
         </div>
       )}
     </header>
