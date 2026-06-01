@@ -43,21 +43,22 @@ export default function HeroSection() {
 
         <form
           onSubmit={onSubmit}
-          className="mx-auto mt-10 flex w-full max-w-2xl items-center rounded-full border border-primary/40 bg-background p-1.5 shadow-[0_2px_16px_rgba(37,99,235,0.08)] focus-within:border-primary"
+          className="mx-auto mt-10 flex h-14 w-full max-w-2xl items-center rounded-full border border-primary/40 bg-background p-1.5 shadow-[0_2px_16px_rgba(37,99,235,0.08)] focus-within:border-primary"
         >
-          <Search className="ml-4 h-4 w-4 shrink-0 text-muted-foreground" />
+          <Search className="ml-4 h-5 w-5 shrink-0 text-muted-foreground" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="What are you looking for? e.g. Stand-up pouches for 500 units"
-            className="h-10 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            className="h-full flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
           <button
             type="submit"
-            className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-[13px] font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
+            aria-label="Search"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Get Started →
+            <Search className="h-5 w-5" />
           </button>
         </form>
 
@@ -73,8 +74,6 @@ export default function HeroSection() {
             </button>
           ))}
         </div>
-
-        <p className="mt-6 text-xs text-muted-foreground">Trusted by emerging D2C brands in FMCG</p>
       </div>
     </section>
   );
