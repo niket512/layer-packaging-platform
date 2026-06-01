@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 export default function CTASection() {
   const { ref, isVisible } = useScrollReveal();
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [brand, setBrand] = useState("");
   const [email, setEmail] = useState("");
   const [requirement, setRequirement] = useState("");
@@ -18,9 +21,24 @@ export default function CTASection() {
     return () => window.removeEventListener("open-access-form", handler);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !brand) return;
+    if (!email.trim() || !brand.trim() || !requirement.trim()) return;
+    setSubmitting(true);
+    const { error } = await supabase.from("access_requests").insert({
+      brand: brand.trim(),
+      email: email.trim(),
+      requirement: requirement.trim(),
+    });
+    setSubmitting(false);
+    if (error) {
+      toast({
+        title: "Submission failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
     setSubmitted(true);
   };
 
