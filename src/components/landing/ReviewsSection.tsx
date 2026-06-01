@@ -37,7 +37,7 @@ export default function ReviewsSection() {
       </div>
 
       <div className="mt-12 marquee-pause">
-        <div className="flex w-max gap-5 animate-marquee">
+        <div className="flex w-max gap-5 pr-6 animate-marquee">
           {[...reviews, ...reviews].map((r, i) => (
             <Card key={i} r={r} />
           ))}
