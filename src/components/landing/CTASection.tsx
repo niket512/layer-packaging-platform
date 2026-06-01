@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 export default function CTASection() {
   const { ref, isVisible } = useScrollReveal();
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [brand, setBrand] = useState("");
   const [email, setEmail] = useState("");
   const [requirement, setRequirement] = useState("");
@@ -18,9 +21,24 @@ export default function CTASection() {
     return () => window.removeEventListener("open-access-form", handler);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !brand) return;
+    if (!email.trim() || !brand.trim() || !requirement.trim()) return;
+    setSubmitting(true);
+    const { error } = await supabase.from("access_requests").insert({
+      brand: brand.trim(),
+      email: email.trim(),
+      requirement: requirement.trim(),
+    });
+    setSubmitting(false);
+    if (error) {
+      toast({
+        title: "Submission failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
     setSubmitted(true);
   };
 
@@ -93,10 +111,11 @@ export default function CTASection() {
                   </div>
                   <div>
                     <label htmlFor="cta-requirement" className="mb-1.5 block text-sm font-medium text-heading">
-                      What do you need?
+                      What do you need? <span className="text-primary">*</span>
                     </label>
                     <textarea
                       id="cta-requirement"
+                      required
                       maxLength={1000}
                       rows={3}
                       value={requirement}
@@ -105,8 +124,8 @@ export default function CTASection() {
                       placeholder="e.g. 5,000 mailer boxes for a skincare launch..."
                     />
                   </div>
-                  <Button type="submit" variant="hero" size="lg" className="w-full gap-2">
-                    Submit request
+                  <Button type="submit" variant="hero" size="lg" className="w-full gap-2" disabled={submitting}>
+                    {submitting ? "Submitting..." : "Submit request"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </form>
