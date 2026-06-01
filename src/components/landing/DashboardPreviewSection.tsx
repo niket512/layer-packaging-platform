@@ -24,13 +24,11 @@ export default function DashboardPreviewSection() {
         </div>
 
         <div className="mt-12 grid items-center gap-10 md:grid-cols-5">
-          <ul className={`space-y-4 md:col-span-2 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
+          <ul className={`space-y-3 md:col-span-2 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
             {features.map((f) => (
-              <li key={f} className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
-                  <Check className="h-4 w-4" />
-                </span>
-                <span className="text-base font-medium text-foreground">{f}</span>
+              <li key={f} className="flex items-center gap-2.5">
+                <Check className="h-4 w-4 shrink-0 text-primary" strokeWidth={3} />
+                <span className="text-base text-foreground">{f}</span>
               </li>
             ))}
           </ul>
