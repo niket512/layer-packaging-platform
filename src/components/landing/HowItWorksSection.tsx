@@ -22,13 +22,13 @@ export default function HowItWorksSection() {
 
         {/* Desktop */}
         <div className="mt-16 hidden md:block">
-          <div className="relative">
-            <div className="absolute left-[6%] right-[6%] top-6 h-px bg-border" />
-            <div className="relative grid grid-cols-5 gap-4">
+          <div className="relative px-4">
+            <div className="absolute left-[10%] right-[10%] top-6 h-px bg-border" />
+            <div className="relative grid grid-cols-5 gap-6">
               {steps.map((s, i) => (
                 <div
                   key={s.n}
-                  className={`flex flex-col items-center text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
+                  className={`flex min-w-0 flex-col items-center px-2 text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
                   <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-md">
