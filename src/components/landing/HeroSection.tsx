@@ -38,8 +38,9 @@ export default function HeroSection() {
 
       <div className="container relative">
         <div className="mx-auto max-w-4xl text-center">
-          <h1 className="font-heading whitespace-nowrap text-3xl font-bold leading-[1.08] tracking-tight text-heading sm:text-5xl lg:text-6xl">
-            Source smarter. Faster. Better.
+          <h1 className="font-heading text-4xl font-bold leading-[1.08] tracking-tight text-heading sm:text-5xl lg:text-6xl">
+            <span className="text-heading">Source </span>
+            <span className="text-primary">smarter. Faster. Better</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-body text-pretty">
             Find verified manufacturers, manage orders, track shipments, and handle payments seamlessly on one platform.

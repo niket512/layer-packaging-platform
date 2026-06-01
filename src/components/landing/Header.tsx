@@ -7,9 +7,7 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "How it works", href: "#how-it-works", id: "how-it-works" },
-  { label: "Platform", href: "#platform-film", id: "platform-film" },
-  { label: "Catalog", href: "#what-you-can-order", id: "what-you-can-order" },
-  { label: "Comparison", href: "#comparison", id: "comparison" },
+  { label: "Platform", href: "#what-you-can-order", id: "what-you-can-order" },
   { label: "FAQ", href: "#faq", id: "faq" },
 ];
 

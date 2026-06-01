@@ -97,20 +97,10 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    text-transform: lowercase;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
-    text-transform: lowercase;
-  }
-
-  /* Preserve case for emails and explicit opt-outs */
-  .normal-case,
-  a[href^="mailto:"],
-  input,
-  textarea {
-    text-transform: none !important;
   }
 
   section[id] {

@@ -1,6 +1,5 @@
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
-import QuickAccess from "@/components/landing/QuickAccess";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import PlatformFilmSection from "@/components/landing/PlatformFilmSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
@@ -19,10 +18,9 @@ export default function Index() {
       <Header />
       <HeroSection />
       <CapabilitiesSection />
-      <QuickAccess />
       <HowItWorksSection />
-      <PlatformFilmSection />
       <WhatYouCanOrderSection />
+      <PlatformFilmSection />
       <CTASection />
       <ComparisonSection />
       <FAQSection />
