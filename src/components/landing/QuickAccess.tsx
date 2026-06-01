@@ -1,17 +1,19 @@
-import { Workflow, LayoutGrid, Sparkles, HelpCircle, ArrowUpRight } from "lucide-react";
+import { Workflow, LayoutGrid, PackageSearch, UserPlus, GitCompare, HelpCircle, ArrowUpRight } from "lucide-react";
 
 const tiles = [
   { id: "how-it-works", label: "How it works", desc: "4 steps from spec to delivery", icon: Workflow },
-  { id: "platform-film", label: "Platform preview", desc: "See the Sourcing OS in action", icon: LayoutGrid },
-  { id: "capabilities", label: "Capabilities", desc: "What Snaplogo handles", icon: Sparkles },
-  { id: "faq", label: "FAQ", desc: "MOQs, timelines, quality", icon: HelpCircle },
+  { id: "platform-film", label: "Platform overview", desc: "See the Sourcing OS in action", icon: LayoutGrid },
+  { id: "what-you-can-order", label: "What you can order", desc: "6 production categories", icon: PackageSearch },
+  { id: "request-access", label: "Register with us", desc: "For D2C brands, startups, SMEs", icon: UserPlus },
+  { id: "comparison", label: "Comparison", desc: "vs IndiaMART & traditional", icon: GitCompare },
+  { id: "faq", label: "FAQs", desc: "Verification, tracking, quality", icon: HelpCircle },
 ];
 
 export default function QuickAccess() {
   return (
     <section aria-label="Quick navigation" className="border-y border-border/60 bg-muted/20 py-6">
       <div className="container">
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
           {tiles.map((t) => (
             <a
               key={t.id}
