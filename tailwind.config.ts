@@ -18,7 +18,7 @@ export default {
         body: ['Inter', 'system-ui', 'sans-serif'],
       },
       maxWidth: {
-        content: '1100px',
+        content: '1200px',
       },
       colors: {
         border: "hsl(var(--border))",
