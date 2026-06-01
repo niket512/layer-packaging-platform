@@ -10,7 +10,7 @@ const items = [
 export default function WhatWeOfferSection() {
   const { ref, isVisible } = useScrollReveal();
   return (
-    <section ref={ref} id="what-we-offer" className="py-14 md:py-[88px] bg-background">
+    <section ref={ref} id="what-we-offer" className="pt-14 md:pt-[88px] pb-8 md:pb-10 bg-background">
       <div className="mx-auto max-w-content px-6">
         <div className={`mx-auto max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
           <p className="label-eyebrow">What We Offer</p>

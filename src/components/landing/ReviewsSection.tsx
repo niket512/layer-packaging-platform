@@ -1,11 +1,9 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const reviews = [
-  { quote: "Finally a platform that doesn't waste my time with random supplier leads. The matching was sharp and the manufacturer actually showed up.", name: "Priya S.", role: "Founder, [Brand]", initials: "PS" },
-  { quote: "Visibility on order status was the biggest win for us. No more chasing on WhatsApp.", name: "Arjun M.", role: "Ops Head, [Brand]", initials: "AM" },
-  { quote: "Pricing was exactly what was quoted. That alone is a reason to never go back to IndiaMART.", name: "Riya K.", role: "Co-Founder, [Brand]", initials: "RK" },
-  { quote: "We launched our pouches 3 weeks faster than our last sourcing attempt. The difference is night and day.", name: "Karan D.", role: "Founder, [Brand]", initials: "KD" },
-  { quote: "Their team handled all the manufacturer back-and-forth so we could focus on our product.", name: "Neha T.", role: "Brand Lead, [Brand]", initials: "NT" },
+  { quote: "Used to spend two weeks finding a pouch manufacturer. Now I spend that time arguing about flavour names instead. Much better problem to have.", name: "Ravi V.", role: "Founder, The Snack Lab", initials: "RV" },
+  { quote: "Our last supplier went silent post-payment. Snaplogo's tracking meant we actually knew where our order was — a novel concept, apparently.", name: "Ananya S.", role: "Co-Founder, Bare Basics", initials: "AS" },
+  { quote: "Pricing was exactly what was quoted. I almost called to check if something had gone wrong. It hadn't. Highly recommend.", name: "Karan M.", role: "Head of Ops, Daily Ritual", initials: "KM" },
 ];
 
 function Card({ r }: { r: typeof reviews[number] }) {
@@ -39,7 +37,7 @@ export default function ReviewsSection() {
       </div>
 
       <div className="mt-12 marquee-pause">
-        <div className="flex w-max gap-5 animate-marquee">
+        <div className="flex w-max gap-5 pr-6 animate-marquee">
           {[...reviews, ...reviews].map((r, i) => (
             <Card key={i} r={r} />
           ))}
