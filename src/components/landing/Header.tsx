@@ -1,25 +1,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const navLinks = [
-  { label: "How It Works", id: "how-it-works" },
-  { label: "What We Offer", id: "what-we-offer" },
-];
+import logo from "@/assets/snaplogo-blue.png";
 
 const scrollToAccess = () => {
   document.getElementById("sign-up")?.scrollIntoView({ behavior: "smooth" });
   window.dispatchEvent(new Event("open-access-form"));
 };
 
-const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-  e.preventDefault();
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-};
-
 export default function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -36,65 +25,26 @@ export default function Header() {
         scrolled ? "border-b border-border" : "border-b border-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-content items-center justify-between px-6">
-        <a href="#" className="font-heading text-lg font-bold tracking-tight text-foreground">
-          Snaplogo
+      <div className="mx-auto flex h-16 max-w-content items-center justify-between px-[5vw] md:px-8">
+        <a href="#" className="flex items-center gap-2">
+          <img src={logo} alt="Snaplogo" className="h-7 w-7 object-contain" />
+          <span className="font-heading text-lg font-bold tracking-tight text-foreground">
+            Snaplogo
+          </span>
         </a>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((l) => (
-            <a
-              key={l.id}
-              href={`#${l.id}`}
-              onClick={(e) => handleNavClick(e, l.id)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              {l.label}
-            </a>
-          ))}
-          <a
-            href="#sign-up"
-            onClick={(e) => { e.preventDefault(); scrollToAccess(); }}
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        <div className="flex items-center gap-3 md:gap-5">
+          <button
+            onClick={scrollToAccess}
+            className="text-sm font-medium text-foreground transition-colors hover:text-primary"
           >
-            Sign Up
-          </a>
-        </nav>
-
-        <div className="hidden md:block">
+            Sign In
+          </button>
           <Button variant="hero" size="pill" onClick={scrollToAccess}>
-            Sign Up
+            Create Account
           </Button>
         </div>
-
-        <button
-          className="p-2 md:hidden text-foreground"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
       </div>
-
-      {mobileOpen && (
-        <div className="border-t border-border bg-background px-6 pb-6 pt-4 md:hidden">
-          <nav className="flex flex-col gap-4">
-            {navLinks.map((l) => (
-              <a
-                key={l.id}
-                href={`#${l.id}`}
-                className="text-sm font-medium text-muted-foreground"
-                onClick={(e) => { handleNavClick(e, l.id); setMobileOpen(false); }}
-              >
-                {l.label}
-              </a>
-            ))}
-          </nav>
-          <Button variant="hero" size="pill" className="mt-4 w-full" onClick={() => { scrollToAccess(); setMobileOpen(false); }}>
-            Sign Up
-          </Button>
-        </div>
-      )}
     </header>
   );
 }

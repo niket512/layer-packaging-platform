@@ -16,10 +16,13 @@ export default function CTASection() {
 
   useEffect(() => {
     const handler = (e: Event) => {
-      const detail = (e as CustomEvent).detail as { email?: string } | undefined;
+      const detail = (e as CustomEvent).detail as { email?: string; requirement?: string } | undefined;
       if (detail?.email) {
         setEmail(detail.email);
         setQuickEmail(detail.email);
+      }
+      if (detail?.requirement) {
+        setRequirement(detail.requirement);
       }
       setShowForm(true);
       setTimeout(() => document.getElementById("cta-brand")?.focus(), 80);
