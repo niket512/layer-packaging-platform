@@ -111,10 +111,11 @@ export default function CTASection() {
                   </div>
                   <div>
                     <label htmlFor="cta-requirement" className="mb-1.5 block text-sm font-medium text-heading">
-                      What do you need?
+                      What do you need? <span className="text-primary">*</span>
                     </label>
                     <textarea
                       id="cta-requirement"
+                      required
                       maxLength={1000}
                       rows={3}
                       value={requirement}
@@ -123,8 +124,8 @@ export default function CTASection() {
                       placeholder="e.g. 5,000 mailer boxes for a skincare launch..."
                     />
                   </div>
-                  <Button type="submit" variant="hero" size="lg" className="w-full gap-2">
-                    Submit request
+                  <Button type="submit" variant="hero" size="lg" className="w-full gap-2" disabled={submitting}>
+                    {submitting ? "Submitting..." : "Submit request"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </form>
