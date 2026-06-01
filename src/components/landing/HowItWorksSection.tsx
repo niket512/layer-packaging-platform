@@ -1,5 +1,6 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { FileText, Users, ShieldCheck, Truck } from "lucide-react";
+import journeyBg from "@/assets/journey-bg.jpg";
 
 const steps = [
   {
@@ -32,37 +33,52 @@ export default function HowItWorksSection() {
   const { ref, isVisible } = useScrollReveal();
 
   return (
-    <section ref={ref} id="how-it-works" className="py-16 md:py-20">
-      <div className="container">
-        <div
-          className={`mx-auto max-w-2xl text-center transition-all duration-700 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
-        >
+    <section
+      ref={ref}
+      id="how-it-works"
+      className="relative overflow-hidden py-20 md:py-28"
+      style={{
+        backgroundImage: `url(${journeyBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background/90" />
+
+      <div className="container relative">
+        <div className={`mx-auto max-w-2xl text-center transition-all duration-700 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">How it works</p>
           <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight text-heading text-balance sm:text-4xl">
-            From spec to shipment in four steps
+            Your sourcing journey, end to end
           </h2>
         </div>
 
-        <div className="mx-auto mt-16 max-w-5xl">
-          <div className="grid gap-0 md:grid-cols-4">
-            {steps.map((s, i) => (
-              <div
-                key={s.num}
-                className={`relative flex flex-col items-center text-center px-5 py-8 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
-                style={{ animationDelay: `${200 + i * 100}ms` }}
-              >
-                {/* Connector line */}
-                {i < steps.length - 1 && (
-                  <div className="absolute right-0 top-[3.5rem] hidden h-px w-full bg-border md:block" style={{ left: "50%" }} />
-                )}
-                <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-subtle text-primary shadow-sm">
-                  <s.icon className="h-6 w-6" />
+        <div className="mx-auto mt-16 max-w-3xl">
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-primary/30 via-primary/40 to-primary/10 md:left-8" />
+
+            <div className="space-y-10 md:space-y-14">
+              {steps.map((s, i) => (
+                <div
+                  key={s.num}
+                  className={`relative flex items-start gap-5 md:gap-7 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
+                  style={{ animationDelay: `${200 + i * 120}ms` }}
+                >
+                  <div className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-background shadow-md md:h-16 md:w-16">
+                    <s.icon className="h-5 w-5 text-primary md:h-6 md:w-6" />
+                  </div>
+                  <div className="flex-1 rounded-2xl border border-border/60 bg-background/80 p-5 backdrop-blur-sm md:p-6">
+                    <span className="font-heading text-xs font-bold uppercase tracking-widest text-primary">
+                      Step {s.num}
+                    </span>
+                    <h3 className="mt-1 font-heading text-lg font-semibold text-heading md:text-xl">{s.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-body md:text-base">{s.desc}</p>
+                  </div>
                 </div>
-                <span className="mt-4 font-heading text-xs font-bold uppercase tracking-widest text-primary">{s.num}</span>
-                <h3 className="mt-2 font-heading text-base font-semibold text-heading">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-body">{s.desc}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
