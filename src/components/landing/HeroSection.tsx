@@ -48,7 +48,7 @@ export default function HeroSection() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="What are you looking for? e.g. Stand-up pouches for 500 units"
+            placeholder="Describe what you are looking for e.g. Stand-up pouches for 500 units"
             className="h-full flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
           <button
