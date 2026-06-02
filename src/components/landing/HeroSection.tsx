@@ -36,7 +36,7 @@ export default function HeroSection() {
           <span className="text-primary">Smarter and Faster with AI</span>
         </h1>
         <p className="mx-auto mt-6 max-w-[640px] text-lg text-muted-foreground md:text-xl">
-          Find verified manufacturers, manage orders, track shipments, and handle payments seamlessly on one platform
+          Find verified manufacturers, manage orders, track shipments, and handle payments - all with AI in one click
         </p>
 
         <form
