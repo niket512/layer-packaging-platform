@@ -33,9 +33,7 @@ export default function HeroSection() {
       <div className="relative mx-auto max-w-content px-[5vw] md:px-8 text-center">
         <h1 className="font-heading text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-[56px]">
           <span className="text-foreground">Source </span>
-          <span className="text-primary">Smarter.</span>{" "}
-          <span className="text-primary">Faster.</span>{" "}
-          <span className="text-primary">Better</span>
+          <span className="text-primary">Smarter and Faster with AI</span>
         </h1>
         <p className="mx-auto mt-6 max-w-[640px] text-lg text-muted-foreground md:text-xl">
           Find verified manufacturers, manage orders, track shipments, and handle payments seamlessly on one platform
