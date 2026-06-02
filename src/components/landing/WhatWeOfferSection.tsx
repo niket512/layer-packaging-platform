@@ -1,10 +1,13 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { Package, Layers, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import standUpPouches from "@/assets/category-stand-up-pouches.jpg";
+import flatPouches from "@/assets/category-flat-pouches.jpg";
+import wrappers from "@/assets/category-wrappers.jpg";
 
 const items = [
-  { icon: Package, title: "Stand-Up Pouches", desc: "Custom printed, food-grade, flexible MOQs. Perfect for snacks, supplements, and pantry brands." },
-  { icon: Layers, title: "Flat & Pillow Pouches", desc: "Lightweight, cost-effective packaging for sachets, powders, and single-serve formats." },
-  { icon: Sparkles, title: "Custom Wrappers", desc: "High-quality printed wrappers for confectionery, bakery, and FMCG products." },
+  { image: standUpPouches, title: "Stand-Up Pouches", desc: "Custom printed, food-grade, flexible MOQs. Perfect for snacks, supplements, and pantry brands." },
+  { image: flatPouches, title: "Flat & Pillow Pouches", desc: "Lightweight, cost-effective packaging for sachets, powders, and single-serve formats." },
+  { image: wrappers, title: "Custom Wrappers", desc: "High-quality printed wrappers for confectionery, bakery, and FMCG products." },
 ];
 
 export default function WhatWeOfferSection() {
@@ -29,8 +32,15 @@ export default function WhatWeOfferSection() {
               className={`rounded-2xl border border-border bg-card p-6 card-soft ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
               style={{ animationDelay: `${i * 80}ms` }}
             >
-              <div className="flex h-40 items-center justify-center rounded-xl bg-secondary">
-                <it.icon className="h-14 w-14 text-primary" strokeWidth={1.5} />
+              <div className="h-40 overflow-hidden rounded-xl bg-secondary">
+                <img
+                  src={it.image}
+                  alt={it.title}
+                  loading="lazy"
+                  width={800}
+                  height={640}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <h3 className="mt-5 font-heading text-lg font-semibold text-foreground">{it.title}</h3>
               <p className="mt-2 text-base leading-relaxed text-muted-foreground">{it.desc}</p>
