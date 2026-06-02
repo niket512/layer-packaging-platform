@@ -2,8 +2,8 @@ import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Check, X } from "lucide-react";
 
 const rows: { feature: string; old: string; snap: string }[] = [
-  { feature: "Manufacturer Discovery", old: "100 calls, weeks of effort", snap: "Matched in hours" },
-  { feature: "Pricing Transparency", old: "Bait-and-switch quotes", snap: "Clear pricing upfront" },
+  { feature: "Manufacturer Discovery", old: "100 calls, weeks of effort", snap: "Matched in minutes" },
+  { feature: "Pricing Transparency", old: "Bait-and-switch quotes", snap: "Clear pricing upfront and NO Commission" },
   { feature: "MOQ Flexibility", old: "Built for large brands only", snap: "Emerging-brand friendly" },
   { feature: "Order Coordination", old: "WhatsApp chaos", snap: "Managed, single thread" },
   { feature: "Order Visibility", old: "Silent after payment", snap: "Live tracking dashboard" },
