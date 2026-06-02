@@ -9,6 +9,7 @@ const faqs = [
   { q: "How do you ensure quality?", a: "All manufacturers on our platform are onboarded through a verification process. We also manage sample approvals before production begins." },
   { q: "Is Snaplogo free to use?", a: "Getting started and discovering manufacturers is free. We'll share pricing details for managed services at sign-up." },
   { q: "How long does an order typically take?", a: "Timelines vary by product and quantity, but we'll share a clear production and delivery estimate before your order is confirmed." },
+  { q: "Do you charge commissions?", a: "No. We charge no commission and maintain complete pricing transparency with the manufacturers." },
 ];
 
 export default function FAQSection() {
