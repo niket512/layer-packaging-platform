@@ -92,3 +92,23 @@
 }
 .animate-marquee { animation: marquee 40s linear infinite; }
 .marquee-pause:hover .animate-marquee { animation-play-state: paused; }
+
+@keyframes ai-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 0.9; transform: scale(1.08); }
+}
+
+.animate-ai-pulse { animation: ai-pulse 6s ease-in-out infinite; }
+
+@keyframes ai-gradient {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.animate-ai-gradient { animation: ai-gradient 6s linear infinite; }
+
+@keyframes ai-sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg);   opacity: 1; }
+  50%      { transform: scale(1.25) rotate(15deg); opacity: 0.85; }
+}
+.animate-ai-sparkle { animation: ai-sparkle 2.4s ease-in-out infinite; }
+
