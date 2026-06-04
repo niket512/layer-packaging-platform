@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useRef, useState } from "react";
+import { Search, Paperclip, X } from "lucide-react";
 
 const chips = [
   "Pouches & Sachets",
@@ -10,22 +10,31 @@ const chips = [
   "Glass & Plastic Bottles",
 ];
 
-const openForm = (query?: string) => {
+const openForm = (query?: string, file?: File | null) => {
   document.getElementById("sign-up")?.scrollIntoView({ behavior: "smooth" });
-  window.dispatchEvent(new CustomEvent("open-access-form", { detail: { requirement: query } }));
+  window.dispatchEvent(
+    new CustomEvent("open-access-form", { detail: { requirement: query, file } }),
+  );
 };
 
 export default function HeroSection() {
   const [query, setQuery] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    openForm(query);
+    openForm(query, file);
   };
 
   const onChipClick = (label: string) => {
     setQuery(label);
-    openForm(label);
+    openForm(label, file);
+  };
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setFile(f);
   };
 
   return (
@@ -51,6 +60,22 @@ export default function HeroSection() {
             placeholder="Describe what you are looking for e.g. Stand-up pouches for 500 units"
             className="h-full flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onFileChange}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            aria-label="Upload image"
+            title="Upload reference image"
+            className="mr-1 inline-flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+          >
+            <Paperclip className="h-5 w-5" />
+          </button>
           <button
             type="submit"
             aria-label="Search"
@@ -59,6 +84,26 @@ export default function HeroSection() {
             <Search className="h-5 w-5" />
           </button>
         </form>
+
+        {file && (
+          <div className="mx-auto mt-3 flex max-w-2xl items-center justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-1 text-xs text-foreground">
+              <Paperclip className="h-3.5 w-3.5 text-primary" />
+              <span className="max-w-[240px] truncate">{file.name}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setFile(null);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+                aria-label="Remove file"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-2">
           {chips.map((c) => (
