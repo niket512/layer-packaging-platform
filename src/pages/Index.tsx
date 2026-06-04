@@ -1,5 +1,6 @@
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
+import IntelligentAISection from "@/components/landing/IntelligentAISection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import WhatWeOfferSection from "@/components/landing/WhatWeOfferSection";
