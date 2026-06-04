@@ -78,6 +78,18 @@
   .label-eyebrow {
     @apply text-xs font-semibold uppercase tracking-[1.5px] text-primary;
   }
+  .handwritten {
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .underline-wobble {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M2 5 Q 30 1 60 4 T 118 3' stroke='%23F97316' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 0.4em;
+    padding-bottom: 0.15em;
+  }
 }
 
 @keyframes reveal-up {
