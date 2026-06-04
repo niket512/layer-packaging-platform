@@ -157,6 +157,7 @@ export default function IntelligentAISection() {
             </div>
           </div>
         </div>
+        </div>
       </div>
     </section>
   );
