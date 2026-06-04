@@ -21,6 +21,7 @@ export default function Index() {
       <ScrollProgress />
       <Header />
       <HeroSection />
+      <AISearchDemoSection />
       <SectionNav />
       <CapabilitiesSection />
       <IntelligentAISection />
