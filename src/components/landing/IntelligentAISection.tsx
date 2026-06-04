@@ -38,8 +38,9 @@ export default function IntelligentAISection() {
     >
       {/* Animated gradient backdrop */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-0 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl animate-ai-pulse" />
+        <div className="absolute left-[calc(50%-240px)] top-0 h-[480px] w-[480px] rounded-full bg-primary/10 blur-3xl animate-ai-pulse" />
         <div className="absolute right-[-120px] bottom-[-120px] h-[360px] w-[360px] rounded-full bg-primary/5 blur-3xl animate-ai-pulse [animation-delay:1.2s]" />
+
       </div>
 
       <div className="mx-auto max-w-content px-[5vw] md:px-8">
