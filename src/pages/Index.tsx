@@ -2,7 +2,6 @@ import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
 import BrandsDeepDiveSection from "@/components/landing/BrandsDeepDiveSection";
 import ManufacturersDeepDiveSection from "@/components/landing/ManufacturersDeepDiveSection";
-import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import WhatWeOfferSection from "@/components/landing/WhatWeOfferSection";
 import DashboardPreviewSection from "@/components/landing/DashboardPreviewSection";
@@ -22,7 +21,6 @@ export default function Index() {
       <Header />
       <HeroSection />
       <SectionNav />
-      <CapabilitiesSection />
       <BrandsDeepDiveSection />
       <ManufacturersDeepDiveSection />
       <HowItWorksSection />
@@ -37,3 +35,4 @@ export default function Index() {
     </div>
   );
 }
+
