@@ -1,6 +1,5 @@
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
-import AISearchDemoSection from "@/components/landing/AISearchDemoSection";
 import IntelligentAISection from "@/components/landing/IntelligentAISection";
 import BrandsDeepDiveSection from "@/components/landing/BrandsDeepDiveSection";
 import ManufacturersDeepDiveSection from "@/components/landing/ManufacturersDeepDiveSection";
