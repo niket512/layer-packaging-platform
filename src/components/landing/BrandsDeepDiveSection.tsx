@@ -93,7 +93,7 @@ export default function BrandsDeepDiveSection() {
                         {a.q}
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="pl-6.5 text-sm leading-relaxed text-muted-foreground">
+                    <AccordionContent className="pl-[26px] text-sm leading-relaxed text-muted-foreground">
                       {a.a}
                     </AccordionContent>
                   </AccordionItem>
