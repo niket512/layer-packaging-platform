@@ -128,4 +128,17 @@
   animation: shine 3.2s ease-in-out infinite;
 }
 
+@keyframes beam-right {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(450%); }
+}
+.animate-beam-right { animation: beam-right 2.4s ease-in-out infinite; }
+
+@keyframes beam-down {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(450%); }
+}
+.animate-beam-down { animation: beam-down 2.4s ease-in-out infinite; }
+
+
 
