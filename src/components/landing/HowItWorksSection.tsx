@@ -1,5 +1,4 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { Search, BadgeIndianRupee, Scale, FlaskConical, Handshake, Truck } from "lucide-react";
 
 const steps = [
   { n: "1", title: "Submit Your Brief", desc: "Share your product, packaging type, quantity, and timeline." },
@@ -7,15 +6,6 @@ const steps = [
   { n: "3", title: "Review & Approve", desc: "Compare options, confirm samples, lock in pricing." },
   { n: "4", title: "Order Managed", desc: "Snaplogo coordinates with the manufacturer end-to-end." },
   { n: "5", title: "Track to Delivery", desc: "Real-time updates on production and shipping, no follow-up needed." },
-];
-
-const tiles = [
-  { icon: Search, title: "Find the Right Manufacturer", desc: "Access a curated network of verified packaging partners without making 100 calls" },
-  { icon: BadgeIndianRupee, title: "Fair Pricing", desc: "Transparent quotes upfront. No bait-and-switch, no hidden markups for small quantities" },
-  { icon: Scale, title: "Flexible MOQs", desc: "Work with manufacturers set up for emerging brand volumes, not just large-scale runs" },
-  { icon: FlaskConical, title: "Sample & Approval Management", desc: "Coordinate samples and sign-offs in one clean thread, not over WhatsApp" },
-  { icon: Handshake, title: "Managed Coordination", desc: "Snaplogo handles manufacturer communication so your team stays focused on the brand" },
-  { icon: Truck, title: "Live Order Tracking", desc: "Know exactly where your order is — from production floor to your warehouse door" },
 ];
 
 export default function HowItWorksSection() {
