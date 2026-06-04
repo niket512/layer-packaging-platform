@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/snaplogo-blue.png";
+import logo from "@/assets/snaplogo-orange.png";
 
 const scrollToAccess = () => {
   document.getElementById("sign-up")?.scrollIntoView({ behavior: "smooth" });

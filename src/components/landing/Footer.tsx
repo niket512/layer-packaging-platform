@@ -1,4 +1,4 @@
-import logo from "@/assets/snaplogo-blue.png";
+import logo from "@/assets/snaplogo-orange.png";
 
 export default function Footer() {
   return (
