@@ -22,6 +22,7 @@ export default function Index() {
       <HeroSection />
       <SectionNav />
       <CapabilitiesSection />
+      <IntelligentAISection />
       <HowItWorksSection />
       <WhatWeOfferSection />
       <DashboardPreviewSection />
