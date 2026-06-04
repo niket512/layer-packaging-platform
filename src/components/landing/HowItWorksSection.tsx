@@ -64,29 +64,6 @@ export default function HowItWorksSection() {
           </div>
         </div>
 
-        {/* What powers each step */}
-        <div className={`mx-auto mt-20 md:mt-24 max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
-          <p className="text-base leading-relaxed text-muted-foreground">
-            What powers every step — the capabilities working quietly in the background.
-          </p>
-        </div>
-
-
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
-          {tiles.map((t, i) => (
-            <div
-              key={t.title}
-              className={`flex h-full flex-col rounded-2xl border border-border bg-card p-7 card-soft transition-colors hover:border-primary/40 ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
-              style={{ animationDelay: `${i * 60}ms` }}
-            >
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary text-primary">
-                <t.icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-5 font-heading text-lg font-semibold text-foreground">{t.title}</h3>
-              <p className="mt-2 text-base leading-relaxed text-muted-foreground">{t.desc}</p>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
