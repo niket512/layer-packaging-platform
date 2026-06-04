@@ -27,6 +27,8 @@ export default function Index() {
       <SectionNav />
       <CapabilitiesSection />
       <IntelligentAISection />
+      <BrandsDeepDiveSection />
+      <ManufacturersDeepDiveSection />
       <HowItWorksSection />
       <WhatWeOfferSection />
       <DashboardPreviewSection />
