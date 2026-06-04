@@ -23,7 +23,6 @@ export default function Index() {
       <HeroSection />
       <SectionNav />
       <CapabilitiesSection />
-      <IntelligentAISection />
       <BrandsDeepDiveSection />
       <ManufacturersDeepDiveSection />
       <HowItWorksSection />
