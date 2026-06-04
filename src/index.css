@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 336 75% 40%;               /* dark pink #B91C5C */
+    --primary: 336 80% 60%;               /* light pink #EC4A8A */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 336 100% 97%;            /* light pink tint */
@@ -70,7 +70,7 @@
   .text-pretty { text-wrap: pretty; }
   .hero-bloom {
     background-image:
-      radial-gradient(circle at 50% 30%, hsl(221 83% 53% / 0.08), transparent 55%);
+      radial-gradient(circle at 50% 30%, hsl(336 80% 60% / 0.08), transparent 55%);
   }
   .card-soft {
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
