@@ -16,35 +16,35 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 336 80% 60%;               /* light pink #EC4A8A */
+    --primary: 24 95% 53%;                /* orange #F97316 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 336 100% 97%;            /* light pink tint */
-    --secondary-foreground: 336 75% 40%;
+    --secondary: 24 100% 96%;             /* orange tint */
+    --secondary-foreground: 24 95% 40%;
 
     --muted: 210 33% 97%;                 /* #F7F9FC */
     --muted-foreground: 215 16% 47%;      /* #64748B */
 
-    --accent: 336 100% 97%;
-    --accent-foreground: 336 75% 40%;
+    --accent: 24 100% 96%;
+    --accent-foreground: 24 95% 40%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 214 32% 91%;                /* #E2E8F0 */
     --input: 214 32% 91%;
-    --ring: 336 75% 40%;
+    --ring: 24 95% 40%;
 
     --radius: 1rem;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 336 75% 40%;
+    --sidebar-primary: 24 95% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 336 100% 97%;
+    --sidebar-accent: 24 100% 96%;
     --sidebar-accent-foreground: 222 47% 11%;
     --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 336 75% 40%;
+    --sidebar-ring: 24 95% 40%;
 
     --surface: 0 0% 100%;
     --surface-raised: 210 33% 97%;
@@ -70,7 +70,7 @@
   .text-pretty { text-wrap: pretty; }
   .hero-bloom {
     background-image:
-      radial-gradient(circle at 50% 30%, hsl(336 80% 60% / 0.08), transparent 55%);
+      radial-gradient(circle at 50% 30%, hsl(24 95% 53% / 0.08), transparent 55%);
   }
   .card-soft {
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
