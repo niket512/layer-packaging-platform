@@ -2,12 +2,12 @@ import { useRef, useState } from "react";
 import { Search, Paperclip, X } from "lucide-react";
 
 const chips = [
-  "Pouches & Sachets",
-  "Custom Printed Wrappers",
-  "Rigid Boxes",
-  "Labels & Stickers",
-  "Mailer Boxes",
-  "Glass & Plastic Bottles",
+  "Stand-up pouches",
+  "Custom printed wrappers",
+  "Rigid boxes",
+  "Labels & stickers",
+  "Mailer boxes",
+  "Glass & PET bottles",
 ];
 
 const openForm = (query?: string, file?: File | null) => {
@@ -40,12 +40,19 @@ export default function HeroSection() {
   return (
     <section className="relative overflow-hidden pt-20 pb-24 md:pt-28 md:pb-32 hero-bloom">
       <div className="relative mx-auto max-w-content px-[5vw] md:px-8 text-center">
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-xs text-muted-foreground">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+          Made in India · Built with brands &amp; factories we actually visit
+        </div>
         <h1 className="font-heading text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-[56px]">
-          <span className="text-foreground">Source </span>
-          <span className="text-primary">Smarter and Faster with AI</span>
+          <span className="text-foreground">Packaging sourcing,</span>{" "}
+          <span className="text-primary underline-wobble">without the WhatsApp chaos.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-[640px] text-lg text-muted-foreground md:text-xl">
-          Find verified manufacturers, manage orders, track shipments, and handle payments - all with AI in one click
+          Tell us what you need. We&rsquo;ll line up verified manufacturers, share honest quotes, and stay on the call from sample to delivery.
+        </p>
+        <p className="handwritten mx-auto mt-3 max-w-[640px] text-xl text-primary/80">
+          — yes, a real human will read your brief.
         </p>
 
         <form

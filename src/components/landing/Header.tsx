@@ -8,6 +8,18 @@ const scrollToAccess = () => {
   window.dispatchEvent(new Event("open-access-form"));
 };
 
+const scrollToId = (id: string) => (e: React.MouseEvent) => {
+  e.preventDefault();
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+};
+
+const navLinks = [
+  { label: "For brands", id: "for-brands" },
+  { label: "For manufacturers", id: "for-manufacturers" },
+  { label: "How it works", id: "how-it-works" },
+  { label: "Why we built this", id: "reviews" },
+];
+
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -21,7 +33,7 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 bg-background transition-all duration-200",
+        "sticky top-0 z-50 bg-background/85 backdrop-blur transition-all duration-200",
         scrolled ? "border-b border-border" : "border-b border-transparent",
       )}
     >
@@ -33,15 +45,28 @@ export default function Header() {
           </span>
         </a>
 
+        <nav className="hidden items-center gap-7 md:flex">
+          {navLinks.map((l) => (
+            <a
+              key={l.id}
+              href={`#${l.id}`}
+              onClick={scrollToId(l.id)}
+              className="text-sm text-foreground/80 transition-colors hover:text-primary"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+
         <div className="flex items-center gap-3 md:gap-5">
           <button
             onClick={scrollToAccess}
-            className="text-sm font-medium text-foreground transition-colors hover:text-primary"
+            className="hidden text-sm font-medium text-foreground transition-colors hover:text-primary sm:inline"
           >
-            Sign In
+            Sign in
           </button>
           <Button variant="hero" size="pill" onClick={scrollToAccess}>
-            Get Started
+            Talk to us
           </Button>
         </div>
       </div>
