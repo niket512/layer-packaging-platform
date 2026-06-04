@@ -1,5 +1,6 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Sparkles, Brain, Workflow, ShieldCheck, Users } from "lucide-react";
+import factoryLine from "@/assets/factory-line.jpg";
 
 const brandPoints = [
   {
@@ -127,7 +128,35 @@ export default function IntelligentAISection() {
                 </li>
               ))}
             </ul>
+        </div>
+
+        {/* Visual: real verified network */}
+        <div
+          className={`mt-8 overflow-hidden rounded-2xl border border-border card-soft ${isVisible ? "animate-reveal-up" : "opacity-0"}`}
+          style={{ animationDelay: "360ms" }}
+        >
+          <div className="relative">
+            <img
+              src={factoryLine}
+              alt="Verified packaging manufacturing line"
+              loading="lazy"
+              width={1280}
+              height={896}
+              className="h-[220px] w-full object-cover transition-transform duration-[1200ms] hover:scale-[1.03] md:h-[300px]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/20 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="label-eyebrow">Verified Network</p>
+                <p className="mt-1 font-heading text-lg font-semibold text-foreground">1,000+ manufacturers. Every one vetted.</p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-background/90 px-3 py-1 text-[11px] font-semibold text-primary backdrop-blur">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Quality-checked
+              </span>
+            </div>
           </div>
+        </div>
         </div>
       </div>
     </section>

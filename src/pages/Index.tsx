@@ -1,5 +1,6 @@
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
+import AISearchDemoSection from "@/components/landing/AISearchDemoSection";
 import IntelligentAISection from "@/components/landing/IntelligentAISection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
@@ -20,6 +21,7 @@ export default function Index() {
       <ScrollProgress />
       <Header />
       <HeroSection />
+      <AISearchDemoSection />
       <SectionNav />
       <CapabilitiesSection />
       <IntelligentAISection />
