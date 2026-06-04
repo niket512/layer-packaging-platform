@@ -3,7 +3,7 @@ import { Search, BadgeIndianRupee, Scale, FlaskConical, Handshake, Truck } from 
 
 const tiles = [
   { icon: Search, title: "Find the Right Manufacturer", desc: "Access a curated network of verified packaging partners without making 100 calls" },
-  { icon: BadgeIndianRupee, title: "Fair Pricing, No Surprises", desc: "Transparent quotes upfront. No bait-and-switch, no hidden markups for small quantities" },
+  { icon: BadgeIndianRupee, title: "Fair Pricing", desc: "Transparent quotes upfront. No bait-and-switch, no hidden markups for small quantities" },
   { icon: Scale, title: "Flexible MOQs", desc: "Work with manufacturers set up for emerging brand volumes, not just large-scale runs" },
   { icon: FlaskConical, title: "Sample & Approval Management", desc: "Coordinate samples and sign-offs in one clean thread, not over WhatsApp" },
   { icon: Handshake, title: "Managed Coordination", desc: "Snaplogo handles manufacturer communication so your team stays focused on the brand" },
