@@ -94,9 +94,10 @@
 .marquee-pause:hover .animate-marquee { animation-play-state: paused; }
 
 @keyframes ai-pulse {
-  0%, 100% { opacity: 0.55; transform: translate(-50%, 0) scale(1); }
-  50%      { opacity: 0.9;  transform: translate(-50%, 0) scale(1.08); }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 0.9; transform: scale(1.08); }
 }
+
 .animate-ai-pulse { animation: ai-pulse 6s ease-in-out infinite; }
 
 @keyframes ai-gradient {
