@@ -24,11 +24,15 @@ export default function HowItWorksSection() {
     <section ref={ref} id="how-it-works" className="py-14 md:py-[88px] bg-muted">
       <div className="mx-auto max-w-content px-6">
         <div className={`mx-auto max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
-          <p className="label-eyebrow">How It Works</p>
+          <p className="label-eyebrow">How Snaplogo Works</p>
           <h2 className="mt-3 font-heading text-[32px] font-semibold tracking-tight text-foreground md:text-[38px]">
-            From brief to delivery, in five steps
+            From brief to delivery — and everything that makes it work
           </h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            Five simple steps move your order from inquiry to your warehouse. Behind each step, Snaplogo handles the sourcing, pricing, samples, and coordination — so you can procure with confidence.
+          </p>
         </div>
+
 
         {/* Steps — Desktop */}
         <div className="mt-16 hidden md:block">
@@ -70,13 +74,13 @@ export default function HowItWorksSection() {
           </div>
         </div>
 
-        {/* How Snaplogo Helps */}
+        {/* What powers each step */}
         <div className={`mx-auto mt-20 md:mt-24 max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
-          <p className="label-eyebrow">How Snaplogo Helps</p>
-          <h2 className="mt-3 font-heading text-[32px] font-semibold tracking-tight text-foreground md:text-[38px]">
-            Everything you need to procure with confidence
-          </h2>
+          <p className="text-base leading-relaxed text-muted-foreground">
+            What powers every step — the capabilities working quietly in the background.
+          </p>
         </div>
+
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
           {tiles.map((t, i) => (
