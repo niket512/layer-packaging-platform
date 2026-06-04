@@ -1,5 +1,6 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Sparkles, Brain, Workflow, ShieldCheck, Users } from "lucide-react";
+import factoryLine from "@/assets/factory-line.jpg";
 
 const brandPoints = [
   {
