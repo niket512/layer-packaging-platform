@@ -13,19 +13,19 @@ const items = [
 export default function WhatWeOfferSection() {
   const { ref, isVisible } = useScrollReveal();
   return (
-    <section ref={ref} id="what-we-offer" className="pt-14 md:pt-[88px] pb-8 md:pb-10 bg-background">
-      <div className="mx-auto max-w-content px-6">
+    <section ref={ref} id="what-we-offer" className="pt-12 md:pt-[88px] pb-8 md:pb-10 bg-background">
+      <div className="mx-auto max-w-content px-5 md:px-6">
         <div className={`mx-auto max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
           <p className="label-eyebrow">What We Offer</p>
-          <h2 className="mt-3 font-heading text-[32px] font-semibold tracking-tight text-foreground md:text-[38px]">
+          <h2 className="mt-3 font-heading text-[26px] font-semibold leading-tight tracking-tight text-foreground md:text-[38px]">
             Starting with packaging — built to grow with you
           </h2>
-          <p className="mt-4 text-base text-muted-foreground">
+          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground md:mt-4 md:text-base">
             We're beginning with flexible, high-quality packaging solutions for FMCG brands — pouches, wrappers, and more — with plans to expand across categories.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:mt-12 md:gap-6 md:grid-cols-3">
           {items.map((it, i) => (
             <div
               key={it.title}

@@ -25,22 +25,22 @@ export default function Header() {
         scrolled ? "border-b border-border" : "border-b border-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-content items-center justify-between px-[5vw] md:px-8">
+      <div className="mx-auto flex h-14 max-w-content items-center justify-between px-5 md:h-16 md:px-8">
         <a href="#" className="flex items-center gap-2">
-          <img src={logo} alt="Snaplogo" className="h-7 w-7 object-contain" />
-          <span className="font-heading text-lg font-bold tracking-tight text-foreground">
+          <img src={logo} alt="Snaplogo" className="h-6 w-6 object-contain md:h-7 md:w-7" />
+          <span className="font-heading text-base font-bold tracking-tight text-foreground md:text-lg">
             Snaplogo
           </span>
         </a>
 
-        <div className="flex items-center gap-3 md:gap-5">
+        <div className="flex items-center gap-2 md:gap-5">
           <button
             onClick={scrollToAccess}
-            className="text-sm font-medium text-foreground transition-colors hover:text-primary"
+            className="hidden text-sm font-medium text-foreground transition-colors hover:text-primary sm:block"
           >
             Sign In
           </button>
-          <Button variant="hero" size="pill" onClick={scrollToAccess}>
+          <Button variant="hero" size="pill" onClick={scrollToAccess} className="h-10 px-4 text-[12px] md:h-12 md:px-6 md:text-[13px]">
             Get Started
           </Button>
         </div>

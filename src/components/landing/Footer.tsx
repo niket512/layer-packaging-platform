@@ -3,7 +3,7 @@ import logo from "@/assets/snaplogo-orange.png";
 export default function Footer() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto flex h-16 max-w-content flex-wrap items-center justify-between gap-3 px-[5vw] md:px-8">
+      <div className="mx-auto flex max-w-content flex-col items-center gap-3 px-5 py-5 text-center md:h-16 md:flex-row md:flex-wrap md:justify-between md:gap-3 md:py-0 md:px-8 md:text-left">
         <div className="flex items-center gap-2">
           <img src={logo} alt="Snaplogo" className="h-5 w-5 object-contain" />
           <span className="font-heading text-sm font-bold tracking-tight text-foreground">Snaplogo</span>

@@ -17,16 +17,16 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section ref={ref} id="faq" className="py-14 md:py-[88px] bg-background">
-      <div className="mx-auto max-w-content px-6">
+    <section ref={ref} id="faq" className="py-12 md:py-[88px] bg-background">
+      <div className="mx-auto max-w-content px-5 md:px-6">
         <div className={`mx-auto max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
           <p className="label-eyebrow">FAQs</p>
-          <h2 className="mt-3 font-heading text-[32px] font-semibold tracking-tight text-foreground md:text-[38px]">
+          <h2 className="mt-3 font-heading text-[26px] font-semibold leading-tight tracking-tight text-foreground md:text-[38px]">
             Common questions
           </h2>
         </div>
 
-        <div className={`mx-auto mt-12 max-w-2xl ${isVisible ? "animate-reveal-up" : "opacity-0"}`} style={{ animationDelay: "150ms" }}>
+        <div className={`mx-auto mt-8 max-w-2xl md:mt-12 ${isVisible ? "animate-reveal-up" : "opacity-0"}`} style={{ animationDelay: "150ms" }}>
           {faqs.map((faq, i) => (
             <div key={i} className="border-b border-border">
               <button
