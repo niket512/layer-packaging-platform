@@ -11,14 +11,14 @@ const steps = [
 export default function HowItWorksSection() {
   const { ref, isVisible } = useScrollReveal();
   return (
-    <section ref={ref} id="how-it-works" className="py-14 md:py-[88px] bg-muted">
-      <div className="mx-auto max-w-content px-6">
+    <section ref={ref} id="how-it-works" className="py-12 md:py-[88px] bg-muted">
+      <div className="mx-auto max-w-content px-5 md:px-6">
         <div className={`mx-auto max-w-2xl text-center ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
           <p className="label-eyebrow">How Snaplogo Works</p>
-          <h2 className="mt-3 font-heading text-[32px] font-semibold tracking-tight text-foreground md:text-[38px]">
+          <h2 className="mt-3 font-heading text-[26px] font-semibold leading-tight tracking-tight text-foreground md:text-[38px]">
             From brief to delivery — and everything that makes it work
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground md:mt-4 md:text-base">
             Five simple steps move your order from inquiry to your warehouse. Behind each step, Snaplogo handles the sourcing, pricing, samples, and coordination — so you can procure with confidence.
           </p>
         </div>
