@@ -1,11 +1,6 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Bell, Workflow, ArrowRight, ShieldCheck, Filter, Target, Users, FileCheck, BarChart3 } from "lucide-react";
-
-const openForm = () => {
-  document.getElementById("sign-up")?.scrollIntoView({ behavior: "smooth" });
-  window.dispatchEvent(new CustomEvent("open-access-form"));
-};
+import { Bell, Workflow, ShieldCheck, Filter, Target, Users, FileCheck, BarChart3 } from "lucide-react";
 
 const features = [
   {
@@ -100,13 +95,6 @@ export default function ManufacturersDeepDiveSection() {
                 ))}
               </Accordion>
 
-              <button
-                type="button"
-                onClick={openForm}
-                className="mt-6 inline-flex h-11 w-fit items-center gap-2 rounded-full bg-primary px-5 text-[13px] font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-[#C2410C]"
-              >
-                Sign Up <ArrowRight className="h-4 w-4" />
-              </button>
             </div>
           ))}
         </div>
