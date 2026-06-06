@@ -1,11 +1,6 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Search, LayoutDashboard, ArrowRight, Sparkles, ShieldCheck, FileText, Truck, MessageSquare, CreditCard } from "lucide-react";
-
-const openForm = () => {
-  document.getElementById("sign-up")?.scrollIntoView({ behavior: "smooth" });
-  window.dispatchEvent(new CustomEvent("open-access-form"));
-};
+import { Search, LayoutDashboard, Sparkles, ShieldCheck, FileText, Truck, MessageSquare, CreditCard } from "lucide-react";
 
 const features = [
   {

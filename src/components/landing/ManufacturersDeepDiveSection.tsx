@@ -1,11 +1,6 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Bell, Workflow, ArrowRight, ShieldCheck, Filter, Target, Users, FileCheck, BarChart3 } from "lucide-react";
-
-const openForm = () => {
-  document.getElementById("sign-up")?.scrollIntoView({ behavior: "smooth" });
-  window.dispatchEvent(new CustomEvent("open-access-form"));
-};
+import { Bell, Workflow, ShieldCheck, Filter, Target, Users, FileCheck, BarChart3 } from "lucide-react";
 
 const features = [
   {
