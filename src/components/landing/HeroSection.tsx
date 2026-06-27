@@ -49,7 +49,8 @@ export default function HeroSection() {
             </div>
 
             <h1 className="mt-5 font-heading text-[40px] font-bold leading-[1.02] tracking-[-0.02em] text-foreground sm:text-[56px] md:text-[68px] lg:text-[76px]">
-              Source <span className="text-primary">smarter</span>,<br className="hidden sm:block" />
+              Source <span className="text-primary">smarter</span>,{" "}
+              <br className="hidden sm:block" />
               ship <span className="text-primary">faster</span>.
             </h1>
 
