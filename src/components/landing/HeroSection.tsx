@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
-import { Search, Paperclip, X } from "lucide-react";
+import { Search, Paperclip, X, Sparkles, CheckCircle2, ArrowRight } from "lucide-react";
 
 const chips = [
   "Pouches & Sachets",
-  "Custom Printed Wrappers",
+  "Custom Wrappers",
   "Rigid Boxes",
   "Labels & Stickers",
   "Mailer Boxes",
-  "Glass & Plastic Bottles",
+  "Bottles",
 ];
 
 const openForm = (query?: string, file?: File | null) => {
@@ -38,64 +38,144 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative overflow-hidden pt-12 pb-16 md:pt-28 md:pb-32 hero-bloom">
-      <div className="relative mx-auto max-w-content px-5 md:px-8 text-center">
-        <h1 className="font-heading text-[32px] font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-[56px]">
-          <span className="text-foreground">Source </span>
-          <span className="text-primary">Smarter and Faster with AI</span>
-        </h1>
-        <p className="mx-auto mt-4 max-w-[640px] text-[15px] leading-relaxed text-muted-foreground md:mt-6 md:text-xl">
-          Find verified manufacturers, manage orders, track shipments, and handle payments — all with AI in one click
-        </p>
+    <section className="relative overflow-hidden pt-10 pb-14 md:pt-20 md:pb-28 hero-bloom">
+      <div className="relative mx-auto max-w-content px-5 md:px-8">
+        <div className="grid items-center gap-10 md:grid-cols-[1.05fr_1fr] md:gap-14">
+          {/* LEFT — Editorial copy */}
+          <div className="text-center md:text-left">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-[1.2px] text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              AI procurement for D2C
+            </div>
 
-        <form
-          onSubmit={onSubmit}
-          className="mx-auto mt-8 flex h-12 w-full max-w-2xl items-center rounded-full border border-primary/40 bg-background p-1 shadow-[0_2px_16px_rgba(37,99,235,0.08)] focus-within:border-primary md:mt-10 md:h-14 md:p-1.5"
-        >
-          <Search className="ml-3 h-4 w-4 shrink-0 text-muted-foreground md:ml-4 md:h-5 md:w-5" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="What are you sourcing?"
-            className="h-full min-w-0 flex-1 bg-transparent px-2 text-sm text-foreground outline-none placeholder:text-muted-foreground md:px-3"
-          />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={onFileChange}
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Upload image"
-            title="Upload reference image"
-            className="mr-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-primary md:mr-1 md:h-11 md:w-11"
-          >
-            <Paperclip className="h-4 w-4 md:h-5 md:w-5" />
-          </button>
-          <button
-            type="submit"
-            aria-label="Search"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/90 md:h-11 md:w-11"
-          >
-            <Search className="h-4 w-4 md:h-5 md:w-5" />
-          </button>
-        </form>
+            <h1 className="mt-5 font-heading text-[40px] font-bold leading-[1.02] tracking-[-0.02em] text-foreground sm:text-[56px] md:text-[68px] lg:text-[76px]">
+              Source <span className="text-primary">smarter</span>,<br className="hidden sm:block" />
+              ship <span className="text-primary">faster</span>.
+            </h1>
+
+            <p className="mx-auto mt-5 max-w-[560px] text-[15px] leading-relaxed text-muted-foreground md:mx-0 md:mt-6 md:text-[18px]">
+              Snaplogo's AI agents find verified manufacturers, manage samples, track orders, and handle payments — so your packaging ships on time, every time.
+            </p>
+
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3 md:justify-start">
+              <button
+                onClick={() => openForm()}
+                className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 text-[13px] font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-[#C2410C] hover:shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.6)]"
+              >
+                Sign Up <ArrowRight className="h-4 w-4" />
+              </button>
+              <a
+                href="#how-it-works"
+                className="inline-flex h-12 items-center gap-2 rounded-full border border-border bg-background px-6 text-[13px] font-bold uppercase tracking-wider text-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                See how it works
+              </a>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[13px] text-muted-foreground md:justify-start">
+              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-primary" /> Verified manufacturers</span>
+              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-primary" /> 50% faster sourcing</span>
+              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-primary" /> No credit card</span>
+            </div>
+          </div>
+
+          {/* RIGHT — Product mockup */}
+          <div className="relative">
+            <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-br from-primary/10 via-transparent to-primary/5 blur-2xl" />
+            <div className="rounded-2xl border border-border bg-card p-3 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.18)] md:p-4">
+              {/* Browser chrome */}
+              <div className="flex items-center gap-1.5 px-2 pb-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
+                <div className="ml-3 hidden flex-1 rounded-md bg-muted px-3 py-1 text-[11px] text-muted-foreground sm:block">
+                  app.snaplogo.in / sourcing / pouches-q3
+                </div>
+                <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> Live
+                </span>
+              </div>
+
+              {/* Step pills */}
+              <div className="flex items-center justify-between gap-1 rounded-xl bg-muted/60 p-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {["Brief", "Match", "Sample", "Order", "Delivery"].map((s, i) => (
+                  <div
+                    key={s}
+                    className={`flex-1 rounded-lg px-2 py-1.5 text-center ${i === 0 ? "bg-background text-primary shadow-sm" : ""}`}
+                  >
+                    {s}
+                  </div>
+                ))}
+              </div>
+
+              {/* Search inside mockup */}
+              <form
+                onSubmit={onSubmit}
+                className="mt-4 flex items-center rounded-xl border border-primary/40 bg-background p-1.5 focus-within:border-primary"
+              >
+                <Search className="ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Describe what you're sourcing…"
+                  className="h-9 min-w-0 flex-1 bg-transparent px-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                />
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  aria-label="Upload image"
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+                >
+                  <Paperclip className="h-4 w-4" />
+                </button>
+                <button
+                  type="submit"
+                  aria-label="Search"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-[11px] font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-[#C2410C]"
+                >
+                  <Sparkles className="h-3.5 w-3.5" /> Ask AI
+                </button>
+              </form>
+
+              {/* Parsed brief preview */}
+              <div className="mt-4 space-y-2 rounded-xl bg-muted/50 p-3">
+                <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                  <Sparkles className="h-3 w-3" /> AI Parsed Brief
+                </div>
+                <dl className="grid grid-cols-2 gap-y-1.5 text-[12px]">
+                  <dt className="text-muted-foreground">Category</dt>
+                  <dd className="text-right font-semibold text-foreground">Stand-up Pouches</dd>
+                  <dt className="text-muted-foreground">Quantity</dt>
+                  <dd className="text-right font-semibold text-foreground">10,000 units</dd>
+                  <dt className="text-muted-foreground">Material</dt>
+                  <dd className="text-right font-semibold text-foreground">Food-grade laminate</dd>
+                  <dt className="text-muted-foreground">Lead time</dt>
+                  <dd className="text-right font-semibold text-foreground">{`< 21 days`}</dd>
+                </dl>
+              </div>
+
+              <div className="mt-3 flex items-center justify-between rounded-xl border border-border bg-background px-3 py-2.5">
+                <div className="flex items-center gap-2 text-[12px]">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  <span className="font-semibold text-foreground">12 verified matches</span>
+                  <span className="text-muted-foreground">in Mumbai, Delhi, Bengaluru</span>
+                </div>
+                <ArrowRight className="h-4 w-4 text-primary" />
+              </div>
+            </div>
+          </div>
+        </div>
 
         {file && (
-          <div className="mx-auto mt-3 flex max-w-2xl items-center justify-center">
+          <div className="mt-4 flex items-center justify-center md:justify-start">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-1 text-xs text-foreground">
               <Paperclip className="h-3.5 w-3.5 text-primary" />
               <span className="max-w-[240px] truncate">{file.name}</span>
               <button
                 type="button"
-                onClick={() => {
-                  setFile(null);
-                  if (fileInputRef.current) fileInputRef.current.value = "";
-                }}
+                onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
                 aria-label="Remove file"
                 className="text-muted-foreground hover:text-foreground"
               >
@@ -105,13 +185,15 @@ export default function HeroSection() {
           </div>
         )}
 
-        <div className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-1.5 md:gap-2">
+        {/* Quick category chips */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-2 md:justify-start">
+          <span className="text-[11px] font-semibold uppercase tracking-[1.5px] text-muted-foreground">Popular →</span>
           {chips.map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => onChipClick(c)}
-              className="inline-flex h-7 items-center rounded-full border border-primary bg-background px-2.5 text-[12px] text-primary transition-colors hover:bg-secondary md:px-3 md:text-[13px]"
+              className="inline-flex h-8 items-center rounded-full border border-border bg-background px-3 text-[12px] text-foreground transition-colors hover:border-primary hover:bg-secondary hover:text-primary md:text-[13px]"
             >
               {c}
             </button>
