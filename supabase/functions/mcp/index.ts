@@ -3,10 +3,10 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.26.1";
+import { defineMcp } from "npm:@lovable.dev/mcp-js@0.26.2";
 
 // src/lib/mcp/tools/list-product-categories.ts
-import { defineTool } from "npm:@lovable.dev/mcp-js@0.26.1";
+import { defineTool } from "npm:@lovable.dev/mcp-js@0.26.2";
 var categories = [
   {
     name: "Stand-Up Pouches",
@@ -51,7 +51,7 @@ var list_product_categories_default = defineTool({
 });
 
 // src/lib/mcp/tools/list-faqs.ts
-import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.1";
+import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var faqs = [
   { question: "What categories does Snaplogo cover?", answer: "We're starting with flexible packaging (pouches, wrappers) for FMCG brands, with more categories coming soon." },
   { question: "What MOQs can I expect?", answer: "Our manufacturer network is specifically selected to work with smaller quantities suited for emerging D2C brands." },
@@ -75,7 +75,7 @@ A: ${f.answer}`).join("\n\n") }],
 });
 
 // src/lib/mcp/tools/get-how-it-works.ts
-import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.1";
+import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var steps = [
   { step: 1, title: "Submit Your Brief", description: "Share your product, packaging type, quantity, and timeline." },
   { step: 2, title: "Get Matched", description: "We surface verified manufacturers suited to your requirements." },
@@ -96,7 +96,7 @@ var get_how_it_works_default = defineTool3({
 });
 
 // src/lib/mcp/tools/submit-signup-request.ts
-import { ToolError, defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.26.1";
+import { ToolError, defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.26.2";
 import { z } from "npm:zod@^3.25.76";
 
 // src/lib/mcp/supabase.ts
@@ -185,5 +185,5 @@ var mcp_default = defineMcp({
 });
 
 // lovable-mcp-supabase-entry.ts
-import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.26.1/stacks/supabase";
+import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.26.2/stacks/supabase";
 Deno.serve(createSupabaseHandler(mcp_default, { functionName: "mcp" }));
