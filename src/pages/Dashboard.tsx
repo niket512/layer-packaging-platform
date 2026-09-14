@@ -23,7 +23,7 @@ import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
 
 type View = "catalogue" | "shortlist" | "compare" | "sources";
-const PAGE = 24;
+const PAGE = 30;
 
 export default function Dashboard() {
   const navigate = useNavigate();
