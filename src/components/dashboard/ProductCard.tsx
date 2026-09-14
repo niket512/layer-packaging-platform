@@ -1,5 +1,5 @@
 import { Heart, AlertTriangle } from "lucide-react";
-import type { Product } from "@/lib/catalogue";
+import { designName, type Product } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -72,7 +72,7 @@ export default function ProductCard({ product, saved, compared, onToggleSave, on
         )}
 
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-2 text-[11px] text-muted-foreground">
-          <span className="truncate">{product.design_label ?? product.design ?? ""}</span>
+          <span className="truncate">{product.design ? designName(product.design) : ""}</span>
           <label className="flex shrink-0 cursor-pointer items-center gap-1.5">
             <input
               type="checkbox"
