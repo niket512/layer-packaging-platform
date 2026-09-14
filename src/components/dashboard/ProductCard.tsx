@@ -6,13 +6,12 @@ import { cn } from "@/lib/utils";
 type Props = {
   product: Product;
   saved: boolean;
-  compared: boolean;
   onToggleSave: () => void;
-  onToggleCompare: () => void;
   onOpen: () => void;
 };
 
-export default function ProductCard({ product, saved, compared, onToggleSave, onToggleCompare, onOpen }: Props) {
+export default function ProductCard({ product, saved, onToggleSave, onOpen }: Props) {
+
   const sizes = product.sizes_ml?.length
     ? product.sizes_ml.map((s) => `${s.toLocaleString()} ml`).join(" · ")
     : product.size_label || product.capacity_raw;
