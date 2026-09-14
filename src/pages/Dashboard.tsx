@@ -9,7 +9,6 @@ import {
   productById,
   products,
   shortlistStore,
-  sources,
   taxonomy,
   type Filters,
   type Product,
@@ -85,10 +84,6 @@ export default function Dashboard() {
     filters.capacity && { label: `${filters.capacity} ml`, clear: () => set({ capacity: "" }) },
     filters.shoulder && { label: filters.shoulder, clear: () => set({ shoulder: "" }) },
     filters.feature && { label: filters.feature, clear: () => set({ feature: "" }) },
-    filters.source && {
-      label: sources.find((s) => s.key === filters.source)?.manufacturer ?? filters.source,
-      clear: () => set({ source: "" }),
-    },
     filters.reviewOnly && { label: "Needs confirmation", clear: () => set({ reviewOnly: false }) },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 

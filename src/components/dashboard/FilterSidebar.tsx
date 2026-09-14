@@ -1,5 +1,5 @@
 import type { Filters } from "@/lib/catalogue";
-import { capacities, featureTags, shoulderTags, sources } from "@/lib/catalogue";
+import { capacities, featureTags, shoulderTags } from "@/lib/catalogue";
 
 type Props = {
   filters: Filters;
@@ -53,15 +53,6 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
           <option value="">Any feature</option>
           {featureTags.map((t) => (
             <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
-      </Field>
-
-      <Field label="Catalogue">
-        <select className={selectClass} value={filters.source} onChange={(e) => set({ source: e.target.value })}>
-          <option value="">All {sources.length} catalogues</option>
-          {sources.map((s) => (
-            <option key={s.key} value={s.key}>{s.manufacturer} — {s.name}</option>
           ))}
         </select>
       </Field>
