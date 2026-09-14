@@ -450,50 +450,13 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
 
-      {compareProducts.length > 0 && view !== "compare" && (
-        <div className="fixed inset-x-0 bottom-4 z-30 mx-auto w-[min(94%,720px)] rounded-xl bg-foreground px-4 py-3 text-background shadow-lg">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[12.5px] font-semibold">Compare {compareProducts.length}</span>
-            {compareProducts.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => toggleCompare(p.id)}
-                aria-label={`Remove ${p.name} from compare`}
-                className="inline-flex max-w-[170px] items-center gap-1.5 rounded-full bg-background/15 px-2.5 py-1 text-[11.5px]"
-              >
-                <span className="truncate">{p.name}</span>
-                <X className="h-3 w-3 shrink-0" />
-              </button>
-            ))}
-            <div className="ml-auto flex items-center gap-3">
-              <button
-                onClick={() => {
-                  setCompare([]);
-                  compareStore.set([]);
-                }}
-                className="text-[12px] underline"
-              >
-                Clear
-              </button>
-              <button
-                onClick={() => setView("compare")}
-                className="rounded-lg bg-primary px-3 py-1.5 text-[12px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-              >
-                Compare {compareProducts.length} →
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <ProductDialog
         product={detail}
         onOpenChange={(o) => !o && setDetail(null)}
         saved={detail ? saved.includes(detail.id) : false}
-        compared={detail ? compare.includes(detail.id) : false}
         onToggleSave={() => detail && toggleSave(detail.id)}
-        onToggleCompare={() => detail && toggleCompare(detail.id)}
       />
+
     </div>
   );
 }
