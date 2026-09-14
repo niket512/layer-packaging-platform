@@ -120,7 +120,7 @@ export default function Dashboard() {
     { id: "catalogue", label: "Bottles & jars", icon: LayoutGrid },
     { id: "sachets", label: "Sachets & pouches", icon: Package },
     { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
-    { id: "compare", label: "Compare", icon: Scale, count: compare.length },
+    ];
   ];
 
   const start = page * PAGE;
