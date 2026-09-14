@@ -184,70 +184,64 @@ export default function Dashboard() {
           {(view === "catalogue" || view === "shortlist") && (
             <>
               {view === "catalogue" ? (
-                <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
-                  <div className="flex flex-wrap items-end justify-between gap-6">
-                    <div className="max-w-xl">
-                      <p className="text-[11px] font-semibold uppercase tracking-[1.8px] text-primary">
-                        Snaplogo packaging
-                      </p>
-                      <h1 className="mt-1 font-display text-[34px] leading-[1.1] text-foreground md:text-[42px]">
-                        Find packaging for your next product
-                      </h1>
-                      <p className="mt-1.5 text-[13px] text-muted-foreground">
-                        Explore real supplier designs, narrow the specifications and build your shortlist
-                      </p>
-                    </div>
-                    <div className="flex gap-10">
-                      {[
-                        { v: products.length, l: "catalogue entries" },
-                        { v: sources.length, l: "source catalogues" },
-                        { v: new Set(products.map((p) => p.manufacturer)).size, l: "manufacturers" },
-                      ].map((s) => (
-                        <div key={s.l} className="text-right">
-                          <span className="block text-[10px] uppercase tracking-[1.4px] text-muted-foreground">
-                            {s.l}
-                          </span>
-                          <strong className="mt-0.5 block text-2xl font-light text-foreground">{s.v}</strong>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                <section>
+                  <p className="text-[11px] font-semibold uppercase tracking-[2.2px] text-muted-foreground">
+                    {products.length} catalogue groups · {new Set(products.map((p) => p.manufacturer)).size}{" "}
+                    manufacturers · {sources.length} pdfs
+                  </p>
+                  <h1 className="mt-3 font-heading text-[38px] font-semibold leading-[1.05] tracking-tight text-foreground md:text-[46px]">
+                    Find the right pack.
+                  </h1>
+                  <p className="mt-3 text-[15px] text-muted-foreground">
+                    Browse real supplier designs. Filter the details and save your favourites.
+                  </p>
 
-                  <div className="relative mt-5">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <div className="relative mt-6">
+                    <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                     <input
                       value={filters.query}
                       onChange={(e) => set({ query: e.target.value })}
                       type="search"
                       aria-label="Search products"
-                      placeholder="Search by name, product code or feature"
-                      className="h-12 w-full rounded-xl border border-transparent bg-muted pl-11 pr-4 text-[14px] outline-none transition-colors focus:border-border focus:bg-background"
+                      placeholder="Search bottle names, product codes or features..."
+                      className="h-16 w-full rounded-2xl border border-border bg-card pl-14 pr-5 text-[16px] outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
                     />
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center gap-2">
-                    {[
-                      { id: "Containers", label: "Bottles, jars & cans" },
-                      { id: "Components", label: "Caps, pumps & parts" },
-                      { id: "", label: "All products" },
-                    ].map((g) => (
-                      <button
-                        key={g.label}
-                        onClick={() => set({ group: g.id, designs: [] })}
-                        aria-pressed={filters.group === g.id}
-                        className={cn(
-                          "h-8 rounded-full border px-3.5 text-[11.5px] font-semibold transition-colors",
-                          filters.group === g.id
-                            ? "border-primary bg-secondary text-primary"
-                            : "border-border bg-background text-foreground hover:border-primary",
-                        )}
-                      >
-                        {g.label}
-                      </button>
-                    ))}
+                  <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="font-heading text-[17px] font-medium text-foreground">Browse by design</h2>
+                    <div className="flex items-center gap-2">
+                      {[
+                        { id: "Containers", label: "Containers" },
+                        { id: "Components", label: "Components" },
+                        { id: "", label: "All" },
+                      ].map((g) => (
+                        <button
+                          key={g.label}
+                          onClick={() => set({ group: g.id, designs: [] })}
+                          aria-pressed={filters.group === g.id}
+                          className={cn(
+                            "h-8 rounded-full border px-3.5 text-[12px] font-semibold transition-colors",
+                            filters.group === g.id
+                              ? "border-primary bg-secondary text-primary"
+                              : "border-border bg-card text-muted-foreground hover:border-primary",
+                          )}
+                        >
+                          {g.label}
+                        </button>
+                      ))}
+                      {designFamilies.length > 6 && (
+                        <button
+                          onClick={() => setShowAllDesigns((v) => !v)}
+                          className="text-[14px] text-foreground hover:text-primary"
+                        >
+                          {showAllDesigns ? "Fewer families ↑" : "All design families ↓"}
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {visibleDesigns.map((d) => {
                       const on = filters.designs.includes(d.id);
                       return (
@@ -260,24 +254,27 @@ export default function Dashboard() {
                             })
                           }
                           className={cn(
-                            "h-7 rounded-full border px-3 text-[11.5px] transition-colors",
-                            on
-                              ? "border-primary bg-secondary font-semibold text-primary"
-                              : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary",
+                            "flex items-center gap-4 rounded-2xl border bg-card p-4 text-left transition-colors",
+                            on ? "border-primary bg-secondary" : "border-border hover:border-primary/60",
                           )}
                         >
-                          {d.name} <span className="opacity-60">{d.count}</span>
+                          <span className="image-plate grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-lg">
+                            {designImages[d.id] ? (
+                              <img
+                                src={designImages[d.id]}
+                                alt=""
+                                loading="lazy"
+                                className="h-full w-full object-contain p-1.5"
+                              />
+                            ) : null}
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block truncate text-[15px] text-foreground">{d.name}</span>
+                            <span className="block text-[12px] text-muted-foreground">{d.count} designs</span>
+                          </span>
                         </button>
                       );
                     })}
-                    {designFamilies.length > 8 && (
-                      <button
-                        onClick={() => setShowAllDesigns((v) => !v)}
-                        className="h-8 px-2 text-[12px] font-semibold text-primary hover:underline"
-                      >
-                        {showAllDesigns ? "Show fewer families" : `All ${designFamilies.length} families`}
-                      </button>
-                    )}
                   </div>
                 </section>
               ) : (
