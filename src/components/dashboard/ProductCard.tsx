@@ -19,7 +19,7 @@ export default function ProductCard({ product, saved, compared, onToggleSave, on
 
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow duration-150 hover:shadow-[0_5px_20px_rgba(37,75,51,0.08)]">
+    <article className="flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-150 hover:border-primary/30 hover:shadow-[0_5px_20px_hsl(var(--primary)/0.10)]">
       <div className="relative">
         <button
           onClick={onOpen}
