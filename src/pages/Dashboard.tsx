@@ -71,7 +71,7 @@ export default function Dashboard() {
 
   const results = useMemo(() => filterProducts(filters), [filters]);
   const savedProducts = saved.map(productById).filter(Boolean) as Product[];
-  const compareProducts = compare.map(productById).filter(Boolean) as Product[];
+  
 
   const designFamilies = useMemo(
     () =>
