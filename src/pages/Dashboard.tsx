@@ -285,9 +285,10 @@ export default function Dashboard() {
                   </div>
                 </section>
               ) : (
-                <section className="rounded-2xl border border-border bg-card p-6">
-                  <h1 className="font-heading text-2xl font-semibold text-foreground">Your shortlist</h1>
-                  <p className="mt-1 text-[13px] text-muted-foreground">
+                <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
+                  <p className="text-[11px] font-semibold uppercase tracking-[1.8px] text-primary">Saved for later</p>
+                  <h1 className="mt-1 font-display text-[34px] leading-[1.1] text-foreground">Your shortlist</h1>
+                  <p className="mt-1.5 text-[13px] text-muted-foreground">
                     {savedProducts.length} saved {savedProducts.length === 1 ? "product" : "products"} · stored in this
                     browser
                   </p>
