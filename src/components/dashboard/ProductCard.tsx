@@ -67,7 +67,8 @@ export default function ProductCard({ product, saved, compared, onToggleSave, on
         >
           {product.name}
         </button>
-        {sizes && <p className="truncate text-[12px] text-muted-foreground">{sizes}</p>}
+        {sizes && <p className="truncate text-[12px] text-muted-foreground">Listed capacity {sizes}</p>}
+
         {product.material && (
           <span className="inline-flex w-fit items-center rounded bg-secondary px-1.5 py-1 text-[11px] font-medium text-secondary-foreground">
             {product.material}
