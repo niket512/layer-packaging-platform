@@ -1,5 +1,5 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Heart, Scale } from "lucide-react";
+import { Heart } from "lucide-react";
 import type { Product } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
 
@@ -7,9 +7,7 @@ type Props = {
   product: Product | null;
   onOpenChange: (open: boolean) => void;
   saved?: boolean;
-  compared?: boolean;
   onToggleSave?: () => void;
-  onToggleCompare?: () => void;
 };
 
 function Row({ label, value }: { label: string; value?: string | number | null }) {
@@ -22,14 +20,8 @@ function Row({ label, value }: { label: string; value?: string | number | null }
   );
 }
 
-export default function ProductDialog({
-  product,
-  onOpenChange,
-  saved,
-  compared,
-  onToggleSave,
-  onToggleCompare,
-}: Props) {
+export default function ProductDialog({ product, onOpenChange, saved, onToggleSave }: Props) {
+
   const sizes = product?.sizes_ml?.length
     ? product.sizes_ml.map((s) => `${s.toLocaleString()} ml`).join(" · ")
     : product?.capacity_raw;
