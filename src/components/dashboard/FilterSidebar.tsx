@@ -1,5 +1,5 @@
 import type { Filters } from "@/lib/catalogue";
-import { capacities, featureTags, manufacturers, materials, shoulderTags, sources } from "@/lib/catalogue";
+import { capacities, featureTags, shoulderTags, sources } from "@/lib/catalogue";
 
 type Props = {
   filters: Filters;
