@@ -97,9 +97,9 @@ export default function Dashboard() {
   const gridProducts = view === "shortlist" ? savedProducts : results.slice(0, limit);
 
   return (
-    <div className="min-h-screen bg-muted">
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-border bg-background px-4 md:px-8">
-        <div className="flex items-center gap-3">
+    <div className="theme-dashboard min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-border bg-card px-4 md:px-8">
+        <div className="flex min-w-0 items-center gap-3">
           <Link to="/" className="flex items-center gap-2">
             <img src={logo} alt="Snaplogo" className="h-7 w-7 object-contain" />
             <span className="font-heading text-lg font-bold tracking-tight text-foreground">Snaplogo</span>
@@ -108,14 +108,38 @@ export default function Dashboard() {
             Packaging discovery
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="hidden text-[13px] text-muted-foreground sm:block">{brand}</span>
+
+        <nav className="flex min-w-0 items-center gap-1.5 overflow-x-auto">
+          {navItems.map((n) => (
+            <button
+              key={n.id}
+              onClick={() => {
+                setView(n.id);
+                setShowFilters(false);
+              }}
+              aria-pressed={view === n.id}
+              className={cn(
+                "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl border px-3.5 text-[12.5px] font-semibold transition-colors",
+                view === n.id
+                  ? "border-primary bg-secondary text-primary"
+                  : "border-border text-foreground hover:border-primary hover:text-primary",
+              )}
+            >
+              <n.icon className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{n.label}</span>
+              {typeof n.count === "number" && <span className="opacity-70">{n.count}</span>}
+            </button>
+          ))}
+        </nav>
+
+        <div className="flex shrink-0 items-center gap-3">
+          <span className="hidden text-[13px] text-muted-foreground lg:block">{brand}</span>
           <button
             onClick={() => {
               clearBrand();
               navigate("/signin", { replace: true });
             }}
-            className="inline-flex h-9 items-center rounded-full border border-border px-4 text-[12px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+            className="inline-flex h-9 items-center rounded-xl border border-border px-4 text-[12px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
           >
             Sign out
           </button>
@@ -140,36 +164,13 @@ export default function Dashboard() {
             </button>
           )}
 
-          <nav className="space-y-1 rounded-2xl border border-border bg-card p-2">
-            {navItems.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => {
-                  setView(n.id);
-                  setShowFilters(false);
-                }}
-                className={cn(
-                  "flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-colors",
-                  view === n.id ? "bg-secondary text-primary" : "text-foreground hover:bg-muted",
-                )}
-              >
-                <n.icon className="h-4 w-4" />
-                {n.label}
-                {!!n.count && (
-                  <span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-[11px] text-primary-foreground">
-                    {n.count}
-                  </span>
-                )}
-              </button>
-            ))}
-          </nav>
-
           {view === "catalogue" && (
             <div className="rounded-2xl border border-border bg-card p-4">
               <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
             </div>
           )}
         </aside>
+
 
         <main className="min-w-0 flex-1">
           {view === "compare" && (
@@ -194,8 +195,8 @@ export default function Dashboard() {
                       <p className="text-[11px] font-semibold uppercase tracking-[1.8px] text-primary">
                         Snaplogo packaging
                       </p>
-                      <h1 className="mt-1 font-display text-[34px] leading-[1.1] text-foreground md:text-[40px]">
-                        Catalogue overview
+                      <h1 className="mt-1 font-display text-[34px] leading-[1.1] text-foreground md:text-[42px]">
+                        Find packaging for your next product
                       </h1>
                       <p className="mt-1.5 text-[13px] text-muted-foreground">
                         Explore real supplier designs, narrow the specifications and build your shortlist

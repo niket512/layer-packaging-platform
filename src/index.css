@@ -53,6 +53,40 @@
     --text-body: 215 25% 27%;
     --text-muted: 215 16% 47%;
   }
+
+  /* Dark workspace theme — used by the catalogue dashboard */
+  .theme-dashboard {
+    --background: 150 8% 10%;             /* deep charcoal green */
+    --foreground: 150 12% 94%;
+
+    --card: 150 8% 13%;
+    --card-foreground: 150 12% 94%;
+
+    --popover: 150 8% 13%;
+    --popover-foreground: 150 12% 94%;
+
+    --primary: 152 40% 62%;               /* sage green accent */
+    --primary-foreground: 150 20% 10%;
+
+    --secondary: 152 28% 18%;
+    --secondary-foreground: 152 45% 72%;
+
+    --muted: 150 7% 16%;
+    --muted-foreground: 150 8% 66%;
+
+    --accent: 152 28% 18%;
+    --accent-foreground: 152 45% 72%;
+
+    --border: 150 6% 22%;
+    --input: 150 6% 22%;
+    --ring: 152 40% 62%;
+
+    --surface: 150 8% 13%;
+    --surface-raised: 150 7% 16%;
+    --text-heading: 150 12% 94%;
+    --text-body: 150 10% 86%;
+    --text-muted: 150 8% 66%;
+  }
 }
 
 @layer base {
@@ -79,6 +113,8 @@
   .label-eyebrow {
     @apply text-xs font-semibold uppercase tracking-[1.5px] text-primary;
   }
+  /* Light plate behind product photography so cut-outs read on dark surfaces */
+  .image-plate { background-color: hsl(60 8% 96%); }
 }
 
 @keyframes reveal-up {
