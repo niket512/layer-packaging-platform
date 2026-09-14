@@ -60,11 +60,8 @@ export default function Dashboard() {
     shortlistStore.set(next);
   };
 
-  const toggleCompare = (id: string) => {
-    const next = compare.includes(id) ? compare.filter((x) => x !== id) : [...compare, id].slice(0, 4);
-    setCompare(next);
-    compareStore.set(next);
-  };
+
+
 
   const toggleDesign = (id: string) =>
     set({ designs: filters.designs.includes(id) ? filters.designs.filter((x) => x !== id) : [...filters.designs, id] });
