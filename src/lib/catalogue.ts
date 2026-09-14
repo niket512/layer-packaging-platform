@@ -165,7 +165,6 @@ export function productById(id: string) {
 }
 
 const SHORTLIST_KEY = "snaplogo.shortlist";
-const COMPARE_KEY = "snaplogo.compare";
 
 function read(key: string): string[] {
   try {
@@ -187,11 +186,6 @@ function write(key: string, ids: string[]) {
 export const shortlistStore = {
   get: () => read(SHORTLIST_KEY),
   set: (ids: string[]) => write(SHORTLIST_KEY, ids),
-};
-
-export const compareStore = {
-  get: () => read(COMPARE_KEY),
-  set: (ids: string[]) => write(COMPARE_KEY, ids),
 };
 
 export const thumbUrl = (image: string) =>
