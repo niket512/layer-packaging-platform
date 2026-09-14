@@ -233,8 +233,9 @@ export default function Dashboard() {
                   <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap gap-1.5">
                       {[
-                        { id: "Containers", label: "Containers" },
                         { id: "", label: "All products" },
+                        { id: "Bottles", label: "Bottles" },
+                        { id: "Jars", label: "Jars" },
                       ].map((g) => (
                         <button
                           key={g.label}
