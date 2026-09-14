@@ -79,17 +79,8 @@ export default function ProductCard({ product, saved, onToggleSave, onOpen }: Pr
 
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
           <span className="truncate">{product.design ? designName(product.design) : ""}</span>
-          <label className="flex shrink-0 cursor-pointer items-center gap-1.5">
-            <input
-              type="checkbox"
-              checked={compared}
-              onChange={onToggleCompare}
-              className="h-3.5 w-3.5 accent-[hsl(var(--primary))]"
-              aria-label={`Compare ${product.name}`}
-            />
-            Compare
-          </label>
         </div>
+
       </div>
     </article>
   );
