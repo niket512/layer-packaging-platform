@@ -12,7 +12,10 @@ type Props = {
 };
 
 export default function ProductCard({ product, saved, compared, onToggleSave, onToggleCompare, onOpen }: Props) {
-  const sizes = product.size_label || product.capacity_raw;
+  const sizes = product.sizes_ml?.length
+    ? product.sizes_ml.map((s) => `${s.toLocaleString()} ml`).join(" · ")
+    : product.size_label || product.capacity_raw;
+
 
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow duration-150 hover:shadow-[0_5px_20px_rgba(37,75,51,0.08)]">
@@ -64,7 +67,8 @@ export default function ProductCard({ product, saved, compared, onToggleSave, on
         >
           {product.name}
         </button>
-        {sizes && <p className="truncate text-[12px] text-muted-foreground">{sizes}</p>}
+        {sizes && <p className="truncate text-[12px] text-muted-foreground">Listed capacity {sizes}</p>}
+
         {product.material && (
           <span className="inline-flex w-fit items-center rounded bg-secondary px-1.5 py-1 text-[11px] font-medium text-secondary-foreground">
             {product.material}

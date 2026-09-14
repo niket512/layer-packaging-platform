@@ -82,13 +82,19 @@ export const capacities = Array.from(
 ).sort((a, b) => a - b);
 
 const isShoulder = (t: string) => /shoulder|neck|waist/i.test(t);
+const isClosure = (t: string) =>
+  /cap|flip|spout|pump|trigger|mist|plug|tamper|locking ring|dosing|pourer/i.test(t);
 
 export const shoulderTags = Array.from(
   new Set(products.flatMap((p) => (p.tags || []).filter(isShoulder))),
 ).sort();
 
+export const closureTags = Array.from(
+  new Set(products.flatMap((p) => (p.tags || []).filter((t) => !isShoulder(t) && isClosure(t)))),
+).sort();
+
 export const featureTags = Array.from(
-  new Set(products.flatMap((p) => (p.tags || []).filter((t) => !isShoulder(t)))),
+  new Set(products.flatMap((p) => (p.tags || []).filter((t) => !isShoulder(t) && !isClosure(t)))),
 ).sort();
 
 export const materials = Array.from(
@@ -103,6 +109,7 @@ export type Filters = {
   manufacturer: string;
   capacity: string;
   shoulder: string;
+  closure: string;
   feature: string;
   source: string;
   reviewOnly: boolean;
@@ -117,6 +124,7 @@ export const emptyFilters: Filters = {
   manufacturer: "",
   capacity: "",
   shoulder: "",
+  closure: "",
   feature: "",
   source: "",
   reviewOnly: false,
@@ -133,6 +141,7 @@ export function filterProducts(f: Filters): Product[] {
     if (f.capacity && !(p.sizes_ml || []).includes(Number(f.capacity))) return false;
     if (f.shoulder && !(p.tags || []).includes(f.shoulder)) return false;
     if (f.feature && !(p.tags || []).includes(f.feature)) return false;
+    if (f.closure && !(p.tags || []).includes(f.closure)) return false;
     if (f.source && p.file_key !== f.source) return false;
     if (f.reviewOnly && !p.review_required) return false;
     if (q) {
