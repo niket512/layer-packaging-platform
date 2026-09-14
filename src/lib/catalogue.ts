@@ -111,7 +111,7 @@ export type Filters = {
 
 export const emptyFilters: Filters = {
   query: "",
-  group: "Containers",
+  group: "",
   designs: [],
   material: "",
   manufacturer: "",
