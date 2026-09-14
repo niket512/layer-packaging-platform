@@ -195,8 +195,8 @@ export default function Dashboard() {
                       <p className="text-[11px] font-semibold uppercase tracking-[1.8px] text-primary">
                         Snaplogo packaging
                       </p>
-                      <h1 className="mt-1 font-display text-[34px] leading-[1.1] text-foreground md:text-[40px]">
-                        Catalogue overview
+                      <h1 className="mt-1 font-display text-[34px] leading-[1.1] text-foreground md:text-[42px]">
+                        Find packaging for your next product
                       </h1>
                       <p className="mt-1.5 text-[13px] text-muted-foreground">
                         Explore real supplier designs, narrow the specifications and build your shortlist
