@@ -12,7 +12,10 @@ type Props = {
 };
 
 export default function ProductCard({ product, saved, compared, onToggleSave, onToggleCompare, onOpen }: Props) {
-  const sizes = product.size_label || product.capacity_raw;
+  const sizes = product.sizes_ml?.length
+    ? product.sizes_ml.map((s) => `${s.toLocaleString()} ml`).join(" · ")
+    : product.size_label || product.capacity_raw;
+
 
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow duration-150 hover:shadow-[0_5px_20px_rgba(37,75,51,0.08)]">
