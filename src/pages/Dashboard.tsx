@@ -82,11 +82,7 @@ export default function Dashboard() {
     return map;
   }, []);
 
-  const makerCount = useMemo(() => new Set(products.map((p) => p.manufacturer)).size, []);
-
   const activeChips = [
-    filters.material && { label: filters.material, clear: () => set({ material: "" }) },
-    filters.manufacturer && { label: filters.manufacturer, clear: () => set({ manufacturer: "" }) },
     filters.capacity && { label: `${filters.capacity} ml`, clear: () => set({ capacity: "" }) },
     filters.shoulder && { label: filters.shoulder, clear: () => set({ shoulder: "" }) },
     filters.feature && { label: filters.feature, clear: () => set({ feature: "" }) },
@@ -228,20 +224,6 @@ export default function Dashboard() {
                       <p className="mt-2 max-w-[530px] text-[14px] text-muted-foreground">
                         Browse real supplier designs, filter the details and save a shortlist you can share
                       </p>
-                    </div>
-                    <div className="flex gap-7">
-                      {[
-                        { n: products.length, l: "Catalogue groups" },
-                        { n: makerCount, l: "Manufacturers" },
-                        { n: sources.length, l: "Source PDFs" },
-                      ].map((s) => (
-                        <div key={s.l} className="min-w-[55px]">
-                          <strong className="block text-[26px] font-medium leading-tight tracking-tight text-foreground">
-                            {s.n}
-                          </strong>
-                          <span className="text-[11px] text-muted-foreground">{s.l}</span>
-                        </div>
-                      ))}
                     </div>
                   </div>
 
