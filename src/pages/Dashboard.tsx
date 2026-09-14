@@ -310,36 +310,39 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-[13px] text-muted-foreground" aria-live="polite">
+              <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-[15px] text-foreground" aria-live="polite">
                   {view === "catalogue"
-                    ? `Showing ${Math.min(limit, results.length)} of ${results.length} products`
+                    ? `${results.length} matching catalogue groups`
                     : `${savedProducts.length} saved`}
                 </p>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowFilters(true)}
-                    className="inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-background px-4 text-[12px] font-semibold lg:hidden"
-                  >
-                    <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
-                  </button>
+                <div className="flex items-center gap-3">
                   {view === "catalogue" && (
-                    <label className="flex items-center gap-2 text-[12px] text-muted-foreground">
-                      Sort
-                      <select
-                        value={filters.sort}
-                        onChange={(e) => set({ sort: e.target.value as Filters["sort"] })}
-                        className="h-9 rounded-full border border-border bg-background px-3 text-[12px] text-foreground outline-none focus:border-primary"
+                    <>
+                      <button
+                        onClick={() => setShowFilters(true)}
+                        className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-[14px] text-foreground transition-colors hover:border-primary"
                       >
-                        <option value="featured">Catalogue order</option>
-                        <option value="name">Name A–Z</option>
-                        <option value="capacity">Capacity ↑</option>
-                        <option value="maker">Manufacturer</option>
-                      </select>
-                    </label>
+                        <SlidersHorizontal className="h-4 w-4" /> Filters
+                      </button>
+                      <label className="flex items-center gap-2 text-[14px] text-muted-foreground">
+                        Sort
+                        <select
+                          value={filters.sort}
+                          onChange={(e) => set({ sort: e.target.value as Filters["sort"] })}
+                          className="h-11 rounded-xl border border-border bg-card px-3 text-[14px] text-foreground outline-none focus:border-primary"
+                        >
+                          <option value="featured">Catalogue order</option>
+                          <option value="name">Name A–Z</option>
+                          <option value="capacity">Capacity ↑</option>
+                          <option value="maker">Manufacturer</option>
+                        </select>
+                      </label>
+                    </>
                   )}
                 </div>
               </div>
+
 
               {gridProducts.length === 0 ? (
                 <div className="mt-6 rounded-2xl border border-dashed border-border bg-card p-10 text-center">
