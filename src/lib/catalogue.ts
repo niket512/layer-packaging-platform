@@ -141,6 +141,7 @@ export function filterProducts(f: Filters): Product[] {
     if (f.capacity && !(p.sizes_ml || []).includes(Number(f.capacity))) return false;
     if (f.shoulder && !(p.tags || []).includes(f.shoulder)) return false;
     if (f.feature && !(p.tags || []).includes(f.feature)) return false;
+    if (f.closure && !(p.tags || []).includes(f.closure)) return false;
     if (f.source && p.file_key !== f.source) return false;
     if (f.reviewOnly && !p.review_required) return false;
     if (q) {
