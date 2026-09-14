@@ -97,7 +97,6 @@ export default function Dashboard() {
     { id: "catalogue", label: "Explore catalogue", icon: LayoutGrid },
     { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
     { id: "compare", label: "Compare", icon: Scale, count: compare.length },
-    { id: "sources", label: "Sources", icon: FileText },
   ];
 
   const start = page * PAGE;
