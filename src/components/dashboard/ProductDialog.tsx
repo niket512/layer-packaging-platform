@@ -60,16 +60,6 @@ export default function ProductDialog({ product, onOpenChange, saved, onToggleSa
                 <Heart className={cn("h-4 w-4", saved && "fill-current")} />
                 {saved ? "Saved" : "Save"}
               </button>
-              <button
-                onClick={onToggleCompare}
-                className={cn(
-                  "inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl border text-[12.5px] font-semibold transition-colors",
-                  compared ? "border-primary bg-primary text-primary-foreground" : "border-border text-foreground hover:border-primary",
-                )}
-              >
-                <Scale className="h-4 w-4" />
-                {compared ? "In compare" : "Compare"}
-              </button>
             </div>
 
             <div className="mt-5">
