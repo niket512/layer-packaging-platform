@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/snaplogo-orange.png";
@@ -34,12 +35,12 @@ export default function Header() {
         </a>
 
         <div className="flex items-center gap-2 md:gap-5">
-          <button
-            onClick={scrollToAccess}
+          <Link
+            to="/signin"
             className="hidden text-sm font-medium text-foreground transition-colors hover:text-primary sm:block"
           >
             Sign In
-          </button>
+          </Link>
           <Button variant="hero" size="pill" onClick={scrollToAccess} className="h-10 px-4 text-[12px] md:h-12 md:px-6 md:text-[13px]">
             Get Started
           </Button>
