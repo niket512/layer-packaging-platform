@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         heading: ['Inter', 'system-ui', 'sans-serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Instrument Serif', 'Georgia', 'serif'],
       },
       maxWidth: {
         content: '1200px',

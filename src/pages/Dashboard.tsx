@@ -23,7 +23,7 @@ import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
 
 type View = "catalogue" | "shortlist" | "compare" | "sources";
-const PAGE = 24;
+const PAGE = 30;
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -188,42 +188,44 @@ export default function Dashboard() {
           {(view === "catalogue" || view === "shortlist") && (
             <>
               {view === "catalogue" ? (
-                <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
-                  <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">
-                    Made to be discovered
-                  </p>
-                  <div className="mt-3 flex flex-wrap items-end justify-between gap-6">
+                <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
+                  <div className="flex flex-wrap items-end justify-between gap-6">
                     <div className="max-w-xl">
-                      <h1 className="font-heading text-3xl font-semibold tracking-tight text-foreground md:text-[38px]">
-                        Find the right pack
+                      <p className="text-[11px] font-semibold uppercase tracking-[1.8px] text-primary">
+                        Snaplogo packaging
+                      </p>
+                      <h1 className="mt-1 font-display text-[34px] leading-[1.1] text-foreground md:text-[40px]">
+                        Catalogue overview
                       </h1>
-                      <p className="mt-2 text-[14px] text-muted-foreground">
+                      <p className="mt-1.5 text-[13px] text-muted-foreground">
                         Explore real supplier designs, narrow the specifications and build your shortlist
                       </p>
                     </div>
-                    <div className="flex gap-6">
+                    <div className="flex gap-10">
                       {[
                         { v: products.length, l: "catalogue entries" },
                         { v: sources.length, l: "source catalogues" },
                         { v: new Set(products.map((p) => p.manufacturer)).size, l: "manufacturers" },
                       ].map((s) => (
-                        <div key={s.l}>
-                          <strong className="block font-heading text-2xl font-bold text-foreground">{s.v}</strong>
-                          <span className="text-[11px] uppercase tracking-[1.2px] text-muted-foreground">{s.l}</span>
+                        <div key={s.l} className="text-right">
+                          <span className="block text-[10px] uppercase tracking-[1.4px] text-muted-foreground">
+                            {s.l}
+                          </span>
+                          <strong className="mt-0.5 block text-2xl font-light text-foreground">{s.v}</strong>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="relative mt-6">
+                  <div className="relative mt-5">
                     <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <input
                       value={filters.query}
                       onChange={(e) => set({ query: e.target.value })}
                       type="search"
                       aria-label="Search products"
-                      placeholder="Search bottle names, product codes or features"
-                      className="h-14 w-full rounded-full border border-border bg-background pl-11 pr-4 text-[15px] outline-none transition-colors focus:border-primary"
+                      placeholder="Search by name, product code or feature"
+                      className="h-12 w-full rounded-xl border border-transparent bg-muted pl-11 pr-4 text-[14px] outline-none transition-colors focus:border-border focus:bg-background"
                     />
                   </div>
 
@@ -238,7 +240,7 @@ export default function Dashboard() {
                         onClick={() => set({ group: g.id, designs: [] })}
                         aria-pressed={filters.group === g.id}
                         className={cn(
-                          "h-9 rounded-full border px-4 text-[12px] font-semibold transition-colors",
+                          "h-8 rounded-full border px-3.5 text-[11.5px] font-semibold transition-colors",
                           filters.group === g.id
                             ? "border-primary bg-secondary text-primary"
                             : "border-border bg-background text-foreground hover:border-primary",
@@ -262,7 +264,7 @@ export default function Dashboard() {
                             })
                           }
                           className={cn(
-                            "h-8 rounded-full border px-3 text-[12px] transition-colors",
+                            "h-7 rounded-full border px-3 text-[11.5px] transition-colors",
                             on
                               ? "border-primary bg-secondary font-semibold text-primary"
                               : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary",
@@ -283,9 +285,10 @@ export default function Dashboard() {
                   </div>
                 </section>
               ) : (
-                <section className="rounded-2xl border border-border bg-card p-6">
-                  <h1 className="font-heading text-2xl font-semibold text-foreground">Your shortlist</h1>
-                  <p className="mt-1 text-[13px] text-muted-foreground">
+                <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
+                  <p className="text-[11px] font-semibold uppercase tracking-[1.8px] text-primary">Saved for later</p>
+                  <h1 className="mt-1 font-display text-[34px] leading-[1.1] text-foreground">Your shortlist</h1>
+                  <p className="mt-1.5 text-[13px] text-muted-foreground">
                     {savedProducts.length} saved {savedProducts.length === 1 ? "product" : "products"} · stored in this
                     browser
                   </p>
@@ -345,7 +348,7 @@ export default function Dashboard() {
                   </p>
                 </div>
               ) : (
-                <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                   {gridProducts.map((p) => (
                     <ProductCard
                       key={p.id}
