@@ -146,32 +146,27 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-[1600px] gap-6 px-4 py-6 md:px-8">
-        <aside
-          className={cn(
-            "w-[272px] shrink-0 space-y-6 lg:block",
-            showFilters
-              ? "fixed inset-x-0 bottom-0 top-16 z-40 w-full overflow-y-auto bg-background p-5 lg:static lg:p-0"
-              : "hidden",
-          )}
-        >
-          {showFilters && (
+      {showFilters && view === "catalogue" && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm"
+            onClick={() => setShowFilters(false)}
+          />
+          <aside className="fixed right-0 top-0 z-50 h-full w-[min(92vw,340px)] overflow-y-auto border-l border-border bg-card p-5">
             <button
               onClick={() => setShowFilters(false)}
-              className="ml-auto flex items-center gap-1 text-[13px] font-semibold text-primary lg:hidden"
+              className="ml-auto flex items-center gap-1 text-[13px] font-semibold text-primary"
             >
               Close <X className="h-4 w-4" />
             </button>
-          )}
-
-          {view === "catalogue" && (
-            <div className="rounded-2xl border border-border bg-card p-4">
+            <div className="mt-3">
               <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
             </div>
-          )}
-        </aside>
+          </aside>
+        </>
+      )}
 
-
+      <div className="mx-auto flex w-full max-w-[1280px] gap-6 px-4 py-8 md:px-8">
         <main className="min-w-0 flex-1">
           {view === "compare" && (
             <CompareView
