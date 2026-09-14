@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, LayoutGrid, Heart, Scale, SlidersHorizontal, X } from "lucide-react";
+import { Search, LayoutGrid, Heart, Scale, SlidersHorizontal, X, Package } from "lucide-react";
 import { getBrand, clearBrand } from "@/lib/brand-session";
 import {
   compareStore,
@@ -18,11 +18,12 @@ import FilterSidebar from "@/components/dashboard/FilterSidebar";
 import ProductCard from "@/components/dashboard/ProductCard";
 import ProductDialog from "@/components/dashboard/ProductDialog";
 import CompareView from "@/components/dashboard/CompareView";
+import SachetCatalogue from "@/components/dashboard/SachetCatalogue";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
 
-type View = "catalogue" | "shortlist" | "compare";
+type View = "catalogue" | "sachets" | "shortlist" | "compare";
 const PAGE = 24;
 
 export default function Dashboard() {
@@ -115,7 +116,8 @@ export default function Dashboard() {
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   const navItems: { id: View; label: string; icon: typeof LayoutGrid; count?: number }[] = [
-    { id: "catalogue", label: "Explore catalogue", icon: LayoutGrid },
+    { id: "catalogue", label: "Bottles & jars", icon: LayoutGrid },
+    { id: "sachets", label: "Sachets & pouches", icon: Package },
     { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
     { id: "compare", label: "Compare", icon: Scale, count: compare.length },
   ];
@@ -158,9 +160,11 @@ export default function Dashboard() {
         ))}
       </nav>
 
-      <div className="mt-7">
-        <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
-      </div>
+      {view !== "sachets" && (
+        <div className="mt-7">
+          <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
+        </div>
+      )}
     </>
   );
 
@@ -264,6 +268,8 @@ export default function Dashboard() {
         </aside>
 
         <main className="min-w-0 px-5 pb-24 pt-7 md:px-8">
+          {view === "sachets" && <SachetCatalogue />}
+
           {view === "compare" && (
             <CompareView
               items={compareProducts}
