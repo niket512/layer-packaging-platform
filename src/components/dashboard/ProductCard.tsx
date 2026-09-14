@@ -75,19 +75,17 @@ export default function ProductCard({ product, saved, compared, onToggleSave, on
         </div>
       </div>
 
-      <div className="mt-2.5 flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <button
-            onClick={onOpen}
-            className="block truncate text-left font-display text-[17px] leading-tight text-foreground transition-colors hover:text-primary"
-          >
-            {product.name}
-          </button>
-          <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{meta || product.manufacturer}</p>
-        </div>
-        <span className="shrink-0 pt-1 text-[10px] font-semibold uppercase tracking-[1px] text-primary">
+      <div className="mt-2.5">
+        <span className="block text-[10px] font-semibold uppercase tracking-[1.2px] text-primary">
           {product.manufacturer}
         </span>
+        <button
+          onClick={onOpen}
+          className="mt-0.5 block w-full truncate text-left font-display text-[17px] leading-tight text-foreground transition-colors hover:text-primary"
+        >
+          {product.name}
+        </button>
+        <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{meta}</p>
       </div>
     </article>
   );
