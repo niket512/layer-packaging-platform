@@ -35,7 +35,7 @@ export default function Dashboard() {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [page, setPage] = useState(0);
   const [saved, setSaved] = useState<string[]>([]);
-  const [compare, setCompare] = useState<string[]>([]);
+  
   const [detail, setDetail] = useState<Product | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [shapeGrid, setShapeGrid] = useState(false);
