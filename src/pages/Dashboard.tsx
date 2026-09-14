@@ -11,6 +11,7 @@ import {
   products,
   shortlistStore,
   taxonomy,
+  thumbUrl,
   type Filters,
   type Product,
 } from "@/lib/catalogue";
@@ -90,7 +91,7 @@ export default function Dashboard() {
   const designImages = useMemo(() => {
     const map: Record<string, string> = {};
     for (const p of products) {
-      if (p.design && p.image && !map[p.design]) map[p.design] = p.image;
+      if (p.design && p.image && !map[p.design]) map[p.design] = thumbUrl(p.image);
     }
     return map;
   }, []);

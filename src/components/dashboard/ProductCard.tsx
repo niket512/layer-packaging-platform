@@ -1,5 +1,6 @@
 import { Heart, AlertTriangle } from "lucide-react";
 import { designName, type Product } from "@/lib/catalogue";
+import { thumbUrl } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -27,10 +28,12 @@ export default function ProductCard({ product, saved, compared, onToggleSave, on
         >
           {product.image ? (
             <img
-              src={product.image}
+              src={thumbUrl(product.image)}
               alt={`${product.name} by ${product.manufacturer}`}
               loading="lazy"
               decoding="async"
+              width={400}
+              height={400}
               className="h-full w-full object-contain"
             />
           ) : (

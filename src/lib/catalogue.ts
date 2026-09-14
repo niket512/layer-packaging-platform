@@ -193,3 +193,6 @@ export const compareStore = {
   get: () => read(COMPARE_KEY),
   set: (ids: string[]) => write(COMPARE_KEY, ids),
 };
+
+export const thumbUrl = (image: string) =>
+  image ? image.replace("/catalogue/", "/catalogue/thumb/").replace(/\.jpg$/, ".webp") : image;
