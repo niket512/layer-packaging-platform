@@ -72,7 +72,15 @@ export default function Dashboard() {
     () => taxonomy.filter((t) => !filters.group || t.group === filters.group),
     [filters.group],
   );
-  const visibleDesigns = showAllDesigns ? designFamilies : designFamilies.slice(0, 8);
+  const visibleDesigns = showAllDesigns ? designFamilies : designFamilies.slice(0, 6);
+
+  const designImages = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const p of products) {
+      if (p.design && p.image && !map[p.design]) map[p.design] = p.image;
+    }
+    return map;
+  }, []);
 
   const activeChips = [
     filters.material && { label: filters.material, clear: () => set({ material: "" }) },
