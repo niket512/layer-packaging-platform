@@ -82,6 +82,8 @@ export default function Dashboard() {
     return map;
   }, []);
 
+  const makerCount = useMemo(() => new Set(products.map((p) => p.manufacturer)).size, []);
+
   const activeChips = [
     filters.material && { label: filters.material, clear: () => set({ material: "" }) },
     filters.manufacturer && { label: filters.manufacturer, clear: () => set({ manufacturer: "" }) },
@@ -96,7 +98,7 @@ export default function Dashboard() {
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   const navItems: { id: View; label: string; icon: typeof LayoutGrid; count?: number }[] = [
-    { id: "catalogue", label: "Explore", icon: LayoutGrid },
+    { id: "catalogue", label: "Explore catalogue", icon: LayoutGrid },
     { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
     { id: "compare", label: "Compare", icon: Scale, count: compare.length },
     { id: "sources", label: "Sources", icon: FileText },
@@ -111,61 +113,78 @@ export default function Dashboard() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const showSidebar = view === "catalogue";
+  const rail = (
+    <>
+      <nav className="grid gap-1">
+        {navItems.map((n) => (
+          <button
+            key={n.id}
+            onClick={() => {
+              setView(n.id);
+              setShowFilters(false);
+            }}
+            aria-pressed={view === n.id}
+            className={cn(
+              "flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-[13px] transition-colors",
+              view === n.id
+                ? "bg-secondary font-semibold text-primary"
+                : "text-foreground hover:bg-secondary/60",
+            )}
+          >
+            <n.icon className="h-4 w-4" />
+            <span className="truncate">{n.label}</span>
+            {typeof n.count === "number" && n.count > 0 && (
+              <span className="ml-auto text-[12px] text-muted-foreground">{n.count}</span>
+            )}
+          </button>
+        ))}
+      </nav>
+
+      <div className="mt-7">
+        <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
+      </div>
+    </>
+  );
 
   return (
     <div className="theme-dashboard min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-border bg-card px-4 md:px-6">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Snaplogo" className="h-6 w-6 object-contain" />
-            <span className="font-heading text-[17px] font-bold tracking-tight text-foreground">Snaplogo</span>
+      <header className="sticky top-0 z-30 flex h-[72px] items-center justify-between gap-5 border-b border-border bg-card px-5 md:px-8">
+        <div className="flex min-w-0 items-center gap-3">
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src={logo} alt="Snaplogo" className="h-7 w-7 object-contain" />
+            <span className="font-heading text-[22px] font-bold tracking-tight text-foreground">Snaplogo</span>
           </Link>
-          <span className="hidden border-l border-border pl-2.5 text-[12px] text-muted-foreground sm:block">
+          <span className="hidden border-l border-border pl-4 text-[13px] text-muted-foreground sm:block">
             Packaging discovery
           </span>
         </div>
 
-        <nav className="flex min-w-0 items-center gap-1 overflow-x-auto">
-          {navItems.map((n) => (
-            <button
-              key={n.id}
-              onClick={() => {
-                setView(n.id);
-                setShowFilters(false);
-              }}
-              aria-pressed={view === n.id}
-              className={cn(
-                "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-semibold transition-colors",
-                view === n.id
-                  ? "bg-secondary text-primary"
-                  : "text-muted-foreground hover:text-primary",
-              )}
-            >
-              <n.icon className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{n.label}</span>
-              {typeof n.count === "number" && n.count > 0 && <span className="opacity-70">{n.count}</span>}
-            </button>
-          ))}
-        </nav>
-
         <div className="flex shrink-0 items-center gap-3">
-          <span className="hidden text-[12px] text-muted-foreground lg:block">{brand}</span>
+          <button
+            onClick={() => setShowFilters(true)}
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[12.5px] text-foreground lg:hidden"
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" /> Menu
+          </button>
+          <span className="hidden text-[13px] text-muted-foreground sm:block">{brand}</span>
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-secondary text-[12px] font-bold uppercase text-primary">
+            {(brand ?? "?").slice(0, 2)}
+          </span>
           <button
             onClick={() => {
               clearBrand();
               navigate("/signin", { replace: true });
             }}
-            className="inline-flex h-8 items-center rounded-lg border border-border px-3 text-[12px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+            className="inline-flex h-9 items-center rounded-lg border border-border px-3.5 text-[12.5px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
           >
             Sign out
           </button>
         </div>
       </header>
 
-      {showFilters && showSidebar && (
+      {showFilters && (
         <>
-          <div className="fixed inset-0 z-40 bg-background/70 lg:hidden" onClick={() => setShowFilters(false)} />
+          <div className="fixed inset-0 z-40 bg-foreground/30 lg:hidden" onClick={() => setShowFilters(false)} />
           <aside className="fixed right-0 top-0 z-50 h-full w-[min(92vw,320px)] overflow-y-auto border-l border-border bg-card p-5 lg:hidden">
             <button
               onClick={() => setShowFilters(false)}
@@ -173,23 +192,17 @@ export default function Dashboard() {
             >
               Close <X className="h-4 w-4" />
             </button>
-            <div className="mt-3">
-              <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
-            </div>
+            <div className="mt-3">{rail}</div>
           </aside>
         </>
       )}
 
-      <div className={cn("grid", showSidebar && "lg:grid-cols-[230px_minmax(0,1fr)]")}>
-        {showSidebar && (
-          <aside className="hidden border-r border-border bg-card/40 p-5 lg:block">
-            <div className="sticky top-20">
-              <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
-            </div>
-          </aside>
-        )}
+      <div className="mx-auto grid max-w-[1600px] lg:grid-cols-[242px_minmax(0,1fr)]">
+        <aside className="hidden border-r border-border bg-surface-raised px-5 py-6 lg:block">
+          <div className="sticky top-[88px]">{rail}</div>
+        </aside>
 
-        <main className="min-w-0 px-4 py-6 md:px-6">
+        <main className="min-w-0 px-5 py-7 md:px-8">
           {view === "compare" && (
             <CompareView
               items={compareProducts}
@@ -207,63 +220,76 @@ export default function Dashboard() {
             <>
               {view === "catalogue" ? (
                 <section>
-                  <p className="text-[11px] font-semibold uppercase tracking-[1.4px] text-muted-foreground">
-                    {products.length} catalogue groups · {new Set(products.map((p) => p.manufacturer)).size}{" "}
-                    manufacturers · {sources.length} pdfs
-                  </p>
-                  <h1 className="mt-2 font-heading text-[30px] font-semibold leading-[1.1] tracking-tight text-foreground">
-                    Find the right pack
-                  </h1>
-                  <p className="mt-2 text-[13px] text-muted-foreground">
-                    Browse real supplier designs. Filter the details and save your favourites
-                  </p>
+                  <div className="flex flex-wrap items-end justify-between gap-6">
+                    <div className="min-w-0">
+                      <h1 className="font-heading text-[34px] font-semibold leading-[1.12] tracking-tight text-foreground md:text-[38px]">
+                        Find the right pack
+                      </h1>
+                      <p className="mt-2 max-w-[530px] text-[14px] text-muted-foreground">
+                        Browse real supplier designs, filter the details and save a shortlist you can share
+                      </p>
+                    </div>
+                    <div className="flex gap-7">
+                      {[
+                        { n: products.length, l: "Catalogue groups" },
+                        { n: makerCount, l: "Manufacturers" },
+                        { n: sources.length, l: "Source PDFs" },
+                      ].map((s) => (
+                        <div key={s.l} className="min-w-[55px]">
+                          <strong className="block text-[26px] font-medium leading-tight tracking-tight text-foreground">
+                            {s.n}
+                          </strong>
+                          <span className="text-[11px] text-muted-foreground">{s.l}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                  <div className="relative mt-4">
-                    <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <div className="relative mt-5">
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
                     <input
                       value={filters.query}
                       onChange={(e) => set({ query: e.target.value })}
                       type="search"
                       aria-label="Search products"
                       placeholder="Search bottle names, product codes or features..."
-                      className="h-11 w-full rounded-lg border border-border bg-card pl-10 pr-4 text-[13px] outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                      className="h-[50px] w-full rounded-[10px] border border-border bg-card pl-11 pr-4 text-[14px] outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
                     />
                   </div>
 
-                  <div className="mt-5 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[12px] text-muted-foreground">Browse by design</span>
-                    <div className="flex items-center gap-1.5">
+                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap gap-1.5">
                       {[
                         { id: "Containers", label: "Containers" },
                         { id: "Components", label: "Components" },
-                        { id: "", label: "All" },
+                        { id: "", label: "All products" },
                       ].map((g) => (
                         <button
                           key={g.label}
                           onClick={() => set({ group: g.id, designs: [] })}
                           aria-pressed={filters.group === g.id}
                           className={cn(
-                            "h-7 rounded-full border px-3 text-[11.5px] font-semibold transition-colors",
+                            "h-8 rounded-lg border px-3 text-[12px] font-medium transition-colors",
                             filters.group === g.id
-                              ? "border-primary bg-secondary text-primary"
-                              : "border-border bg-card text-muted-foreground hover:border-primary",
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border bg-transparent text-foreground hover:border-primary/50",
                           )}
                         >
                           {g.label}
                         </button>
                       ))}
-                      {designFamilies.length > 6 && (
-                        <button
-                          onClick={() => setShowAllDesigns((v) => !v)}
-                          className="rounded-full border border-border px-3 py-1 text-[11.5px] text-foreground hover:text-primary"
-                        >
-                          {showAllDesigns ? "Fewer ↑" : "All families ↓"}
-                        </button>
-                      )}
                     </div>
+                    {designFamilies.length > 6 && (
+                      <button
+                        onClick={() => setShowAllDesigns((v) => !v)}
+                        className="rounded-lg border border-border bg-card px-3 py-1.5 text-[12px] text-foreground hover:border-primary/50"
+                      >
+                        {showAllDesigns ? "Fewer families ↑" : `All ${designFamilies.length} design families ↓`}
+                      </button>
+                    )}
                   </div>
 
-                  <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+                  <div className="mt-3 grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-6">
                     {visibleDesigns.map((d) => {
                       const on = filters.designs.includes(d.id);
                       return (
@@ -276,11 +302,11 @@ export default function Dashboard() {
                             })
                           }
                           className={cn(
-                            "flex min-h-[104px] flex-col items-center gap-1.5 rounded-lg border bg-card p-2 text-center transition-colors",
-                            on ? "border-primary bg-secondary" : "border-border hover:border-primary/60",
+                            "flex min-h-[132px] flex-col items-center gap-1.5 rounded-lg border bg-card px-1.5 py-2.5 text-center transition-colors",
+                            on ? "border-primary ring-1 ring-inset ring-primary" : "border-border hover:border-primary/50",
                           )}
                         >
-                          <span className="image-plate grid h-[52px] w-[46px] place-items-center overflow-hidden rounded">
+                          <span className="image-plate grid h-[68px] w-[65px] place-items-center overflow-hidden rounded">
                             {designImages[d.id] ? (
                               <img
                                 src={designImages[d.id]}
@@ -291,18 +317,19 @@ export default function Dashboard() {
                               />
                             ) : null}
                           </span>
-                          <span className="text-[11px] leading-tight text-foreground">{d.name}</span>
-                          <span className="text-[11px] text-muted-foreground">{d.count} groups</span>
+                          <span className="text-[11px] leading-[1.3] text-foreground">{d.name}</span>
+                          <span className="text-[10px] text-muted-foreground">{d.count} groups</span>
                         </button>
                       );
                     })}
                   </div>
                 </section>
               ) : (
-                <section className="rounded-xl border border-border bg-card p-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[1.4px] text-primary">Saved for later</p>
-                  <h1 className="mt-1 font-heading text-[24px] font-semibold text-foreground">Your shortlist</h1>
-                  <p className="mt-1 text-[12px] text-muted-foreground">
+                <section>
+                  <h1 className="font-heading text-[30px] font-semibold tracking-tight text-foreground">
+                    Your shortlist
+                  </h1>
+                  <p className="mt-1.5 text-[13px] text-muted-foreground">
                     {savedProducts.length} saved {savedProducts.length === 1 ? "product" : "products"} · stored in this
                     browser
                   </p>
@@ -310,12 +337,12 @@ export default function Dashboard() {
               )}
 
               {view === "catalogue" && activeChips.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
+                <div className="mt-4 flex flex-wrap gap-1.5">
                   {activeChips.map((c) => (
                     <button
                       key={c.label}
                       onClick={c.clear}
-                      className="inline-flex h-7 items-center gap-1.5 rounded-full bg-secondary px-2.5 text-[11.5px] text-secondary-foreground hover:text-primary"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-[11px] text-secondary-foreground hover:text-primary"
                     >
                       {c.label} <X className="h-3 w-3" />
                     </button>
@@ -323,50 +350,43 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-2">
-                <p className="text-[12.5px] text-muted-foreground" aria-live="polite">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-[13px] text-muted-foreground" aria-live="polite">
                   {view === "catalogue" ? (
                     <>
-                      <strong className="text-foreground">{results.length}</strong> matching catalogue groups
+                      <strong className="font-semibold text-foreground">{results.length}</strong> matching catalogue
+                      groups
                     </>
                   ) : (
                     `${savedProducts.length} saved`
                   )}
                 </p>
                 {view === "catalogue" && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setShowFilters(true)}
-                      className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-card px-3 text-[12.5px] text-foreground transition-colors hover:border-primary lg:hidden"
+                  <label className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+                    Sort
+                    <select
+                      value={filters.sort}
+                      onChange={(e) => set({ sort: e.target.value as Filters["sort"] })}
+                      className="h-9 rounded-lg border border-border bg-card px-2.5 text-[12px] text-foreground outline-none focus:border-primary"
                     >
-                      <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
-                    </button>
-                    <label className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
-                      Sort
-                      <select
-                        value={filters.sort}
-                        onChange={(e) => set({ sort: e.target.value as Filters["sort"] })}
-                        className="h-9 rounded-lg border border-border bg-card px-2.5 text-[12px] text-foreground outline-none focus:border-primary"
-                      >
-                        <option value="featured">Catalogue order</option>
-                        <option value="name">Name A–Z</option>
-                        <option value="capacity">Capacity ↑</option>
-                        <option value="maker">Manufacturer</option>
-                      </select>
-                    </label>
-                  </div>
+                      <option value="featured">Catalogue order</option>
+                      <option value="name">Name A–Z</option>
+                      <option value="capacity">Capacity ↑</option>
+                      <option value="maker">Manufacturer</option>
+                    </select>
+                  </label>
                 )}
               </div>
 
               {gridProducts.length === 0 ? (
-                <div className="mt-4 rounded-xl border border-dashed border-border bg-card p-10 text-center">
-                  <p className="font-heading text-[15px] font-semibold text-foreground">No products match yet</p>
-                  <p className="mt-1.5 text-[12.5px] text-muted-foreground">
+                <div className="mt-3 rounded-xl border border-dashed border-border bg-card p-11 text-center">
+                  <h3 className="font-heading text-[19px] font-semibold text-foreground">No products match yet</h3>
+                  <p className="mt-2 text-[13px] text-muted-foreground">
                     {view === "shortlist" ? "Save products from the catalogue" : "Try clearing a filter or two"}
                   </p>
                 </div>
               ) : (
-                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                   {gridProducts.map((p) => (
                     <ProductCard
                       key={p.id}
@@ -382,11 +402,11 @@ export default function Dashboard() {
               )}
 
               {view === "catalogue" && results.length > PAGE && (
-                <div className="mt-5 flex items-center justify-between gap-3 text-[12.5px]">
+                <div className="mt-6 flex items-center justify-between gap-3 text-[12.5px]">
                   <button
                     onClick={() => goPage(page - 1)}
                     disabled={page === 0}
-                    className="h-9 rounded-lg border border-border bg-card px-3 font-semibold text-foreground transition-colors hover:border-primary disabled:opacity-40"
+                    className="h-9 rounded-lg border border-border bg-card px-3.5 font-semibold text-foreground transition-colors hover:border-primary disabled:opacity-45"
                   >
                     ← Previous
                   </button>
@@ -396,7 +416,7 @@ export default function Dashboard() {
                   <button
                     onClick={() => goPage(page + 1)}
                     disabled={page >= totalPages - 1}
-                    className="h-9 rounded-lg border border-border bg-card px-3 font-semibold text-foreground transition-colors hover:border-primary disabled:opacity-40"
+                    className="h-9 rounded-lg border border-border bg-card px-3.5 font-semibold text-foreground transition-colors hover:border-primary disabled:opacity-45"
                   >
                     Next →
                   </button>
@@ -405,7 +425,7 @@ export default function Dashboard() {
             </>
           )}
 
-          <footer className="mt-8 flex flex-wrap justify-between gap-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
+          <footer className="mt-8 flex flex-wrap justify-between gap-4 border-t border-border pt-4 text-[11px] text-muted-foreground">
             <span>Source-linked catalogue · design classifications are visual interpretations</span>
             <span>Shortlist saved in this browser</span>
           </footer>
@@ -413,23 +433,23 @@ export default function Dashboard() {
       </div>
 
       {compare.length > 0 && view !== "compare" && (
-        <div className="fixed inset-x-0 bottom-4 z-30 mx-auto flex w-[min(92%,520px)] items-center justify-between gap-3 rounded-full border border-border bg-card px-4 py-2.5 shadow-lg">
-          <span className="text-[12.5px] text-muted-foreground">{compare.length} selected to compare</span>
-          <div className="flex gap-2">
+        <div className="fixed inset-x-0 bottom-4 z-30 mx-auto flex w-[min(92%,540px)] items-center justify-between gap-3 rounded-[10px] bg-foreground px-4 py-3 text-background shadow-lg">
+          <span className="text-[12.5px]">{compare.length} selected to compare</span>
+          <div className="flex items-center gap-3">
             <button
               onClick={() => {
                 setCompare([]);
                 compareStore.set([]);
               }}
-              className="h-8 rounded-full border border-border px-3 text-[12px] font-semibold"
+              className="text-[12px] underline"
             >
               Clear
             </button>
             <button
               onClick={() => setView("compare")}
-              className="h-8 rounded-full bg-primary px-4 text-[12px] font-semibold text-primary-foreground"
+              className="rounded-lg bg-[hsl(78_75%_76%)] px-3 py-1.5 text-[12px] font-semibold text-foreground"
             >
-              Compare
+              Compare selected →
             </button>
           </div>
         </div>
