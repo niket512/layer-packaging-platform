@@ -46,8 +46,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     setSaved(shortlistStore.get());
-    setCompare(compareStore.get());
   }, []);
+
 
   const set = (patch: Partial<Filters>) => {
     setFilters((f) => ({ ...f, ...patch }));
