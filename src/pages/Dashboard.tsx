@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, LayoutGrid, Heart, Scale, FileText, SlidersHorizontal, X } from "lucide-react";
+import { Search, LayoutGrid, Heart, Scale, SlidersHorizontal, X } from "lucide-react";
 import { getBrand, clearBrand } from "@/lib/brand-session";
 import {
   compareStore,
@@ -18,11 +18,10 @@ import FilterSidebar from "@/components/dashboard/FilterSidebar";
 import ProductCard from "@/components/dashboard/ProductCard";
 import ProductDialog from "@/components/dashboard/ProductDialog";
 import CompareView from "@/components/dashboard/CompareView";
-import SourcesView from "@/components/dashboard/SourcesView";
 import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
 
-type View = "catalogue" | "shortlist" | "compare" | "sources";
+type View = "catalogue" | "shortlist" | "compare";
 const PAGE = 24;
 
 export default function Dashboard() {
@@ -97,7 +96,6 @@ export default function Dashboard() {
     { id: "catalogue", label: "Explore catalogue", icon: LayoutGrid },
     { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
     { id: "compare", label: "Compare", icon: Scale, count: compare.length },
-    { id: "sources", label: "Sources", icon: FileText },
   ];
 
   const start = page * PAGE;
@@ -209,8 +207,6 @@ export default function Dashboard() {
               }}
             />
           )}
-
-          {view === "sources" && <SourcesView />}
 
           {(view === "catalogue" || view === "shortlist") && (
             <>
