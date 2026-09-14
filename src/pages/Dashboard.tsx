@@ -234,7 +234,6 @@ export default function Dashboard() {
                     <div className="flex flex-wrap gap-1.5">
                       {[
                         { id: "Containers", label: "Containers" },
-                        { id: "Components", label: "Components" },
                         { id: "", label: "All products" },
                       ].map((g) => (
                         <button
