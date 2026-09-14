@@ -65,7 +65,7 @@ const data = raw as unknown as {
   references: Reference[];
 };
 
-export const products = data.products.filter((p) => p.material?.toUpperCase() !== "PET");
+export const products = data.products.filter((p) => p.material?.toLowerCase() === "hdpe");
 export const taxonomy = data.taxonomy;
 
 const designNames: Record<string, string> = Object.fromEntries(
