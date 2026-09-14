@@ -67,6 +67,11 @@ const data = raw as unknown as {
 
 export const products = data.products;
 export const taxonomy = data.taxonomy;
+
+const designNames: Record<string, string> = Object.fromEntries(
+  (data.taxonomy as DesignFamily[]).map((t) => [t.id, t.name]),
+);
+export const designName = (id: string) => designNames[id] ?? id;
 export const sources = data.sources;
 export const references = data.references;
 
