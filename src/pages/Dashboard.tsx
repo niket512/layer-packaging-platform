@@ -109,7 +109,6 @@ export default function Dashboard() {
     filters.feature && { label: `Body: ${filters.feature}`, clear: () => set({ feature: "" }) },
     filters.shoulder && { label: `Shoulder: ${filters.shoulder}`, clear: () => set({ shoulder: "" }) },
     filters.query.trim() && { label: `Search: ${filters.query.trim()}`, clear: () => set({ query: "" }) },
-    filters.reviewOnly && { label: "Needs confirmation", clear: () => set({ reviewOnly: false }) },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   const navItems: { id: View; label: string; icon: typeof LayoutGrid; count?: number }[] = [

@@ -114,7 +114,6 @@ export type Filters = {
   closure: string;
   feature: string;
   source: string;
-  reviewOnly: boolean;
   sort: "featured" | "name" | "capacity" | "maker";
 };
 
@@ -129,7 +128,6 @@ export const emptyFilters: Filters = {
   closure: "",
   feature: "",
   source: "",
-  reviewOnly: false,
   sort: "featured",
 };
 
@@ -145,7 +143,6 @@ export function filterProducts(f: Filters): Product[] {
     if (f.feature && !(p.tags || []).includes(f.feature)) return false;
     if (f.closure && !(p.tags || []).includes(f.closure)) return false;
     if (f.source && p.file_key !== f.source) return false;
-    if (f.reviewOnly && !p.review_required) return false;
     if (q) {
       const hay = [p.name, p.codes, p.manufacturer, p.material, p.size_label, (p.tags || []).join(" ")]
         .join(" ")

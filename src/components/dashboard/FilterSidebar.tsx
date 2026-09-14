@@ -24,9 +24,7 @@ function Field({ label, children, note }: { label: string; children: React.React
 }
 
 export default function FilterSidebar({ filters, set, reset }: Props) {
-  const [more, setMore] = useState(
-    Boolean(filters.shoulder || filters.reviewOnly),
-  );
+  const [more, setMore] = useState(Boolean(filters.shoulder));
 
   return (
     <div className="space-y-4">
@@ -89,16 +87,6 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
               ))}
             </select>
           </Field>
-
-          <label className="flex items-center gap-2 text-[13px] text-foreground">
-            <input
-              type="checkbox"
-              checked={filters.reviewOnly}
-              onChange={(e) => set({ reviewOnly: e.target.checked })}
-              className="h-4 w-4 accent-[hsl(var(--primary))]"
-            />
-            Show entries needing confirmation
-          </label>
         </div>
       )}
 
