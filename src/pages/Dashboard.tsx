@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, LayoutGrid, Heart, Scale, SlidersHorizontal, X, Package } from "lucide-react";
+import { Search, LayoutGrid, Heart, SlidersHorizontal, X, Package } from "lucide-react";
 import { getBrand, clearBrand } from "@/lib/brand-session";
 import {
-  compareStore,
   designName,
   emptyFilters,
   filterProducts,
@@ -18,13 +17,13 @@ import {
 import FilterSidebar from "@/components/dashboard/FilterSidebar";
 import ProductCard from "@/components/dashboard/ProductCard";
 import ProductDialog from "@/components/dashboard/ProductDialog";
-import CompareView from "@/components/dashboard/CompareView";
 import SachetCatalogue from "@/components/dashboard/SachetCatalogue";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
 
-type View = "catalogue" | "sachets" | "shortlist" | "compare";
+type View = "catalogue" | "sachets" | "shortlist";
+
 const PAGE = 24;
 
 export default function Dashboard() {
