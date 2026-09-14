@@ -399,13 +399,12 @@ export default function Dashboard() {
                       key={p.id}
                       product={p}
                       saved={saved.includes(p.id)}
-                      compared={compare.includes(p.id)}
                       onToggleSave={() => toggleSave(p.id)}
-                      onToggleCompare={() => toggleCompare(p.id)}
                       onOpen={() => setDetail(p)}
                     />
                   ))}
                 </div>
+
               )}
 
               {view === "catalogue" && results.length > PAGE && (
