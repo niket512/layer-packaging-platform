@@ -1,5 +1,8 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import type { Filters } from "@/lib/catalogue";
-import { capacities, featureTags, shoulderTags } from "@/lib/catalogue";
+import { capacities, closureTags, featureTags, shoulderTags } from "@/lib/catalogue";
+import { cn } from "@/lib/utils";
 
 type Props = {
   filters: Filters;
@@ -21,6 +24,10 @@ function Field({ label, children, note }: { label: string; children: React.React
 }
 
 export default function FilterSidebar({ filters, set, reset }: Props) {
+  const [more, setMore] = useState(
+    Boolean(filters.shoulder || filters.reviewOnly),
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -30,42 +37,70 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
         </button>
       </div>
 
-      <Field label="Listed capacity" note="Exact printed volumes. Ranges appear under all capacities">
+      <Field label="Capacity" note="Listed volumes printed on the catalogue">
         <select className={selectClass} value={filters.capacity} onChange={(e) => set({ capacity: e.target.value })}>
           <option value="">All capacities</option>
           {capacities.map((c) => (
-            <option key={c} value={c}>{c} ml</option>
+            <option key={c} value={c}>{c.toLocaleString()} ml</option>
           ))}
         </select>
       </Field>
 
-      <Field label="Shoulder">
-        <select className={selectClass} value={filters.shoulder} onChange={(e) => set({ shoulder: e.target.value })}>
-          <option value="">Any shoulder</option>
-          {shoulderTags.map((t) => (
+      <Field label="Material">
+        <select className={selectClass} value="HDPE" disabled>
+          <option value="HDPE">HDPE</option>
+        </select>
+      </Field>
+
+      <Field label="Closure type">
+        <select className={selectClass} value={filters.closure} onChange={(e) => set({ closure: e.target.value })}>
+          <option value="">Any closure</option>
+          {closureTags.map((t) => (
             <option key={t} value={t}>{t}</option>
           ))}
         </select>
       </Field>
 
-      <Field label="Closure or body feature">
+      <Field label="Body feature">
         <select className={selectClass} value={filters.feature} onChange={(e) => set({ feature: e.target.value })}>
-          <option value="">Any feature</option>
+          <option value="">Any body feature</option>
           {featureTags.map((t) => (
             <option key={t} value={t}>{t}</option>
           ))}
         </select>
       </Field>
 
-      <label className="flex items-center gap-2 text-[13px] text-foreground">
-        <input
-          type="checkbox"
-          checked={filters.reviewOnly}
-          onChange={(e) => set({ reviewOnly: e.target.checked })}
-          className="h-4 w-4 accent-[hsl(var(--primary))]"
-        />
-        Show entries needing confirmation
-      </label>
+      <button
+        onClick={() => setMore((v) => !v)}
+        aria-expanded={more}
+        className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-3 py-2.5 text-[12.5px] font-semibold text-foreground transition-colors hover:border-primary/60"
+      >
+        More filters
+        <ChevronDown className={cn("h-4 w-4 transition-transform", more && "rotate-180")} />
+      </button>
+
+      {more && (
+        <div className="space-y-4">
+          <Field label="Shoulder or neck">
+            <select className={selectClass} value={filters.shoulder} onChange={(e) => set({ shoulder: e.target.value })}>
+              <option value="">Any shoulder or neck</option>
+              {shoulderTags.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </Field>
+
+          <label className="flex items-center gap-2 text-[13px] text-foreground">
+            <input
+              type="checkbox"
+              checked={filters.reviewOnly}
+              onChange={(e) => set({ reviewOnly: e.target.checked })}
+              className="h-4 w-4 accent-[hsl(var(--primary))]"
+            />
+            Show entries needing confirmation
+          </label>
+        </div>
+      )}
 
       <p className="rounded-xl bg-muted p-3 text-[11px] leading-relaxed text-muted-foreground">
         Specifications come from supplied catalogues. A listed product is subject to supplier confirmation
