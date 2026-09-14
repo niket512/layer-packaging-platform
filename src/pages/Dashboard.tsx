@@ -264,7 +264,7 @@ export default function Dashboard() {
                             })
                           }
                           className={cn(
-                            "h-8 rounded-full border px-3 text-[12px] transition-colors",
+                            "h-7 rounded-full border px-3 text-[11.5px] transition-colors",
                             on
                               ? "border-primary bg-secondary font-semibold text-primary"
                               : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary",
