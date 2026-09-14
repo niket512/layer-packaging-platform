@@ -477,7 +477,7 @@ export default function Dashboard() {
               </button>
               <button
                 onClick={() => setView("compare")}
-                className="rounded-lg bg-[hsl(78_75%_76%)] px-3 py-1.5 text-[12px] font-semibold text-foreground"
+                className="rounded-lg bg-primary px-3 py-1.5 text-[12px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Compare {compareProducts.length} →
               </button>

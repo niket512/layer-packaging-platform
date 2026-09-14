@@ -54,38 +54,38 @@
     --text-muted: 215 16% 47%;
   }
 
-  /* Light paper workspace theme — used by the catalogue dashboard */
+  /* Snaplogo workspace theme — aligned with the landing page */
   .theme-dashboard {
-    --background: 70 18% 96%;             /* paper */
-    --foreground: 165 41% 16%;            /* deep green ink */
+    --background: 210 33% 97%;            /* cool gray workspace */
+    --foreground: 222 47% 11%;            /* slate ink */
 
     --card: 0 0% 100%;
-    --card-foreground: 165 41% 16%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 165 41% 16%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 160 46% 25%;               /* deep green */
+    --primary: 24 95% 53%;                /* Snaplogo orange */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 97 25% 91%;              /* soft green wash */
-    --secondary-foreground: 160 46% 25%;
+    --secondary: 24 100% 96%;             /* pale orange */
+    --secondary-foreground: 24 95% 40%;
 
-    --muted: 100 8% 94%;
-    --muted-foreground: 160 5% 44%;
+    --muted: 210 33% 97%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 97 25% 91%;
-    --accent-foreground: 160 46% 25%;
+    --accent: 24 100% 96%;
+    --accent-foreground: 24 95% 40%;
 
-    --border: 120 12% 89%;
-    --input: 120 12% 89%;
-    --ring: 105 34% 62%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 24 95% 40%;
 
     --surface: 0 0% 100%;
-    --surface-raised: 70 20% 98%;
-    --text-heading: 165 41% 16%;
-    --text-body: 165 20% 25%;
-    --text-muted: 160 5% 44%;
+    --surface-raised: 0 0% 100%;
+    --text-heading: 222 47% 11%;
+    --text-body: 215 25% 27%;
+    --text-muted: 215 16% 47%;
   }
 }
 
@@ -113,8 +113,8 @@
   .label-eyebrow {
     @apply text-xs font-semibold uppercase tracking-[1.5px] text-primary;
   }
-  /* Light plate behind product photography so cut-outs read on dark surfaces */
-  .image-plate { background-color: hsl(84 12% 94%); }
+  /* Neutral plate keeps catalogue cut-outs crisp within the Snaplogo palette */
+  .image-plate { background-color: hsl(var(--muted)); }
   .image-plate img { mix-blend-mode: multiply; }
 }
 
