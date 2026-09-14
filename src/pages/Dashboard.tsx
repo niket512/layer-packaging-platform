@@ -72,7 +72,10 @@ export default function Dashboard() {
   const compareProducts = compare.map(productById).filter(Boolean) as Product[];
 
   const designFamilies = useMemo(
-    () => taxonomy.filter((t) => !filters.group || t.group === filters.group),
+    () =>
+      taxonomy.filter(
+        (t) => (!filters.group || t.group === filters.group) && t.id !== "unknown-body",
+      ),
     [filters.group],
   );
 
