@@ -1,11 +1,9 @@
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
 import BrandsDeepDiveSection from "@/components/landing/BrandsDeepDiveSection";
-import StatsBand from "@/components/landing/StatsBand";
 import ManufacturersDeepDiveSection from "@/components/landing/ManufacturersDeepDiveSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import WhatWeOfferSection from "@/components/landing/WhatWeOfferSection";
-import DashboardPreviewSection from "@/components/landing/DashboardPreviewSection";
 import CTASection from "@/components/landing/CTASection";
 import ComparisonSection from "@/components/landing/ComparisonSection";
 import ReviewsSection from "@/components/landing/ReviewsSection";
@@ -21,13 +19,11 @@ export default function Index() {
       <ScrollProgress />
       <Header />
       <HeroSection />
-      <StatsBand />
       <SectionNav />
       <BrandsDeepDiveSection />
       <ManufacturersDeepDiveSection />
       <HowItWorksSection />
       <WhatWeOfferSection />
-      <DashboardPreviewSection />
       <CTASection />
       <ComparisonSection />
       <ReviewsSection />
@@ -37,4 +33,5 @@ export default function Index() {
     </div>
   );
 }
+
 
