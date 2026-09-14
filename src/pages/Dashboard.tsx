@@ -240,7 +240,7 @@ export default function Dashboard() {
                         onClick={() => set({ group: g.id, designs: [] })}
                         aria-pressed={filters.group === g.id}
                         className={cn(
-                          "h-9 rounded-full border px-4 text-[12px] font-semibold transition-colors",
+                          "h-8 rounded-full border px-3.5 text-[11.5px] font-semibold transition-colors",
                           filters.group === g.id
                             ? "border-primary bg-secondary text-primary"
                             : "border-border bg-background text-foreground hover:border-primary",
