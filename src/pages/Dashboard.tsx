@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, LayoutGrid, Heart, Scale, SlidersHorizontal, X, Package } from "lucide-react";
+import { Search, LayoutGrid, Heart, SlidersHorizontal, X, Package } from "lucide-react";
 import { getBrand, clearBrand } from "@/lib/brand-session";
 import {
-  compareStore,
   designName,
   emptyFilters,
   filterProducts,
@@ -18,13 +17,13 @@ import {
 import FilterSidebar from "@/components/dashboard/FilterSidebar";
 import ProductCard from "@/components/dashboard/ProductCard";
 import ProductDialog from "@/components/dashboard/ProductDialog";
-import CompareView from "@/components/dashboard/CompareView";
 import SachetCatalogue from "@/components/dashboard/SachetCatalogue";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
 
-type View = "catalogue" | "sachets" | "shortlist" | "compare";
+type View = "catalogue" | "sachets" | "shortlist";
+
 const PAGE = 24;
 
 export default function Dashboard() {
@@ -35,7 +34,7 @@ export default function Dashboard() {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [page, setPage] = useState(0);
   const [saved, setSaved] = useState<string[]>([]);
-  const [compare, setCompare] = useState<string[]>([]);
+  
   const [detail, setDetail] = useState<Product | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [shapeGrid, setShapeGrid] = useState(false);
@@ -46,8 +45,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     setSaved(shortlistStore.get());
-    setCompare(compareStore.get());
   }, []);
+
 
   const set = (patch: Partial<Filters>) => {
     setFilters((f) => ({ ...f, ...patch }));
@@ -60,18 +59,15 @@ export default function Dashboard() {
     shortlistStore.set(next);
   };
 
-  const toggleCompare = (id: string) => {
-    const next = compare.includes(id) ? compare.filter((x) => x !== id) : [...compare, id].slice(0, 4);
-    setCompare(next);
-    compareStore.set(next);
-  };
+
+
 
   const toggleDesign = (id: string) =>
     set({ designs: filters.designs.includes(id) ? filters.designs.filter((x) => x !== id) : [...filters.designs, id] });
 
   const results = useMemo(() => filterProducts(filters), [filters]);
   const savedProducts = saved.map(productById).filter(Boolean) as Product[];
-  const compareProducts = compare.map(productById).filter(Boolean) as Product[];
+  
 
   const designFamilies = useMemo(
     () =>
@@ -120,8 +116,8 @@ export default function Dashboard() {
     { id: "catalogue", label: "Bottles & jars", icon: LayoutGrid },
     { id: "sachets", label: "Sachets & pouches", icon: Package },
     { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
-    { id: "compare", label: "Compare", icon: Scale, count: compare.length },
   ];
+
 
   const start = page * PAGE;
   const gridProducts = view === "shortlist" ? savedProducts : results.slice(start, start + PAGE);
@@ -271,16 +267,8 @@ export default function Dashboard() {
         <main className="min-w-0 px-5 pb-24 pt-7 md:px-8">
           {view === "sachets" && <SachetCatalogue />}
 
-          {view === "compare" && (
-            <CompareView
-              items={compareProducts}
-              onRemove={toggleCompare}
-              onClear={() => {
-                setCompare([]);
-                compareStore.set([]);
-              }}
-            />
-          )}
+
+
 
           {(view === "catalogue" || view === "shortlist") && (
             <>
@@ -399,13 +387,12 @@ export default function Dashboard() {
                       key={p.id}
                       product={p}
                       saved={saved.includes(p.id)}
-                      compared={compare.includes(p.id)}
                       onToggleSave={() => toggleSave(p.id)}
-                      onToggleCompare={() => toggleCompare(p.id)}
                       onOpen={() => setDetail(p)}
                     />
                   ))}
                 </div>
+
               )}
 
               {view === "catalogue" && results.length > PAGE && (
@@ -450,50 +437,13 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
 
-      {compareProducts.length > 0 && view !== "compare" && (
-        <div className="fixed inset-x-0 bottom-4 z-30 mx-auto w-[min(94%,720px)] rounded-xl bg-foreground px-4 py-3 text-background shadow-lg">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[12.5px] font-semibold">Compare {compareProducts.length}</span>
-            {compareProducts.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => toggleCompare(p.id)}
-                aria-label={`Remove ${p.name} from compare`}
-                className="inline-flex max-w-[170px] items-center gap-1.5 rounded-full bg-background/15 px-2.5 py-1 text-[11.5px]"
-              >
-                <span className="truncate">{p.name}</span>
-                <X className="h-3 w-3 shrink-0" />
-              </button>
-            ))}
-            <div className="ml-auto flex items-center gap-3">
-              <button
-                onClick={() => {
-                  setCompare([]);
-                  compareStore.set([]);
-                }}
-                className="text-[12px] underline"
-              >
-                Clear
-              </button>
-              <button
-                onClick={() => setView("compare")}
-                className="rounded-lg bg-primary px-3 py-1.5 text-[12px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-              >
-                Compare {compareProducts.length} →
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <ProductDialog
         product={detail}
         onOpenChange={(o) => !o && setDetail(null)}
         saved={detail ? saved.includes(detail.id) : false}
-        compared={detail ? compare.includes(detail.id) : false}
         onToggleSave={() => detail && toggleSave(detail.id)}
-        onToggleCompare={() => detail && toggleCompare(detail.id)}
       />
+
     </div>
   );
 }
