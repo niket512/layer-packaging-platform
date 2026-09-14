@@ -271,16 +271,8 @@ export default function Dashboard() {
         <main className="min-w-0 px-5 pb-24 pt-7 md:px-8">
           {view === "sachets" && <SachetCatalogue />}
 
-          {view === "compare" && (
-            <CompareView
-              items={compareProducts}
-              onRemove={toggleCompare}
-              onClear={() => {
-                setCompare([]);
-                compareStore.set([]);
-              }}
-            />
-          )}
+
+
 
           {(view === "catalogue" || view === "shortlist") && (
             <>
