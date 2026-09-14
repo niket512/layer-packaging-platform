@@ -113,6 +113,8 @@
   .label-eyebrow {
     @apply text-xs font-semibold uppercase tracking-[1.5px] text-primary;
   }
+  /* Light plate behind product photography so cut-outs read on dark surfaces */
+  .image-plate { background-color: hsl(60 8% 96%); }
 }
 
 @keyframes reveal-up {
