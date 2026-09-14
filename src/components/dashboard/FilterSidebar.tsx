@@ -30,24 +30,6 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
         </button>
       </div>
 
-      <Field label="Material">
-        <select className={selectClass} value={filters.material} onChange={(e) => set({ material: e.target.value })}>
-          <option value="">All materials</option>
-          {materials.map((m) => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
-      </Field>
-
-      <Field label="Manufacturer">
-        <select className={selectClass} value={filters.manufacturer} onChange={(e) => set({ manufacturer: e.target.value })}>
-          <option value="">All manufacturers</option>
-          {manufacturers.map((m) => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
-      </Field>
-
       <Field label="Listed capacity" note="Exact printed volumes. Ranges appear under all capacities">
         <select className={selectClass} value={filters.capacity} onChange={(e) => set({ capacity: e.target.value })}>
           <option value="">All capacities</option>
