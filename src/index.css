@@ -54,38 +54,38 @@
     --text-muted: 215 16% 47%;
   }
 
-  /* Dark workspace theme — used by the catalogue dashboard */
+  /* Light paper workspace theme — used by the catalogue dashboard */
   .theme-dashboard {
-    --background: 150 8% 10%;             /* deep charcoal green */
-    --foreground: 150 12% 94%;
+    --background: 70 18% 96%;             /* paper */
+    --foreground: 165 41% 16%;            /* deep green ink */
 
-    --card: 150 8% 13%;
-    --card-foreground: 150 12% 94%;
+    --card: 0 0% 100%;
+    --card-foreground: 165 41% 16%;
 
-    --popover: 150 8% 13%;
-    --popover-foreground: 150 12% 94%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 165 41% 16%;
 
-    --primary: 152 40% 62%;               /* sage green accent */
-    --primary-foreground: 150 20% 10%;
+    --primary: 160 46% 25%;               /* deep green */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 152 28% 18%;
-    --secondary-foreground: 152 45% 72%;
+    --secondary: 97 25% 91%;              /* soft green wash */
+    --secondary-foreground: 160 46% 25%;
 
-    --muted: 150 7% 16%;
-    --muted-foreground: 150 8% 66%;
+    --muted: 100 8% 94%;
+    --muted-foreground: 160 5% 44%;
 
-    --accent: 152 28% 18%;
-    --accent-foreground: 152 45% 72%;
+    --accent: 97 25% 91%;
+    --accent-foreground: 160 46% 25%;
 
-    --border: 150 6% 22%;
-    --input: 150 6% 22%;
-    --ring: 152 40% 62%;
+    --border: 120 12% 89%;
+    --input: 120 12% 89%;
+    --ring: 105 34% 62%;
 
-    --surface: 150 8% 13%;
-    --surface-raised: 150 7% 16%;
-    --text-heading: 150 12% 94%;
-    --text-body: 150 10% 86%;
-    --text-muted: 150 8% 66%;
+    --surface: 0 0% 100%;
+    --surface-raised: 70 20% 98%;
+    --text-heading: 165 41% 16%;
+    --text-body: 165 20% 25%;
+    --text-muted: 160 5% 44%;
   }
 }
 
@@ -114,7 +114,8 @@
     @apply text-xs font-semibold uppercase tracking-[1.5px] text-primary;
   }
   /* Light plate behind product photography so cut-outs read on dark surfaces */
-  .image-plate { background-color: hsl(60 8% 96%); }
+  .image-plate { background-color: hsl(84 12% 94%); }
+  .image-plate img { mix-blend-mode: multiply; }
 }
 
 @keyframes reveal-up {
