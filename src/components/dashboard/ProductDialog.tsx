@@ -49,9 +49,8 @@ export default function ProductDialog({ product, onOpenChange }: Props) {
                 <Row label="Body diameter" value={product.diameter} />
                 <Row label="Total height" value={product.height} />
                 <Row label="Weight" value={product.weight} />
-                <Row label="Product code" value={product.codes} />
                 <Row label="Design family" value={product.design} />
-                <Row label="Source" value={`${product.source_file} · p. ${product.page}`} />
+                <Row label="Source" value={product.manufacturer} />
 
                 {(product.tags || []).length > 0 && (
                   <div className="mt-4 flex flex-wrap gap-1.5">
@@ -65,12 +64,6 @@ export default function ProductDialog({ product, onOpenChange }: Props) {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-muted p-4 text-[12px] leading-relaxed text-muted-foreground">
-              <p>{product.specification_status}</p>
-              <p className="mt-1">Pouring performance: {product.pouring_performance}</p>
-              <p className="mt-1">Closure compatibility: {product.compatibility_status}</p>
-              {product.material_evidence && <p className="mt-1">Material evidence: {product.material_evidence}</p>}
-            </div>
           </>
         )}
       </DialogContent>
