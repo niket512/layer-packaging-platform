@@ -16,7 +16,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     category: "bottles",
     location: "India",
     capabilities: ["HDPE blow moulding", "1000 ml to 8000 ml", "Handled jerry cans", "In-house moulds"],
-    brands: [],
+    brands: ["Derma Organics", "R n overseas", "Ajanta food", "Dameasy", "Hunger incl bombay sweets", "And many more"],
   },
   {
     name: "Dinoss",
