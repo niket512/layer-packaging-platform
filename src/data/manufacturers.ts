@@ -99,7 +99,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     category: "sachets",
     location: "Sivakasi, Tamil Nadu",
     capabilities: ["Flexible packaging and laminates", "Sachets and stick packs", "Custom material: yes", "Custom print: yes"],
-    brands: ["Vionelli (cooking oil)", "Amul"],
+    brands: ["Vionelli (cooking oil)", "Amul", "Priyagold"],
   },
   {
     name: "Spectalpack",
