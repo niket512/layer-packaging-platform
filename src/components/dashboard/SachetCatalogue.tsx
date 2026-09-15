@@ -256,9 +256,10 @@ export default function SachetCatalogue() {
             >
               <div className="h-[184px] overflow-hidden bg-secondary">
                 <img
-                  src={thumb(s.id)}
+                  src={thumb(s)}
                   alt={s.name}
                   loading="lazy"
+                  onError={fallback(s, false)}
                   className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               </div>
@@ -285,7 +286,12 @@ export default function SachetCatalogue() {
               </SheetHeader>
 
               <div className="image-plate mt-4 grid place-items-center rounded-xl p-4">
-                <img src={img(detail.id)} alt={detail.name} className="max-h-[260px] w-full object-contain" />
+                <img
+                  src={img(detail)}
+                  alt={detail.name}
+                  onError={fallback(detail, true)}
+                  className="max-h-[260px] w-full object-contain"
+                />
               </div>
 
               <div className="mt-5">
