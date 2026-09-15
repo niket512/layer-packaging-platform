@@ -2,27 +2,88 @@ import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const SEALS = ["Centre seal", "2-side seal", "3-side seal", "4-side seal", "Stand-up (bottom gusset)"];
+const FORMATS = ["Flat sachet", "Slim stick pack", "Pillow pouch"];
+const SHAPES = ["Portrait rectangle", "Landscape rectangle", "Square", "Slim elongated"];
+const OPENING_STYLES = ["Corner pour opening", "Wide top opening"];
+const OPENING_FEATURES = ["Tear notch", "Serrated edge", "Controlled tear / laser score"];
+const PLIES = ["2 plies", "3 plies", "Not specified"];
+const SEALS = ["Three-side seal", "Four-side seal", "Back fin seal", "Back lap seal"];
 const FINISHES = ["Matte", "Glossy", "Matte + glossy spot", "Metallised", "Soft touch"];
-const FILLS = ["Up to 5 g", "5–20 g", "20–50 g", "50–200 g", "200 g +"];
 
-type Selected = { seal: string; finish: string; fill: string };
-const empty: Selected = { seal: "", finish: "", fill: "" };
+// Prototype sizes, width x height in mm including seals
+const SIZES: { value: string; format: string; shape?: string }[] = [
+  { value: "50 × 75 mm", format: "Flat sachet", shape: "Portrait rectangle" },
+  { value: "60 × 80 mm", format: "Flat sachet", shape: "Portrait rectangle" },
+  { value: "75 × 50 mm", format: "Flat sachet", shape: "Landscape rectangle" },
+  { value: "80 × 60 mm", format: "Flat sachet", shape: "Landscape rectangle" },
+  { value: "60 × 60 mm", format: "Flat sachet", shape: "Square" },
+  { value: "30 × 100 mm", format: "Slim stick pack", shape: "Slim elongated" },
+  { value: "30 × 110 mm", format: "Slim stick pack", shape: "Slim elongated" },
+  { value: "45 × 70 mm", format: "Pillow pouch", shape: "Portrait rectangle" },
+  { value: "50 × 75 mm ", format: "Pillow pouch", shape: "Portrait rectangle" },
+];
+
+type Selected = {
+  format: string;
+  shape: string;
+  openingStyle: string;
+  openingFeature: string;
+  plies: string;
+  seal: string;
+  finish: string;
+  size: string;
+};
+
+const empty: Selected = {
+  format: "",
+  shape: "",
+  openingStyle: "",
+  openingFeature: "",
+  plies: "",
+  seal: "",
+  finish: "",
+  size: "",
+};
 
 export default function SachetCatalogue() {
   const [query, setQuery] = useState("");
   const [sel, setSel] = useState<Selected>(empty);
 
+  const pick = (key: keyof Selected) => (v: string) =>
+    setSel((s) => {
+      const next = { ...s, [key]: v };
+      if (key === "format" || key === "shape") next.size = "";
+      return next;
+    });
+
+  const clear = (key: keyof Selected) => () => setSel((s) => ({ ...s, [key]: "" }));
+
+  const sizeOptions = SIZES.filter(
+    (s) => (!sel.format || s.format === sel.format) && (!sel.shape || s.shape === sel.shape),
+  );
+
   const chips = [
-    sel.seal && { label: `Seal: ${sel.seal}`, clear: () => setSel((s) => ({ ...s, seal: "" })) },
-    sel.finish && { label: `Finish: ${sel.finish}`, clear: () => setSel((s) => ({ ...s, finish: "" })) },
-    sel.fill && { label: `Fill size: ${sel.fill}`, clear: () => setSel((s) => ({ ...s, fill: "" })) },
+    sel.format && { label: `Format: ${sel.format}`, clear: clear("format") },
+    sel.shape && { label: `Shape: ${sel.shape}`, clear: clear("shape") },
+    sel.openingStyle && { label: `Opening: ${sel.openingStyle}`, clear: clear("openingStyle") },
+    sel.openingFeature && { label: `Opening feature: ${sel.openingFeature}`, clear: clear("openingFeature") },
+    sel.plies && { label: `Plies: ${sel.plies}`, clear: clear("plies") },
+    sel.seal && { label: `Seal: ${sel.seal}`, clear: clear("seal") },
+    sel.finish && { label: `Finish: ${sel.finish}`, clear: clear("finish") },
+    sel.size && { label: `Size: ${sel.size.trim()}`, clear: clear("size") },
     query.trim() && { label: `Search: ${query.trim()}`, clear: () => setQuery("") },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
-  const group = (title: string, options: string[], value: string, onPick: (v: string) => void) => (
+  const group = (
+    title: string,
+    options: string[],
+    value: string,
+    onPick: (v: string) => void,
+    note?: string,
+  ) => (
     <div>
       <span className="text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">{title}</span>
+      {note && <p className="mt-1 text-[11.5px] text-muted-foreground">{note}</p>}
       <div className="mt-2 flex flex-wrap gap-2">
         {options.map((o) => {
           const on = value === o;
@@ -38,7 +99,7 @@ export default function SachetCatalogue() {
                   : "border-border bg-card text-foreground hover:border-primary/50",
               )}
             >
-              {o}
+              {o.trim()}
             </button>
           );
         })}
@@ -53,8 +114,8 @@ export default function SachetCatalogue() {
           Sachets and pouches
         </h1>
         <p className="mt-2 max-w-[560px] text-[14px] text-muted-foreground">
-          Flexible packaging designs are being added. Set your seal and finish preferences so we can match makers for
-          you
+          Flexible packaging designs are being added. Set your pack format, seal and size preferences so we can match
+          makers for you
         </p>
 
         <div className="relative mt-5">
@@ -64,15 +125,26 @@ export default function SachetCatalogue() {
             onChange={(e) => setQuery(e.target.value)}
             type="search"
             aria-label="Search sachets"
-            placeholder="Search sachet styles, finishes or fill sizes..."
+            placeholder="Search pack formats, seals or sizes..."
             className="h-[50px] w-full rounded-[10px] border border-border bg-card pl-11 pr-4 text-[14px] outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
           />
         </div>
 
         <div className="mt-6 grid gap-5">
-          {group("Seal type", SEALS, sel.seal, (v) => setSel((s) => ({ ...s, seal: v })))}
-          {group("Finishing", FINISHES, sel.finish, (v) => setSel((s) => ({ ...s, finish: v })))}
-          {group("Fill size", FILLS, sel.fill, (v) => setSel((s) => ({ ...s, fill: v })))}
+          {group("Pack format", FORMATS, sel.format, pick("format"))}
+          {group("Body shape", SHAPES, sel.shape, pick("shape"))}
+          {group("Opening style", OPENING_STYLES, sel.openingStyle, pick("openingStyle"))}
+          {group("Opening feature", OPENING_FEATURES, sel.openingFeature, pick("openingFeature"))}
+          {group("Structure", PLIES, sel.plies, pick("plies"))}
+          {group("Seal layout", SEALS, sel.seal, pick("seal"))}
+          {group("Finishing", FINISHES, sel.finish, pick("finish"))}
+          {group(
+            "Prototype size",
+            sizeOptions.map((s) => s.value),
+            sel.size,
+            pick("size"),
+            "Width × height in mm, including seals",
+          )}
         </div>
       </section>
 
