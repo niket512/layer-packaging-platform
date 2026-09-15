@@ -258,55 +258,55 @@ export default function SachetCatalogue() {
         </div>
       )}
 
-      <Dialog open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
-        <DialogContent className="max-w-3xl">
+      <Sheet open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
+        <SheetContent side="right" className="w-[min(94vw,480px)] overflow-y-auto p-6">
           {detail && (
             <>
-              <DialogHeader>
-                <DialogTitle className="text-left text-[19px]">{detail.name}</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-5 md:grid-cols-[minmax(0,260px)_1fr]">
-                <div className="overflow-hidden rounded-xl bg-secondary">
-                  <img src={img(detail.id)} alt={detail.name} className="h-full w-full object-contain" />
-                </div>
-                <div>
-                  <div className="grid grid-cols-2 gap-2.5">
-                    {spec("Material", detail.material)}
-                    {spec("Surface finish", detail.surfaceFinish)}
-                    {spec("Pack format", detail.format)}
-                    {spec("Body shape", detail.shape)}
-                    {spec("Opening style", detail.openingStyle)}
-                    {spec("Opening feature", detail.openingFeature)}
-                    {spec("Structure", detail.plies)}
-                    {spec("Seal layout", detail.seal)}
-                    {spec("Finishing", detail.finish)}
-                    {spec("Prototype size", detail.size)}
-                    {spec("Typical use", detail.use)}
-                  </div>
-                  <div className="mt-4">
-                    <span className="text-[10.5px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
-                      Available customisations
-                    </span>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {[
-                        { icon: Layers, label: "Custom material" },
-                        { icon: Printer, label: "Custom print" },
-                      ].map(({ icon: Icon, label }) => (
-                        <span
-                          key={label}
-                          className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-[12px] font-medium text-secondary-foreground"
-                        >
-                          <Icon className="h-3.5 w-3.5 text-primary" /> {label}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+              <SheetHeader className="text-left">
+                <SheetTitle className="font-heading text-xl">{detail.name}</SheetTitle>
+                <p className="text-[13px] text-muted-foreground">
+                  {detail.format} · {detail.size}
+                </p>
+              </SheetHeader>
+
+              <div className="image-plate mt-4 grid place-items-center rounded-xl p-4">
+                <img src={img(detail.id)} alt={detail.name} className="max-h-[260px] w-full object-contain" />
+              </div>
+
+              <div className="mt-5">
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
+                  Specifications
+                </p>
+                <Row label="Material" value={detail.material} />
+                <Row label="Surface finish" value={detail.surfaceFinish} />
+                <Row label="Pack format" value={detail.format} />
+                <Row label="Body shape" value={detail.shape} />
+                <Row label="Opening style" value={detail.openingStyle} />
+                <Row label="Opening feature" value={detail.openingFeature} />
+                <Row label="Structure" value={detail.plies} />
+                <Row label="Seal layout" value={detail.seal} />
+                <Row label="Finishing" value={detail.finish} />
+                <Row label="Prototype size" value={detail.size} />
+                <Row label="Typical use" value={detail.use} />
+              </div>
+
+              <div className="mt-5">
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
+                  Available customisations
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1.5 text-[12px] font-medium text-secondary-foreground">
+                    <Layers className="h-3.5 w-3.5" /> Custom material
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1.5 text-[12px] font-medium text-secondary-foreground">
+                    <Printer className="h-3.5 w-3.5" /> Custom print
+                  </span>
                 </div>
               </div>
             </>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
