@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import type { Filters } from "@/lib/catalogue";
-import { capacities, closureTags, featureTags, shoulderTags } from "@/lib/catalogue";
+import { capacities, closureTags } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
 
 type Props = {
