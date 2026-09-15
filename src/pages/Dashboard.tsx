@@ -157,7 +157,7 @@ export default function Dashboard() {
         ))}
       </nav>
 
-      {view !== "sachets" && (
+      {view === "catalogue" && (
         <div className="mt-7">
           <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
         </div>
@@ -217,17 +217,19 @@ export default function Dashboard() {
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
-          <button
-            onClick={() => setShowFilters(true)}
-            className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[12.5px] text-foreground lg:hidden"
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
-            {activeChips.length > 0 && (
-              <span className="grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
-                {activeChips.length}
-              </span>
-            )}
-          </button>
+          {view === "catalogue" && (
+            <button
+              onClick={() => setShowFilters(true)}
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[12.5px] text-foreground lg:hidden"
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
+              {activeChips.length > 0 && (
+                <span className="grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
+                  {activeChips.length}
+                </span>
+              )}
+            </button>
+          )}
           <span className="hidden text-[13px] text-muted-foreground sm:block">{brand}</span>
           <span className="grid h-9 w-9 place-items-center rounded-full bg-secondary text-[12px] font-bold uppercase text-primary">
             {(brand ?? "?").slice(0, 2)}
