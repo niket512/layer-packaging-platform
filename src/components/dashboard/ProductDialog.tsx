@@ -1,5 +1,5 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Heart } from "lucide-react";
+import { Heart, Palette, Printer, Layers } from "lucide-react";
 import type { Product } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
 
@@ -85,6 +85,23 @@ export default function ProductDialog({ product, onOpenChange, saved, onToggleSa
               <Row label="Weight" value={product.weight} />
               <Row label="Shape family" value={product.design} />
               <Row label="Source" value={product.manufacturer} />
+            </div>
+
+            <div className="mt-5">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
+                Available customisations
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1.5 text-[12px] font-medium text-secondary-foreground">
+                  <Palette className="h-3.5 w-3.5" /> Custom colour
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1.5 text-[12px] font-medium text-secondary-foreground">
+                  <Printer className="h-3.5 w-3.5" /> Printing & labelling
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-secondary px-2.5 py-1.5 text-[12px] font-medium text-secondary-foreground">
+                  <Layers className="h-3.5 w-3.5" /> Custom moulding
+                </span>
+              </div>
             </div>
 
             {(product.tags || []).length > 0 && (
