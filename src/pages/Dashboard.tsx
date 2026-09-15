@@ -37,7 +37,9 @@ const PAGE = 24;
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const brand = getBrand();
+  const { brandSlug } = useParams();
+  const routeBrand = brandSlug ? brandSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null;
+  const brand = routeBrand ?? getBrand();
 
   const [view, setView] = useState<View>("catalogue");
   const [filters, setFilters] = useState<Filters>(emptyFilters);
@@ -49,8 +51,13 @@ export default function Dashboard() {
   const [shapeGrid, setShapeGrid] = useState(false);
 
   useEffect(() => {
+    if (routeBrand) {
+      setBrand(routeBrand);
+      return;
+    }
     if (!brand) navigate("/signin", { replace: true });
-  }, [brand, navigate]);
+  }, [brand, routeBrand, navigate]);
+
 
   useEffect(() => {
     if (!brand) return;
