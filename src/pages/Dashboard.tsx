@@ -392,8 +392,8 @@ export default function Dashboard() {
                     Your shortlist
                   </h1>
                   <p className="mt-1.5 text-[13px] text-muted-foreground">
-                    {savedProducts.length} saved {savedProducts.length === 1 ? "product" : "products"} · stored in this
-                    browser
+                    {savedProducts.length + shortlist.sachet.length} saved{" "}
+                    {savedProducts.length + shortlist.sachet.length === 1 ? "item" : "items"} · saved to {brand}
                   </p>
                 </section>
               )}
