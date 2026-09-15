@@ -53,11 +53,14 @@ const empty: Selected = {
 const BLANK: Record<string, string> = {
   "Slim stick pack": "blank-stick",
   "Pillow pouch": "blank-pillow",
-  "Flat sachet": "blank-flat-landscape",
+  "Flat sachet": "blank-flat-portrait",
 };
 
-const blankFor = (s: Sachet) =>
-  s.shape === "Square" ? "blank-flat-square" : BLANK[s.format] ?? "blank-flat-landscape";
+const blankFor = (s: Sachet) => {
+  if (s.shape === "Square") return "blank-flat-square";
+  if (s.shape === "Landscape rectangle") return "blank-flat-landscape";
+  return BLANK[s.format] ?? "blank-flat-portrait";
+};
 
 const img = (s: Sachet) => `/sachets/${s.image ?? s.id}.jpg`;
 const thumb = (s: Sachet) => `/sachets/thumb/${s.image ?? s.id}.webp`;
