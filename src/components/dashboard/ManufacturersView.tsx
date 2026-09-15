@@ -61,6 +61,11 @@ export default function ManufacturersView({ category }: Props) {
                         <MapPin className="h-3 w-3" /> {m.location}
                       </p>
                     )}
+                    {m.established && (
+                      <p className="mt-0.5 flex items-center gap-1 text-[12px] text-muted-foreground">
+                        <CalendarDays className="h-3 w-3" /> Est. {m.established}
+                      </p>
+                    )}
                   </div>
                 </div>
 
