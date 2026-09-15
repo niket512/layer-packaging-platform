@@ -148,12 +148,15 @@ export default function SachetCatalogue() {
     </div>
   );
 
-  const spec = (label: string, value: string) => (
-    <div className="rounded-lg border border-border bg-background p-3">
-      <span className="text-[10.5px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">{label}</span>
-      <p className="mt-1 text-[13px] font-medium text-foreground">{value}</p>
-    </div>
-  );
+  const Row = ({ label, value }: { label: string; value?: string }) => {
+    if (!value) return null;
+    return (
+      <div className="flex justify-between gap-4 border-b border-border/70 py-2 text-[13px]">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="text-right font-medium text-foreground">{value}</span>
+      </div>
+    );
+  };
 
   return (
     <>
