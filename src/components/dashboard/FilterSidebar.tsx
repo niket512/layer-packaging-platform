@@ -44,12 +44,6 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
         </select>
       </Field>
 
-      <Field label="Material">
-        <select className={selectClass} value="HDPE" disabled>
-          <option value="HDPE">HDPE</option>
-        </select>
-      </Field>
-
       <Field label="Closure type">
         <select className={selectClass} value={filters.closure} onChange={(e) => set({ closure: e.target.value })}>
           <option value="">Any closure</option>
