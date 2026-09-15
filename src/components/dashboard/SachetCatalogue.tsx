@@ -138,9 +138,9 @@ export default function SachetCatalogue() {
     note?: string,
   ) => (
     <div>
-      <span className="text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">{title}</span>
-      {note && <p className="mt-1 text-[11.5px] text-muted-foreground">{note}</p>}
-      <div className="mt-2 flex flex-wrap gap-2">
+      <span className="text-[10.5px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">{title}</span>
+      {note && <span className="ml-2 text-[11px] text-muted-foreground">{note}</span>}
+      <div className="mt-1.5 flex flex-wrap gap-1.5">
         {options.map((o) => {
           const on = value === o;
           return (
@@ -149,7 +149,7 @@ export default function SachetCatalogue() {
               onClick={() => onPick(on ? "" : o)}
               aria-pressed={on}
               className={cn(
-                "rounded-full border px-3 py-1.5 text-[12.5px] transition-colors",
+                "rounded-full border px-2.5 py-1 text-[12px] transition-colors",
                 on
                   ? "border-primary bg-secondary font-semibold text-primary"
                   : "border-border bg-card text-foreground hover:border-primary/50",
