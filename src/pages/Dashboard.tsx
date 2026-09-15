@@ -450,7 +450,7 @@ export default function Dashboard() {
                 )}
               </div>
 
-              {gridProducts.length === 0 ? (
+              {gridProducts.length === 0 && (view !== "shortlist" || shortlist.sachet.length === 0) ? (
                 <div className="mt-3 rounded-xl border border-dashed border-border bg-card p-11 text-center">
                   <h3 className="font-heading text-[19px] font-semibold text-foreground">No products match yet</h3>
                   <p className="mt-2 text-[13px] text-muted-foreground">
@@ -470,6 +470,17 @@ export default function Dashboard() {
                   ))}
                 </div>
 
+              )}
+
+              {view === "shortlist" && shortlist.sachet.length > 0 && (
+                <div className="mt-8">
+                  <h2 className="font-heading text-[19px] font-semibold text-foreground">Saved sachets and pouches</h2>
+                  <SachetCatalogue
+                    savedIds={shortlist.sachet}
+                    onToggleSave={toggleSaveSachet}
+                    savedOnly
+                  />
+                </div>
               )}
 
               {view === "catalogue" && results.length > PAGE && (
