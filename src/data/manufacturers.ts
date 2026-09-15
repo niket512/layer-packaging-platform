@@ -165,13 +165,6 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     brands: ["Sakthi Sugars Limited"],
   },
   {
-    name: "Maruthi Plastics",
-    category: "sachets",
-    location: "Chennai, Tamil Nadu",
-    capabilities: ["Flexible packaging and laminates", "Sachets and stick packs", "Custom material: yes", "Custom print: yes"],
-    brands: ["JK Fenner", "Alma Coffee"],
-  },
-  {
     name: "Sambhav Foils and Flexible Packaging",
     category: "sachets",
     location: "Bangalore, Karnataka",
@@ -184,12 +177,5 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     location: "Bangalore, Karnataka",
     capabilities: ["Flexible packaging and laminates", "Sachets and stick packs", "Custom material: yes", "Custom print: yes"],
     brands: ["Dove", "Mother's Agro Foods"],
-  },
-  {
-    name: "Colorgraph Packaging",
-    category: "sachets",
-    location: "Coimbatore, Tamil Nadu",
-    capabilities: ["Flexible packaging and laminates", "Sachets and stick packs", "Custom material: yes", "Custom print: yes"],
-    brands: ["Nuts N Spices", "BigFoot Marketing"],
   },
 ];
