@@ -8,12 +8,20 @@ import {
   filterProducts,
   productById,
   products,
-  shortlistStore,
+  
   taxonomy,
   thumbUrl,
   type Filters,
   type Product,
 } from "@/lib/catalogue";
+import {
+  emptyShortlist,
+  fetchShortlist,
+  readCache,
+  saveItem,
+  syncLocalToAccount,
+  type Shortlist,
+} from "@/lib/shortlist";
 import FilterSidebar from "@/components/dashboard/FilterSidebar";
 import ProductCard from "@/components/dashboard/ProductCard";
 import ProductDialog from "@/components/dashboard/ProductDialog";
@@ -34,8 +42,8 @@ export default function Dashboard() {
   const [view, setView] = useState<View>("catalogue");
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [page, setPage] = useState(0);
-  const [saved, setSaved] = useState<string[]>([]);
-  
+  const [shortlist, setShortlist] = useState<Shortlist>(emptyShortlist);
+
   const [detail, setDetail] = useState<Product | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [shapeGrid, setShapeGrid] = useState(false);
@@ -45,23 +53,38 @@ export default function Dashboard() {
   }, [brand, navigate]);
 
   useEffect(() => {
-    setSaved(shortlistStore.get());
-  }, []);
-
+    if (!brand) return;
+    const cached = readCache(brand);
+    setShortlist(cached);
+    (async () => {
+      await syncLocalToAccount(brand, cached.bottle);
+      setShortlist(await fetchShortlist(brand));
+      try {
+        localStorage.removeItem("snaplogo.shortlist");
+      } catch {
+        /* ignore */
+      }
+    })();
+  }, [brand]);
 
   const set = (patch: Partial<Filters>) => {
     setFilters((f) => ({ ...f, ...patch }));
     setPage(0);
   };
 
+  const saved = shortlist.bottle;
+
   const toggleSave = (id: string) => {
-    const next = saved.includes(id) ? saved.filter((x) => x !== id) : [...saved, id];
-    setSaved(next);
-    shortlistStore.set(next);
+    const on = !saved.includes(id);
+    setShortlist((s) => ({ ...s, bottle: on ? [...s.bottle, id] : s.bottle.filter((x) => x !== id) }));
+    if (brand) void saveItem(brand, "bottle", id, on);
   };
 
-
-
+  const toggleSaveSachet = (id: string) => {
+    const on = !shortlist.sachet.includes(id);
+    setShortlist((s) => ({ ...s, sachet: on ? [...s.sachet, id] : s.sachet.filter((x) => x !== id) }));
+    if (brand) void saveItem(brand, "sachet", id, on);
+  };
 
   const toggleDesign = (id: string) =>
     set({ designs: filters.designs.includes(id) ? filters.designs.filter((x) => x !== id) : [...filters.designs, id] });
@@ -138,7 +161,7 @@ export default function Dashboard() {
         { id: "sachets-makers", label: "Manufacturing profiles" },
       ],
     },
-    { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
+    { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length + shortlist.sachet.length },
   ];
 
 
@@ -317,7 +340,9 @@ export default function Dashboard() {
         </aside>
 
         <main className="min-w-0 px-5 pb-24 pt-7 md:px-8">
-          {view === "sachets" && <SachetCatalogue />}
+          {view === "sachets" && (
+            <SachetCatalogue savedIds={shortlist.sachet} onToggleSave={toggleSaveSachet} />
+          )}
           {view === "catalogue-makers" && <ManufacturersView category="bottles" />}
           {view === "sachets-makers" && <ManufacturersView category="sachets" />}
 
@@ -369,8 +394,8 @@ export default function Dashboard() {
                     Your shortlist
                   </h1>
                   <p className="mt-1.5 text-[13px] text-muted-foreground">
-                    {savedProducts.length} saved {savedProducts.length === 1 ? "product" : "products"} · stored in this
-                    browser
+                    {savedProducts.length + shortlist.sachet.length} saved{" "}
+                    {savedProducts.length + shortlist.sachet.length === 1 ? "item" : "items"} · saved to {brand}
                   </p>
                 </section>
               )}
@@ -427,7 +452,7 @@ export default function Dashboard() {
                 )}
               </div>
 
-              {gridProducts.length === 0 ? (
+              {gridProducts.length === 0 && (view !== "shortlist" || shortlist.sachet.length === 0) ? (
                 <div className="mt-3 rounded-xl border border-dashed border-border bg-card p-11 text-center">
                   <h3 className="font-heading text-[19px] font-semibold text-foreground">No products match yet</h3>
                   <p className="mt-2 text-[13px] text-muted-foreground">
@@ -447,6 +472,17 @@ export default function Dashboard() {
                   ))}
                 </div>
 
+              )}
+
+              {view === "shortlist" && shortlist.sachet.length > 0 && (
+                <div className="mt-8">
+                  <h2 className="font-heading text-[19px] font-semibold text-foreground">Saved sachets and pouches</h2>
+                  <SachetCatalogue
+                    savedIds={shortlist.sachet}
+                    onToggleSave={toggleSaveSachet}
+                    savedOnly
+                  />
+                </div>
               )}
 
               {view === "catalogue" && results.length > PAGE && (
@@ -475,7 +511,7 @@ export default function Dashboard() {
 
           <footer className="mt-8 flex flex-wrap justify-between gap-4 border-t border-border pt-4 text-[11px] text-muted-foreground">
             <span>Source-linked catalogue · design classifications are visual interpretations</span>
-            <span>Shortlist saved in this browser</span>
+            <span>Shortlist saved to your brand account</span>
           </footer>
         </main>
       </div>
