@@ -1,6 +1,24 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import raw from "@/data/sachets.json";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+type Sachet = {
+  id: string;
+  name: string;
+  format: string;
+  shape: string;
+  openingStyle: string;
+  openingFeature: string;
+  plies: string;
+  seal: string;
+  finish: string;
+  size: string;
+  use: string;
+};
+
+const sachets = raw as Sachet[];
 
 const FORMATS = ["Flat sachet", "Slim stick pack", "Pillow pouch"];
 const SHAPES = ["Portrait rectangle", "Landscape rectangle", "Square", "Slim elongated"];
@@ -9,19 +27,6 @@ const OPENING_FEATURES = ["Tear notch", "Serrated edge", "Controlled tear / lase
 const PLIES = ["2 plies", "3 plies", "Not specified"];
 const SEALS = ["Three-side seal", "Four-side seal", "Back fin seal", "Back lap seal"];
 const FINISHES = ["Matte", "Glossy", "Matte + glossy spot", "Metallised", "Soft touch"];
-
-// Prototype sizes, width x height in mm including seals
-const SIZES: { value: string; format: string; shape?: string }[] = [
-  { value: "50 × 75 mm", format: "Flat sachet", shape: "Portrait rectangle" },
-  { value: "60 × 80 mm", format: "Flat sachet", shape: "Portrait rectangle" },
-  { value: "75 × 50 mm", format: "Flat sachet", shape: "Landscape rectangle" },
-  { value: "80 × 60 mm", format: "Flat sachet", shape: "Landscape rectangle" },
-  { value: "60 × 60 mm", format: "Flat sachet", shape: "Square" },
-  { value: "30 × 100 mm", format: "Slim stick pack", shape: "Slim elongated" },
-  { value: "30 × 110 mm", format: "Slim stick pack", shape: "Slim elongated" },
-  { value: "45 × 70 mm", format: "Pillow pouch", shape: "Portrait rectangle" },
-  { value: "50 × 75 mm ", format: "Pillow pouch", shape: "Portrait rectangle" },
-];
 
 type Selected = {
   format: string;
@@ -45,16 +50,19 @@ const empty: Selected = {
   size: "",
 };
 
+const img = (id: string) => `/sachets/${id}.jpg`;
+const thumb = (id: string) => `/sachets/thumb/${id}.webp`;
+
 export default function SachetCatalogue() {
   const [query, setQuery] = useState("");
   const [sel, setSel] = useState<Selected>(empty);
+  const [detail, setDetail] = useState<Sachet | null>(null);
 
   const pick = (key: keyof Selected) => (v: string) =>
     setSel((s) => {
       const next = { ...s, [key]: v };
       if (key === "format" || key === "shape") next.size = "";
-      // drop a shape that no longer fits the chosen format
-      if (key === "format" && v && next.shape && !SIZES.some((z) => z.format === v && z.shape === next.shape)) {
+      if (key === "format" && v && next.shape && !sachets.some((z) => z.format === v && z.shape === next.shape)) {
         next.shape = "";
       }
       return next;
@@ -62,10 +70,36 @@ export default function SachetCatalogue() {
 
   const clear = (key: keyof Selected) => () => setSel((s) => ({ ...s, [key]: "" }));
 
-  const sizeOptions = SIZES.filter(
-    (s) => (!sel.format || s.format === sel.format) && (!sel.shape || s.shape === sel.shape),
+  const sizeOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          sachets
+            .filter((s) => (!sel.format || s.format === sel.format) && (!sel.shape || s.shape === sel.shape))
+            .map((s) => s.size),
+        ),
+      ).sort(),
+    [sel.format, sel.shape],
   );
 
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return sachets.filter((s) => {
+      if (sel.format && s.format !== sel.format) return false;
+      if (sel.shape && s.shape !== sel.shape) return false;
+      if (sel.openingStyle && s.openingStyle !== sel.openingStyle) return false;
+      if (sel.openingFeature && s.openingFeature !== sel.openingFeature) return false;
+      if (sel.plies && s.plies !== sel.plies) return false;
+      if (sel.seal && s.seal !== sel.seal) return false;
+      if (sel.finish && s.finish !== sel.finish) return false;
+      if (sel.size && s.size !== sel.size) return false;
+      if (q) {
+        const hay = [s.name, s.format, s.shape, s.seal, s.finish, s.size, s.use].join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [sel, query]);
 
   const chips = [
     sel.format && { label: `Format: ${sel.format}`, clear: clear("format") },
@@ -75,7 +109,7 @@ export default function SachetCatalogue() {
     sel.plies && { label: `Plies: ${sel.plies}`, clear: clear("plies") },
     sel.seal && { label: `Seal: ${sel.seal}`, clear: clear("seal") },
     sel.finish && { label: `Finish: ${sel.finish}`, clear: clear("finish") },
-    sel.size && { label: `Size: ${sel.size.trim()}`, clear: clear("size") },
+    sel.size && { label: `Size: ${sel.size}`, clear: clear("size") },
     query.trim() && { label: `Search: ${query.trim()}`, clear: () => setQuery("") },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
@@ -112,6 +146,13 @@ export default function SachetCatalogue() {
     </div>
   );
 
+  const spec = (label: string, value: string) => (
+    <div className="rounded-lg border border-border bg-background p-3">
+      <span className="text-[10.5px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">{label}</span>
+      <p className="mt-1 text-[13px] font-medium text-foreground">{value}</p>
+    </div>
+  );
+
   return (
     <>
       <section>
@@ -119,8 +160,8 @@ export default function SachetCatalogue() {
           Sachets and pouches
         </h1>
         <p className="mt-2 max-w-[560px] text-[14px] text-muted-foreground">
-          Flexible packaging designs are being added. Set your pack format, seal and size preferences so we can match
-          makers for you
+          {sachets.length} flexible packs, classified by format, seal and size so you can shortlist a structure and we
+          match makers for you
         </p>
 
         <div className="relative mt-5">
@@ -143,13 +184,7 @@ export default function SachetCatalogue() {
           {group("Structure", PLIES, sel.plies, pick("plies"))}
           {group("Seal layout", SEALS, sel.seal, pick("seal"))}
           {group("Finishing", FINISHES, sel.finish, pick("finish"))}
-          {group(
-            "Prototype size",
-            sizeOptions.map((s) => s.value),
-            sel.size,
-            pick("size"),
-            "Width × height in mm, including seals",
-          )}
+          {group("Prototype size", sizeOptions, sel.size, pick("size"), "Width × height in mm, including seals")}
         </div>
       </section>
 
@@ -180,13 +215,71 @@ export default function SachetCatalogue() {
         </div>
       )}
 
-      <div className="mt-6 rounded-xl border border-dashed border-border bg-card p-11 text-center">
-        <h3 className="font-heading text-[19px] font-semibold text-foreground">No sachet designs yet</h3>
-        <p className="mx-auto mt-2 max-w-[420px] text-[13px] text-muted-foreground">
-          Sachet catalogues are being onboarded. Your selections stay on screen, and designs will appear here as makers
-          are added
-        </p>
-      </div>
+      <p className="mt-6 text-[12.5px] text-muted-foreground">
+        {results.length} {results.length === 1 ? "design" : "designs"}
+      </p>
+
+      {results.length === 0 ? (
+        <div className="mt-3 rounded-xl border border-dashed border-border bg-card p-11 text-center">
+          <h3 className="font-heading text-[19px] font-semibold text-foreground">No designs match these choices</h3>
+          <p className="mx-auto mt-2 max-w-[420px] text-[13px] text-muted-foreground">
+            Remove a filter to widen the search, or tell us the structure you need and we will source it
+          </p>
+        </div>
+      ) : (
+        <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+          {results.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => setDetail(s)}
+              className="group overflow-hidden rounded-xl border border-border bg-card text-left transition-colors hover:border-primary/60"
+            >
+              <div className="h-[184px] overflow-hidden bg-secondary">
+                <img
+                  src={thumb(s.id)}
+                  alt={s.name}
+                  loading="lazy"
+                  className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+                />
+              </div>
+              <div className="p-3">
+                <h3 className="line-clamp-2 text-[13.5px] font-semibold leading-snug text-foreground">{s.name}</h3>
+                <p className="mt-1 text-[12px] text-muted-foreground">
+                  {s.format} · {s.size}
+                </p>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <Dialog open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
+        <DialogContent className="max-w-3xl">
+          {detail && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-left text-[19px]">{detail.name}</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-5 md:grid-cols-[minmax(0,260px)_1fr]">
+                <div className="overflow-hidden rounded-xl bg-secondary">
+                  <img src={img(detail.id)} alt={detail.name} className="h-full w-full object-contain" />
+                </div>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {spec("Pack format", detail.format)}
+                  {spec("Body shape", detail.shape)}
+                  {spec("Opening style", detail.openingStyle)}
+                  {spec("Opening feature", detail.openingFeature)}
+                  {spec("Structure", detail.plies)}
+                  {spec("Seal layout", detail.seal)}
+                  {spec("Finishing", detail.finish)}
+                  {spec("Prototype size", detail.size)}
+                  {spec("Typical use", detail.use)}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
