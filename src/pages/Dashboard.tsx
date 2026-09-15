@@ -153,30 +153,57 @@ export default function Dashboard() {
   const rail = (
     <>
       <nav className="grid gap-1">
-        {navItems.map((n) => (
-          <button
-            key={n.id}
-            onClick={() => {
-              setView(n.id);
-              setShowFilters(false);
-            }}
-            aria-pressed={view === n.id}
-            className={cn(
-              "flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-[13px] transition-colors",
-              view === n.id
-                ? "bg-secondary font-semibold text-primary"
-                : "text-foreground hover:bg-secondary/60",
-            )}
-          >
-            <n.icon className="h-4 w-4" />
-            <span className="truncate">{n.label}</span>
-            {typeof n.count === "number" && n.count > 0 && (
-              <span className="ml-auto grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
-                {n.count}
-              </span>
-            )}
-          </button>
-        ))}
+        {navItems.map((n) => {
+          const sectionActive = n.children ? n.children.some((c) => c.id === view) : view === n.id;
+          return (
+            <div key={n.id}>
+              <button
+                onClick={() => {
+                  setView(n.id);
+                  setShowFilters(false);
+                }}
+                aria-pressed={sectionActive}
+                className={cn(
+                  "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-[13px] transition-colors",
+                  sectionActive
+                    ? "bg-secondary font-semibold text-primary"
+                    : "text-foreground hover:bg-secondary/60",
+                )}
+              >
+                <n.icon className="h-4 w-4" />
+                <span className="truncate">{n.label}</span>
+                {typeof n.count === "number" && n.count > 0 && (
+                  <span className="ml-auto grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
+                    {n.count}
+                  </span>
+                )}
+              </button>
+
+              {n.children && sectionActive && (
+                <div className="ml-[26px] mt-1 grid gap-0.5 border-l border-border pl-3">
+                  {n.children.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setView(c.id);
+                        setShowFilters(false);
+                      }}
+                      aria-pressed={view === c.id}
+                      className={cn(
+                        "rounded-md px-2.5 py-1.5 text-left text-[12.5px] transition-colors",
+                        view === c.id
+                          ? "font-semibold text-primary"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </nav>
 
       {view === "catalogue" && (
