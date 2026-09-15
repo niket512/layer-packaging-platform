@@ -8,7 +8,7 @@ import {
   filterProducts,
   productById,
   products,
-  shortlistStore,
+  
   taxonomy,
   thumbUrl,
   type Filters,
