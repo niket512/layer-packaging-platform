@@ -1,4 +1,4 @@
-import { Heart, AlertTriangle } from "lucide-react";
+import { Heart, AlertTriangle, Palette, Printer, Layers } from "lucide-react";
 import { designName, type Product } from "@/lib/catalogue";
 import { thumbUrl } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";

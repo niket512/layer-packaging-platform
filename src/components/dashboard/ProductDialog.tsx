@@ -1,5 +1,5 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Heart } from "lucide-react";
+import { Heart, Palette, Printer, Layers } from "lucide-react";
 import type { Product } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
 
