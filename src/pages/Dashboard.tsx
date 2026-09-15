@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { Search, LayoutGrid, Heart, Menu, X, Package } from "lucide-react";
-import { getBrand, clearBrand } from "@/lib/brand-session";
+import { getBrand, setBrand, clearBrand } from "@/lib/brand-session";
 import {
   designName,
   emptyFilters,
@@ -37,7 +37,9 @@ const PAGE = 24;
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const brand = getBrand();
+  const { brandSlug } = useParams();
+  const routeBrand = brandSlug ? brandSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null;
+  const brand = routeBrand ?? getBrand();
 
   const [view, setView] = useState<View>("catalogue");
   const [filters, setFilters] = useState<Filters>(emptyFilters);
@@ -49,8 +51,13 @@ export default function Dashboard() {
   const [shapeGrid, setShapeGrid] = useState(false);
 
   useEffect(() => {
+    if (routeBrand) {
+      setBrand(routeBrand);
+      return;
+    }
     if (!brand) navigate("/signin", { replace: true });
-  }, [brand, navigate]);
+  }, [brand, routeBrand, navigate]);
+
 
   useEffect(() => {
     if (!brand) return;
