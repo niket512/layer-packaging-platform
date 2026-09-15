@@ -18,6 +18,7 @@ type Sachet = {
   use: string;
   material: string;
   surfaceFinish: string;
+  image?: string;
 };
 
 const sachets = raw as Sachet[];
@@ -52,8 +53,22 @@ const empty: Selected = {
   size: "",
 };
 
-const img = (id: string) => `/sachets/${id}.jpg`;
-const thumb = (id: string) => `/sachets/thumb/${id}.webp`;
+const BLANK: Record<string, string> = {
+  "Slim stick pack": "blank-stick",
+  "Pillow pouch": "blank-pillow",
+  "Flat sachet": "blank-flat-landscape",
+};
+
+const blankFor = (s: Sachet) =>
+  s.shape === "Square" ? "blank-flat-square" : BLANK[s.format] ?? "blank-flat-landscape";
+
+const img = (s: Sachet) => `/sachets/${s.image ?? s.id}.jpg`;
+const thumb = (s: Sachet) => `/sachets/thumb/${s.image ?? s.id}.webp`;
+const fallback = (s: Sachet, full: boolean) => (e: { currentTarget: HTMLImageElement }) => {
+  const el = e.currentTarget;
+  const next = full ? `/sachets/${blankFor(s)}.jpg` : `/sachets/thumb/${blankFor(s)}.webp`;
+  if (!el.src.endsWith(next)) el.src = next;
+};
 
 export default function SachetCatalogue() {
   const [query, setQuery] = useState("");
