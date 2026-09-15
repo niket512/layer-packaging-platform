@@ -106,7 +106,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     category: "sachets",
     location: "Bangalore, Karnataka",
     capabilities: ["Flexible packaging and laminates", "Sachets and stick packs", "Custom material: yes", "Custom print: yes"],
-    brands: ["Nandini", "Bayars Coffee"],
+    brands: [],
   },
   {
     name: "Pixel Flexibles",
