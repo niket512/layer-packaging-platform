@@ -58,7 +58,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     category: "bottles",
     location: "India",
     capabilities: ["HDPE bottles", "30 ml to 1000 ml", "Edible oil and hair oil packs", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
-    brands: [],
+    brands: ["Puvi"],
   },
   {
     name: "Aasic Plastics",
