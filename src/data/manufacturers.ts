@@ -85,6 +85,6 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
       "Printing and labelling: yes",
     ],
     brands: ["Chekko"],
-    note: "Serves pharmaceutical, FMCG, personal care, food, edible oil, agrochemical, automotive, construction chemical and industrial brands across Tamil Nadu and South India. Specific brand names shared on request.",
+    note: "Serves pharmaceutical, FMCG, personal care, food, edible oil, agrochemical, automotive, construction chemical and industrial brands across Tamil Nadu and South India.",
   },
 ];
