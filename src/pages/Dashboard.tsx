@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { Search, LayoutGrid, Heart, Menu, X, Package } from "lucide-react";
-import { getBrand, clearBrand } from "@/lib/brand-session";
+import { getBrand, setBrand, clearBrand } from "@/lib/brand-session";
 import {
   designName,
   emptyFilters,
