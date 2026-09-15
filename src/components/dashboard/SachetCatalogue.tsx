@@ -29,7 +29,6 @@ const OPENING_STYLES = ["Corner pour opening", "Wide top opening"];
 const OPENING_FEATURES = ["Tear notch", "Serrated edge", "Controlled tear / laser score"];
 const PLIES = ["2 plies", "3 plies", "Not specified"];
 const SEALS = ["Three-side seal", "Four-side seal", "Back fin seal", "Back lap seal"];
-const FINISHES = ["Matte", "Glossy", "Matte + glossy spot", "Metallised", "Soft touch"];
 
 type Selected = {
   format: string;
@@ -38,7 +37,6 @@ type Selected = {
   openingFeature: string;
   plies: string;
   seal: string;
-  finish: string;
   size: string;
 };
 
@@ -49,7 +47,6 @@ const empty: Selected = {
   openingFeature: "",
   plies: "",
   seal: "",
-  finish: "",
   size: "",
 };
 
