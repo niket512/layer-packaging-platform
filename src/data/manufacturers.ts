@@ -30,7 +30,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     category: "bottles",
     location: "India",
     capabilities: ["HDPE bottles and jars", "Wide-mouth containers", "Custom neck finishes"],
-    brands: [],
+    brands: ["Bayer (agrochemicals)", "Valvoline (automotive lubricants)", "Hindustan Unilever (Sunsilk)"],
   },
   {
     name: "Jade Polymers",
