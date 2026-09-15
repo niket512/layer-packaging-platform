@@ -22,7 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
 
-type View = "catalogue" | "sachets" | "shortlist";
+type View = "catalogue" | "catalogue-makers" | "sachets" | "sachets-makers" | "shortlist";
 
 const PAGE = 24;
 
@@ -112,9 +112,31 @@ export default function Dashboard() {
     filters.query.trim() && { label: `Search: ${filters.query.trim()}`, clear: () => set({ query: "" }) },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
-  const navItems: { id: View; label: string; icon: typeof LayoutGrid; count?: number }[] = [
-    { id: "catalogue", label: "Bottles & jars", icon: LayoutGrid },
-    { id: "sachets", label: "Sachets & pouches", icon: Package },
+  const navItems: {
+    id: View;
+    label: string;
+    icon: typeof LayoutGrid;
+    count?: number;
+    children?: { id: View; label: string }[];
+  }[] = [
+    {
+      id: "catalogue",
+      label: "Bottles & jars",
+      icon: LayoutGrid,
+      children: [
+        { id: "catalogue", label: "Catalogue" },
+        { id: "catalogue-makers", label: "Manufacturing profiles" },
+      ],
+    },
+    {
+      id: "sachets",
+      label: "Sachets & pouches",
+      icon: Package,
+      children: [
+        { id: "sachets", label: "Catalogue" },
+        { id: "sachets-makers", label: "Manufacturing profiles" },
+      ],
+    },
     { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
   ];
 
