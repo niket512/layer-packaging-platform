@@ -1,6 +1,6 @@
 import type { Filters } from "@/lib/catalogue";
 import { capacities, closureTags } from "@/lib/catalogue";
-import { cn } from "@/lib/utils";
+
 
 type Props = {
   filters: Filters;
