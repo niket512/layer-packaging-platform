@@ -1,4 +1,4 @@
-import { Heart, AlertTriangle, Palette, Printer, Layers } from "lucide-react";
+import { Heart, AlertTriangle } from "lucide-react";
 import { designName, type Product } from "@/lib/catalogue";
 import { thumbUrl } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
@@ -77,17 +77,6 @@ export default function ProductCard({ product, saved, onToggleSave, onOpen }: Pr
           </span>
         )}
 
-        <div className="flex flex-wrap gap-1.5">
-          <span className="inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-1 text-[10px] font-medium text-secondary-foreground">
-            <Palette className="h-3 w-3" /> Custom colour
-          </span>
-          <span className="inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-1 text-[10px] font-medium text-secondary-foreground">
-            <Printer className="h-3 w-3" /> Printing & labelling
-          </span>
-          <span className="inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-1 text-[10px] font-medium text-secondary-foreground">
-            <Layers className="h-3 w-3" /> Custom moulding
-          </span>
-        </div>
 
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
           <span className="truncate">{product.design ? designName(product.design) : ""}</span>
