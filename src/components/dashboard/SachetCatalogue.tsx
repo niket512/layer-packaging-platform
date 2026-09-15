@@ -209,7 +209,7 @@ export default function SachetCatalogue() {
       </section>
 
       {chips.length > 0 && (
-        <div className="mt-6 flex flex-wrap items-center gap-1.5 rounded-xl border border-border bg-card p-3">
+        <div className="mt-4 flex flex-wrap items-center gap-1.5 rounded-xl border border-border bg-card p-2.5">
           <span className="mr-1 text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
             Active filters
           </span>
@@ -235,7 +235,7 @@ export default function SachetCatalogue() {
         </div>
       )}
 
-      <p className="mt-6 text-[12.5px] text-muted-foreground">
+      <p className="mt-4 text-[12.5px] text-muted-foreground">
         {results.length} {results.length === 1 ? "design" : "designs"}
       </p>
 
@@ -247,14 +247,14 @@ export default function SachetCatalogue() {
           </p>
         </div>
       ) : (
-        <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
           {results.map((s) => (
             <button
               key={s.id}
               onClick={() => setDetail(s)}
               className="group overflow-hidden rounded-xl border border-border bg-card text-left transition-colors hover:border-primary/60"
             >
-              <div className="h-[184px] overflow-hidden bg-secondary">
+              <div className="h-[150px] overflow-hidden bg-secondary">
                 <img
                   src={thumb(s)}
                   alt={s.name}
@@ -263,9 +263,9 @@ export default function SachetCatalogue() {
                   className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               </div>
-              <div className="p-3">
-                <h3 className="line-clamp-2 text-[13.5px] font-semibold leading-snug text-foreground">{s.name}</h3>
-                <p className="mt-1 text-[12px] text-muted-foreground">
+              <div className="p-2.5">
+                <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-foreground">{s.name}</h3>
+                <p className="mt-0.5 text-[11.5px] text-muted-foreground">
                   {s.format} · {s.size}
                 </p>
               </div>
