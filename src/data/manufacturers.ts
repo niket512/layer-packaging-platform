@@ -50,7 +50,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     name: "Elham MultiPlast LLP",
     category: "bottles",
     location: "India",
-    capabilities: ["HDPE jars", "Edible oil packaging", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
+    capabilities: ["HDPE jars and jerry cans", "Handled bottles", "Edible oil packaging", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
     brands: [],
   },
   {
