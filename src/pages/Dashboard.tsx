@@ -42,8 +42,8 @@ export default function Dashboard() {
   const [view, setView] = useState<View>("catalogue");
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [page, setPage] = useState(0);
-  const [saved, setSaved] = useState<string[]>([]);
-  
+  const [shortlist, setShortlist] = useState<Shortlist>(emptyShortlist);
+
   const [detail, setDetail] = useState<Product | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [shapeGrid, setShapeGrid] = useState(false);
@@ -53,23 +53,38 @@ export default function Dashboard() {
   }, [brand, navigate]);
 
   useEffect(() => {
-    setSaved(shortlistStore.get());
-  }, []);
-
+    if (!brand) return;
+    const cached = readCache(brand);
+    setShortlist(cached);
+    (async () => {
+      await syncLocalToAccount(brand, cached.bottle);
+      setShortlist(await fetchShortlist(brand));
+      try {
+        localStorage.removeItem("snaplogo.shortlist");
+      } catch {
+        /* ignore */
+      }
+    })();
+  }, [brand]);
 
   const set = (patch: Partial<Filters>) => {
     setFilters((f) => ({ ...f, ...patch }));
     setPage(0);
   };
 
+  const saved = shortlist.bottle;
+
   const toggleSave = (id: string) => {
-    const next = saved.includes(id) ? saved.filter((x) => x !== id) : [...saved, id];
-    setSaved(next);
-    shortlistStore.set(next);
+    const on = !saved.includes(id);
+    setShortlist((s) => ({ ...s, bottle: on ? [...s.bottle, id] : s.bottle.filter((x) => x !== id) }));
+    if (brand) void saveItem(brand, "bottle", id, on);
   };
 
-
-
+  const toggleSaveSachet = (id: string) => {
+    const on = !shortlist.sachet.includes(id);
+    setShortlist((s) => ({ ...s, sachet: on ? [...s.sachet, id] : s.sachet.filter((x) => x !== id) }));
+    if (brand) void saveItem(brand, "sachet", id, on);
+  };
 
   const toggleDesign = (id: string) =>
     set({ designs: filters.designs.includes(id) ? filters.designs.filter((x) => x !== id) : [...filters.designs, id] });
