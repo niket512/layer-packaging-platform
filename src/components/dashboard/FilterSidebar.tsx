@@ -84,9 +84,6 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
         </div>
       )}
 
-      <p className="rounded-xl bg-muted p-3 text-[11px] leading-relaxed text-muted-foreground">
-        Specifications come from supplied catalogues. A listed product is subject to supplier confirmation
-      </p>
     </div>
   );
 }
