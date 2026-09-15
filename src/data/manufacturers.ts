@@ -46,4 +46,18 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     capabilities: ["HDPE containers", "Industrial packs", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
     brands: [],
   },
+  {
+    name: "Elham MultiPlast LLP",
+    category: "bottles",
+    location: "India",
+    capabilities: ["HDPE jars", "Edible oil packaging", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
+    brands: [],
+  },
+  {
+    name: "Star Bottles",
+    category: "bottles",
+    location: "India",
+    capabilities: ["Plastic bottles", "Edible oil packaging", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
+    brands: [],
+  },
 ];
