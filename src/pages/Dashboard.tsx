@@ -161,7 +161,7 @@ export default function Dashboard() {
         { id: "sachets-makers", label: "Manufacturing profiles" },
       ],
     },
-    { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
+    { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length + shortlist.sachet.length },
   ];
 
 
@@ -340,7 +340,9 @@ export default function Dashboard() {
         </aside>
 
         <main className="min-w-0 px-5 pb-24 pt-7 md:px-8">
-          {view === "sachets" && <SachetCatalogue />}
+          {view === "sachets" && (
+            <SachetCatalogue savedIds={shortlist.sachet} onToggleSave={toggleSaveSachet} />
+          )}
           {view === "catalogue-makers" && <ManufacturersView category="bottles" />}
           {view === "sachets-makers" && <ManufacturersView category="sachets" />}
 
@@ -509,7 +511,7 @@ export default function Dashboard() {
 
           <footer className="mt-8 flex flex-wrap justify-between gap-4 border-t border-border pt-4 text-[11px] text-muted-foreground">
             <span>Source-linked catalogue · design classifications are visual interpretations</span>
-            <span>Shortlist saved in this browser</span>
+            <span>Shortlist saved to your brand account</span>
           </footer>
         </main>
       </div>
