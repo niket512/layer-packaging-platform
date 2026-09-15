@@ -91,7 +91,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     name: "Alpha Polymers",
     category: "bottles",
     location: "India",
-    capabilities: ["HDPE jerry cans", "2 L and 5 L handled containers", "Edible oil and lubricant packaging", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
+    capabilities: ["HDPE jerry cans", "1 L to 5 L handled containers", "Edible oil and lubricant packaging", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
     brands: [],
   },
 ];
