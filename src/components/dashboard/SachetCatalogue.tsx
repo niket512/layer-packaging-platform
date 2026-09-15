@@ -266,16 +266,38 @@ export default function SachetCatalogue() {
                 <div className="overflow-hidden rounded-xl bg-secondary">
                   <img src={img(detail.id)} alt={detail.name} className="h-full w-full object-contain" />
                 </div>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {spec("Pack format", detail.format)}
-                  {spec("Body shape", detail.shape)}
-                  {spec("Opening style", detail.openingStyle)}
-                  {spec("Opening feature", detail.openingFeature)}
-                  {spec("Structure", detail.plies)}
-                  {spec("Seal layout", detail.seal)}
-                  {spec("Finishing", detail.finish)}
-                  {spec("Prototype size", detail.size)}
-                  {spec("Typical use", detail.use)}
+                <div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {spec("Material", detail.material)}
+                    {spec("Surface finish", detail.surfaceFinish)}
+                    {spec("Pack format", detail.format)}
+                    {spec("Body shape", detail.shape)}
+                    {spec("Opening style", detail.openingStyle)}
+                    {spec("Opening feature", detail.openingFeature)}
+                    {spec("Structure", detail.plies)}
+                    {spec("Seal layout", detail.seal)}
+                    {spec("Finishing", detail.finish)}
+                    {spec("Prototype size", detail.size)}
+                    {spec("Typical use", detail.use)}
+                  </div>
+                  <div className="mt-4">
+                    <span className="text-[10.5px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
+                      Available customisations
+                    </span>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {[
+                        { icon: Layers, label: "Custom material" },
+                        { icon: Printer, label: "Custom print" },
+                      ].map(({ icon: Icon, label }) => (
+                        <span
+                          key={label}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-[12px] font-medium text-secondary-foreground"
+                        >
+                          <Icon className="h-3.5 w-3.5 text-primary" /> {label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
