@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Factory, MapPin } from "lucide-react";
+import { Factory, MapPin, CalendarDays, Info } from "lucide-react";
 import { products, designName } from "@/lib/catalogue";
 import { manufacturerProfiles } from "@/data/manufacturers";
 
