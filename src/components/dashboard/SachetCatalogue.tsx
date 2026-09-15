@@ -53,6 +53,10 @@ export default function SachetCatalogue() {
     setSel((s) => {
       const next = { ...s, [key]: v };
       if (key === "format" || key === "shape") next.size = "";
+      // drop a shape that no longer fits the chosen format
+      if (key === "format" && v && next.shape && !SIZES.some((z) => z.format === v && z.shape === next.shape)) {
+        next.shape = "";
+      }
       return next;
     });
 
@@ -61,6 +65,7 @@ export default function SachetCatalogue() {
   const sizeOptions = SIZES.filter(
     (s) => (!sel.format || s.format === sel.format) && (!sel.shape || s.shape === sel.shape),
   );
+
 
   const chips = [
     sel.format && { label: `Format: ${sel.format}`, clear: clear("format") },
