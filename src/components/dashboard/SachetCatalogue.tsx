@@ -177,7 +177,7 @@ export default function SachetCatalogue({ savedIds = [], onToggleSave, savedOnly
 
   return (
     <>
-      <section>
+      {!savedOnly && (<><section>
         <h1 className="font-heading text-[24px] font-semibold leading-[1.15] tracking-tight text-foreground md:text-[28px]">
           Sachets and pouches
         </h1>
@@ -209,7 +209,7 @@ export default function SachetCatalogue({ savedIds = [], onToggleSave, savedOnly
         </div>
       </section>
 
-      {chips.length > 0 && (
+      {!savedOnly && chips.length > 0 && (
         <div className="mt-4 flex flex-wrap items-center gap-1.5 rounded-xl border border-border bg-card p-2.5">
           <span className="mr-1 text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
             Active filters
