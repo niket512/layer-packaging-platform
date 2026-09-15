@@ -127,7 +127,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     category: "sachets",
     location: "Chennai, Tamil Nadu",
     capabilities: ["Flexible packaging and laminates", "Sachets and stick packs", "Custom material: yes", "Custom print: yes"],
-    brands: ["Almond House", "ID Fresh Food"],
+    brands: ["Aachi Masala", "Royal Enfield", "TVS SriChakra", "SGS Detergents", "Five Star Exports", "AJR Food Products", "Amma Masala", "TAV Products", "Rajama Exports", "Murugan & Co"],
   },
   {
     name: "Prinova",
