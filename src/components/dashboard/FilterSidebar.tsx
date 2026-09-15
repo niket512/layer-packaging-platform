@@ -21,7 +21,6 @@ function Field({ label, className, children }: { label: string; className?: stri
 }
 
 export default function FilterSidebar({ filters, set, reset }: Props) {
-  const [more, setMore] = useState(Boolean(filters.shoulder));
 
   return (
     <div className="mt-4 rounded-xl border border-border bg-card p-4">
