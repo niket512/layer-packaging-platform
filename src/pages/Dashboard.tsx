@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, LayoutGrid, Heart, SlidersHorizontal, X, Package } from "lucide-react";
+import { Search, LayoutGrid, Heart, Menu, X, Package } from "lucide-react";
 import { getBrand, clearBrand } from "@/lib/brand-session";
 import {
   designName,
@@ -230,11 +230,6 @@ export default function Dashboard() {
         })}
       </nav>
 
-      {view === "catalogue" && (
-        <div className="mt-7">
-          <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
-        </div>
-      )}
     </>
   );
 
