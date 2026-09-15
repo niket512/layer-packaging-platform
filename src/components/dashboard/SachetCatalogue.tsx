@@ -29,7 +29,6 @@ const OPENING_STYLES = ["Corner pour opening", "Wide top opening"];
 const OPENING_FEATURES = ["Tear notch", "Serrated edge", "Controlled tear / laser score"];
 const PLIES = ["2 plies", "3 plies", "Not specified"];
 const SEALS = ["Three-side seal", "Four-side seal", "Back fin seal", "Back lap seal"];
-const FINISHES = ["Matte", "Glossy", "Matte + glossy spot", "Metallised", "Soft touch"];
 
 type Selected = {
   format: string;
@@ -38,7 +37,6 @@ type Selected = {
   openingFeature: string;
   plies: string;
   seal: string;
-  finish: string;
   size: string;
 };
 
@@ -49,7 +47,6 @@ const empty: Selected = {
   openingFeature: "",
   plies: "",
   seal: "",
-  finish: "",
   size: "",
 };
 
@@ -108,7 +105,6 @@ export default function SachetCatalogue() {
       if (sel.openingFeature && s.openingFeature !== sel.openingFeature) return false;
       if (sel.plies && s.plies !== sel.plies) return false;
       if (sel.seal && s.seal !== sel.seal) return false;
-      if (sel.finish && s.finish !== sel.finish) return false;
       if (sel.size && s.size !== sel.size) return false;
       if (q) {
         const hay = [s.name, s.format, s.shape, s.seal, s.finish, s.size, s.use].join(" ").toLowerCase();
@@ -125,7 +121,6 @@ export default function SachetCatalogue() {
     sel.openingFeature && { label: `Opening feature: ${sel.openingFeature}`, clear: clear("openingFeature") },
     sel.plies && { label: `Plies: ${sel.plies}`, clear: clear("plies") },
     sel.seal && { label: `Seal: ${sel.seal}`, clear: clear("seal") },
-    sel.finish && { label: `Finish: ${sel.finish}`, clear: clear("finish") },
     sel.size && { label: `Size: ${sel.size}`, clear: clear("size") },
     query.trim() && { label: `Search: ${query.trim()}`, clear: () => setQuery("") },
   ].filter(Boolean) as { label: string; clear: () => void }[];
@@ -203,7 +198,6 @@ export default function SachetCatalogue() {
           {group("Opening feature", OPENING_FEATURES, sel.openingFeature, pick("openingFeature"))}
           {group("Structure", PLIES, sel.plies, pick("plies"))}
           {group("Seal layout", SEALS, sel.seal, pick("seal"))}
-          {group("Finishing", FINISHES, sel.finish, pick("finish"))}
           {group("Prototype size", sizeOptions, sel.size, pick("size"), "Width × height in mm, including seals")}
         </div>
       </section>
