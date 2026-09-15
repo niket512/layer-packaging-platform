@@ -18,11 +18,12 @@ import FilterSidebar from "@/components/dashboard/FilterSidebar";
 import ProductCard from "@/components/dashboard/ProductCard";
 import ProductDialog from "@/components/dashboard/ProductDialog";
 import SachetCatalogue from "@/components/dashboard/SachetCatalogue";
+import ManufacturersView from "@/components/dashboard/ManufacturersView";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
 
-type View = "catalogue" | "sachets" | "shortlist";
+type View = "catalogue" | "catalogue-makers" | "sachets" | "sachets-makers" | "shortlist";
 
 const PAGE = 24;
 
@@ -112,9 +113,31 @@ export default function Dashboard() {
     filters.query.trim() && { label: `Search: ${filters.query.trim()}`, clear: () => set({ query: "" }) },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
-  const navItems: { id: View; label: string; icon: typeof LayoutGrid; count?: number }[] = [
-    { id: "catalogue", label: "Bottles & jars", icon: LayoutGrid },
-    { id: "sachets", label: "Sachets & pouches", icon: Package },
+  const navItems: {
+    id: View;
+    label: string;
+    icon: typeof LayoutGrid;
+    count?: number;
+    children?: { id: View; label: string }[];
+  }[] = [
+    {
+      id: "catalogue",
+      label: "Bottles & jars",
+      icon: LayoutGrid,
+      children: [
+        { id: "catalogue", label: "Catalogue" },
+        { id: "catalogue-makers", label: "Manufacturing profiles" },
+      ],
+    },
+    {
+      id: "sachets",
+      label: "Sachets & pouches",
+      icon: Package,
+      children: [
+        { id: "sachets", label: "Catalogue" },
+        { id: "sachets-makers", label: "Manufacturing profiles" },
+      ],
+    },
     { id: "shortlist", label: "Shortlist", icon: Heart, count: saved.length },
   ];
 
@@ -131,30 +154,57 @@ export default function Dashboard() {
   const rail = (
     <>
       <nav className="grid gap-1">
-        {navItems.map((n) => (
-          <button
-            key={n.id}
-            onClick={() => {
-              setView(n.id);
-              setShowFilters(false);
-            }}
-            aria-pressed={view === n.id}
-            className={cn(
-              "flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-[13px] transition-colors",
-              view === n.id
-                ? "bg-secondary font-semibold text-primary"
-                : "text-foreground hover:bg-secondary/60",
-            )}
-          >
-            <n.icon className="h-4 w-4" />
-            <span className="truncate">{n.label}</span>
-            {typeof n.count === "number" && n.count > 0 && (
-              <span className="ml-auto grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
-                {n.count}
-              </span>
-            )}
-          </button>
-        ))}
+        {navItems.map((n) => {
+          const sectionActive = n.children ? n.children.some((c) => c.id === view) : view === n.id;
+          return (
+            <div key={n.id}>
+              <button
+                onClick={() => {
+                  setView(n.id);
+                  setShowFilters(false);
+                }}
+                aria-pressed={sectionActive}
+                className={cn(
+                  "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-[13px] transition-colors",
+                  sectionActive
+                    ? "bg-secondary font-semibold text-primary"
+                    : "text-foreground hover:bg-secondary/60",
+                )}
+              >
+                <n.icon className="h-4 w-4" />
+                <span className="truncate">{n.label}</span>
+                {typeof n.count === "number" && n.count > 0 && (
+                  <span className="ml-auto grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
+                    {n.count}
+                  </span>
+                )}
+              </button>
+
+              {n.children && sectionActive && (
+                <div className="ml-[26px] mt-1 grid gap-0.5 border-l border-border pl-3">
+                  {n.children.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setView(c.id);
+                        setShowFilters(false);
+                      }}
+                      aria-pressed={view === c.id}
+                      className={cn(
+                        "rounded-md px-2.5 py-1.5 text-left text-[12.5px] transition-colors",
+                        view === c.id
+                          ? "font-semibold text-primary"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </nav>
 
       {view === "catalogue" && (
@@ -268,6 +318,8 @@ export default function Dashboard() {
 
         <main className="min-w-0 px-5 pb-24 pt-7 md:px-8">
           {view === "sachets" && <SachetCatalogue />}
+          {view === "catalogue-makers" && <ManufacturersView category="bottles" />}
+          {view === "sachets-makers" && <ManufacturersView category="sachets" />}
 
 
 
