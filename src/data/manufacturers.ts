@@ -95,7 +95,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     brands: ["Shell (engine oil)", "Vionelli (cooking oil)"],
   },
   {
-    name: "MTC Polymers and Packaging",
+    name: "Surya Packaging",
     category: "sachets",
     location: "Sivakasi, Tamil Nadu",
     capabilities: ["Flexible packaging and laminates", "Sachets and stick packs", "Custom material: yes", "Custom print: yes"],
