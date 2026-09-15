@@ -87,4 +87,11 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     brands: ["Chekko"],
     note: "Serves pharmaceutical, FMCG, personal care, food, edible oil, agrochemical, automotive, construction chemical and industrial brands across Tamil Nadu and South India.",
   },
+  {
+    name: "Alpha Polymers",
+    category: "bottles",
+    location: "India",
+    capabilities: ["HDPE jerry cans", "5 L handled containers", "Edible oil and lubricant packaging", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
+    brands: [],
+  },
 ];
