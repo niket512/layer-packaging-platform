@@ -26,6 +26,13 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     brands: [],
   },
   {
+    name: "Regent Plast",
+    category: "bottles",
+    location: "India",
+    capabilities: ["HDPE bottles and jars", "Wide-mouth containers", "Custom neck finishes"],
+    brands: [],
+  },
+  {
     name: "Jade Polymers",
     category: "bottles",
     location: "India",
