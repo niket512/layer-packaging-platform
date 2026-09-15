@@ -37,7 +37,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     category: "bottles",
     location: "India",
     capabilities: ["HDPE bottles", "Closure matching", "Small batch runs"],
-    brands: [],
+    brands: ["Animal Vet Mankind", "Bovian", "Cadila Pharmaceuticals", "Himalaya Wellness", "Amul"],
   },
   {
     name: "SNP Plastech",
