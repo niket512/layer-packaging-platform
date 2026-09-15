@@ -157,7 +157,7 @@ export default function Dashboard() {
         ))}
       </nav>
 
-      {view !== "sachets" && (
+      {view === "catalogue" && (
         <div className="mt-7">
           <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
         </div>
