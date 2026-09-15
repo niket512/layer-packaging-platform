@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Factory, MapPin } from "lucide-react";
+import { Factory, MapPin, CalendarDays, Info } from "lucide-react";
 import { products, designName } from "@/lib/catalogue";
 import { manufacturerProfiles } from "@/data/manufacturers";
 
@@ -61,6 +61,11 @@ export default function ManufacturersView({ category }: Props) {
                         <MapPin className="h-3 w-3" /> {m.location}
                       </p>
                     )}
+                    {m.established && (
+                      <p className="mt-0.5 flex items-center gap-1 text-[12px] text-muted-foreground">
+                        <CalendarDays className="h-3 w-3" /> Est. {m.established}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -119,6 +124,18 @@ export default function ManufacturersView({ category }: Props) {
                   </div>
                 ) : (
                   <p className="mt-1.5 text-[12.5px] text-muted-foreground">Shared on request</p>
+                )}
+
+                {m.note && (
+                  <>
+                    <p className="mt-4 text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
+                      Note
+                    </p>
+                    <p className="mt-1.5 flex items-start gap-1.5 text-[12.5px] leading-[1.6] text-muted-foreground">
+                      <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                      {m.note}
+                    </p>
+                  </>
                 )}
               </article>
             );
