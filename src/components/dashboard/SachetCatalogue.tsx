@@ -18,6 +18,7 @@ type Sachet = {
   use: string;
   material: string;
   surfaceFinish: string;
+  image?: string;
 };
 
 const sachets = raw as Sachet[];
@@ -52,8 +53,22 @@ const empty: Selected = {
   size: "",
 };
 
-const img = (id: string) => `/sachets/${id}.jpg`;
-const thumb = (id: string) => `/sachets/thumb/${id}.webp`;
+const BLANK: Record<string, string> = {
+  "Slim stick pack": "blank-stick",
+  "Pillow pouch": "blank-pillow",
+  "Flat sachet": "blank-flat-landscape",
+};
+
+const blankFor = (s: Sachet) =>
+  s.shape === "Square" ? "blank-flat-square" : BLANK[s.format] ?? "blank-flat-landscape";
+
+const img = (s: Sachet) => `/sachets/${s.image ?? s.id}.jpg`;
+const thumb = (s: Sachet) => `/sachets/thumb/${s.image ?? s.id}.webp`;
+const fallback = (s: Sachet, full: boolean) => (e: { currentTarget: HTMLImageElement }) => {
+  const el = e.currentTarget;
+  const next = full ? `/sachets/${blankFor(s)}.jpg` : `/sachets/thumb/${blankFor(s)}.webp`;
+  if (!el.src.endsWith(next)) el.src = next;
+};
 
 export default function SachetCatalogue() {
   const [query, setQuery] = useState("");
@@ -241,9 +256,10 @@ export default function SachetCatalogue() {
             >
               <div className="h-[184px] overflow-hidden bg-secondary">
                 <img
-                  src={thumb(s.id)}
+                  src={thumb(s)}
                   alt={s.name}
                   loading="lazy"
+                  onError={fallback(s, false)}
                   className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               </div>
@@ -270,7 +286,12 @@ export default function SachetCatalogue() {
               </SheetHeader>
 
               <div className="image-plate mt-4 grid place-items-center rounded-xl p-4">
-                <img src={img(detail.id)} alt={detail.name} className="max-h-[260px] w-full object-contain" />
+                <img
+                  src={img(detail)}
+                  alt={detail.name}
+                  onError={fallback(detail, true)}
+                  className="max-h-[260px] w-full object-contain"
+                />
               </div>
 
               <div className="mt-5">
