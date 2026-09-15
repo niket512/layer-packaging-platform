@@ -57,7 +57,7 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     name: "Star Bottles",
     category: "bottles",
     location: "India",
-    capabilities: ["Plastic bottles", "Edible oil packaging", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
+    capabilities: ["HDPE bottles", "30 ml to 1000 ml", "Edible oil and hair oil packs", "Custom mould: yes", "Custom color: yes", "Printing and labelling: yes"],
     brands: [],
   },
 ];
