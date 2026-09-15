@@ -177,7 +177,7 @@ export default function SachetCatalogue({ savedIds = [], onToggleSave, savedOnly
 
   return (
     <>
-      {!savedOnly && (<><section>
+      {!savedOnly && (<section>
         <h1 className="font-heading text-[24px] font-semibold leading-[1.15] tracking-tight text-foreground md:text-[28px]">
           Sachets and pouches
         </h1>
@@ -207,7 +207,7 @@ export default function SachetCatalogue({ savedIds = [], onToggleSave, savedOnly
           {group("Seal layout", SEALS, sel.seal, pick("seal"))}
           {group("Prototype size", sizeOptions, sel.size, pick("size"), "Width × height in mm, including seals")}
         </div>
-      </section>
+      </section>)}
 
       {!savedOnly && chips.length > 0 && (
         <div className="mt-4 flex flex-wrap items-center gap-1.5 rounded-xl border border-border bg-card p-2.5">
