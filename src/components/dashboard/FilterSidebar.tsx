@@ -9,12 +9,12 @@ type Props = {
 };
 
 const selectClass =
-  "h-10 w-full rounded-lg border border-border bg-background px-3 text-[13px] text-foreground outline-none transition-colors focus:border-primary";
+  "h-8 rounded-lg border border-border bg-background px-2 text-[12.5px] text-foreground outline-none transition-colors focus:border-primary";
 
-function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className={cn("block min-w-[160px] flex-1", className)}>
-      <span className="text-[10.5px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">{label}</span>
+    <label className="inline-flex items-center gap-1.5">
+      <span className="text-[10.5px] font-semibold uppercase tracking-[1px] text-muted-foreground">{label}</span>
       {children}
     </label>
   );
@@ -23,36 +23,32 @@ function Field({ label, className, children }: { label: string; className?: stri
 export default function FilterSidebar({ filters, set, reset }: Props) {
 
   return (
-    <div className="mt-4 rounded-xl border border-border bg-card p-4">
-      <div className="flex items-center justify-between">
-        <strong className="text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
-          Refine your search
-        </strong>
-        <button onClick={reset} className="text-[12px] font-semibold text-primary hover:underline">
-          Reset all
-        </button>
-      </div>
+    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-border bg-card px-3 py-2">
+      <strong className="text-[10.5px] font-semibold uppercase tracking-[1px] text-muted-foreground">
+        Refine your search
+      </strong>
 
-      <div className="mt-3 flex flex-wrap items-end gap-x-3 gap-y-3">
-        <Field label="Capacity">
-          <select className={selectClass} value={filters.capacity} onChange={(e) => set({ capacity: e.target.value })}>
-            <option value="">All capacities</option>
-            {capacities.map((c) => (
-              <option key={c} value={c}>{c.toLocaleString()} ml</option>
-            ))}
-          </select>
-        </Field>
+      <Field label="Capacity">
+        <select className={selectClass} value={filters.capacity} onChange={(e) => set({ capacity: e.target.value })}>
+          <option value="">All capacities</option>
+          {capacities.map((c) => (
+            <option key={c} value={c}>{c.toLocaleString()} ml</option>
+          ))}
+        </select>
+      </Field>
 
-        <Field label="Closure type">
-          <select className={selectClass} value={filters.closure} onChange={(e) => set({ closure: e.target.value })}>
-            <option value="">Any closure</option>
-            {closureTags.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-        </Field>
+      <Field label="Closure type">
+        <select className={selectClass} value={filters.closure} onChange={(e) => set({ closure: e.target.value })}>
+          <option value="">Any closure</option>
+          {closureTags.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </Field>
 
-      </div>
+      <button onClick={reset} className="ml-auto text-[12px] font-semibold text-primary hover:underline">
+        Reset all
+      </button>
     </div>
   );
 }
