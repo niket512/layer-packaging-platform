@@ -382,6 +382,8 @@ export default function Dashboard() {
                   <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
                     {shapeStrip.map((d) => shapeTile(d, true))}
                   </div>
+
+                  <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
                 </section>
               ) : (
                 <section>
