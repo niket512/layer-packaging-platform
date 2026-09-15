@@ -131,8 +131,6 @@ export default function Dashboard() {
       clear: () => set({ capacity: "" }),
     },
     filters.closure && { label: `Closure: ${filters.closure}`, clear: () => set({ closure: "" }) },
-    filters.feature && { label: `Body: ${filters.feature}`, clear: () => set({ feature: "" }) },
-    filters.shoulder && { label: `Shoulder: ${filters.shoulder}`, clear: () => set({ shoulder: "" }) },
     filters.query.trim() && { label: `Search: ${filters.query.trim()}`, clear: () => set({ query: "" }) },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 

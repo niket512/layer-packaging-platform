@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import type { Filters } from "@/lib/catalogue";
-import { capacities, closureTags, featureTags, shoulderTags } from "@/lib/catalogue";
+import { capacities, closureTags } from "@/lib/catalogue";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -23,7 +21,6 @@ function Field({ label, className, children }: { label: string; className?: stri
 }
 
 export default function FilterSidebar({ filters, set, reset }: Props) {
-  const [more, setMore] = useState(Boolean(filters.shoulder));
 
   return (
     <div className="mt-4 rounded-xl border border-border bg-card p-4">
@@ -55,36 +52,6 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
           </select>
         </Field>
 
-        <Field label="Body feature">
-          <select className={selectClass} value={filters.feature} onChange={(e) => set({ feature: e.target.value })}>
-            <option value="">Any body feature</option>
-            {featureTags.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-        </Field>
-
-        <div className="min-w-[160px] flex-1">
-          <button
-            onClick={() => setMore((v) => !v)}
-            aria-expanded={more}
-            className="flex h-10 w-full items-center justify-between rounded-lg border border-border bg-background px-3 text-[12.5px] font-semibold text-foreground transition-colors hover:border-primary/60"
-          >
-            More filters
-            <ChevronDown className={cn("h-4 w-4 transition-transform", more && "rotate-180")} />
-          </button>
-        </div>
-
-        {more && (
-          <Field label="Shoulder or neck">
-            <select className={selectClass} value={filters.shoulder} onChange={(e) => set({ shoulder: e.target.value })}>
-              <option value="">Any shoulder or neck</option>
-              {shoulderTags.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-          </Field>
-        )}
       </div>
     </div>
   );
