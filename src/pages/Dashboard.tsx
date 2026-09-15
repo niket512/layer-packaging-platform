@@ -14,6 +14,14 @@ import {
   type Filters,
   type Product,
 } from "@/lib/catalogue";
+import {
+  emptyShortlist,
+  fetchShortlist,
+  readCache,
+  saveItem,
+  syncLocalToAccount,
+  type Shortlist,
+} from "@/lib/shortlist";
 import FilterSidebar from "@/components/dashboard/FilterSidebar";
 import ProductCard from "@/components/dashboard/ProductCard";
 import ProductDialog from "@/components/dashboard/ProductDialog";
