@@ -10,7 +10,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "60 × 80 mm",
-  "use": "Lamp oil"
+  "use": "Lamp oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "vasantham-nallennai-100",
@@ -23,7 +25,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Edible oil"
+  "use": "Edible oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kasthuri-deepam-oil-100",
@@ -36,7 +40,9 @@
   "seal": "Four-side seal",
   "finish": "Metallised",
   "size": "50 × 75 mm",
-  "use": "Lamp oil"
+  "use": "Lamp oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kryolan-fluid-foundation",
@@ -49,7 +55,9 @@
   "seal": "Four-side seal",
   "finish": "Matte",
   "size": "50 × 75 mm",
-  "use": "Cosmetics"
+  "use": "Cosmetics",
+  "material": "PET / Aluminium foil / PE",
+  "surfaceFinish": "Matte"
  },
  {
   "id": "perfect99-apparel-perfume",
@@ -62,7 +70,9 @@
   "seal": "Back fin seal",
   "finish": "Matte + glossy spot",
   "size": "50 × 75 mm",
-  "use": "Personal care"
+  "use": "Personal care",
+  "material": "PET / PE",
+  "surfaceFinish": "Matte with selective gloss"
  },
  {
   "id": "leeol-engine-oil-1l",
@@ -75,7 +85,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Lubricant"
+  "use": "Lubricant",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "sakthi-coconut-oil",
@@ -88,7 +100,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Edible oil"
+  "use": "Edible oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "sakthi-deepam-ennai-100",
@@ -101,7 +115,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "60 × 80 mm",
-  "use": "Lamp oil"
+  "use": "Lamp oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "nantha-gingelly-100",
@@ -114,7 +130,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Edible oil"
+  "use": "Edible oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "surya-groundnut-oil",
@@ -127,7 +145,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "60 × 80 mm",
-  "use": "Edible oil"
+  "use": "Edible oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kesavardhini-hair-oil",
@@ -140,7 +160,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Hair oil"
+  "use": "Hair oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kasthuri-gingelly-50",
@@ -153,7 +175,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Edible oil"
+  "use": "Edible oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "bhakthi-theertham",
@@ -166,7 +190,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Liquid"
+  "use": "Liquid",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "ilavarasi-nalla-ennai-100",
@@ -179,7 +205,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "60 × 80 mm",
-  "use": "Edible oil"
+  "use": "Edible oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kasthuri-sunflower-200",
@@ -192,7 +220,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "60 × 80 mm",
-  "use": "Edible oil"
+  "use": "Edible oil",
+  "material": "Multilayer PE oil film",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "acn-guava-candy-stick",
@@ -205,7 +235,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "30 × 110 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "natraj-orange-candy-70g",
@@ -218,7 +250,9 @@
   "seal": "Back fin seal",
   "finish": "Matte + glossy spot",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Matte with selective gloss"
  },
  {
   "id": "chottee-orange-candy-pack",
@@ -231,7 +265,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "80 × 60 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "chottee-orange-candy-pillow",
@@ -244,7 +280,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "75 × 50 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "acn-mango-spicy-stick",
@@ -257,7 +295,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "30 × 110 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "puppy-jam-elanthai",
@@ -270,7 +310,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Snack"
+  "use": "Snack",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kovilpatti-peanut-candy",
@@ -283,7 +325,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "30 × 110 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "svr-peanut-candy-50g",
@@ -296,7 +340,9 @@
   "seal": "Back fin seal",
   "finish": "Matte",
   "size": "45 × 70 mm",
-  "use": "Snack"
+  "use": "Snack",
+  "material": "PET / PE",
+  "surfaceFinish": "Matte"
  },
  {
   "id": "aavin-milk-choco-bite",
@@ -309,7 +355,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "30 × 100 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "crazy-jelly-sticks",
@@ -322,7 +370,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "froozee-fruity-chews",
@@ -335,7 +385,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "acn-eclairs",
@@ -348,7 +400,9 @@
   "seal": "Back fin seal",
   "finish": "Metallised",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / Metallised PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "ganesha-vilas-nice-chikki",
@@ -361,7 +415,9 @@
   "seal": "Back fin seal",
   "finish": "Matte",
   "size": "50 × 75 mm",
-  "use": "Snack"
+  "use": "Snack",
+  "material": "PET / PE",
+  "surfaceFinish": "Matte"
  },
  {
   "id": "rathnas-orange-guava-candy",
@@ -374,7 +430,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "45 × 70 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "ivak-peanut-chikki-purple",
@@ -387,7 +445,9 @@
   "seal": "Back fin seal",
   "finish": "Metallised",
   "size": "30 × 110 mm",
-  "use": "Snack"
+  "use": "Snack",
+  "material": "PET / Metallised PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kings-orange-juicy-candy",
@@ -400,7 +460,9 @@
   "seal": "Back fin seal",
   "finish": "Metallised",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / Metallised PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "ivak-peanut-chikki-green",
@@ -413,7 +475,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "30 × 110 mm",
-  "use": "Snack"
+  "use": "Snack",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "guava-candy-series",
@@ -426,7 +490,9 @@
   "seal": "Back fin seal",
   "finish": "Metallised",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / Metallised PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "mams-pop-orange",
@@ -439,7 +505,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "60 × 60 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "rathnas-orange-candy-silver",
@@ -452,7 +520,9 @@
   "seal": "Back fin seal",
   "finish": "Metallised",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / Metallised PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "ajantha-betel-nut",
@@ -465,7 +535,9 @@
   "seal": "Four-side seal",
   "finish": "Glossy",
   "size": "60 × 80 mm",
-  "use": "Supari"
+  "use": "Supari",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "vishaali-peanut-candy",
@@ -478,7 +550,9 @@
   "seal": "Back lap seal",
   "finish": "Glossy",
   "size": "30 × 110 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "milis-pop-caramel",
@@ -491,7 +565,9 @@
   "seal": "Back lap seal",
   "finish": "Matte",
   "size": "30 × 100 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Matte"
  },
  {
   "id": "awalia-peanut-chikki",
@@ -504,7 +580,9 @@
   "seal": "Back lap seal",
   "finish": "Metallised",
   "size": "30 × 110 mm",
-  "use": "Snack"
+  "use": "Snack",
+  "material": "PET / Metallised PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kings-fruity-candy-grape",
@@ -517,7 +595,9 @@
   "seal": "Back fin seal",
   "finish": "Metallised",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / Metallised PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kings-fruity-candy-litchi",
@@ -530,7 +610,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kings-fruity-candy-mango",
@@ -543,7 +625,9 @@
   "seal": "Back fin seal",
   "finish": "Glossy",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Glossy"
  },
  {
   "id": "kings-coffee-bliss",
@@ -556,6 +640,8 @@
   "seal": "Back fin seal",
   "finish": "Matte",
   "size": "50 × 75 mm",
-  "use": "Confectionery"
+  "use": "Confectionery",
+  "material": "PET / PE",
+  "surfaceFinish": "Matte"
  }
 ]
