@@ -38,6 +38,30 @@ export type Database = {
         }
         Relationships: []
       }
+      shortlist_items: {
+        Row: {
+          brand: string
+          created_at: string
+          id: string
+          item_id: string
+          kind: string
+        }
+        Insert: {
+          brand: string
+          created_at?: string
+          id?: string
+          item_id: string
+          kind?: string
+        }
+        Update: {
+          brand?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          kind?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
