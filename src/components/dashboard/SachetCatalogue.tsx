@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Layers, Printer, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import raw from "@/data/sachets.json";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
