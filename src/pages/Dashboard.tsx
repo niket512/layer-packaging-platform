@@ -290,7 +290,7 @@ export default function Dashboard() {
               onClick={() => setShowFilters(true)}
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[12.5px] text-foreground lg:hidden"
             >
-              <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
+              <Menu className="h-3.5 w-3.5" /> Menu
               {activeChips.length > 0 && (
                 <span className="grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
                   {activeChips.length}
