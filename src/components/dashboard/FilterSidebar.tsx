@@ -11,14 +11,13 @@ type Props = {
 };
 
 const selectClass =
-  "mt-1.5 h-11 w-full rounded-xl border border-border bg-background px-3 text-[13px] text-foreground outline-none transition-colors focus:border-primary";
+  "h-10 w-full rounded-lg border border-border bg-background px-3 text-[13px] text-foreground outline-none transition-colors focus:border-primary";
 
-function Field({ label, children, note }: { label: string; children: React.ReactNode; note?: string }) {
+function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return (
-    <label className="block">
-      <span className="text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">{label}</span>
+    <label className={cn("block min-w-[160px] flex-1", className)}>
+      <span className="text-[10.5px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">{label}</span>
       {children}
-      {note && <span className="mt-1.5 block text-[11px] leading-snug text-muted-foreground">{note}</span>}
     </label>
   );
 }
@@ -27,52 +26,56 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
   const [more, setMore] = useState(Boolean(filters.shoulder));
 
   return (
-    <div className="space-y-4">
+    <div className="mt-4 rounded-xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <strong className="text-[13px] font-semibold text-foreground">Refine your search</strong>
+        <strong className="text-[11px] font-semibold uppercase tracking-[1.2px] text-muted-foreground">
+          Refine your search
+        </strong>
         <button onClick={reset} className="text-[12px] font-semibold text-primary hover:underline">
           Reset all
         </button>
       </div>
 
-      <Field label="Capacity" note="Listed volumes printed on the catalogue">
-        <select className={selectClass} value={filters.capacity} onChange={(e) => set({ capacity: e.target.value })}>
-          <option value="">All capacities</option>
-          {capacities.map((c) => (
-            <option key={c} value={c}>{c.toLocaleString()} ml</option>
-          ))}
-        </select>
-      </Field>
+      <div className="mt-3 flex flex-wrap items-end gap-x-3 gap-y-3">
+        <Field label="Capacity">
+          <select className={selectClass} value={filters.capacity} onChange={(e) => set({ capacity: e.target.value })}>
+            <option value="">All capacities</option>
+            {capacities.map((c) => (
+              <option key={c} value={c}>{c.toLocaleString()} ml</option>
+            ))}
+          </select>
+        </Field>
 
-      <Field label="Closure type">
-        <select className={selectClass} value={filters.closure} onChange={(e) => set({ closure: e.target.value })}>
-          <option value="">Any closure</option>
-          {closureTags.map((t) => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
-      </Field>
+        <Field label="Closure type">
+          <select className={selectClass} value={filters.closure} onChange={(e) => set({ closure: e.target.value })}>
+            <option value="">Any closure</option>
+            {closureTags.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </Field>
 
-      <Field label="Body feature">
-        <select className={selectClass} value={filters.feature} onChange={(e) => set({ feature: e.target.value })}>
-          <option value="">Any body feature</option>
-          {featureTags.map((t) => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
-      </Field>
+        <Field label="Body feature">
+          <select className={selectClass} value={filters.feature} onChange={(e) => set({ feature: e.target.value })}>
+            <option value="">Any body feature</option>
+            {featureTags.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </Field>
 
-      <button
-        onClick={() => setMore((v) => !v)}
-        aria-expanded={more}
-        className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-3 py-2.5 text-[12.5px] font-semibold text-foreground transition-colors hover:border-primary/60"
-      >
-        More filters
-        <ChevronDown className={cn("h-4 w-4 transition-transform", more && "rotate-180")} />
-      </button>
+        <div className="min-w-[160px] flex-1">
+          <button
+            onClick={() => setMore((v) => !v)}
+            aria-expanded={more}
+            className="flex h-10 w-full items-center justify-between rounded-lg border border-border bg-background px-3 text-[12.5px] font-semibold text-foreground transition-colors hover:border-primary/60"
+          >
+            More filters
+            <ChevronDown className={cn("h-4 w-4 transition-transform", more && "rotate-180")} />
+          </button>
+        </div>
 
-      {more && (
-        <div className="space-y-4">
+        {more && (
           <Field label="Shoulder or neck">
             <select className={selectClass} value={filters.shoulder} onChange={(e) => set({ shoulder: e.target.value })}>
               <option value="">Any shoulder or neck</option>
@@ -81,9 +84,8 @@ export default function FilterSidebar({ filters, set, reset }: Props) {
               ))}
             </select>
           </Field>
-        </div>
-      )}
-
+        )}
+      </div>
     </div>
   );
 }

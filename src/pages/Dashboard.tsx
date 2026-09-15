@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Search, LayoutGrid, Heart, SlidersHorizontal, X, Package } from "lucide-react";
+import { Search, LayoutGrid, Heart, Menu, X, Package } from "lucide-react";
 import { getBrand, clearBrand } from "@/lib/brand-session";
 import {
   designName,
@@ -230,11 +230,6 @@ export default function Dashboard() {
         })}
       </nav>
 
-      {view === "catalogue" && (
-        <div className="mt-7">
-          <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
-        </div>
-      )}
     </>
   );
 
@@ -295,7 +290,7 @@ export default function Dashboard() {
               onClick={() => setShowFilters(true)}
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-[12.5px] text-foreground lg:hidden"
             >
-              <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
+              <Menu className="h-3.5 w-3.5" /> Menu
               {activeChips.length > 0 && (
                 <span className="grid h-5 min-w-[20px] place-items-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
                   {activeChips.length}
@@ -387,6 +382,8 @@ export default function Dashboard() {
                   <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
                     {shapeStrip.map((d) => shapeTile(d, true))}
                   </div>
+
+                  <FilterSidebar filters={filters} set={set} reset={() => setFilters(emptyFilters)} />
                 </section>
               ) : (
                 <section>
