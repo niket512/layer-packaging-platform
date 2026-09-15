@@ -18,6 +18,7 @@ import FilterSidebar from "@/components/dashboard/FilterSidebar";
 import ProductCard from "@/components/dashboard/ProductCard";
 import ProductDialog from "@/components/dashboard/ProductDialog";
 import SachetCatalogue from "@/components/dashboard/SachetCatalogue";
+import ManufacturersView from "@/components/dashboard/ManufacturersView";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
@@ -317,6 +318,8 @@ export default function Dashboard() {
 
         <main className="min-w-0 px-5 pb-24 pt-7 md:px-8">
           {view === "sachets" && <SachetCatalogue />}
+          {view === "catalogue-makers" && <ManufacturersView category="bottles" />}
+          {view === "sachets-makers" && <ManufacturersView category="sachets" />}
 
 
 
