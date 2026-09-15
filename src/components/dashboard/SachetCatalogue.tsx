@@ -16,6 +16,8 @@ type Sachet = {
   finish: string;
   size: string;
   use: string;
+  material: string;
+  surfaceFinish: string;
 };
 
 const sachets = raw as Sachet[];
