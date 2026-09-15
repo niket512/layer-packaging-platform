@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Layers, Printer, Search, X } from "lucide-react";
+import { Heart, Layers, Printer, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import raw from "@/data/sachets.json";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -67,7 +67,13 @@ const fallback = (s: Sachet, full: boolean) => (e: { currentTarget: HTMLImageEle
   if (!el.src.endsWith(next)) el.src = next;
 };
 
-export default function SachetCatalogue() {
+type Props = {
+  savedIds?: string[];
+  onToggleSave?: (id: string) => void;
+  savedOnly?: boolean;
+};
+
+export default function SachetCatalogue({ savedIds = [], onToggleSave, savedOnly = false }: Props) {
   const [query, setQuery] = useState("");
   const [sel, setSel] = useState<Selected>(empty);
   const [detail, setDetail] = useState<Sachet | null>(null);
@@ -99,6 +105,7 @@ export default function SachetCatalogue() {
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     return sachets.filter((s) => {
+      if (savedOnly && !savedIds.includes(s.id)) return false;
       if (sel.format && s.format !== sel.format) return false;
       if (sel.shape && s.shape !== sel.shape) return false;
       if (sel.openingStyle && s.openingStyle !== sel.openingStyle) return false;
@@ -112,7 +119,7 @@ export default function SachetCatalogue() {
       }
       return true;
     });
-  }, [sel, query]);
+  }, [sel, query, savedOnly, savedIds]);
 
   const chips = [
     sel.format && { label: `Format: ${sel.format}`, clear: clear("format") },
@@ -243,11 +250,22 @@ export default function SachetCatalogue() {
       ) : (
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
           {results.map((s) => (
-            <button
+            <div
               key={s.id}
-              onClick={() => setDetail(s)}
-              className="group overflow-hidden rounded-xl border border-border bg-card text-left transition-colors hover:border-primary/60"
+              className="group relative overflow-hidden rounded-xl border border-border bg-card text-left transition-colors hover:border-primary/60"
             >
+              {onToggleSave && (
+                <button
+                  onClick={() => onToggleSave(s.id)}
+                  aria-label={savedIds.includes(s.id) ? "Remove from shortlist" : "Save to shortlist"}
+                  className="absolute right-2 top-2 z-10 grid h-8 w-8 place-items-center rounded-full border border-border bg-card/90 text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Heart
+                    className={cn("h-4 w-4", savedIds.includes(s.id) && "fill-primary text-primary")}
+                  />
+                </button>
+              )}
+              <button onClick={() => setDetail(s)} className="block w-full text-left">
               <div className="h-[150px] overflow-hidden bg-secondary">
                 <img
                   src={thumb(s)}
@@ -263,7 +281,8 @@ export default function SachetCatalogue() {
                   {s.format} · {s.size}
                 </p>
               </div>
-            </button>
+              </button>
+            </div>
           ))}
         </div>
       )}
