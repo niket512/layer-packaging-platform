@@ -4243,7 +4243,7 @@
   {
    "id": "din-06-1",
    "manufacturer": "Dinoss",
-   "name": "CURVE Shape Shampoo",
+   "name": "CURVE Shape Bottle",
    "design": "waisted",
    "material": "HDPE",
    "sizes_ml": [
@@ -4284,7 +4284,7 @@
   {
    "id": "din-06-2",
    "manufacturer": "Dinoss",
-   "name": "S Shape Shampoo",
+   "name": "S Shape Bottle",
    "design": "waisted",
    "material": "HDPE",
    "sizes_ml": [
@@ -4324,7 +4324,7 @@
   {
    "id": "din-06-3",
    "manufacturer": "Dinoss",
-   "name": "Diamond Shampoo Bottle",
+   "name": "Diamond Bottle",
    "design": "waisted",
    "material": "HDPE",
    "sizes_ml": [
@@ -4361,7 +4361,7 @@
   {
    "id": "din-06-4",
    "manufacturer": "Dinoss",
-   "name": "Tower Shampoo Bottle",
+   "name": "Tower Bottle",
    "design": "round",
    "material": "HDPE",
    "sizes_ml": [
@@ -5140,7 +5140,7 @@
   {
    "id": "din-09-1",
    "manufacturer": "Dinoss",
-   "name": "LIQUID DETERGENT - sculpted",
+   "name": "Sculpted bottle - pourer",
    "design": "waisted",
    "material": "HDPE",
    "sizes_ml": [
@@ -5179,7 +5179,7 @@
   {
    "id": "din-09-2",
    "manufacturer": "Dinoss",
-   "name": "LIQUID DETERGENT - 145",
+   "name": "Handled bottle - 145",
    "design": "handled",
    "material": "HDPE",
    "sizes_ml": [
@@ -5216,7 +5216,7 @@
   {
    "id": "din-09-3",
    "manufacturer": "Dinoss",
-   "name": "LIQUID DETERGENT - P50",
+   "name": "Handled bottle - P50",
    "design": "handled",
    "material": "HDPE",
    "sizes_ml": [
@@ -5253,7 +5253,7 @@
   {
    "id": "din-09-4",
    "manufacturer": "Dinoss",
-   "name": "LIQUID DETERGENT - 143",
+   "name": "Waisted bottle - 143",
    "design": "waisted",
    "material": "HDPE",
    "sizes_ml": [
@@ -5326,7 +5326,7 @@
   {
    "id": "din-09-6",
    "manufacturer": "Dinoss",
-   "name": "LIQUID DETERGENT - handle series",
+   "name": "Handle series bottle",
    "design": "handled",
    "material": "HDPE",
    "sizes_ml": [
@@ -5366,7 +5366,7 @@
   {
    "id": "din-09-7",
    "manufacturer": "Dinoss",
-   "name": "SE LIQUID DETERGENT Handle Bottle",
+   "name": "SE Handle Bottle",
    "design": "handled",
    "material": "HDPE",
    "sizes_ml": [
@@ -5405,7 +5405,7 @@
   {
    "id": "din-09-8",
    "manufacturer": "Dinoss",
-   "name": "REGENT Detergent - pourer versions",
+   "name": "REGENT - pourer versions",
    "design": "handled",
    "material": "HDPE",
    "sizes_ml": [
@@ -5482,7 +5482,7 @@
   {
    "id": "din-10-1",
    "manufacturer": "Dinoss",
-   "name": "C1 Liquid Detergent Cap",
+   "name": "C1 Pourer Cap",
    "design": "spout",
    "material": "Not specified",
    "sizes_ml": [],
@@ -5515,7 +5515,7 @@
   {
    "id": "din-10-2",
    "manufacturer": "Dinoss",
-   "name": "C2 Liquid Detergent Spout",
+   "name": "C2 Spout",
    "design": "spout",
    "material": "Not specified",
    "sizes_ml": [],
