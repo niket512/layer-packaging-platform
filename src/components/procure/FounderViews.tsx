@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Wand2, Sparkles as _unused, Trash2, Send, Trophy } from "lucide-react";
+import { Plus, Wand2, Trash2, Send, Trophy } from "lucide-react";
 import ReactMarkdownless from "./PlainMarkdown";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -15,7 +15,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-void _unused;
 
 export const Empty = ({ title, sub, action }: { title: string; sub: string; action?: React.ReactNode }) => (
   <div className="rounded-2xl border border-dashed border-border bg-card px-6 py-12 text-center">
