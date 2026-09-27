@@ -38,6 +38,285 @@ export type Database = {
         }
         Relationships: []
       }
+      po_updates: {
+        Row: {
+          author_id: string | null
+          created_at: string
+          id: string
+          note: string | null
+          po_id: string
+          status: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          po_id: string
+          status?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          po_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "po_updates_po_id_fkey"
+            columns: ["po_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          company: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      purchase_orders: {
+        Row: {
+          created_at: string
+          expected_ship_date: string | null
+          id: string
+          notes: string | null
+          owner_id: string
+          po_number: string
+          quantity: number | null
+          quote_id: string | null
+          rfq_id: string | null
+          status: string
+          supplier_id: string
+          title: string
+          total: number | null
+          unit_price: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expected_ship_date?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          po_number: string
+          quantity?: number | null
+          quote_id?: string | null
+          rfq_id?: string | null
+          status?: string
+          supplier_id: string
+          title: string
+          total?: number | null
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expected_ship_date?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          po_number?: string
+          quantity?: number | null
+          quote_id?: string | null
+          rfq_id?: string | null
+          status?: string
+          supplier_id?: string
+          title?: string
+          total?: number | null
+          unit_price?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_orders_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_rfq_id_fkey"
+            columns: ["rfq_id"]
+            isOneToOne: false
+            referencedRelation: "rfqs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          created_at: string
+          id: string
+          lead_time_days: number | null
+          moq: number | null
+          notes: string | null
+          rfq_id: string
+          status: string
+          submitted_by: string | null
+          supplier_id: string
+          terms: string | null
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_time_days?: number | null
+          moq?: number | null
+          notes?: string | null
+          rfq_id: string
+          status?: string
+          submitted_by?: string | null
+          supplier_id: string
+          terms?: string | null
+          unit_price: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_time_days?: number | null
+          moq?: number | null
+          notes?: string | null
+          rfq_id?: string
+          status?: string
+          submitted_by?: string | null
+          supplier_id?: string
+          terms?: string | null
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_rfq_id_fkey"
+            columns: ["rfq_id"]
+            isOneToOne: false
+            referencedRelation: "rfqs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rfq_invites: {
+        Row: {
+          created_at: string
+          id: string
+          rfq_id: string
+          supplier_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rfq_id: string
+          supplier_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rfq_id?: string
+          supplier_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rfq_invites_rfq_id_fkey"
+            columns: ["rfq_id"]
+            isOneToOne: false
+            referencedRelation: "rfqs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rfq_invites_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rfqs: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          owner_id: string
+          quantity: number | null
+          specs: string | null
+          status: string
+          target_price: number | null
+          title: string
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          owner_id?: string
+          quantity?: number | null
+          specs?: string | null
+          status?: string
+          target_price?: number | null
+          title: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          owner_id?: string
+          quantity?: number | null
+          specs?: string | null
+          status?: string
+          target_price?: number | null
+          title?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       shortlist_items: {
         Row: {
           brand: string
@@ -62,15 +341,92 @@ export type Database = {
         }
         Relationships: []
       }
+      suppliers: {
+        Row: {
+          category: string | null
+          contact_name: string | null
+          created_at: string
+          email: string | null
+          id: string
+          location: string | null
+          name: string
+          notes: string | null
+          owner_id: string
+          phone: string | null
+          rating: number | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          notes?: string | null
+          owner_id?: string
+          phone?: string | null
+          rating?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          phone?: string | null
+          rating?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_access_po: { Args: { _po_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      invited_to_rfq: { Args: { _rfq_id: string }; Returns: boolean }
+      is_supplier_contact: { Args: { _supplier_id: string }; Returns: boolean }
+      owns_rfq: { Args: { _rfq_id: string }; Returns: boolean }
+      supplier_update_po: {
+        Args: { _note: string; _po_id: string; _ship: string; _status: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "founder" | "supplier"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -197,6 +553,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["founder", "supplier"],
+    },
   },
 } as const

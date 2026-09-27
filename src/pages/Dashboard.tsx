@@ -233,6 +233,13 @@ export default function Dashboard() {
             </div>
           );
         })}
+        <Link
+          to="/dashboard/procure"
+          className="mt-1 flex w-full items-center gap-2.5 rounded-lg border border-primary/30 bg-secondary/40 px-3 py-2.5 text-[13px] font-semibold text-primary hover:bg-secondary"
+        >
+          <Package className="h-4 w-4" />
+          Procurement
+        </Link>
       </nav>
 
     </>
