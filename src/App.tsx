@@ -8,6 +8,8 @@ import Proposal from "./pages/Proposal.tsx";
 import SignIn from "./pages/SignIn.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Auth from "./pages/Auth.tsx";
+import Procure from "./pages/Procure.tsx";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/proposal" element={<Proposal />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard/procure" element={<Procure />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/:brandSlug" element={<Dashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
