@@ -13,7 +13,7 @@ export function useAuth() {
       setRole(null);
       return;
     }
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", u.id).maybeSingle();
+    const { data } = await supabase.from("user_roles").select("role").eq("user_id", u.id).in("role", ["founder", "supplier"]).maybeSingle();
     setRole((data?.role as Role) ?? null);
   }, []);
 
