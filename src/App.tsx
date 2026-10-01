@@ -10,8 +10,10 @@ import Dashboard from "./pages/Dashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import Procure from "./pages/Procure.tsx";
+import AppHome from "./pages/AppHome.tsx";
 
 const queryClient = new QueryClient();
+const isAppHost = typeof window !== "undefined" && window.location.hostname.startsWith("app.");
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -20,7 +22,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={isAppHost ? <AppHome /> : <Index />} />
+          <Route path="/app" element={<AppHome />} />
           <Route path="/proposal" element={<Proposal />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth" element={<Auth />} />
