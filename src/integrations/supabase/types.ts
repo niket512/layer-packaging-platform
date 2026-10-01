@@ -38,6 +38,113 @@ export type Database = {
         }
         Relationships: []
       }
+      catalogue_uploads: {
+        Row: {
+          created_at: string
+          error: string | null
+          file_name: string
+          file_path: string
+          id: string
+          owner_id: string
+          status: string
+          store_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          file_name: string
+          file_path: string
+          id?: string
+          owner_id?: string
+          status?: string
+          store_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          file_name?: string
+          file_path?: string
+          id?: string
+          owner_id?: string
+          status?: string
+          store_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalogue_uploads_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_products: {
+        Row: {
+          capacity: string | null
+          category: string | null
+          created_at: string
+          description: string | null
+          dimensions: string | null
+          id: string
+          material: string | null
+          moq: string | null
+          name: string
+          owner_id: string
+          status: string
+          store_id: string
+          updated_at: string
+          upload_id: string | null
+        }
+        Insert: {
+          capacity?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          id?: string
+          material?: string | null
+          moq?: string | null
+          name: string
+          owner_id?: string
+          status?: string
+          store_id: string
+          updated_at?: string
+          upload_id?: string | null
+        }
+        Update: {
+          capacity?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          id?: string
+          material?: string | null
+          moq?: string | null
+          name?: string
+          owner_id?: string
+          status?: string
+          store_id?: string
+          updated_at?: string
+          upload_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_products_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_products_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "catalogue_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       po_updates: {
         Row: {
           author_id: string | null
@@ -341,6 +448,42 @@ export type Database = {
         }
         Relationships: []
       }
+      stores: {
+        Row: {
+          categories: string | null
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          name: string
+          owner_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          categories?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          owner_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          categories?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          owner_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suppliers: {
         Row: {
           category: string | null
@@ -418,6 +561,7 @@ export type Database = {
         Returns: boolean
       }
       invited_to_rfq: { Args: { _rfq_id: string }; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
       is_supplier_contact: { Args: { _supplier_id: string }; Returns: boolean }
       owns_rfq: { Args: { _rfq_id: string }; Returns: boolean }
       supplier_update_po: {
@@ -426,7 +570,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "founder" | "supplier"
+      app_role: "founder" | "supplier" | "manufacturer" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -554,7 +698,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["founder", "supplier"],
+      app_role: ["founder", "supplier", "manufacturer", "admin"],
     },
   },
 } as const

@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import Procure from "./pages/Procure.tsx";
 import AppHome from "./pages/AppHome.tsx";
+import AppStore from "./pages/AppStore.tsx";
+import AppAdmin from "./pages/AppAdmin.tsx";
 
 const queryClient = new QueryClient();
 const isAppHost = typeof window !== "undefined" && window.location.hostname.startsWith("app.");
@@ -24,6 +26,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={isAppHost ? <AppHome /> : <Index />} />
           <Route path="/app" element={<AppHome />} />
+          <Route path="/app/store" element={<AppStore />} />
+          <Route path="/app/admin" element={<AppAdmin />} />
+          <Route path="/store" element={<AppStore />} />
+          <Route path="/admin" element={<AppAdmin />} />
           <Route path="/proposal" element={<Proposal />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth" element={<Auth />} />
