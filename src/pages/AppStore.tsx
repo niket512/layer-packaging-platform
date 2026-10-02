@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import AppShell, { SignInBox, useSession } from "@/components/market/AppShell";
 import type { Database } from "@/integrations/supabase/types";
-import { cropProductImages, pdfPageText } from "@/lib/pdf-crops";
+import { cropProductImages, pdfPageImages, pdfPageText } from "@/lib/pdf-crops";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 
 type Store = Database["public"]["Tables"]["stores"]["Row"];
