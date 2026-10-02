@@ -88,7 +88,7 @@ export default function AppStore() {
     void refresh();
     toast.info("Reading your catalogue with AI — this can take a minute");
     let text = "";
-    try { text = await pdfPageText(file); } catch { /* fall back to sending the PDF */ }
+    try { text = await pdfPageText(file); } catch (e) { console.error("page text failed", e); }
     const useText = text.replace(/=== Page.*===/g, "").trim().length > 300;
     // Send the text in small groups of pages so each AI read stays quick.
     const chunks: { text?: string; images?: { page: number; url: string }[] }[] = [];
@@ -104,7 +104,7 @@ export default function AppStore() {
       try {
         const imgs = await pdfPageImages(file);
         for (let i = 0; i < imgs.length; i += 3) chunks.push({ images: imgs.slice(i, i + 3) });
-      } catch { chunks.push({}); }
+      } catch (e) { console.error("page pictures failed", e); chunks.push({}); }
     }
     let total = 0;
     let fnErr: unknown = null;
