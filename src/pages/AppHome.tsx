@@ -59,6 +59,7 @@ export default function AppHome() {
         <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((r) => (
             <div key={r.id} className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+              {r.image_url && <img src={r.image_url} alt={r.name} loading="lazy" className="mb-3 aspect-square w-full rounded-xl bg-background object-contain" />}
               {r.category && <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">{r.category}</span>}
               <h3 className="mt-1 font-semibold text-foreground">{r.name}</h3>
               <p className="text-sm text-muted-foreground">{r.stores?.name}{r.stores?.location ? ` · ${r.stores.location}` : ""}</p>

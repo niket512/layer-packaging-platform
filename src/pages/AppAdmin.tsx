@@ -65,6 +65,7 @@ export default function AppAdmin() {
         {products.length === 0 && <p className="text-sm text-muted-foreground">Nothing to review.</p>}
         {products.map((p) => (
           <div key={p.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
+            {p.image_url ? <img src={p.image_url} alt="" className="h-12 w-12 shrink-0 rounded-lg border border-border bg-background object-contain" /> : <div className="h-12 w-12 shrink-0 rounded-lg bg-muted" />}
             <div className="min-w-0 flex-1">
               <p className="font-medium text-foreground">{p.name}</p>
               <p className="truncate text-xs text-muted-foreground">{[p.stores?.name, p.category, p.material, p.capacity, p.dimensions].filter(Boolean).join(" · ")}</p>

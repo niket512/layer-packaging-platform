@@ -87,7 +87,6 @@ export default function AppStore() {
     void refresh();
     toast.info("Reading your catalogue with AI — this can take a minute");
     const { data, error: fnErr } = await supabase.functions.invoke("extract-catalogue", { body: { uploadId: row.id } });
-    setBusy(false);
     if (fnErr) {
       let msg = "Could not read this catalogue";
       try { msg = (await (fnErr as { context?: Response }).context?.json())?.error ?? msg; } catch { /* ignore */ }
