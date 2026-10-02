@@ -12,6 +12,7 @@ const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
 const SYSTEM = `You extract products from a manufacturer's product catalogue PDF for a B2B packaging marketplace.
+ALWAYS fill "page" (a number) for every product — it is required to attach the product photo.
 Reply with ONLY a JSON object, no markdown: {"products":[{"name","category","material","capacity","dimensions","moq","description","page","bbox"}]}.
 - name: short buyer-facing product name, no brand names of customers.
 - category: e.g. "Bottle", "Jar", "Pouch", "Sachet", "Cap", "Box", "Label".

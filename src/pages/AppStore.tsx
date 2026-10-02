@@ -95,7 +95,7 @@ export default function AppStore() {
       toast.success(`Found ${data.count} products — cutting out their photos…`);
       try {
         const { data: fresh } = await supabase.from("market_products").select("id,page,bbox").eq("upload_id", row.id);
-        const reqs = (fresh ?? []).filter((p) => p.page && Array.isArray(p.bbox)).map((p) => ({ id: p.id, page: p.page as number, bbox: p.bbox as number[] }));
+        const reqs = (fresh ?? []).filter((p) => p.page).map((p) => ({ id: p.id, page: p.page as number, bbox: Array.isArray(p.bbox) ? (p.bbox as number[]) : null }));
         const crops = await cropProductImages(file, reqs);
         await Promise.all(Object.entries(crops).map(([id, url]) => supabase.from("market_products").update({ image_url: url }).eq("id", id)));
         toast.success(`Added ${Object.keys(crops).length} product photos — review them below, then submit`);
