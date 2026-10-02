@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 type Row = {
   id: string; name: string; category: string | null; material: string | null; capacity: string | null;
-  dimensions: string | null; moq: string | null; description: string | null;
+  dimensions: string | null; moq: string | null; description: string | null; image_url: string | null;
   stores: { name: string; location: string | null } | null;
 };
 
@@ -20,7 +20,7 @@ export default function AppHome() {
 
   useEffect(() => {
     supabase.from("market_products")
-      .select("id,name,category,material,capacity,dimensions,moq,description,stores!inner(name,location,status)")
+      .select("id,name,category,material,capacity,dimensions,moq,description,image_url,stores!inner(name,location,status)")
       .eq("status", "approved").eq("stores.status", "approved").order("created_at", { ascending: false }).limit(1000)
       .then(({ data }) => { setRows((data as unknown as Row[]) ?? []); setLoading(false); });
   }, []);

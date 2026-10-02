@@ -12,6 +12,7 @@ const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
 const SYSTEM = `You extract products from a manufacturer's product catalogue PDF for a B2B packaging marketplace.
+ALWAYS fill "page" (a number) for every product — it is required to attach the product photo.
 Reply with ONLY a JSON object, no markdown: {"products":[{"name","category","material","capacity","dimensions","moq","description","page","bbox"}]}.
 - name: short buyer-facing product name, no brand names of customers.
 - category: e.g. "Bottle", "Jar", "Pouch", "Sachet", "Cap", "Box", "Label".
@@ -21,7 +22,7 @@ Reply with ONLY a JSON object, no markdown: {"products":[{"name","category","mat
 - bbox: [x0, y0, x1, y1] tight box around that product's photo on that page, as fractions 0-1 of page width/height measured from the top-left corner, or null if no photo.
 Never invent facts. Include at most 150 products.`;
 
-const num = (v: unknown) => (typeof v === "number" && isFinite(v) ? v : null);
+const num = (v: unknown) => { const n = Number(v); return v != null && v !== "" && isFinite(n) && n > 0 ? n : null; };
 const box = (v: unknown) => {
   if (!Array.isArray(v) || v.length !== 4) return null;
   const b = v.map((x) => Math.min(1, Math.max(0, Number(x))));
