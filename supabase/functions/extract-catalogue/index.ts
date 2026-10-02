@@ -18,7 +18,7 @@ Reply with ONLY a JSON object, no markdown: {"products":[{"name","category","mat
 - description: one sentence from catalogue facts only.
 - page: 1-based PDF page number where the product's photo/drawing appears, or null.
 - bbox: [x0, y0, x1, y1] tight box around that product's photo on that page, as fractions 0-1 of page width/height measured from the top-left corner, or null if no photo.
-Never invent facts. Include at most 150 products.`;
+Only list products whose photo or drawing appears on these pages. Do NOT create products from spec/price tables or index pages; use such tables only to fill details. Never invent facts. Include at most 150 products.`;
 
 const num = (v: unknown) => { const n = Number(v); return v != null && v !== "" && isFinite(n) && n > 0 ? n : null; };
 const box = (v: unknown) => {
