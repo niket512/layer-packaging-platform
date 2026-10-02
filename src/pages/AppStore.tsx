@@ -185,7 +185,13 @@ export default function AppStore() {
                 <ProductEditor key={p.id} p={p} onCancel={() => setEditing(null)} onSave={async (patch) => { await updateProduct(p, { ...patch, status: "draft" }); setEditing(null); }} />
               ) : (
                 <div key={p.id} className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
-                  {p.image_url ? <img src={p.image_url} alt="" className="h-12 w-12 shrink-0 rounded-lg border border-border bg-background object-contain" /> : <div className="h-12 w-12 shrink-0 rounded-lg bg-muted" />}
+                  <label title={p.status === "approved" ? undefined : "Add or change photo"} className={`relative h-12 w-12 shrink-0 ${p.status === "approved" ? "" : "cursor-pointer"}`}>
+                    {p.image_url ? <img src={p.image_url} alt="" className="h-12 w-12 rounded-lg border border-border bg-background object-contain" /> : <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted"><ImagePlus className="h-4 w-4 text-muted-foreground" /></div>}
+                    {p.status !== "approved" && <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                      const f = e.target.files?.[0]; e.target.value = ""; if (!f) return;
+                      try { await updateProduct(p, { image_url: await imageFileToDataUrl(f), status: "draft" }); toast.success("Photo added"); } catch (err) { toast.error((err as Error).message); }
+                    }} />}
+                  </label>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-foreground">{p.name}</p>
                     <p className="truncate text-xs text-muted-foreground">{[p.category, p.material, p.capacity, p.dimensions, p.moq && `MOQ ${p.moq}`].filter(Boolean).join(" · ")}</p>
