@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { FileUp, Trash2 } from "lucide-react";
+import { FileUp, ImagePlus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import AppShell, { SignInBox, useSession } from "@/components/market/AppShell";
 import type { Database } from "@/integrations/supabase/types";
 import { cropProductImages } from "@/lib/pdf-crops";
+import { imageFileToDataUrl } from "@/lib/image-data-url";
 
 type Store = Database["public"]["Tables"]["stores"]["Row"];
 type Product = Database["public"]["Tables"]["market_products"]["Row"];
@@ -204,12 +205,25 @@ export default function AppStore() {
 
 function ProductEditor({ p, onSave, onCancel }: { p: Product; onSave: (patch: Partial<Product>) => void; onCancel: () => void }) {
   const [v, setV] = useState<Record<string, string>>(() => Object.fromEntries([...FIELDS, "description"].map((k) => [k, (p[k as keyof Product] as string) ?? ""])));
+  const [img, setImg] = useState<string | null>(p.image_url);
+  const pick = async (f?: File) => {
+    if (!f) return;
+    try { setImg(await imageFileToDataUrl(f)); } catch (e) { toast.error((e as Error).message); }
+  };
   return (
     <div className="grid gap-2 rounded-xl border border-primary bg-card p-4 md:grid-cols-3">
+      <div className="flex items-center gap-3 md:col-span-3">
+        {img ? <img src={img} alt="" className="h-20 w-20 rounded-lg border border-border bg-background object-contain" /> : <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-muted"><ImagePlus className="h-5 w-5 text-muted-foreground" /></div>}
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm text-foreground hover:bg-muted">
+          <ImagePlus className="h-4 w-4" />{img ? "Change photo" : "Add photo"}
+          <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; void pick(f); }} />
+        </label>
+        {img && <button className="text-sm text-muted-foreground hover:text-destructive" onClick={() => setImg(null)}>Remove</button>}
+      </div>
       {FIELDS.map((k) => <div key={k} className="space-y-1"><Label className="capitalize">{k === "moq" ? "MOQ" : k}</Label><Input value={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.value })} /></div>)}
       <div className="space-y-1 md:col-span-3"><Label>Description</Label><Textarea rows={2} value={v.description} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
       <div className="flex gap-2 md:col-span-3">
-        <Button size="sm" className="rounded-full" onClick={() => onSave(Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "name" ? x.trim() || "Untitled product" : x.trim() || null])))}>Save</Button>
+        <Button size="sm" className="rounded-full" onClick={() => onSave({ ...Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "name" ? x.trim() || "Untitled product" : x.trim() || null])), image_url: img })}>Save</Button>
         <Button size="sm" variant="ghost" onClick={onCancel}>Cancel</Button>
       </div>
     </div>
