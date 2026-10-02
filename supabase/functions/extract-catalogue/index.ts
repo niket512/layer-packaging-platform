@@ -21,7 +21,7 @@ Reply with ONLY a JSON object, no markdown: {"products":[{"name","category","mat
 - bbox: [x0, y0, x1, y1] tight box around that product's photo on that page, as fractions 0-1 of page width/height measured from the top-left corner, or null if no photo.
 Never invent facts. Include at most 150 products.`;
 
-const num = (v: unknown) => (typeof v === "number" && isFinite(v) ? v : null);
+const num = (v: unknown) => { const n = Number(v); return v != null && v !== "" && isFinite(n) && n > 0 ? n : null; };
 const box = (v: unknown) => {
   if (!Array.isArray(v) || v.length !== 4) return null;
   const b = v.map((x) => Math.min(1, Math.max(0, Number(x))));
