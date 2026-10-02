@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import AppShell, { SignInBox, useSession } from "@/components/market/AppShell";
 import type { Database } from "@/integrations/supabase/types";
-import { cropProductImages } from "@/lib/pdf-crops";
+import { cropProductImages, pdfPageImages, pdfPageText } from "@/lib/pdf-crops";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 
 type Store = Database["public"]["Tables"]["stores"]["Row"];
@@ -87,13 +87,39 @@ export default function AppStore() {
     if (error || !row) { setBusy(false); return toast.error(error?.message ?? "Upload failed"); }
     void refresh();
     toast.info("Reading your catalogue with AI — this can take a minute");
-    const { data, error: fnErr } = await supabase.functions.invoke("extract-catalogue", { body: { uploadId: row.id } });
-    if (fnErr) {
+    let text = "";
+    try { text = await pdfPageText(file); } catch (e) { console.error("page text failed", e); }
+    const useText = text.replace(/=== Page.*===/g, "").trim().length > 300;
+    // Send the text in small groups of pages so each AI read stays quick.
+    const chunks: { text?: string; images?: { page: number; url: string }[] }[] = [];
+    if (useText) {
+      let cur = "";
+      for (const part of text.split(/(?=\n=== Page )/)) {
+        if (cur && cur.length + part.length > 30_000) { chunks.push({ text: cur }); cur = ""; }
+        cur += part;
+      }
+      if (cur.trim()) chunks.push({ text: cur });
+    } else {
+      // Scanned PDF: send page pictures, a few at a time
+      try {
+        const imgs = await pdfPageImages(file);
+        for (let i = 0; i < imgs.length; i += 3) chunks.push({ images: imgs.slice(i, i + 3) });
+      } catch (e) { console.error("page pictures failed", e); chunks.push({}); }
+    }
+    let total = 0;
+    let fnErr: unknown = null;
+    for (let i = 0; i < chunks.length; i++) {
+      if (chunks.length > 1) toast.info(`Reading part ${i + 1} of ${chunks.length}…`);
+      const res = await supabase.functions.invoke("extract-catalogue", { body: { uploadId: row.id, ...chunks[i] } });
+      if (res.error) { fnErr = res.error; break; }
+      total += res.data?.count ?? 0;
+    }
+    if (fnErr && !total) {
       let msg = "Could not read this catalogue";
       try { msg = (await (fnErr as { context?: Response }).context?.json())?.error ?? msg; } catch { /* ignore */ }
       toast.error(msg);
     } else {
-      toast.success(`Found ${data.count} products — cutting out their photos…`);
+      toast.success(`Found ${total} products — cutting out their photos…`);
       try {
         const { data: fresh } = await supabase.from("market_products").select("id,page,bbox").eq("upload_id", row.id);
         const reqs = (fresh ?? []).filter((p) => p.page).map((p) => ({ id: p.id, page: p.page as number, bbox: Array.isArray(p.bbox) ? (p.bbox as number[]) : null }));
