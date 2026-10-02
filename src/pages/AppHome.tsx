@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 type Row = {
   id: string; name: string; category: string | null; material: string | null; capacity: string | null;
-  dimensions: string | null; moq: string | null; description: string | null;
+  dimensions: string | null; moq: string | null; description: string | null; image_url: string | null;
   stores: { name: string; location: string | null } | null;
 };
 
