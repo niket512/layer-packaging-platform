@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import AppShell, { SignInBox, useSession } from "@/components/market/AppShell";
 import type { Database } from "@/integrations/supabase/types";
+import { cropProductImages } from "@/lib/pdf-crops";
 
 type Store = Database["public"]["Tables"]["stores"]["Row"];
 type Product = Database["public"]["Tables"]["market_products"]["Row"];
@@ -91,7 +92,19 @@ export default function AppStore() {
       let msg = "Could not read this catalogue";
       try { msg = (await (fnErr as { context?: Response }).context?.json())?.error ?? msg; } catch { /* ignore */ }
       toast.error(msg);
-    } else toast.success(`Found ${data.count} products — review them below, then submit`);
+    } else {
+      toast.success(`Found ${data.count} products — cutting out their photos…`);
+      try {
+        const { data: fresh } = await supabase.from("market_products").select("id,page,bbox").eq("upload_id", row.id);
+        const reqs = (fresh ?? []).filter((p) => p.page && Array.isArray(p.bbox)).map((p) => ({ id: p.id, page: p.page as number, bbox: p.bbox as number[] }));
+        const crops = await cropProductImages(file, reqs);
+        await Promise.all(Object.entries(crops).map(([id, url]) => supabase.from("market_products").update({ image_url: url }).eq("id", id)));
+        toast.success(`Added ${Object.keys(crops).length} product photos — review them below, then submit`);
+      } catch {
+        toast.error("Products saved, but photos could not be cut from this PDF");
+      }
+    }
+    setBusy(false);
     void refresh();
   };
 
@@ -172,6 +185,7 @@ export default function AppStore() {
                 <ProductEditor key={p.id} p={p} onCancel={() => setEditing(null)} onSave={async (patch) => { await updateProduct(p, { ...patch, status: "draft" }); setEditing(null); }} />
               ) : (
                 <div key={p.id} className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
+                  {p.image_url ? <img src={p.image_url} alt="" className="h-12 w-12 shrink-0 rounded-lg border border-border bg-background object-contain" /> : <div className="h-12 w-12 shrink-0 rounded-lg bg-muted" />}
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-foreground">{p.name}</p>
                     <p className="truncate text-xs text-muted-foreground">{[p.category, p.material, p.capacity, p.dimensions, p.moq && `MOQ ${p.moq}`].filter(Boolean).join(" · ")}</p>
