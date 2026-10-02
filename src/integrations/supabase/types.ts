@@ -81,48 +81,57 @@ export type Database = {
       }
       market_products: {
         Row: {
+          bbox: Json | null
           capacity: string | null
           category: string | null
           created_at: string
           description: string | null
           dimensions: string | null
           id: string
+          image_url: string | null
           material: string | null
           moq: string | null
           name: string
           owner_id: string
+          page: number | null
           status: string
           store_id: string
           updated_at: string
           upload_id: string | null
         }
         Insert: {
+          bbox?: Json | null
           capacity?: string | null
           category?: string | null
           created_at?: string
           description?: string | null
           dimensions?: string | null
           id?: string
+          image_url?: string | null
           material?: string | null
           moq?: string | null
           name: string
           owner_id?: string
+          page?: number | null
           status?: string
           store_id: string
           updated_at?: string
           upload_id?: string | null
         }
         Update: {
+          bbox?: Json | null
           capacity?: string | null
           category?: string | null
           created_at?: string
           description?: string | null
           dimensions?: string | null
           id?: string
+          image_url?: string | null
           material?: string | null
           moq?: string | null
           name?: string
           owner_id?: string
+          page?: number | null
           status?: string
           store_id?: string
           updated_at?: string
