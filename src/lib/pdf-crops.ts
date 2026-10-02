@@ -43,6 +43,40 @@ const overlap = (a: number[], b: number[]) => {
   return w * h;
 };
 
+/** Renders every page to a small JPEG, for scanned PDFs that have no text. */
+export async function pdfPageImages(file: File, maxPx = 1400): Promise<{ page: number; url: string }[]> {
+  const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+  const out: { page: number; url: string }[] = [];
+  for (let n = 1; n <= Math.min(doc.numPages, 60); n++) {
+    const page = await doc.getPage(n);
+    const base = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: maxPx / Math.max(base.width, base.height) });
+    const c = document.createElement("canvas");
+    c.width = viewport.width; c.height = viewport.height;
+    await page.render({ canvasContext: c.getContext("2d")!, viewport }).promise;
+    out.push({ page: n, url: c.toDataURL("image/jpeg", 0.75) });
+    page.cleanup();
+  }
+  await doc.destroy();
+  return out;
+}
+
+/** Reads the PDF's text page by page in the browser, so big PDFs don't need to be sent to the AI whole. */
+export async function pdfPageText(file: File, maxChars = 250_000): Promise<string> {
+  const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+  let out = "";
+  for (let n = 1; n <= doc.numPages && out.length < maxChars; n++) {
+    const page = await doc.getPage(n);
+    const tc = await page.getTextContent();
+    const text = tc.items.map((i) => ("str" in i ? i.str : "")).join(" ").replace(/\s+/g, " ").trim();
+    const photos = (await imageBoxes(page, page.getViewport({ scale: 1 }))).length;
+    out += `\n=== Page ${n} (${photos} product photos) ===\n${text}\n`;
+    page.cleanup();
+  }
+  await doc.destroy();
+  return out.slice(0, maxChars);
+}
+
 /** Renders the needed PDF pages in the browser and returns a JPEG data URL per product. */
 export async function cropProductImages(file: File, items: CropRequest[]): Promise<Record<string, string>> {
   const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;

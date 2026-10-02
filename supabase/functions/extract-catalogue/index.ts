@@ -1,5 +1,3 @@
-import { createOpenAI } from "npm:@ai-sdk/openai";
-import { streamText } from "npm:ai";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { createLovableAiGatewayRunIdFetch, getLovableAiGatewayRunId } from "../_shared/run-id.ts";
 
@@ -44,10 +42,19 @@ Deno.serve(async (req) => {
   if (!user) return json({ error: "Please sign in" }, 401);
 
   let uploadId: string;
+  let pageText: string | null = null;
+  let pageImages: { page: number; url: string }[] | null = null;
   try {
     const b = await req.json();
     uploadId = String(b.uploadId ?? "");
     if (!/^[0-9a-f-]{36}$/i.test(uploadId)) throw new Error();
+    if (typeof b.text === "string" && b.text.trim()) pageText = b.text.slice(0, 260_000);
+    if (Array.isArray(b.images) && b.images.length) {
+      pageImages = b.images.slice(0, 6)
+        .filter((x: { page?: unknown; url?: unknown }) => Number.isInteger(x?.page) && typeof x?.url === "string" && x.url.startsWith("data:image/jpeg;base64,") && x.url.length < 3_000_000)
+        .map((x: { page: number; url: string }) => ({ page: x.page, url: x.url }));
+      if (!pageImages!.length) pageImages = null;
+    }
   } catch {
     return json({ error: "Invalid request" }, 400);
   }
@@ -65,54 +72,49 @@ Deno.serve(async (req) => {
   };
 
   await admin.from("catalogue_uploads").update({ status: "processing", error: null }).eq("id", uploadId);
-  const { data: file, error: dlErr } = await admin.storage.from("catalogue-pdfs").download(up.file_path);
-  if (dlErr || !file) return fail("Could not read the PDF", 500);
 
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  let bin = "";
-  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  const base64 = btoa(bin);
+  let content: Array<Record<string, unknown>>;
+  if (pageImages) {
+    content = [{ type: "text", text: "Extract every product from these catalogue pages. Each picture is labelled with its page number; use it for \"page\" and give a tight bbox around each product's photo on that page." }];
+    for (const im of pageImages) {
+      content.push({ type: "text", text: `Page ${im.page}:` });
+      content.push({ type: "image_url", image_url: { url: im.url } });
+    }
+  } else if (pageText) {
+    content = [{ type: "text", text: `Extract every product from this catalogue. Its text is given page by page; use those page numbers. Pages showing more photos usually hold more products.\n${pageText}` }];
+  } else {
+    const { data: file, error: dlErr } = await admin.storage.from("catalogue-pdfs").download(up.file_path);
+    if (dlErr || !file) return fail("Could not read the PDF", 500);
+    if (file.size > 8 * 1024 * 1024) return fail("This PDF has no readable text and is too large — try a smaller PDF", 413);
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    let bin = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    content = [
+      { type: "text", text: "Extract every product from this catalogue." },
+      { type: "file", file: { filename: up.file_name, file_data: `data:application/pdf;base64,${btoa(bin)}` } },
+    ];
+  }
 
+  // Plain (non-streamed) request: streaming a long answer used up the function's CPU budget.
   const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(req));
-  const provider = createOpenAI({
-    baseURL: "https://ai.gateway.lovable.dev/v1",
-    apiKey,
-    headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
-    fetch: runIdFetch.fetch,
-  });
-
   let failure: { status: number; message: string } | null = null;
   let text = "";
   try {
-    const result = streamText({
-      model: provider.responses("openai/gpt-6-astra"),
-      system: SYSTEM,
-      messages: [{
-        role: "user",
-        content: [
-          { type: "text", text: "Extract every product from this catalogue." },
-          { type: "file", filename: up.file_name, data: base64, mediaType: "application/pdf" },
-        ],
-      }],
-      abortSignal: req.signal,
-      providerOptions: {
-        openai: {
-          forceReasoning: true,
-          reasoningEffort: "low",
-          reasoningSummary: "auto",
-          store: false,
-          include: ["reasoning.encrypted_content"],
-        },
-      },
-      onError: ({ error }) => {
-        const e = error as { statusCode?: number; message?: string };
-        failure = { status: e.statusCode ?? 500, message: e.message ?? "AI request failed" };
-      },
+    const r = await runIdFetch.fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "openai/gpt-6-astra",
+        reasoning_effort: "low",
+        response_format: { type: "json_object" },
+        messages: [{ role: "system", content: SYSTEM }, { role: "user", content }],
+      }),
+      signal: req.signal,
     });
-    text = await result.text;
-  } catch (err) {
-    const e = err as { statusCode?: number };
-    failure ??= { status: e.statusCode ?? 500, message: "AI request failed" };
+    if (!r.ok) failure = { status: r.status, message: (await r.text()).slice(0, 300) };
+    else text = (await r.json()).choices?.[0]?.message?.content ?? "";
+  } catch {
+    failure = { status: 500, message: "AI request failed" };
   }
   if (failure) {
     const f = failure as { status: number; message: string };
