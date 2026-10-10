@@ -27,7 +27,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={isAppHost ? <AppHome /> : <Index />} />
+          <Route path="/" element={isMfrHost ? <ManufacturersDirectory /> : isAppHost ? <AppHome /> : <Index />} />
+          <Route path="/manufacturers" element={<ManufacturersDirectory />} />
           <Route path="/app" element={<AppHome />} />
           <Route path="/app/store" element={<AppStore />} />
           <Route path="/app/admin" element={<AppAdmin />} />
