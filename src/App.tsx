@@ -13,9 +13,12 @@ import Procure from "./pages/Procure.tsx";
 import AppHome from "./pages/AppHome.tsx";
 import AppStore from "./pages/AppStore.tsx";
 import AppAdmin from "./pages/AppAdmin.tsx";
+import ManufacturersDirectory from "./pages/ManufacturersDirectory.tsx";
 
 const queryClient = new QueryClient();
-const isAppHost = typeof window !== "undefined" && window.location.hostname.startsWith("app.");
+const host = typeof window !== "undefined" ? window.location.hostname : "";
+const isAppHost = host.startsWith("app.");
+const isMfrHost = host.startsWith("manufacturers.") || host.startsWith("makers.");
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -24,7 +27,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={isAppHost ? <AppHome /> : <Index />} />
+          <Route path="/" element={isMfrHost ? <ManufacturersDirectory /> : isAppHost ? <AppHome /> : <Index />} />
+          <Route path="/manufacturers" element={<ManufacturersDirectory />} />
           <Route path="/app" element={<AppHome />} />
           <Route path="/app/store" element={<AppStore />} />
           <Route path="/app/admin" element={<AppAdmin />} />
