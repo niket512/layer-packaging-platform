@@ -30,6 +30,21 @@ export const manufacturerProfiles: ManufacturerProfile[] = [
     note: "Customised packaging based on product, quantity and budget. MOQ, capacity, lead time and delivery coverage to be confirmed.",
   },
   {
+    name: "Evepack",
+    categories: ["sachets"],
+    location: "Esenyurt, Istanbul, Türkiye",
+    capabilities: [
+      "Stand-up pouches (doypack)",
+      "Flat-bottom and quadro packaging",
+      "Sachets",
+      "Roll-stock packaging films",
+      "Custom structures, finishes, zippers and barrier options",
+      "Digital printing — custom packs in about one week",
+    ],
+    brands: [],
+    note: "MOQ, pricing, delivery to India, import logistics, certifications and lead times to be confirmed.",
+  },
+  {
     name: "Evenpack",
     categories: ["boxes", "sachets"],
     location: "New Delhi, India",
