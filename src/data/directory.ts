@@ -96,7 +96,7 @@ const records: DirectoryManufacturer[] = [
       { scope: "Fully custom orders", value: "10–20 business days" },
     ],
     delivery_locations: null,
-    phone: null,
+    phone: "+91 98108 84245",
     listing_status: "published",
     last_updated_at: "2026-10-12",
   },
