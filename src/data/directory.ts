@@ -128,6 +128,34 @@ const records: DirectoryManufacturer[] = [
     listing_status: "published",
     last_updated_at: "2026-10-12",
   },
+  {
+    id: "7ply",
+    slug: "7ply",
+    name: "7ply",
+    logo_url: null,
+    cover_image_url: cartons,
+    description:
+      "Mumbai-based custom print and packaging partner taking work from idea to prototype to production, with most output made in-house. Handles corrugated, rigid and personalised packaging, paper bags, retail displays and event installations — no minimum order, short-run printing and 24–48 hour samples.",
+    city: "Navi Mumbai",
+    state: "Maharashtra",
+    website_url: "https://www.7ply.in",
+    packaging_categories: ["corrugated", "cartons", "paper-bags", "other"],
+    customization_capabilities: ["custom-sizes", "custom-printing", "custom-structures", "material-options"],
+    printing_capabilities: ["custom-manufacturing"],
+    products: [
+      "Custom corrugated, rigid and personalised packaging",
+      "Paper bags and shopping bags",
+      "Gift and promotional boxes with custom fitments",
+      "Retail signage, floor and countertop displays",
+      "Event booths, pop-ups and visual merchandising",
+    ],
+    minimum_order_quantities: [{ scope: "All custom work", value: "No MOQ — from 1 unit" }],
+    lead_times: [{ scope: "Samples", value: "24–48 hours" }],
+    delivery_locations: null,
+    phone: "+91 75061 55566",
+    listing_status: "published",
+    last_updated_at: "2026-10-12",
+  },
 ];
 
 /** Async on purpose so the UI already handles loading/error like a real backend. */
