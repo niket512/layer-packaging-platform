@@ -40,7 +40,7 @@ export default function ManufacturerProfile() {
               <div className="flex flex-wrap gap-2">
                 <a href={enquiryHref(m.name)} className="rounded-full bg-primary px-5 py-3 text-xs font-bold uppercase tracking-wide text-primary-foreground hover:bg-primary/90">Request a Quote</a>
                 {m.phone && (
-                  <a href={whatsappHref(m.name, m.phone)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366] px-5 py-3 text-xs font-bold uppercase tracking-wide text-[#053d21] hover:brightness-95">
+                  <a href={whatsappHref(m.name, m.phone)} target="_blank" rel="noopener noreferrer" className="whatsapp-cta inline-flex items-center gap-1.5 rounded-full px-5 py-3 text-xs font-bold uppercase tracking-wide">
                     <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                   </a>
                 )}
