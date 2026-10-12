@@ -11,6 +11,7 @@ export type ManufacturerProfile = {
 };
 
 export const manufacturerProfiles: ManufacturerProfile[] = [
+  /* Listing refreshed — profiles removed pending updated entries.
   {
     name: "Teknobyte",
     category: "bottles",
