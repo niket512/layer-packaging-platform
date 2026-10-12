@@ -28,8 +28,8 @@ export function ManufacturerCard({ m }: { m: DirectoryManufacturer }) {
           <a href={m.website_url} target="_blank" rel="noopener noreferrer" className="mt-3 text-xs text-primary hover:underline">{new URL(m.website_url).hostname}</a>
         )}
         <div className="mt-auto flex gap-2 pt-5">
-          <Link to={`/manufacturers/${m.slug}`} className="flex-1 rounded-full bg-primary py-2.5 text-center text-xs font-bold uppercase tracking-wide text-primary-foreground hover:bg-primary/90">View Supplier</Link>
-          <a href={enquiryHref(m.name)} className="flex-1 rounded-full border border-border py-2.5 text-center text-xs font-bold uppercase tracking-wide text-foreground hover:border-primary hover:text-primary">Request a Quote</a>
+          <Link to={`/manufacturers/${m.slug}`} className="flex-1 whitespace-nowrap rounded-full bg-primary py-2.5 text-center text-xs font-bold uppercase tracking-wide text-primary-foreground hover:bg-primary/90">View Supplier</Link>
+          <a href={enquiryHref(m.name)} className="flex-1 whitespace-nowrap rounded-full border border-border py-2.5 text-center text-xs font-bold uppercase tracking-wide text-foreground hover:border-primary hover:text-primary">Enquire</a>
         </div>
       </div>
     </article>
