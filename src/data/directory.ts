@@ -63,7 +63,8 @@ export type DirectoryManufacturer = {
   minimum_order_quantities: ScopedFact[];
   lead_times: ScopedFact[];
   delivery_locations: string[] | null;
-  contact_details: null; // private contact info is never exposed publicly
+  /** Public phone number, shown with a WhatsApp enquiry CTA. Null until the supplier shares it. */
+  phone: string | null;
   listing_status: "draft" | "published";
   last_updated_at: string;
 };
@@ -95,7 +96,7 @@ const records: DirectoryManufacturer[] = [
       { scope: "Fully custom orders", value: "10–20 business days" },
     ],
     delivery_locations: null,
-    contact_details: null,
+    phone: null,
     listing_status: "published",
     last_updated_at: "2026-10-12",
   },
