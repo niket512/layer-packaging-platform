@@ -6,7 +6,7 @@ import { manufacturerProfiles } from "@/data/manufacturers";
 type Props = { category: "bottles" | "sachets" };
 
 export default function ManufacturersView({ category }: Props) {
-  const profiles = manufacturerProfiles.filter((m) => m.category === category);
+  const profiles = manufacturerProfiles.filter((m) => m.categories.includes(category));
 
   const stats = useMemo(() => {
     const map: Record<string, { count: number; shapes: string[]; min: number; max: number }> = {};

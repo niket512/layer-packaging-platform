@@ -22,7 +22,7 @@ export default function ManufacturersDirectory() {
     const t = q.trim().toLowerCase();
     return manufacturerProfiles.filter(
       (m) =>
-        (cat === "all" || m.category === cat) &&
+        (cat === "all" || m.categories.includes(cat)) &&
         (!t ||
           [m.name, m.location, ...m.capabilities, ...m.brands]
             .filter(Boolean)
@@ -39,7 +39,7 @@ export default function ManufacturersDirectory() {
       { key: "boxes", title: "Boxes & paper packaging", blurb: "Corrugated, printed and food-grade paper packaging makers" },
     ];
     return order
-      .map((g) => ({ ...g, items: shown.filter((m) => m.category === g.key) }))
+      .map((g) => ({ ...g, items: shown.filter((m) => m.categories.includes(g.key)) }))
       .filter((g) => g.items.length > 0);
   }, [shown]);
 
