@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ExternalLink, MapPin } from "lucide-react";
+import { ArrowLeft, ExternalLink, MapPin, MessageCircle, Phone } from "lucide-react";
 import { DirectoryFooter, DirectoryHeader } from "@/components/directory/DirectoryChrome";
-import { CAPABILITIES, CUSTOMIZATION, categoryLabel, enquiryHref, fetchPublishedManufacturers, placeOf } from "@/data/directory";
+import { CAPABILITIES, CUSTOMIZATION, categoryLabel, enquiryHref, fetchPublishedManufacturers, placeOf, waDigits, whatsappHref } from "@/data/directory";
 
 export default function ManufacturerProfile() {
   const { slug } = useParams();
@@ -31,9 +31,19 @@ export default function ManufacturerProfile() {
               <div>
                 <h1 className="font-heading text-3xl font-bold text-foreground md:text-4xl">{m.name}</h1>
                 {placeOf(m) && <p className="mt-2 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{placeOf(m)}</p>}
+                {m.phone && (
+                  <a href={`tel:${waDigits(m.phone)}`} className="mt-1 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                    <Phone className="h-4 w-4" />{m.phone}
+                  </a>
+                )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <a href={enquiryHref(m.name)} className="rounded-full bg-primary px-5 py-3 text-xs font-bold uppercase tracking-wide text-primary-foreground hover:bg-primary/90">Request a Quote</a>
+                {m.phone && (
+                  <a href={whatsappHref(m.name, m.phone)} target="_blank" rel="noopener noreferrer" className="whatsapp-cta inline-flex items-center gap-1.5 rounded-full px-5 py-3 text-xs font-bold uppercase tracking-wide">
+                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                  </a>
+                )}
                 {m.website_url && <a href={m.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border px-5 py-3 text-xs font-bold uppercase tracking-wide">Website <ExternalLink className="h-3 w-3" /></a>}
               </div>
             </div>
