@@ -9,6 +9,7 @@ const categories = [
   { key: "all", label: "All" },
   { key: "bottles", label: "Bottles & jars (HDPE)" },
   { key: "sachets", label: "Sachets & pouches" },
+  { key: "boxes", label: "Boxes & paper packaging" },
 ] as const;
 
 type CatKey = (typeof categories)[number]["key"];
@@ -35,6 +36,7 @@ export default function ManufacturersDirectory() {
     const order: { key: Exclude<CatKey, "all">; title: string; blurb: string }[] = [
       { key: "bottles", title: "Bottles & jars", blurb: "HDPE bottle, jar and jerry can manufacturers" },
       { key: "sachets", title: "Sachets & pouches", blurb: "Flexible packaging, sachet and stick pack makers" },
+      { key: "boxes", title: "Boxes & paper packaging", blurb: "Corrugated, printed and food-grade paper packaging makers" },
     ];
     return order
       .map((g) => ({ ...g, items: shown.filter((m) => m.category === g.key) }))
