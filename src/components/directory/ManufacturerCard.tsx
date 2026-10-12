@@ -1,35 +1,29 @@
 import { Link } from "react-router-dom";
-import { MapPin } from "lucide-react";
-import { CUSTOMIZATION, type DirectoryManufacturer, categoryLabel, enquiryHref, placeOf } from "@/data/directory";
+import { ArrowUpRight, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { type DirectoryManufacturer, categoryLabel, placeOf } from "@/data/directory";
 
 export function ManufacturerCard({ m }: { m: DirectoryManufacturer }) {
   const moq = m.minimum_order_quantities[0];
-  const lead = m.lead_times[0];
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card">
-      {m.cover_image_url && (
-        <img src={m.cover_image_url} alt={`${categoryLabel(m.packaging_categories[0])} — representative image`} loading="lazy" width={944} height={704} className="aspect-[16/9] w-full object-cover" />
-      )}
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-heading text-lg font-semibold text-foreground">{m.name}</h3>
-        {placeOf(m) && (
-          <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3" />{placeOf(m)}</p>
-        )}
-        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{m.description}</p>
-        <dl className="mt-4 space-y-2 text-[13px]">
-          <div><dt className="inline font-semibold text-foreground">Categories: </dt><dd className="inline text-muted-foreground">{m.packaging_categories.map(categoryLabel).join(" · ")}</dd></div>
-          {m.customization_capabilities.length > 0 && (
-            <div><dt className="inline font-semibold text-foreground">Customisation: </dt><dd className="inline text-muted-foreground">{m.customization_capabilities.map((c) => CUSTOMIZATION[c]).join(" · ")}</dd></div>
-          )}
-          <div><dt className="inline font-semibold text-foreground">MOQ: </dt><dd className="inline text-muted-foreground">{moq ? `${moq.value} (${moq.scope.toLowerCase()})` : "Not yet confirmed"}</dd></div>
-          {lead && <div><dt className="inline font-semibold text-foreground">Lead time: </dt><dd className="inline text-muted-foreground">{lead.value} ({lead.scope.toLowerCase()})</dd></div>}
+    <article className="grid grid-cols-[80px_minmax(0,1fr)] gap-4 py-6 sm:grid-cols-[128px_minmax(0,1fr)]">
+      {m.cover_image_url ? <img src={m.cover_image_url} alt={`${m.name} — representative packaging image`} loading="lazy" width={128} height={172} className="h-28 w-full rounded-xl object-cover sm:h-44" /> : <div className="h-28 rounded-xl bg-muted sm:h-44" />}
+      <div className="min-w-0">
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="text-xl font-semibold leading-tight">{m.name}</h2>
+          <Link to={`/manufacturers/${m.slug}`} aria-label={`View ${m.name} profile`} className="shrink-0 text-muted-foreground hover:text-foreground"><ArrowUpRight className="h-4 w-4" /></Link>
+        </div>
+        <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0" />{[placeOf(m), "India"].filter(Boolean).join(", ")}</p>
+        <p className="mt-1 line-clamp-2 text-sm leading-relaxed">{m.description}</p>
+        <div className="mt-2 flex flex-wrap gap-1.5">{m.packaging_categories.map((c) => <span key={c} className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{categoryLabel(c)}</span>)}</div>
+        <dl className="mt-4 grid grid-cols-1 gap-3 border-t border-border pt-3 sm:grid-cols-2">
+          <div><dt className="text-xs text-muted-foreground">Starting MOQ</dt><dd className="mt-1 text-base font-semibold">{moq ? `${moq.value}*` : "On request"}</dd>{moq && <p className="mt-1 text-xs text-muted-foreground">*{moq.scope}</p>}</div>
+          <div><dt className="text-xs text-muted-foreground">Lead time</dt><dd className="mt-1 text-base font-semibold">{m.lead_times.length ? m.lead_times.map((l) => <div key={l.scope}>{l.value}<span className="mt-0.5 block text-xs font-normal text-muted-foreground">{l.scope}</span></div>) : "On request"}</dd></div>
         </dl>
-        {m.website_url && (
-          <a href={m.website_url} target="_blank" rel="noopener noreferrer" className="mt-3 text-xs text-primary hover:underline">{new URL(m.website_url).hostname}</a>
-        )}
-        <div className="mt-auto flex gap-2 pt-5">
-          <Link to={`/manufacturers/${m.slug}`} className="flex-1 whitespace-nowrap rounded-full bg-primary py-2.5 text-center text-xs font-bold uppercase tracking-wide text-primary-foreground hover:bg-primary/90">View Supplier</Link>
-          <a href={enquiryHref(m.name)} className="flex-1 whitespace-nowrap rounded-full border border-border py-2.5 text-center text-xs font-bold uppercase tracking-wide text-foreground hover:border-primary hover:text-primary">Enquire</a>
+        <p className="mt-3 text-sm text-primary">{[m.customization_capabilities.includes("custom-printing") ? "Custom printing" : null, m.printing_capabilities.includes("custom-manufacturing") ? "Custom manufacturing" : null].filter(Boolean).join(" · ")}</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button asChild variant="secondary" className="min-w-32 flex-1 rounded-full"><Link to={`/manufacturers/${m.slug}`}>View profile</Link></Button>
+          {m.website_url && <Button asChild variant="outline" className="rounded-full px-5"><a href={m.website_url} target="_blank" rel="noopener noreferrer">Website</a></Button>}
         </div>
       </div>
     </article>
@@ -37,14 +31,5 @@ export function ManufacturerCard({ m }: { m: DirectoryManufacturer }) {
 }
 
 export function ManufacturerCardSkeleton() {
-  return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card">
-      <div className="aspect-[16/9] animate-pulse bg-muted" />
-      <div className="space-y-3 p-5">
-        <div className="h-5 w-1/2 animate-pulse rounded bg-muted" />
-        <div className="h-3 w-1/3 animate-pulse rounded bg-muted" />
-        <div className="h-12 animate-pulse rounded bg-muted" />
-      </div>
-    </div>
-  );
+  return <div className="flex gap-4 py-6"><div className="h-44 w-32 shrink-0 animate-pulse rounded-xl bg-muted" /><div className="flex-1 space-y-3"><div className="h-6 w-1/2 animate-pulse rounded bg-muted" /><div className="h-4 w-1/3 animate-pulse rounded bg-muted" /><div className="h-24 animate-pulse rounded bg-muted" /></div></div>;
 }
