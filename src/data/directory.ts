@@ -124,7 +124,7 @@ const records: DirectoryManufacturer[] = [
     minimum_order_quantities: [],
     lead_times: [],
     delivery_locations: null,
-    contact_details: null,
+    phone: "+91 92510 07198",
     listing_status: "published",
     last_updated_at: "2026-10-12",
   },
@@ -139,3 +139,8 @@ export const categoryLabel = (k: CategoryKey) => PACKAGING_CATEGORIES.find((c) =
 export const placeOf = (m: DirectoryManufacturer) => [m.city, m.state].filter(Boolean).join(", ");
 export const enquiryHref = (name: string) =>
   `mailto:contact@snapit.club?subject=${encodeURIComponent(`Quote request – ${name}`)}`;
+export const waDigits = (phone: string) => phone.replace(/\D/g, "");
+export const whatsappHref = (name: string, phone: string) =>
+  `https://wa.me/${waDigits(phone)}?text=${encodeURIComponent(
+    `Hi, I found ${name} on Snaplogo and would like a quote for custom packaging.`
+  )}`;
