@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { type DirectoryManufacturer, categoryLabel, placeOf } from "@/data/directory";
+import { type DirectoryManufacturer, categoryLabel, placeOf, whatsappHref } from "@/data/directory";
 
 export function ManufacturerCard({ m }: { m: DirectoryManufacturer }) {
   const moq = m.minimum_order_quantities[0];
@@ -23,6 +23,7 @@ export function ManufacturerCard({ m }: { m: DirectoryManufacturer }) {
         <p className="mt-3 text-sm text-primary">{[m.customization_capabilities.includes("custom-printing") ? "Custom printing" : null, m.printing_capabilities.includes("custom-manufacturing") ? "Custom manufacturing" : null].filter(Boolean).join(" · ")}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           <Button asChild variant="secondary" className="min-w-32 flex-1 rounded-full"><Link to={`/manufacturers/${m.slug}`}>View profile</Link></Button>
+          {m.phone && <Button asChild className="whatsapp-cta rounded-full px-5"><a href={whatsappHref(m.name, m.phone)} target="_blank" rel="noopener noreferrer">WhatsApp</a></Button>}
           {m.website_url && <Button asChild variant="outline" className="rounded-full px-5"><a href={m.website_url} target="_blank" rel="noopener noreferrer">Website</a></Button>}
         </div>
       </div>
