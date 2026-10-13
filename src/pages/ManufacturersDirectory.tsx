@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Sparkles, Loader2, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequirementForm } from "@/components/directory/RequirementForm";
 import { DirectoryFooter } from "@/components/directory/DirectoryChrome";
 import { ManufacturerCard, ManufacturerCardSkeleton } from "@/components/directory/ManufacturerCard";
-import { fetchPublishedManufacturers, categoryLabel, placeOf, PACKAGING_CATEGORIES, moqUnits, type DirectoryManufacturer } from "@/data/directory";
+import { fetchPublishedManufacturers, categoryLabel, placeOf, PACKAGING_CATEGORIES, moqUnits, waDigits, type DirectoryManufacturer } from "@/data/directory";
 
 const MOQ_OPTIONS = [
   { value: "", label: "Any quantity" },
@@ -24,34 +23,27 @@ const selectCls = "h-9 rounded-full border border-input bg-background px-3 text-
 
 export default function ManufacturersDirectory() {
   const [params, setParams] = useSearchParams();
-  const q = params.get("q") ?? "";
   const category = params.get("category") ?? "";
   const moq = params.get("moq") ?? "";
   const custom = params.get("custom") ?? "";
   const loc = params.get("state") ?? "";
   const sort = params.get("sort") ?? "relevance";
   const { data = [], isLoading, isError, refetch } = useQuery({ queryKey: ["directory"], queryFn: fetchPublishedManufacturers });
-  const [ai, setAi] = useState<{ query: string; matches: { id: string; reason: string }[] } | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState("");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [contact, setContact] = useState("");
+  const [reqText, setReqText] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   useEffect(() => {
     document.title = "Find packaging manufacturers in India | Snaplogo";
-    document.querySelector('meta[name="description"]')?.setAttribute("content", "Discover packaging manufacturers by packaging type, order quantity, customization and location.");
+    document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirement, pick manufacturers and WhatsApp them directly.");
   }, []);
   const update = (key: string, value: string) => {
     const next = new URLSearchParams(params);
     if (value) next.set(key, value); else next.delete(key);
     setParams(next, { replace: true });
   };
-  const askAi = async () => {
-    if (!q.trim() || !data.length) return;
-    setAiLoading(true); setAiError("");
-    const manufacturers = data.map((m) => ({ id: m.id, name: m.name, location: placeOf(m), description: m.description, categories: m.packaging_categories.map(categoryLabel), products: m.products, moq: m.minimum_order_quantities, lead_times: m.lead_times }));
-    const { data: res, error } = await supabase.functions.invoke("directory-search", { body: { query: q, manufacturers } });
-    setAiLoading(false);
-    if (error || res?.error) { setAiError(res?.error ?? "AI search failed, please try again"); return; }
-    setAi({ query: q, matches: res.matches ?? [] });
-  };
+  const toggle = (id: string) =>
+    setSelected((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   const states = useMemo(() => [...new Set(data.map((m) => m.state).filter(Boolean) as string[])].sort(), [data]);
   const counts = useMemo(() => Object.fromEntries(PACKAGING_CATEGORIES.map((c) => [c.key, data.filter((m) => m.packaging_categories.includes(c.key)).length])), [data]);
   const passesFilters = (m: DirectoryManufacturer) => {
@@ -62,47 +54,42 @@ export default function ManufacturersDirectory() {
       && (!loc || m.state === loc);
   };
   const results = useMemo(() => {
-    if (ai) return ai.matches.map((x) => data.find((m) => m.id === x.id)).filter((m): m is DirectoryManufacturer => !!m && passesFilters(m));
-    const words = q.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    const rows = data.filter((m) => {
-      const text = [m.name, m.description, m.city, m.state, ...m.products, ...m.packaging_categories.map(categoryLabel)].join(" ").toLowerCase();
-      return words.every((w) => text.includes(w)) && passesFilters(m);
-    });
+    const rows = data.filter(passesFilters);
     if (sort === "name") rows.sort((a, b) => a.name.localeCompare(b.name));
     if (sort === "location") rows.sort((a, b) => placeOf(a).localeCompare(placeOf(b)));
     if (sort === "moq") rows.sort((a, b) => (moqUnits(a) ?? Infinity) - (moqUnits(b) ?? Infinity));
     return rows;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, q, category, moq, custom, loc, sort, ai]);
-  const reasonOf = (id: string) => ai?.matches.find((x) => x.id === id)?.reason;
+  }, [data, category, moq, custom, loc, sort]);
   const hasFilters = !!(category || moq || custom || loc);
   const pickCategory = (key: string) => {
     update("category", category === key ? "" : key);
     document.getElementById("directory")?.scrollIntoView({ behavior: "smooth" });
   };
-  const clearAll = () => { setAi(null); setParams(new URLSearchParams()); };
+  const clearAll = () => { setParams(new URLSearchParams()); };
+  const waText = `Hi, I found you on Snaplogo. My packaging requirement: ${reqText.trim() || "(details)"}`;
+  const selectedMakers = data.filter((m) => selected.includes(m.id) && m.phone);
 
   return (
     <div className="theme-directory min-h-screen bg-background text-foreground">
-      <main className="mx-auto max-w-content px-4 md:px-6">
-        {/* 1. Search-first hero */}
+      <main className="mx-auto max-w-content px-4 pb-24 md:px-6">
+        {/* 1. Requirement-first hero */}
         <section className="py-10 md:py-14">
           <p className="text-xs font-semibold uppercase tracking-[1.5px] text-primary">The D2C packaging network</p>
-          <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">Find the right packaging manufacturer.</h1>
-          <p className="mt-2 max-w-xl text-base text-muted-foreground">Discover manufacturers by packaging type, order quantity, customization and location.</p>
-          <form role="search" onSubmit={(e) => { e.preventDefault(); askAi(); }} className="relative mt-5">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-            <input value={q} onChange={(e) => { setAi(null); update("q", e.target.value); }} aria-label="Search manufacturers" placeholder="Search boxes, pouches, bottles, labels… or describe your need" className="h-14 w-full rounded-lg border border-input bg-background pl-11 pr-32 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring" />
-            <Button type="submit" size="sm" disabled={aiLoading || !q.trim()} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full">
-              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} AI match
-            </Button>
-          </form>
-          {aiError && <p role="alert" className="mt-2 text-sm text-destructive">{aiError}</p>}
-          <div className="mt-3 flex flex-wrap gap-2">
-            {[{ l: "Low MOQ", k: "moq", v: "500" }, { l: "Custom printing", k: "custom", v: "custom-printing" }, { l: "Custom sizes", k: "custom", v: "custom-sizes" }].map((t) => {
-              const on = params.get(t.k) === t.v;
-              return <button key={t.l} type="button" aria-pressed={on} onClick={() => update(t.k, on ? "" : t.v)} className={`h-7 rounded-full px-3 text-xs ${on ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}>{t.l}</button>;
-            })}
+          <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">Tell us what you need. We'll match the maker.</h1>
+          <p className="mt-2 max-w-xl text-base text-muted-foreground">Share your packaging requirement, select manufacturers below, and WhatsApp them directly.</p>
+          <div className="mt-5">
+            <RequirementForm
+              manufacturers={data}
+              selected={selected}
+              onToggle={toggle}
+              contact={contact}
+              onContact={setContact}
+              text={reqText}
+              onText={setReqText}
+              images={images}
+              onImages={setImages}
+            />
           </div>
         </section>
 
@@ -143,38 +130,44 @@ export default function ManufacturersDirectory() {
               <option value="">Anywhere in India</option>
               {states.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
-            {(hasFilters || ai) && <button type="button" onClick={clearAll} className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">Clear all</button>}
+            {hasFilters && <button type="button" onClick={clearAll} className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">Clear all</button>}
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
-            <p aria-live="polite" className="flex items-center gap-2">
-              {isLoading ? "Loading manufacturers…" : ai ? <><Sparkles className="h-4 w-4 text-primary" />{results.length} AI matches for “{ai.query}”<button type="button" onClick={() => setAi(null)} aria-label="Clear AI results" className="hover:text-foreground"><X className="h-4 w-4" /></button></> : `${results.length} manufacturers found`}
+            <p aria-live="polite">
+              {isLoading ? "Loading manufacturers…" : `${results.length} manufacturers found`}
             </p>
-            {!ai && <label className="flex items-center gap-1">Sort:
+            <label className="flex items-center gap-1">Sort:
               <select aria-label="Sort manufacturers" value={sort} onChange={(e) => update("sort", e.target.value)} className="cursor-pointer bg-background py-1 text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <option value="relevance">Relevance</option><option value="moq">Lowest MOQ</option><option value="name">Name (A–Z)</option><option value="location">Location</option>
               </select>
-            </label>}
+            </label>
           </div>
           <div aria-label="Manufacturer results" className="divide-y divide-border">
             {isLoading ? <><ManufacturerCardSkeleton /><ManufacturerCardSkeleton /></>
-              : isError ? <div className="py-12 text-center"><p>We couldn’t load manufacturers.</p><Button variant="outline" onClick={() => refetch()} className="mt-4 rounded-full">Retry</Button></div>
-              : results.length ? results.map((m) => <div key={m.id}>{reasonOf(m.id) && <p className="pt-4 text-sm text-primary"><Sparkles className="mr-1 inline h-3.5 w-3.5" />{reasonOf(m.id)}</p>}<ManufacturerCard m={m} /></div>)
-              : <div className="py-12 text-center"><h3 className="text-lg font-semibold">No manufacturers match yet</h3><p className="mt-1 text-sm text-muted-foreground">Share your requirement below and we'll find suppliers for you.</p><Button variant="outline" onClick={clearAll} className="mt-4 rounded-full">Clear filters</Button></div>}
+              : isError ? <div className="py-12 text-center"><p>We couldn't load manufacturers.</p><Button variant="outline" onClick={() => refetch()} className="mt-4 rounded-full">Retry</Button></div>
+              : results.length ? results.map((m) => <ManufacturerCard key={m.id} m={m} selected={selected.includes(m.id)} onToggleSelect={() => toggle(m.id)} waText={waText} />)
+              : <div className="py-12 text-center"><h3 className="text-lg font-semibold">No manufacturers match yet</h3><p className="mt-1 text-sm text-muted-foreground">Try clearing the filters, or share your requirement above and we'll find suppliers for you.</p><Button variant="outline" onClick={clearAll} className="mt-4 rounded-full">Clear filters</Button></div>}
           </div>
-        </section>
-
-        {/* 4. Requirement CTA */}
-        <section id="request" aria-labelledby="req-h" className="my-10 grid gap-6 rounded-2xl border border-border bg-muted/40 p-6 md:grid-cols-[1fr_1.2fr] md:p-8">
-          <div>
-            <h2 id="req-h" className="text-xl font-semibold">Can't find the right manufacturer?</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Tell us what you need. We'll help identify suitable suppliers.</p>
-            <ol className="mt-4 space-y-2 text-sm">
-              {["Share your packaging requirement", "Get matched with suppliers", "Compare quotes on price, MOQ and timelines"].map((s, i) => <li key={s} className="flex gap-2"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">{i + 1}</span>{s}</li>)}
-            </ol>
-          </div>
-          <RequirementForm manufacturers={data} />
         </section>
       </main>
+
+      {/* Sticky selection bar */}
+      {selected.length > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
+          <div className="mx-auto flex max-w-content flex-wrap items-center gap-2 px-4 py-3 md:px-6">
+            <span className="text-sm font-semibold">{selected.length} selected</span>
+            <span className="hidden text-xs text-muted-foreground sm:inline">WhatsApp them your requirement — attach your photos in the chat.</span>
+            <div className="ml-auto flex flex-wrap items-center gap-2">
+              {selectedMakers.map((m) => (
+                <Button key={m.id} asChild size="sm" className="whatsapp-cta rounded-full px-4">
+                  <a href={`https://wa.me/${waDigits(m.phone!)}?text=${encodeURIComponent(waText)}`} target="_blank" rel="noopener noreferrer"><MessageCircle className="mr-1 h-3.5 w-3.5" />{m.name}</a>
+                </Button>
+              ))}
+              <button type="button" onClick={() => setSelected([])} className="flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground hover:text-foreground"><X className="h-3.5 w-3.5" />Clear</button>
+            </div>
+          </div>
+        </div>
+      )}
       <DirectoryFooter />
     </div>
   );
