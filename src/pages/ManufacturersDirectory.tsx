@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Sparkles, Loader2, X, CheckCircle2 } from "lucide-react";
+import { Search, Sparkles, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DirectoryFooter } from "@/components/directory/DirectoryChrome";
@@ -186,7 +186,7 @@ export default function ManufacturersDirectory() {
               {["Share your packaging requirement", "Get matched with suppliers", "Compare quotes on price, MOQ and timelines"].map((s, i) => <li key={s} className="flex gap-2"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">{i + 1}</span>{s}</li>)}
             </ol>
           </div>
-          <RequirementForm />
+          <WhatsAppCTA />
         </section>
       </main>
       <DirectoryFooter />
