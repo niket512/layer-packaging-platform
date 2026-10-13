@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, Check, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequirementForm } from "@/components/directory/RequirementForm";
-import { DirectoryFooter } from "@/components/directory/DirectoryChrome";
 import { ManufacturerCard, ManufacturerCardSkeleton } from "@/components/directory/ManufacturerCard";
 import { fetchPublishedManufacturers, categoryLabel, placeOf, PACKAGING_CATEGORIES, moqUnits, waDigits, type DirectoryManufacturer } from "@/data/directory";
 
@@ -115,8 +114,6 @@ export default function ManufacturersDirectory() {
           </div>
         </section>
       </main>
-
-      <DirectoryFooter />
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur">
         <div className="mx-auto max-w-[1000px] px-4 py-3 md:px-6">
           {selectedMakers.length > 0 && <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-1" aria-label="Selected manufacturers">
