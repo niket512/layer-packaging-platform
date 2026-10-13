@@ -61,10 +61,6 @@ export default function ManufacturersDirectory() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, category, moq, custom, loc, sort]);
   const hasFilters = !!(category || moq || custom || loc);
-  const pickCategory = (key: string) => {
-    update("category", category === key ? "" : key);
-    document.getElementById("directory")?.scrollIntoView({ behavior: "smooth" });
-  };
   const clearAll = () => { setParams(new URLSearchParams()); };
   const waText = `Hi, I found you on Snaplogo.${contact.trim() ? ` I'm ${contact.trim()}.` : ""} My packaging requirement: ${reqText.trim() || "(please share details)"}`;
   const selectedMakers = data.filter((m) => selected.includes(m.id) && m.phone);
@@ -86,7 +82,7 @@ export default function ManufacturersDirectory() {
         <section className="py-10 md:py-14">
           <p className="text-xs font-semibold uppercase tracking-[1.5px] text-primary">The D2C packaging network</p>
           <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">Tell us what you need. We'll match the maker.</h1>
-          <p className="mt-2 max-w-xl text-base text-muted-foreground">Write your packaging requirement, select manufacturers below, and message all of them on WhatsApp in one click.</p>
+          <p className="mt-2 max-w-xl text-base text-muted-foreground">Three quick steps: describe your need, add manufacturers, send it to all of them on WhatsApp.</p>
           <div className="mt-5">
             <RequirementForm contact={contact} onContact={setContact} text={reqText} onText={setReqText} />
           </div>
