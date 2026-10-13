@@ -355,6 +355,7 @@ export type Database = {
           created_at: string
           id: string
           images: string[]
+          manufacturers: Json
           requirement: string
         }
         Insert: {
@@ -362,6 +363,7 @@ export type Database = {
           created_at?: string
           id?: string
           images?: string[]
+          manufacturers?: Json
           requirement: string
         }
         Update: {
@@ -369,6 +371,7 @@ export type Database = {
           created_at?: string
           id?: string
           images?: string[]
+          manufacturers?: Json
           requirement?: string
         }
         Relationships: []
