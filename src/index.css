@@ -56,19 +56,21 @@
 
   /* Compact public directory — reference-matched dark surfaces */
   .theme-directory {
-    --background: 0 0% 2%;
-    --foreground: 0 0% 93%;
-    --card: 0 0% 2%;
+    --background: 220 15% 7%;
+    --foreground: 210 20% 96%;
+    --card: 220 13% 10%;
     --card-foreground: 0 0% 93%;
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 72%;
+    --muted: 220 12% 15%;
+    --muted-foreground: 215 12% 68%;
     --secondary: 0 0% 93%;
     --secondary-foreground: 0 0% 5%;
-    --border: 0 0% 13%;
-    --input: 0 0% 16%;
-    --primary: 160 57% 43%;
-    --primary-foreground: 0 0% 4%;
-    --ring: 160 57% 43%;
+    --border: 220 10% 22%;
+    --input: 220 10% 25%;
+    --primary: 160 65% 55%;
+    --primary-foreground: 220 15% 7%;
+    --ring: 160 65% 55%;
+    --whatsapp: 145 63% 49%;
+    --whatsapp-foreground: 152 85% 9%;
   }
 
   /* Snaplogo workspace theme — aligned with the landing page */
@@ -122,8 +124,8 @@
   .text-pretty { text-wrap: pretty; }
   /* WhatsApp brand green for enquiry CTAs */
   .whatsapp-cta {
-    background-color: hsl(145 63% 49%);
-    color: hsl(152 85% 13%);
+    background-color: hsl(var(--whatsapp, 145 63% 49%));
+    color: hsl(var(--whatsapp-foreground, 152 85% 13%));
   }
   .whatsapp-cta:hover { filter: brightness(0.95); }
   .hero-bloom {
