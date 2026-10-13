@@ -35,7 +35,7 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
               aria-pressed={selected}
               aria-label={selected ? `Unselect ${m.name}` : `Select ${m.name}`}
               onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
-              className={`h-8 shrink-0 rounded-full px-3 text-xs font-semibold ${selected ? "bg-primary text-primary-foreground" : "hover:border-primary"}`}
+              className={`h-8 shrink-0 rounded-full px-3 text-xs font-semibold ${selected ? "!bg-primary !text-primary-foreground hover:!bg-primary/90" : "hover:border-primary"}`}
             >
               {selected ? <Check /> : <Plus />}
               {canSelect ? (selected ? "Selected" : "Select") : "Unavailable"}
