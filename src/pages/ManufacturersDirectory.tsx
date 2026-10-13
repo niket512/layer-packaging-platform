@@ -8,25 +8,9 @@ import { DirectoryFooter } from "@/components/directory/DirectoryChrome";
 import { ManufacturerCard, ManufacturerCardSkeleton } from "@/components/directory/ManufacturerCard";
 import { fetchPublishedManufacturers, categoryLabel, placeOf, PACKAGING_CATEGORIES, moqUnits, waDigits, type DirectoryManufacturer } from "@/data/directory";
 
-const MOQ_OPTIONS = [
-  { value: "", label: "Any quantity" },
-  { value: "500", label: "Up to 500 units" },
-  { value: "2000", label: "Up to 2,000 units" },
-];
-const CUSTOM_OPTIONS = [
-  { value: "", label: "Any customization" },
-  { value: "custom-printing", label: "Custom printing" },
-  { value: "custom-sizes", label: "Custom sizes" },
-  { value: "custom-structures", label: "Custom structures" },
-];
-const selectCls = "h-9 rounded-full border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring";
-
 export default function ManufacturersDirectory() {
   const [params, setParams] = useSearchParams();
   const category = params.get("category") ?? "";
-  const moq = params.get("moq") ?? "";
-  const custom = params.get("custom") ?? "";
-  const loc = params.get("state") ?? "";
   const sort = params.get("sort") ?? "relevance";
   const { data = [], isLoading, isError, refetch } = useQuery({ queryKey: ["directory"], queryFn: fetchPublishedManufacturers });
   const [selected, setSelected] = useState<string[]>([]);
@@ -43,15 +27,8 @@ export default function ManufacturersDirectory() {
   };
   const toggle = (id: string) =>
     setSelected((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
-  const states = useMemo(() => [...new Set(data.map((m) => m.state).filter(Boolean) as string[])].sort(), [data]);
   const counts = useMemo(() => Object.fromEntries(PACKAGING_CATEGORIES.map((c) => [c.key, data.filter((m) => m.packaging_categories.includes(c.key)).length])), [data]);
-  const passesFilters = (m: DirectoryManufacturer) => {
-    const units = moqUnits(m);
-    return (!category || m.packaging_categories.includes(category as never))
-      && (!moq || (units !== null && units <= Number(moq)))
-      && (!custom || m.customization_capabilities.includes(custom as never))
-      && (!loc || m.state === loc);
-  };
+  const passesFilters = (m: DirectoryManufacturer) => !category || m.packaging_categories.includes(category as never);
   const results = useMemo(() => {
     const rows = data.filter(passesFilters);
     if (sort === "name") rows.sort((a, b) => a.name.localeCompare(b.name));
@@ -59,9 +36,7 @@ export default function ManufacturersDirectory() {
     if (sort === "moq") rows.sort((a, b) => (moqUnits(a) ?? Infinity) - (moqUnits(b) ?? Infinity));
     return rows;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, category, moq, custom, loc, sort]);
-  const hasFilters = !!(category || moq || custom || loc);
-  const clearAll = () => { setParams(new URLSearchParams()); };
+  }, [data, category, sort]);
   const waText = `Hi, I found you on Snaplogo.${contact.trim() ? ` I'm ${contact.trim()}.` : ""} My packaging requirement: ${reqText.trim() || "(please share details)"}`;
   const selectedMakers = data.filter((m) => selected.includes(m.id) && m.phone);
   const reachable = results.filter((m) => m.phone);
@@ -121,19 +96,6 @@ export default function ManufacturersDirectory() {
                 </Button>
               ))}
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <select aria-label="Minimum order quantity" value={moq} onChange={(e) => update("moq", e.target.value)} className={selectCls}>
-                {MOQ_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-              <select aria-label="Customization" value={custom} onChange={(e) => update("custom", e.target.value)} className={selectCls}>
-                {CUSTOM_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-              <select aria-label="Location" value={loc} onChange={(e) => update("state", e.target.value)} className={selectCls}>
-                <option value="">Anywhere in India</option>
-                {states.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-              {hasFilters && <Button variant="ghost" size="sm" onClick={clearAll}>Reset filters</Button>}
-            </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
             <p aria-live="polite">
@@ -149,7 +111,7 @@ export default function ManufacturersDirectory() {
             {isLoading ? <><ManufacturerCardSkeleton /><ManufacturerCardSkeleton /></>
               : isError ? <div className="py-12 text-center"><p>We couldn't load manufacturers.</p><Button variant="outline" onClick={() => refetch()} className="mt-4 rounded-full">Retry</Button></div>
               : results.length ? results.map((m) => <ManufacturerCard key={m.id} m={m} selected={selected.includes(m.id)} onToggleSelect={() => toggle(m.id)} waText={waText} />)
-              : <div className="py-12 text-center"><h3 className="text-lg font-semibold">No manufacturers match yet</h3><p className="mt-1 text-sm text-muted-foreground">Try clearing the filters, or share your requirement above and we'll find suppliers for you.</p><Button variant="outline" onClick={clearAll} className="mt-4 rounded-full">Clear filters</Button></div>}
+              : <div className="py-12 text-center"><h3 className="text-lg font-semibold">No manufacturers match yet</h3><p className="mt-1 text-sm text-muted-foreground">Try another packaging type, or share your requirement above and we'll find suppliers for you.</p><Button asChild variant="outline" className="mt-4 rounded-full"><a href="/manufacturers">Show all manufacturers</a></Button></div>}
           </div>
         </section>
       </main>
