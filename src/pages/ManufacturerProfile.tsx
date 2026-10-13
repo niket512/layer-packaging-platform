@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ExternalLink, MapPin, MessageCircle, Phone } from "lucide-react";
-import { DirectoryFooter, DirectoryHeader } from "@/components/directory/DirectoryChrome";
+import { DirectoryHeader } from "@/components/directory/DirectoryChrome";
 import { CAPABILITIES, CUSTOMIZATION, categoryLabel, enquiryHref, fetchPublishedManufacturers, placeOf, waDigits, whatsappHref } from "@/data/directory";
 
 export default function ManufacturerProfile() {
@@ -62,7 +62,6 @@ export default function ManufacturerProfile() {
           </article>
         )}
       </main>
-      <DirectoryFooter />
     </div>
   );
 }

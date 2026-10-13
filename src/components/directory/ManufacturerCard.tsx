@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { Check, MapPin, Plus, ArrowUpRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MapPin, ArrowUpRight } from "lucide-react";
 import { type DirectoryManufacturer, categoryLabel, placeOf, waDigits, whatsappHref } from "@/data/directory";
 
 interface Props {
@@ -27,19 +26,19 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
             <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0" />{[placeOf(m), "India"].filter(Boolean).join(", ")}</p>
           </div>
           {onToggleSelect && (
-            <Button
-              variant={selected ? "default" : "outline"}
-              size="sm"
-              type="button"
-              disabled={!canSelect}
-              aria-pressed={selected}
-              aria-label={selected ? `Unselect ${m.name}` : `Select ${m.name}`}
-              onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
-              className={`h-8 shrink-0 rounded-full px-3 text-xs font-semibold ${selected ? "!bg-primary !text-primary-foreground hover:!bg-primary/90" : "hover:border-primary"}`}
+            <label
+              className={`flex shrink-0 select-none items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-colors ${canSelect ? "cursor-pointer" : "cursor-not-allowed opacity-50"} ${selected ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-muted-foreground"}`}
             >
-              {selected ? <Check /> : <Plus />}
-              {canSelect ? (selected ? "Selected" : "Select") : "Unavailable"}
-            </Button>
+              <input
+                type="checkbox"
+                checked={selected}
+                disabled={!canSelect}
+                onChange={onToggleSelect}
+                aria-label={selected ? `Unselect ${m.name}` : `Select ${m.name}`}
+                className="h-4 w-4 accent-primary"
+              />
+              {canSelect ? "Select" : "Unavailable"}
+            </label>
           )}
         </div>
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{m.description}</p>
