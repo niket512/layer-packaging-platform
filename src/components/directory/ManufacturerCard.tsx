@@ -34,7 +34,7 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
         <div className="mt-2 flex flex-wrap gap-2">
           {onToggleSelect && (
             <Button variant={selected ? "default" : "outline"} className="rounded-full px-4" aria-pressed={selected} onClick={onToggleSelect}>
-              <Check className="mr-1 h-4 w-4" />{selected ? "Selected" : "Select"}
+              {selected && <Check className="mr-1 h-4 w-4" />}{selected ? "Selected" : "Select"}
             </Button>
           )}
           <Button asChild variant="secondary" className="min-w-32 flex-1 rounded-full"><Link to={`/manufacturers/${m.slug}`}>View profile</Link></Button>
