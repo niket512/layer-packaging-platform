@@ -1,0 +1,1 @@
+ALTER TABLE public.requirement_submissions ADD COLUMN IF NOT EXISTS manufacturers jsonb NOT NULL DEFAULT '[]'::jsonb;
