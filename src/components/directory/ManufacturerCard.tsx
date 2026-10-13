@@ -1,12 +1,22 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowUpRight, Check, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { type DirectoryManufacturer, categoryLabel, placeOf, whatsappHref } from "@/data/directory";
+import { type DirectoryManufacturer, categoryLabel, placeOf, waDigits, whatsappHref } from "@/data/directory";
 
-export function ManufacturerCard({ m }: { m: DirectoryManufacturer }) {
+interface Props {
+  m: DirectoryManufacturer;
+  selected?: boolean;
+  onToggleSelect?: () => void;
+  waText?: string;
+}
+
+export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }: Props) {
   const moq = m.minimum_order_quantities[0];
+  const waHref = waText
+    ? `https://wa.me/${waDigits(m.phone!)}?text=${encodeURIComponent(waText)}`
+    : whatsappHref(m.name, m.phone!);
   return (
-    <article className="grid grid-cols-[80px_minmax(0,1fr)] gap-4 py-6 sm:grid-cols-[128px_minmax(0,1fr)]">
+    <article className={`grid grid-cols-[80px_minmax(0,1fr)] gap-4 py-6 sm:grid-cols-[128px_minmax(0,1fr)] ${selected ? "rounded-xl bg-primary/5" : ""}`}>
       {m.cover_image_url ? <img src={m.cover_image_url} alt={`${m.name} — representative packaging image`} loading="lazy" width={128} height={172} className="h-28 w-full rounded-xl object-cover sm:h-44" /> : <div className="h-28 rounded-xl bg-muted sm:h-44" />}
       <div className="min-w-0">
         <div className="flex items-start justify-between gap-3">
@@ -22,8 +32,13 @@ export function ManufacturerCard({ m }: { m: DirectoryManufacturer }) {
         </dl>
         <p className="mt-3 text-sm text-primary">{[m.customization_capabilities.includes("custom-printing") ? "Custom printing" : null, m.printing_capabilities.includes("custom-manufacturing") ? "Custom manufacturing" : null].filter(Boolean).join(" · ")}</p>
         <div className="mt-2 flex flex-wrap gap-2">
+          {onToggleSelect && (
+            <Button variant={selected ? "default" : "outline"} className="rounded-full px-4" aria-pressed={selected} onClick={onToggleSelect}>
+              <Check className="mr-1 h-4 w-4" />{selected ? "Selected" : "Select"}
+            </Button>
+          )}
           <Button asChild variant="secondary" className="min-w-32 flex-1 rounded-full"><Link to={`/manufacturers/${m.slug}`}>View profile</Link></Button>
-          {m.phone && <Button asChild className="whatsapp-cta rounded-full px-5"><a href={whatsappHref(m.name, m.phone)} target="_blank" rel="noopener noreferrer">WhatsApp</a></Button>}
+          {m.phone && <Button asChild className="whatsapp-cta rounded-full px-5"><a href={m.phone ? waHref : undefined} target="_blank" rel="noopener noreferrer">WhatsApp</a></Button>}
           {m.website_url && <Button asChild variant="outline" className="rounded-full px-5"><a href={m.website_url} target="_blank" rel="noopener noreferrer">Website</a></Button>}
         </div>
       </div>
