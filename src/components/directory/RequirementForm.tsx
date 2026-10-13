@@ -1,4 +1,5 @@
-import { GROUP_URL } from "./group-url";
+const GROUP_URL = "https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6";
+
 
 const field = "w-full rounded-xl border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
