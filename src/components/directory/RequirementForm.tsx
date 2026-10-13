@@ -47,6 +47,21 @@ export function RequirementForm({ manufacturers }: { manufacturers: DirectoryMan
       <form onSubmit={submit} className="space-y-3">
         <input className={field} placeholder="Your phone or email" value={contact} onChange={(e) => setContact(e.target.value)} maxLength={200} />
         <textarea className={`${field} min-h-[96px]`} placeholder="Describe what you need — pack type, size, quantity, printing, location…" value={text} onChange={(e) => setText(e.target.value)} maxLength={4000} />
+        <div>
+          <p className="text-xs font-medium text-muted-foreground">Select manufacturers to contact (optional)</p>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            {manufacturers.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => toggle(m.id)}
+                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${selected.includes(m.id) ? "border-primary bg-primary/10 text-primary" : "border-input text-muted-foreground hover:border-primary/60"}`}
+              >
+                {m.name}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex flex-wrap gap-2">
           {images.map((src, i) => (
             <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border border-border">
@@ -70,10 +85,10 @@ export function RequirementForm({ manufacturers }: { manufacturers: DirectoryMan
 
       {withPhone.length > 0 && (
         <div className="border-t border-border pt-4">
-          <p className="text-sm font-medium">Message a manufacturer directly</p>
+          <p className="text-sm font-medium">WhatsApp {selected.length > 0 ? "your selected manufacturers" : "a manufacturer directly"}</p>
           <p className="mt-0.5 text-xs text-muted-foreground">Opens WhatsApp with your requirement filled in. Attach your photos in the chat.</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {withPhone.map((m) => (
+            {(selected.length > 0 ? chosen.filter((m) => m.phone) : withPhone).map((m) => (
               <Button key={m.id} asChild variant="outline" size="sm" className="rounded-full">
                 <a href={`https://wa.me/${waDigits(m.phone!)}?text=${encodeURIComponent(directText)}`} target="_blank" rel="noopener noreferrer"><MessageCircle className="mr-1 h-3.5 w-3.5" />{m.name}</a>
               </Button>
