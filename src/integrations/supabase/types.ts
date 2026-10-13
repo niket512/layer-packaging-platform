@@ -349,6 +349,30 @@ export type Database = {
           },
         ]
       }
+      requirement_submissions: {
+        Row: {
+          contact: string
+          created_at: string
+          id: string
+          images: string[]
+          requirement: string
+        }
+        Insert: {
+          contact: string
+          created_at?: string
+          id?: string
+          images?: string[]
+          requirement: string
+        }
+        Update: {
+          contact?: string
+          created_at?: string
+          id?: string
+          images?: string[]
+          requirement?: string
+        }
+        Relationships: []
+      }
       rfq_invites: {
         Row: {
           created_at: string
