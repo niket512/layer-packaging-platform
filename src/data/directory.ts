@@ -165,6 +165,15 @@ export async function fetchPublishedManufacturers(): Promise<DirectoryManufactur
 
 export const categoryLabel = (k: CategoryKey) => PACKAGING_CATEGORIES.find((c) => c.key === k)?.label ?? k;
 export const placeOf = (m: DirectoryManufacturer) => [m.city, m.state].filter(Boolean).join(", ");
+/** Lowest stated MOQ in units; null when the supplier hasn't confirmed one. */
+export const moqUnits = (m: DirectoryManufacturer): number | null => {
+  const nums = m.minimum_order_quantities.flatMap((f) => {
+    if (/no moq/i.test(f.value)) return [1];
+    const n = f.value.replace(/,/g, "").match(/\d+/);
+    return n ? [Number(n[0])] : [];
+  });
+  return nums.length ? Math.min(...nums) : null;
+};
 export const enquiryHref = (name: string) =>
   `mailto:contact@snapit.club?subject=${encodeURIComponent(`Quote request – ${name}`)}`;
 export const waDigits = (phone: string) => phone.replace(/\D/g, "");
