@@ -32,7 +32,6 @@ export default function ManufacturersDirectory() {
   const [selected, setSelected] = useState<string[]>([]);
   const [contact, setContact] = useState("");
   const [reqText, setReqText] = useState("");
-  const [images, setImages] = useState<string[]>([]);
   useEffect(() => {
     document.title = "Find packaging manufacturers in India | Snaplogo";
     document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirement, pick manufacturers and WhatsApp them directly.");
@@ -67,8 +66,13 @@ export default function ManufacturersDirectory() {
     document.getElementById("directory")?.scrollIntoView({ behavior: "smooth" });
   };
   const clearAll = () => { setParams(new URLSearchParams()); };
-  const waText = `Hi, I found you on Snaplogo. My packaging requirement: ${reqText.trim() || "(details)"}`;
+  const waText = `Hi, I found you on Snaplogo.${contact.trim() ? ` I'm ${contact.trim()}.` : ""} My packaging requirement: ${reqText.trim() || "(please share details)"}`;
   const selectedMakers = data.filter((m) => selected.includes(m.id) && m.phone);
+  const sendToSelected = () => {
+    selectedMakers.forEach((m, i) => {
+      window.setTimeout(() => window.open(`https://wa.me/${waDigits(m.phone!)}?text=${encodeURIComponent(waText)}`, "_blank", "noopener"), i * 350);
+    });
+  };
 
   return (
     <div className="theme-directory min-h-screen bg-background text-foreground">
@@ -77,19 +81,9 @@ export default function ManufacturersDirectory() {
         <section className="py-10 md:py-14">
           <p className="text-xs font-semibold uppercase tracking-[1.5px] text-primary">The D2C packaging network</p>
           <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">Tell us what you need. We'll match the maker.</h1>
-          <p className="mt-2 max-w-xl text-base text-muted-foreground">Share your packaging requirement, select manufacturers below, and WhatsApp them directly.</p>
+          <p className="mt-2 max-w-xl text-base text-muted-foreground">Write your packaging requirement, select manufacturers below, and message all of them on WhatsApp in one click.</p>
           <div className="mt-5">
-            <RequirementForm
-              manufacturers={data}
-              selected={selected}
-              onToggle={toggle}
-              contact={contact}
-              onContact={setContact}
-              text={reqText}
-              onText={setReqText}
-              images={images}
-              onImages={setImages}
-            />
+            <RequirementForm contact={contact} onContact={setContact} text={reqText} onText={setReqText} />
           </div>
         </section>
 
@@ -156,13 +150,13 @@ export default function ManufacturersDirectory() {
         <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
           <div className="mx-auto flex max-w-content flex-wrap items-center gap-2 px-4 py-3 md:px-6">
             <span className="text-sm font-semibold">{selected.length} selected</span>
-            <span className="hidden text-xs text-muted-foreground sm:inline">WhatsApp them your requirement — attach your photos in the chat.</span>
+            <span className="hidden text-xs text-muted-foreground sm:inline">One tap opens a WhatsApp chat with each selected maker, your requirement pre-filled.</span>
             <div className="ml-auto flex flex-wrap items-center gap-2">
-              {selectedMakers.map((m) => (
-                <Button key={m.id} asChild size="sm" className="whatsapp-cta rounded-full px-4">
-                  <a href={`https://wa.me/${waDigits(m.phone!)}?text=${encodeURIComponent(waText)}`} target="_blank" rel="noopener noreferrer"><MessageCircle className="mr-1 h-3.5 w-3.5" />{m.name}</a>
+              {selectedMakers.length > 0 && (
+                <Button size="sm" className="whatsapp-cta rounded-full px-5" onClick={sendToSelected}>
+                  <MessageCircle className="mr-1 h-3.5 w-3.5" />WhatsApp {selectedMakers.length} selected
                 </Button>
-              ))}
+              )}
               <button type="button" onClick={() => setSelected([])} className="flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground hover:text-foreground"><X className="h-3.5 w-3.5" />Clear</button>
             </div>
           </div>
