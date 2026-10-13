@@ -12,8 +12,14 @@ export function RequirementForm({ manufacturers }: { manufacturers: DirectoryMan
   const [contact, setContact] = useState("");
   const [text, setText] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const toggle = (id: string) =>
+    setSelected((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
+  const chosen = manufacturers.filter((m) => selected.includes(m.id));
 
   const addImages = async (files: FileList | null) => {
     if (!files) return;
@@ -27,7 +33,7 @@ export function RequirementForm({ manufacturers }: { manufacturers: DirectoryMan
     e.preventDefault();
     if (contact.trim().length < 3 || text.trim().length < 5) return setMsg({ ok: false, text: "Add your contact and a short requirement." });
     setBusy(true); setMsg(null);
-    const { error } = await supabase.from("requirement_submissions").insert({ contact: contact.trim(), requirement: text.trim(), images });
+    const { error } = await supabase.from("requirement_submissions").insert({ contact: contact.trim(), requirement: text.trim(), images, manufacturers: chosen.map((m) => m.name) });
     setBusy(false);
     if (error) return setMsg({ ok: false, text: "Couldn't send. Please try again." });
     setMsg({ ok: true, text: "Thanks! We've received your requirement and will match suppliers." });
