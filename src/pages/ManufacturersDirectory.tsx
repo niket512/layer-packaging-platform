@@ -109,7 +109,7 @@ export default function ManufacturersDirectory() {
             {reachable.length > 0 && (
               <Button variant="outline" size="sm" onClick={addAllShown} className="h-8 rounded-full text-xs">
                 {allShownSelected ? "Unselect all shown" : `Select all (${reachable.length})`}
-              </button>
+              </Button>
             )}
           </div>
           <div className="sticky top-0 z-10 -mx-4 mt-3 space-y-2 bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
