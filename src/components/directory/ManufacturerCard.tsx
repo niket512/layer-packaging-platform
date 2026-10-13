@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Check, MapPin } from "lucide-react";
+import { Check, MapPin, Plus, ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { type DirectoryManufacturer, categoryLabel, placeOf, waDigits, whatsappHref } from "@/data/directory";
 
 interface Props {
@@ -16,8 +17,7 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
   const waHref = m.phone ? (waText ? `https://wa.me/${waDigits(m.phone)}?text=${encodeURIComponent(waText)}` : whatsappHref(m.name, m.phone)) : undefined;
   return (
     <article
-      onClick={canSelect ? onToggleSelect : undefined}
-      className={`relative grid cursor-pointer grid-cols-[72px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 transition-colors sm:grid-cols-[112px_minmax(0,1fr)] ${selected ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground"} ${canSelect ? "" : "cursor-default"}`}
+      className={`relative grid grid-cols-[64px_minmax(0,1fr)] gap-3 rounded-lg border p-4 transition-colors sm:grid-cols-[100px_minmax(0,1fr)] sm:gap-5 ${selected ? "border-primary bg-primary/10 ring-1 ring-primary/30" : "border-border bg-card hover:border-muted-foreground/50"}`}
     >
       {m.cover_image_url ? <img src={m.cover_image_url} alt="" loading="lazy" className="h-24 w-full rounded-xl object-cover sm:h-32" /> : <div className="h-24 rounded-xl bg-muted sm:h-32" />}
       <div className="min-w-0">
@@ -27,17 +27,19 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
             <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0" />{[placeOf(m), "India"].filter(Boolean).join(", ")}</p>
           </div>
           {onToggleSelect && (
-            <button
+            <Button
+              variant={selected ? "default" : "outline"}
+              size="sm"
               type="button"
               disabled={!canSelect}
               aria-pressed={selected}
               aria-label={selected ? `Unselect ${m.name}` : `Select ${m.name}`}
               onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
-              className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50 ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"}`}
+              className={`h-8 shrink-0 rounded-full px-3 text-xs font-semibold ${selected ? "!bg-primary !text-primary-foreground hover:!bg-primary/90" : "hover:border-primary"}`}
             >
-              <span className={`flex h-4 w-4 items-center justify-center rounded border ${selected ? "border-primary-foreground" : "border-muted-foreground"}`}>{selected && <Check className="h-3 w-3" />}</span>
-              {canSelect ? (selected ? "Added" : "Add") : "No WhatsApp"}
-            </button>
+              {selected ? <Check /> : <Plus />}
+              {canSelect ? (selected ? "Selected" : "Select") : "Unavailable"}
+            </Button>
           )}
         </div>
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{m.description}</p>
@@ -48,7 +50,7 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
           <span><span className="text-muted-foreground">MOQ </span><b>{moq ? moq.value : "On request"}</b></span>
           <span><span className="text-muted-foreground">Lead time </span><b>{lead ? lead.value : "On request"}</b></span>
           <span className="ml-auto flex gap-3 text-sm" onClick={(e) => e.stopPropagation()}>
-            <Link to={`/manufacturers/${m.slug}`} className="text-primary underline-offset-4 hover:underline">Profile</Link>
+             <Link to={`/manufacturers/${m.slug}`} className="inline-flex items-center gap-1 text-foreground underline-offset-4 hover:underline">View profile<ArrowUpRight className="h-3.5 w-3.5" /></Link>
             {waHref && <a href={waHref} target="_blank" rel="noopener noreferrer" className="text-primary underline-offset-4 hover:underline">Chat now</a>}
             {m.website_url && <a href={m.website_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground underline-offset-4 hover:underline">Website</a>}
           </span>

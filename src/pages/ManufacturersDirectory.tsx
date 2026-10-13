@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { MessageCircle, X } from "lucide-react";
+import { ArrowDown, Check, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequirementForm } from "@/components/directory/RequirementForm";
 import { DirectoryFooter } from "@/components/directory/DirectoryChrome";
@@ -71,43 +71,54 @@ export default function ManufacturersDirectory() {
   const sendToSelected = () => {
     if (needsText) { document.getElementById("req")?.focus(); return; }
     selectedMakers.forEach((m, i) => {
-      window.setTimeout(() => window.open(`https://wa.me/${waDigits(m.phone!)}?text=${encodeURIComponent(waText)}`, "_blank", "noopener"), i * 350);
+      window.setTimeout(() => window.open(`https://wa.me/${waDigits(m.phone ?? "")}?text=${encodeURIComponent(waText)}`, "_blank", "noopener"), i * 350);
     });
   };
 
   return (
     <div className="theme-directory min-h-screen bg-background text-foreground">
-      <main className="mx-auto max-w-content px-4 pb-24 md:px-6">
-        {/* 1. Requirement-first hero */}
-        <section className="py-10 md:py-14">
-          <p className="text-xs font-semibold uppercase tracking-[1.5px] text-primary">The D2C packaging network</p>
-          <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">Tell us what you need. We'll match the maker.</h1>
-          <p className="mt-2 max-w-xl text-base text-muted-foreground">Three quick steps: describe your need, add manufacturers, send it to all of them on WhatsApp.</p>
-          <div className="mt-5">
+      <main className="mx-auto max-w-[1000px] px-4 pb-8 md:px-6">
+        <header className="flex items-center justify-between border-b border-border py-4">
+          <a href="/manufacturers" className="text-lg font-bold">snaplogo<span className="text-primary">.</span></a>
+          <span className="text-xs text-muted-foreground">Packaging network · India</span>
+        </header>
+        <section className="py-7 md:py-9">
+          <h1 className="text-3xl font-bold leading-tight md:text-4xl">Find your packaging manufacturer.</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Your requirement. Your shortlist. A direct conversation.</p>
+          <ol aria-label="Contact progress" className="mt-6 flex items-center gap-3 text-xs sm:gap-5 sm:text-sm">
+            <li className="flex items-center gap-2"><span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">{reqText.trim() ? <Check className="h-3.5 w-3.5" /> : "1"}</span>Requirement</li>
+            <li aria-hidden="true" className="h-px w-5 bg-border sm:w-10" />
+            <li className={`flex items-center gap-2 ${selected.length ? "text-foreground" : "text-muted-foreground"}`}><span className={`flex h-6 w-6 items-center justify-center rounded-full ${selected.length ? "bg-primary text-primary-foreground" : "bg-muted"}`}>{selected.length ? <Check className="h-3.5 w-3.5" /> : "2"}</span>Select makers</li>
+            <li aria-hidden="true" className="h-px w-5 bg-border sm:w-10" />
+            <li className="flex items-center gap-2 text-muted-foreground"><MessageCircle className="h-4 w-4" />WhatsApp</li>
+          </ol>
+          <div className="mt-6">
             <RequirementForm contact={contact} onContact={setContact} text={reqText} onText={setReqText} />
+          </div>
+          <div className="mt-4 flex justify-end">
+            <Button asChild variant={reqText.trim() ? "default" : "outline"} size="sm" className="rounded-full"><a href="#directory">Choose manufacturers <ArrowDown /></a></Button>
           </div>
         </section>
 
         {/* 2. Pick makers */}
-        <section id="directory" aria-labelledby="dir-h" className="border-t border-border pt-8">
+        <section id="directory" aria-labelledby="dir-h" className="border-t border-border pt-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="dir-h" className="flex items-center gap-2 text-lg font-semibold">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">2</span>
-              Pick the manufacturers to contact
+              Manufacturers
             </h2>
             {reachable.length > 0 && (
-              <button type="button" onClick={addAllShown} className="rounded-full border border-border px-3 py-1 text-xs font-semibold hover:border-primary">
-                {allShownSelected ? "Unselect all shown" : `Add all ${reachable.length} shown`}
-              </button>
+              <Button variant="outline" size="sm" onClick={addAllShown} className="h-8 rounded-full text-xs">
+                {allShownSelected ? "Unselect all shown" : `Select all (${reachable.length})`}
+              </Button>
             )}
           </div>
           <div className="sticky top-0 z-10 -mx-4 mt-3 space-y-2 bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
             <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Packaging type">
-              <button type="button" onClick={() => update("category", "")} aria-pressed={!category} className={`shrink-0 rounded-full border px-3 py-1.5 text-sm ${!category ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-muted-foreground"}`}>All · {data.length}</button>
+              <Button variant="outline" type="button" onClick={() => update("category", "")} aria-pressed={!category} className={`shrink-0 rounded-full border px-3 py-1.5 text-sm ${!category ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-muted-foreground"}`}>All · {data.length}</Button>
               {PACKAGING_CATEGORIES.filter((c) => counts[c.key]).map((c) => (
-                <button key={c.key} type="button" onClick={() => update("category", category === c.key ? "" : c.key)} aria-pressed={category === c.key} className={`flex shrink-0 items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-sm ${category === c.key ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-muted-foreground"}`}>
+                <Button variant="outline" key={c.key} type="button" onClick={() => update("category", category === c.key ? "" : c.key)} aria-pressed={category === c.key} className={`flex shrink-0 items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-sm ${category === c.key ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-muted-foreground"}`}>
                   <img src={c.image} alt="" className="h-6 w-6 rounded-full object-cover" />{c.label} · {counts[c.key]}
-                </button>
+                </Button>
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -121,7 +132,7 @@ export default function ManufacturersDirectory() {
                 <option value="">Anywhere in India</option>
                 {states.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
-              {hasFilters && <button type="button" onClick={clearAll} className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">Clear all</button>}
+              {hasFilters && <Button variant="ghost" size="sm" onClick={clearAll}>Reset filters</Button>}
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
@@ -143,22 +154,24 @@ export default function ManufacturersDirectory() {
         </section>
       </main>
 
-      {/* Step 3: always-visible send bar */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-content flex-wrap items-center gap-3 px-4 py-3 md:px-6">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">3</span>
-          <div className="min-w-0 flex-1 text-sm">
-            {selected.length === 0 ? <span className="text-muted-foreground">Add manufacturers above to message them together.</span>
-              : needsText ? <span><b>{selected.length} selected.</b> <span className="text-muted-foreground">Write your requirement first.</span></span>
-              : <span><b>{selected.length} selected.</b> <span className="hidden text-muted-foreground sm:inline">Opens one WhatsApp chat per maker, message pre-filled.</span></span>}
+      <DirectoryFooter />
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur">
+        <div className="mx-auto max-w-[1000px] px-4 py-3 md:px-6">
+          {selectedMakers.length > 0 && <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-1" aria-label="Selected manufacturers">
+            {selectedMakers.map((m) => <Button key={m.id} variant="outline" size="sm" onClick={() => toggle(m.id)} aria-label={`Remove ${m.name}`} className="h-7 shrink-0 rounded-full border-primary/40 bg-primary/10 text-xs text-primary">{m.name}<X className="h-3 w-3" /></Button>)}
+          </div>}
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0 text-sm">
+              <p className="font-semibold">{selectedMakers.length ? `${selectedMakers.length} manufacturer${selectedMakers.length === 1 ? "" : "s"} selected` : "Your shortlist is empty"}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">{selectedMakers.length ? (needsText ? "Add your packaging requirement" : "Message ready · send in each chat") : "Choose manufacturers to get started"}</p>
+            </div>
+            <Button className="whatsapp-cta h-11 shrink-0 rounded-full px-4 sm:px-6" disabled={selectedMakers.length === 0} onClick={sendToSelected}>
+              <MessageCircle />{needsText && selected.length ? "Add requirement" : "WhatsApp selected"}
+            </Button>
           </div>
-          {selected.length > 0 && <button type="button" onClick={() => setSelected([])} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><X className="h-3.5 w-3.5" />Clear</button>}
-          <Button size="sm" className="whatsapp-cta rounded-full px-5" disabled={selectedMakers.length === 0} onClick={sendToSelected}>
-            <MessageCircle className="mr-1 h-3.5 w-3.5" />{needsText && selected.length ? "Add requirement" : `Send on WhatsApp${selectedMakers.length ? ` (${selectedMakers.length})` : ""}`}
-          </Button>
         </div>
       </div>
-      <DirectoryFooter />
+      <div className={selectedMakers.length ? "h-36" : "h-24"} />
     </div>
   );
 }
