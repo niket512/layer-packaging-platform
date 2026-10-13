@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Check, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Check, MapPin } from "lucide-react";
 import { type DirectoryManufacturer, categoryLabel, placeOf, waDigits, whatsappHref } from "@/data/directory";
 
 interface Props {
@@ -12,34 +11,47 @@ interface Props {
 
 export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }: Props) {
   const moq = m.minimum_order_quantities[0];
-  const waHref = waText
-    ? `https://wa.me/${waDigits(m.phone!)}?text=${encodeURIComponent(waText)}`
-    : whatsappHref(m.name, m.phone!);
+  const lead = m.lead_times[0];
+  const canSelect = !!onToggleSelect && !!m.phone;
+  const waHref = m.phone ? (waText ? `https://wa.me/${waDigits(m.phone)}?text=${encodeURIComponent(waText)}` : whatsappHref(m.name, m.phone)) : undefined;
   return (
-    <article className={`grid grid-cols-[80px_minmax(0,1fr)] gap-4 py-6 sm:grid-cols-[128px_minmax(0,1fr)] ${selected ? "rounded-xl bg-primary/5" : ""}`}>
-      {m.cover_image_url ? <img src={m.cover_image_url} alt={`${m.name} — representative packaging image`} loading="lazy" width={128} height={172} className="h-28 w-full rounded-xl object-cover sm:h-44" /> : <div className="h-28 rounded-xl bg-muted sm:h-44" />}
+    <article
+      onClick={canSelect ? onToggleSelect : undefined}
+      className={`relative grid cursor-pointer grid-cols-[72px_minmax(0,1fr)] gap-4 rounded-2xl border p-4 transition-colors sm:grid-cols-[112px_minmax(0,1fr)] ${selected ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground"} ${canSelect ? "" : "cursor-default"}`}
+    >
+      {m.cover_image_url ? <img src={m.cover_image_url} alt="" loading="lazy" className="h-24 w-full rounded-xl object-cover sm:h-32" /> : <div className="h-24 rounded-xl bg-muted sm:h-32" />}
       <div className="min-w-0">
         <div className="flex items-start justify-between gap-3">
-          <h2 className="text-xl font-semibold leading-tight">{m.name}</h2>
-          <Link to={`/manufacturers/${m.slug}`} aria-label={`View ${m.name} profile`} className="shrink-0 text-muted-foreground hover:text-foreground"><ArrowUpRight className="h-4 w-4" /></Link>
-        </div>
-        <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0" />{[placeOf(m), "India"].filter(Boolean).join(", ")}</p>
-        <p className="mt-1 line-clamp-2 text-sm leading-relaxed">{m.description}</p>
-        <div className="mt-2 flex flex-wrap gap-1.5">{m.packaging_categories.map((c) => <span key={c} className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{categoryLabel(c)}</span>)}</div>
-        <dl className="mt-4 grid grid-cols-1 gap-3 border-t border-border pt-3 sm:grid-cols-2">
-          <div><dt className="text-xs text-muted-foreground">Starting MOQ</dt><dd className="mt-1 text-base font-semibold">{moq ? `${moq.value}*` : "On request"}</dd>{moq && <p className="mt-1 text-xs text-muted-foreground">*{moq.scope}</p>}</div>
-          <div><dt className="text-xs text-muted-foreground">Lead time</dt><dd className="mt-1 text-base font-semibold">{m.lead_times.length ? m.lead_times.map((l) => <div key={l.scope}>{l.value}<span className="mt-0.5 block text-xs font-normal text-muted-foreground">{l.scope}</span></div>) : "On request"}</dd></div>
-        </dl>
-        <p className="mt-3 text-sm text-primary">{[m.customization_capabilities.includes("custom-printing") ? "Custom printing" : null, m.printing_capabilities.includes("custom-manufacturing") ? "Custom manufacturing" : null].filter(Boolean).join(" · ")}</p>
-        <div className="mt-2 flex flex-wrap gap-2">
+          <div className="min-w-0">
+            <h3 className="text-lg font-semibold leading-tight">{m.name}</h3>
+            <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0" />{[placeOf(m), "India"].filter(Boolean).join(", ")}</p>
+          </div>
           {onToggleSelect && (
-            <Button variant={selected ? "default" : "outline"} className="rounded-full px-4" aria-pressed={selected} onClick={onToggleSelect}>
-              {selected && <Check className="mr-1 h-4 w-4" />}{selected ? "Selected" : "Select"}
-            </Button>
+            <button
+              type="button"
+              disabled={!canSelect}
+              aria-pressed={selected}
+              aria-label={selected ? `Unselect ${m.name}` : `Select ${m.name}`}
+              onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
+              className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50 ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"}`}
+            >
+              <span className={`flex h-4 w-4 items-center justify-center rounded border ${selected ? "border-primary-foreground" : "border-muted-foreground"}`}>{selected && <Check className="h-3 w-3" />}</span>
+              {canSelect ? (selected ? "Added" : "Add") : "No WhatsApp"}
+            </button>
           )}
-          <Button asChild variant="secondary" className="min-w-32 flex-1 rounded-full"><Link to={`/manufacturers/${m.slug}`}>View profile</Link></Button>
-          {m.phone && <Button asChild className="whatsapp-cta rounded-full px-5"><a href={m.phone ? waHref : undefined} target="_blank" rel="noopener noreferrer">WhatsApp</a></Button>}
-          {m.website_url && <Button asChild variant="outline" className="rounded-full px-5"><a href={m.website_url} target="_blank" rel="noopener noreferrer">Website</a></Button>}
+        </div>
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{m.description}</p>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {m.packaging_categories.map((c) => <span key={c} className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{categoryLabel(c)}</span>)}
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+          <span><span className="text-muted-foreground">MOQ </span><b>{moq ? moq.value : "On request"}</b></span>
+          <span><span className="text-muted-foreground">Lead time </span><b>{lead ? lead.value : "On request"}</b></span>
+          <span className="ml-auto flex gap-3 text-sm" onClick={(e) => e.stopPropagation()}>
+            <Link to={`/manufacturers/${m.slug}`} className="text-primary underline-offset-4 hover:underline">Profile</Link>
+            {waHref && <a href={waHref} target="_blank" rel="noopener noreferrer" className="text-primary underline-offset-4 hover:underline">Chat now</a>}
+            {m.website_url && <a href={m.website_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground underline-offset-4 hover:underline">Website</a>}
+          </span>
         </div>
       </div>
     </article>
@@ -47,5 +59,5 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
 }
 
 export function ManufacturerCardSkeleton() {
-  return <div className="flex gap-4 py-6"><div className="h-44 w-32 shrink-0 animate-pulse rounded-xl bg-muted" /><div className="flex-1 space-y-3"><div className="h-6 w-1/2 animate-pulse rounded bg-muted" /><div className="h-4 w-1/3 animate-pulse rounded bg-muted" /><div className="h-24 animate-pulse rounded bg-muted" /></div></div>;
+  return <div className="flex gap-4 rounded-2xl border border-border p-4"><div className="h-32 w-28 shrink-0 animate-pulse rounded-xl bg-muted" /><div className="flex-1 space-y-3"><div className="h-6 w-1/2 animate-pulse rounded bg-muted" /><div className="h-4 w-1/3 animate-pulse rounded bg-muted" /><div className="h-16 animate-pulse rounded bg-muted" /></div></div>;
 }
