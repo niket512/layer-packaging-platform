@@ -32,7 +32,6 @@ export default function ManufacturersDirectory() {
   const [selected, setSelected] = useState<string[]>([]);
   const [contact, setContact] = useState("");
   const [reqText, setReqText] = useState("");
-  const [images, setImages] = useState<string[]>([]);
   useEffect(() => {
     document.title = "Find packaging manufacturers in India | Snaplogo";
     document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirement, pick manufacturers and WhatsApp them directly.");
