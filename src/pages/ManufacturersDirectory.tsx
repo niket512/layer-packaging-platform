@@ -21,28 +21,18 @@ const CUSTOM_OPTIONS = [
 ];
 const selectCls = "h-9 rounded-full border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
-function RequirementForm() {
-  const [brand, setBrand] = useState("");
-  const [email, setEmail] = useState("");
-  const [requirement, setRequirement] = useState("");
-  const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setState("sending");
-    const { error } = await supabase.from("access_requests").insert({ brand: brand.trim(), email: email.trim(), requirement: `[Directory] ${requirement.trim()}` });
-    setState(error ? "error" : "done");
-  };
-  if (state === "done") return <p className="flex items-center gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-primary" /> Thanks — we'll share suitable suppliers by email shortly.</p>;
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6";
+
+function WhatsAppCTA() {
   return (
-    <form onSubmit={submit} className="grid gap-2 sm:grid-cols-2">
-      <input required value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Brand name" aria-label="Brand name" className="h-10 rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" />
-      <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Work email" aria-label="Email" className="h-10 rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" />
-      <textarea required value={requirement} onChange={(e) => setRequirement(e.target.value)} placeholder="Product type, dimensions, quantity and customization" aria-label="Requirement" rows={3} className="rounded-lg border border-input bg-background p-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring sm:col-span-2" />
-      <div className="flex items-center gap-3 sm:col-span-2">
-        <Button type="submit" disabled={state === "sending"} className="rounded-full">{state === "sending" ? "Sending…" : "Share requirement"}</Button>
-        {state === "error" && <span role="alert" className="text-sm text-destructive">Couldn't send — please try again.</span>}
-      </div>
-    </form>
+    <div>
+      <Button asChild className="rounded-full">
+        <a href={WHATSAPP_GROUP_URL} target="_blank" rel="noopener noreferrer">
+          Submit on WhatsApp
+        </a>
+      </Button>
+      <p className="mt-2 text-sm text-muted-foreground">Join our WhatsApp group and share your requirement there.</p>
+    </div>
   );
 }
 
