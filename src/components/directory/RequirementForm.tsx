@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Plus } from "lucide-react";
+import { MessageCircle, Plus, Check } from "lucide-react";
 
 const GROUP_URL = "https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6";
 
-const field = "w-full rounded-xl border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring";
+const field = "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 const STARTERS = [
   "Printed kraft paper bags",
@@ -12,7 +13,11 @@ const STARTERS = [
   "HDPE bottles 500 ml",
   "Courier / mailer bags",
 ];
-const DETAILS = ["Quantity: ", "Size: ", "Delivery city: "];
+const DETAILS = [
+  { key: "Quantity", ph: "e.g. 10,000" },
+  { key: "Size", ph: "e.g. 12x10x4 in" },
+  { key: "Delivery city", ph: "e.g. Delhi" },
+];
 
 interface Props {
   contact: string;
@@ -22,31 +27,55 @@ interface Props {
 }
 
 export function RequirementForm({ contact, onContact, text, onText }: Props) {
+  const [open, setOpen] = useState<string | null>(null);
+  const [val, setVal] = useState("");
   const add = (s: string) => onText(text.trim() ? `${text.trim()}\n${s}` : s);
+  const commit = () => {
+    if (open && val.trim()) add(`${open}: ${val.trim()}`);
+    setOpen(null);
+    setVal("");
+  };
   return (
     <div>
-      <label htmlFor="req" className="text-sm font-semibold">
-        What packaging do you need?
-      </label>
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <label htmlFor="req" className="text-sm font-semibold">What packaging do you need?</label>
+      <div className="mt-2 flex flex-wrap gap-1.5">
         {STARTERS.map((s) => (
-           <Button key={s} variant="outline" size="sm" onClick={() => add(s)} className="h-7 rounded-full px-2.5 text-xs text-muted-foreground hover:border-primary"><Plus className="h-3 w-3" />{s}</Button>
+          <button key={s} type="button" onClick={() => add(s)} className="inline-flex h-7 items-center gap-1 rounded-md bg-muted px-2.5 text-xs text-muted-foreground transition-colors hover:text-foreground">
+            <Plus className="h-3 w-3" />{s}
+          </button>
         ))}
       </div>
       <textarea
         id="req"
-        className={`${field} mt-3 min-h-[108px] resize-y bg-card p-4 text-base transition-colors focus:border-primary`}
+        className={`${field} mt-3 min-h-[72px] resize-y bg-card p-3 text-base transition-colors focus:border-primary`}
+        rows={2}
         placeholder="e.g. 10,000 printed kraft paper bags, 12x10x4 in, delivered in Delhi"
         value={text}
         onChange={(e) => onText(e.target.value)}
         maxLength={4000}
       />
-      <div className="mt-2 flex flex-wrap items-center gap-2">
-        {DETAILS.map((d) => (
-          <Button key={d} variant="ghost" size="sm" onClick={() => add(d)} className="h-7 px-2 text-xs text-muted-foreground"><Plus className="h-3 w-3" />{d.replace(": ", "")}</Button>
-        ))}
+      <div className="mt-2 flex flex-wrap items-center gap-1">
+        {open ? (
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">{open}</span>
+            <input
+              autoFocus
+              className={`${field} h-8 w-40`}
+              placeholder={DETAILS.find((d) => d.key === open)?.ph}
+              value={val}
+              onChange={(e) => setVal(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") commit(); if (e.key === "Escape") { setOpen(null); setVal(""); } }}
+              aria-label={open}
+            />
+            <Button size="sm" variant="ghost" onClick={commit} className="h-8 px-2" aria-label={`Add ${open}`}><Check className="h-4 w-4" /></Button>
+          </div>
+        ) : (
+          DETAILS.map((d) => (
+            <Button key={d.key} variant="ghost" size="sm" onClick={() => setOpen(d.key)} className="h-7 px-2 text-xs text-muted-foreground"><Plus className="h-3 w-3" />{d.key}</Button>
+          ))
+        )}
         <input
-          className={`${field} h-9 sm:ml-auto sm:max-w-[220px]`}
+          className="ml-auto h-8 w-full border-0 border-b border-border bg-transparent px-1 text-xs text-muted-foreground outline-none focus:border-primary sm:w-[200px]"
           placeholder="Your name or brand (optional)"
           value={contact}
           onChange={(e) => onContact(e.target.value)}
