@@ -16,7 +16,8 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
   const waHref = m.phone ? (waText ? `https://wa.me/${waDigits(m.phone)}?text=${encodeURIComponent(waText)}` : whatsappHref(m.name, m.phone)) : undefined;
   return (
     <article
-      className={`relative grid grid-cols-[64px_minmax(0,1fr)] gap-3 rounded-lg border p-4 transition-colors sm:grid-cols-[100px_minmax(0,1fr)] sm:gap-5 ${selected ? "border-primary bg-primary/10 ring-1 ring-primary/30" : "border-border bg-card hover:border-muted-foreground/50"}`}
+      id={`maker-${m.id}`}
+      className={`relative grid grid-cols-[64px_minmax(0,1fr)] gap-3 rounded-lg border p-4 transition-colors sm:grid-cols-[100px_minmax(0,1fr)] sm:gap-5 ${selected ? "border-primary/70 bg-primary/[0.04]" : "border-transparent bg-card hover:border-border"}`}
     >
       {m.cover_image_url ? <img src={m.cover_image_url} alt="" loading="lazy" className="h-24 w-full rounded-xl object-cover sm:h-32" /> : <div className="h-24 rounded-xl bg-muted sm:h-32" />}
       <div className="min-w-0">
@@ -27,7 +28,7 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
           </div>
           {onToggleSelect && (
             <label
-              className={`flex shrink-0 select-none items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-colors ${canSelect ? "cursor-pointer" : "cursor-not-allowed opacity-50"} ${selected ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-muted-foreground"}`}
+              className={`flex shrink-0 select-none items-center gap-2 rounded-md px-2 py-1 text-xs font-semibold transition-colors ${canSelect ? "cursor-pointer" : "cursor-not-allowed opacity-50"} ${selected ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
             >
               <input
                 type="checkbox"
@@ -37,7 +38,7 @@ export function ManufacturerCard({ m, selected = false, onToggleSelect, waText }
                 aria-label={selected ? `Unselect ${m.name}` : `Select ${m.name}`}
                 className="h-4 w-4 accent-primary"
               />
-              {canSelect ? "Select" : "Unavailable"}
+              {canSelect ? (selected ? "Selected" : "Select") : "Unavailable"}
             </label>
           )}
         </div>
