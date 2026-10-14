@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowDown, Check, MessageCircle, X } from "lucide-react";
+import { Check, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequirementForm } from "@/components/directory/RequirementForm";
 import { ManufacturerCard, ManufacturerCardSkeleton } from "@/components/directory/ManufacturerCard";
@@ -57,7 +57,7 @@ export default function ManufacturersDirectory() {
           <a href="/manufacturers" className="text-lg font-bold">snaplogo<span className="text-primary">.</span></a>
           <span className="text-xs text-muted-foreground">Packaging network · India</span>
         </header>
-        <section className="py-7 md:py-9">
+        <section className="pb-6 pt-7 md:pt-9">
           <h1 className="text-3xl font-bold leading-tight md:text-4xl">Find your packaging manufacturer.</h1>
           <p className="mt-2 text-sm text-muted-foreground">Your requirement. Your shortlist. A direct conversation.</p>
           <ol aria-label="Contact progress" className="mt-6 flex items-center gap-3 text-xs sm:gap-5 sm:text-sm">
