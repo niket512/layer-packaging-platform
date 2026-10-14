@@ -15,6 +15,7 @@ export default function ManufacturersDirectory() {
   const [selected, setSelected] = useState<string[]>([]);
   const [contact, setContact] = useState("");
   const [reqText, setReqText] = useState("");
+  const [review, setReview] = useState(false);
   useEffect(() => {
     document.title = "Find packaging manufacturers in India | Snaplogo";
     document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirement, pick manufacturers and WhatsApp them directly.");
@@ -66,34 +67,31 @@ export default function ManufacturersDirectory() {
             <li aria-hidden="true" className="h-px w-5 bg-border sm:w-10" />
             <li className="flex items-center gap-2 text-muted-foreground"><MessageCircle className="h-4 w-4" />WhatsApp</li>
           </ol>
-          <div className="mt-6">
+          <div className="mt-5">
             <RequirementForm contact={contact} onContact={setContact} text={reqText} onText={setReqText} />
-          </div>
-          <div className="mt-4 flex justify-end">
-            <Button asChild variant={reqText.trim() ? "default" : "outline"} size="sm" className="rounded-full"><a href="#directory">Choose manufacturers <ArrowDown /></a></Button>
           </div>
         </section>
 
-        {/* 2. Pick makers */}
-        <section id="directory" aria-labelledby="dir-h" className="border-t border-border pt-6">
+        <section id="directory" aria-labelledby="dir-h" className="pt-2">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 id="dir-h" className="flex items-center gap-2 text-lg font-semibold">
-              Manufacturers
-            </h2>
+            <h2 id="dir-h" className="text-lg font-semibold">Manufacturers</h2>
             {reachable.length > 0 && (
-              <Button variant="outline" size="sm" onClick={addAllShown} className="h-8 rounded-full text-xs">
+              <Button variant="ghost" size="sm" onClick={addAllShown} className="h-8 text-xs text-muted-foreground">
                 {allShownSelected ? "Unselect all shown" : `Select all (${reachable.length})`}
               </Button>
             )}
           </div>
-          <div className="sticky top-0 z-10 -mx-4 mt-3 space-y-2 bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
-            <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Packaging type">
-              <Button variant="outline" type="button" onClick={() => update("category", "")} aria-pressed={!category} className={`shrink-0 rounded-full border px-3 py-1.5 text-sm ${!category ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-muted-foreground"}`}>All · {data.length}</Button>
-              {PACKAGING_CATEGORIES.filter((c) => counts[c.key]).map((c) => (
-                <Button variant="outline" key={c.key} type="button" onClick={() => update("category", category === c.key ? "" : c.key)} aria-pressed={category === c.key} className={`flex shrink-0 items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-sm ${category === c.key ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-muted-foreground"}`}>
-                  <img src={c.image} alt="" className="h-6 w-6 rounded-full object-cover" />{c.label} · {counts[c.key]}
-                </Button>
-              ))}
+          <div className="sticky top-0 z-10 -mx-4 mt-2 bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
+            <div className="relative">
+              <div className="flex gap-1.5 overflow-x-auto pb-1 pr-10 [scrollbar-width:thin]" role="group" aria-label="Packaging type">
+                <button type="button" onClick={() => update("category", "")} aria-pressed={!category} className={`shrink-0 rounded-md px-3 py-1.5 text-sm transition-colors ${!category ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}>All · {data.length}</button>
+                {PACKAGING_CATEGORIES.filter((c) => counts[c.key]).map((c) => (
+                  <button key={c.key} type="button" onClick={() => update("category", category === c.key ? "" : c.key)} aria-pressed={category === c.key} className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md py-1 pl-1 pr-3 text-sm transition-colors ${category === c.key ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}>
+                    <img src={c.image} alt="" className="h-6 w-6 rounded object-cover" />{c.label} · {counts[c.key]}
+                  </button>
+                ))}
+              </div>
+              <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-background to-transparent" />
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
@@ -106,7 +104,7 @@ export default function ManufacturersDirectory() {
               </select>
             </label>
           </div>
-          <div aria-label="Manufacturer results" className="mt-3 space-y-3">
+          <div aria-label="Manufacturer results" className="mt-3 space-y-2">
             {isLoading ? <><ManufacturerCardSkeleton /><ManufacturerCardSkeleton /></>
               : isError ? <div className="py-12 text-center"><p>We couldn't load manufacturers.</p><Button variant="outline" onClick={() => refetch()} className="mt-4 rounded-full">Retry</Button></div>
               : results.length ? results.map((m) => <ManufacturerCard key={m.id} m={m} selected={selected.includes(m.id)} onToggleSelect={() => toggle(m.id)} waText={waText} />)
@@ -114,23 +112,32 @@ export default function ManufacturersDirectory() {
           </div>
         </section>
       </main>
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto max-w-[1000px] px-4 py-3 md:px-6">
-          {selectedMakers.length > 0 && <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-1" aria-label="Selected manufacturers">
-            {selectedMakers.map((m) => <Button key={m.id} variant="outline" size="sm" onClick={() => toggle(m.id)} aria-label={`Remove ${m.name}`} className="h-7 shrink-0 rounded-full border-primary/40 bg-primary/10 text-xs text-primary">{m.name}<X className="h-3 w-3" /></Button>)}
-          </div>}
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0 text-sm">
-              <p className="font-semibold">{selectedMakers.length ? `${selectedMakers.length} manufacturer${selectedMakers.length === 1 ? "" : "s"} selected` : "Your shortlist is empty"}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{selectedMakers.length ? (needsText ? "Add your packaging requirement" : "Message ready · send in each chat") : "Choose manufacturers to get started"}</p>
+      {selectedMakers.length > 0 ? (
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur">
+          <div className="mx-auto max-w-[1000px] px-4 py-3 md:px-6">
+            {review && (
+              <div className="mb-3 rounded-lg bg-muted p-3 text-sm">
+                <p className="text-xs font-semibold text-muted-foreground">Message preview</p>
+                <p className="mt-1 whitespace-pre-wrap">{waText}</p>
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground">{selectedMakers.length}</span>
+              <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto" aria-label="Selected manufacturers">
+                {selectedMakers.map((m) => <button key={m.id} type="button" onClick={() => toggle(m.id)} aria-label={`Remove ${m.name}`} className="inline-flex h-7 shrink-0 items-center gap-1 rounded-md bg-primary/10 px-2 text-xs text-primary">{m.name}<X className="h-3 w-3" /></button>)}
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setReview((r) => !r)} className="hidden shrink-0 sm:inline-flex">{review ? "Hide" : "Review"}</Button>
+              <Button className="whatsapp-cta h-11 shrink-0 rounded-full px-4 sm:px-6" onClick={sendToSelected}>
+                <MessageCircle /><span className="hidden sm:inline">{needsText ? "Add requirement" : "Continue to WhatsApp"}</span><span className="sm:hidden">{needsText ? "Add req." : "WhatsApp"}</span>
+              </Button>
             </div>
-            <Button className="whatsapp-cta h-11 shrink-0 rounded-full px-4 sm:px-6" disabled={selectedMakers.length === 0} onClick={sendToSelected}>
-              <MessageCircle />{needsText && selected.length ? "Add requirement" : "WhatsApp selected"}
-            </Button>
+            <button type="button" onClick={() => setReview((r) => !r)} className="mt-2 text-xs text-muted-foreground underline-offset-4 hover:underline sm:hidden">{review ? "Hide message" : "Review message"}</button>
           </div>
         </div>
-      </div>
-      <div className={selectedMakers.length ? "h-36" : "h-24"} />
+      ) : (
+        <p className="pointer-events-none fixed bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-card/90 px-3 py-1.5 text-xs text-muted-foreground shadow backdrop-blur">Tick manufacturers to message them on WhatsApp</p>
+      )}
+      <div className={selectedMakers.length ? (review ? "h-64" : "h-32") : "h-12"} />
     </div>
   );
 }
