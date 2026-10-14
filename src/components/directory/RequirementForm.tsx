@@ -60,7 +60,7 @@ export function RequirementForm({ contact, onContact, text, onText }: Props) {
             <span className="text-xs text-muted-foreground">{open}</span>
             <input
               autoFocus
-              className={`${field} h-8 w-40`}
+              className={`${field} h-8 !w-40`}
               placeholder={DETAILS.find((d) => d.key === open)?.ph}
               value={val}
               onChange={(e) => setVal(e.target.value)}
