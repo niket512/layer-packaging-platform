@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowUp, Check, ChevronRight, Loader2, MessageSquare, Phone, Plus, Sparkles, X } from "lucide-react";
+import { ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Phone, Plus, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PACKAGING_CATEGORIES } from "@/data/directory";
 import { supabase } from "@/integrations/supabase/client";
 import { readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject } from "@/lib/sourcing";
+import { imageFileToDataUrl } from "@/lib/image-data-url";
 import logo from "@/assets/snaplogo-orange.png";
 
 const suggestions = [
@@ -22,7 +23,8 @@ export default function SourcingAgent() {
   });
   const [activeId, setActiveId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [phone, setPhone] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
+  const fileInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -32,6 +34,15 @@ export default function SourcingAgent() {
   const turns = project?.turns ?? [];
   const current = turns.at(-1);
   const hasQuestions = !current?.questionsSkipped && (current?.questions?.length ?? 0) > 0;
+  const askingPhone = !!current && !hasQuestions && !project?.submitted;
+  const addPhotos = async (files: FileList | null) => {
+    if (!files) return;
+    try {
+      const next = await Promise.all(Array.from(files).slice(0, 4 - photos.length).map(f => imageFileToDataUrl(f)));
+      setPhotos(prev => [...prev, ...next].slice(0, 4));
+    } catch (e) { setError(e instanceof Error ? e.message : "Couldn’t add that photo."); }
+    if (fileInput.current) fileInput.current.value = "";
+  };
 
   useEffect(() => { try { localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects)); } catch { /* Keep session usable. */ } }, [projects]);
   useEffect(() => {
@@ -39,38 +50,40 @@ export default function SourcingAgent() {
     document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirements, answer a few focused questions and request a phone follow-up from Snaplogo.");
   }, []);
 
-  const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhone(""); setError(""); input.current?.focus(); };
+  const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
   const search = async (text = query) => {
-    const trimmed = text.trim();
+    const trimmed = text.trim() || (photos.length ? "Photos attached" : "");
+    if (askingPhone && validSourcingPhone(trimmed) && !photos.length) { void submitPhone(trimmed); return; }
     if (!trimmed || busy || submitting || project?.submitted) return;
     setBusy(true); setError(""); setPendingQuery(trimmed);
     const id = activeId ?? crypto.randomUUID();
     try {
       const { data, error: requestError } = await supabase.functions.invoke("directory-search", { body: { query: sourcingRequest(turns, trimmed), mode: "intake", conversation: turns.map(t => ({ request: t.query, questions: t.questions ?? [], skipped: t.questionsSkipped ?? false })) } });
       if (requestError || data?.error) throw new Error(data?.error || "I couldn’t continue this conversation. Please try again.");
-      const turn = { query: trimmed, matches: [], questions: validatedQuestions(data?.questions, turns) };
+      const turn = { query: trimmed, matches: [], questions: validatedQuestions(data?.questions, turns), images: photos };
       setProjects(prev => prev.some(p => p.id === id) ? prev.map(p => p.id === id ? { ...p, turns: [...p.turns, turn] } : p) : [{ id, title: trimmed.slice(0, 65), turns: [turn] }, ...prev]);
-      setActiveId(id); setQuery("");
+      setActiveId(id); setQuery(""); setPhotos([]);
     } catch (e) { setError(e instanceof Error ? e.message : "Something went wrong. Please try again."); }
     finally { setBusy(false); setPendingQuery(""); }
   };
-  const submitPhone = async () => {
+  const submitPhone = async (phone: string) => {
     const payload = sourcingSubmission(turns, phone);
     if (!payload || busy || submitting || project?.submitted) return;
     setSubmitting(true); setError("");
     try {
       const { error: insertError } = await supabase.from("requirement_submissions").insert(payload);
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
-      setProjects(prev => prev.map(p => p.id === activeId ? { ...p, submitted: true } : p));
-      setPhone("");
+      setProjects(prev => prev.map(p => p.id === activeId ? { ...p, submitted: true, phone: phone.trim() } : p));
+      setQuery("");
     } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setSubmitting(false); }
   };
   const composer = (compact = false) => (
     <form onSubmit={e => { e.preventDefault(); void search(); }} className={`sourcing-composer rounded-2xl border border-border bg-card p-3 ${compact ? "" : "mt-7"}`}>
       <label htmlFor="sourcing-query" className="sr-only">{compact ? "Your answer" : "Packaging requirement"}</label>
-      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} maxLength={500} disabled={busy || submitting} rows={compact ? 2 : 3} placeholder={compact ? "Your answer, or any other details…" : "What packaging do you need?"} className="w-full resize-none bg-transparent px-2 pt-2 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
-      <div className="flex items-center justify-between gap-2 pt-2"><span className="flex items-center gap-1.5 px-2 text-xs text-muted-foreground"><Sparkles className="h-3.5 w-3.5 text-primary" />Snaplogo sourcing</span><Button type="submit" size="icon" disabled={busy || submitting || !query.trim()} aria-label="Send answer" className="h-10 w-10 rounded-full">{busy ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button></div>
+      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} maxLength={500} disabled={busy || submitting} rows={compact ? 2 : 3} placeholder={askingPhone ? "Type your phone number, e.g. +91 98765 43210" : compact ? "Your answer, or any other details…" : "What packaging do you need?"} className="w-full resize-none bg-transparent px-2 pt-2 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
+      {photos.length > 0 && <div className="flex flex-wrap gap-2 px-2 pt-2">{photos.map((src, i) => <div key={i} className="relative"><img src={src} alt={`Attached photo ${i + 1}`} className="h-16 w-16 rounded-lg border border-border object-cover" /><button type="button" aria-label="Remove photo" onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))} className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background"><X className="h-3 w-3" /></button></div>)}</div>}
+      <div className="flex items-center justify-between gap-2 pt-2"><div className="flex items-center gap-1"><input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={e => void addPhotos(e.target.files)} /><Button type="button" variant="ghost" size="sm" disabled={busy || submitting || photos.length >= 4} onClick={() => fileInput.current?.click()} className="text-muted-foreground"><ImagePlus />Add photos</Button><span className="hidden items-center gap-1.5 px-2 text-xs text-muted-foreground sm:flex"><Sparkles className="h-3.5 w-3.5 text-primary" />Snaplogo sourcing</span></div><Button type="submit" size="icon" disabled={busy || submitting || (!query.trim() && !photos.length)} aria-label="Send answer" className="h-10 w-10 rounded-full">{busy ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button></div>
     </form>
   );
   return (
@@ -95,11 +108,12 @@ export default function SourcingAgent() {
           </div>}
           {(current || busy) && <div className="mx-auto max-w-[780px] py-8">
             <ol className="mb-8 flex items-center gap-2 text-xs font-medium" aria-label="Progress">{["Describe need", "Add details", "Request a call"].map((label, i) => { const step = project?.submitted ? 3 : hasQuestions || busy ? 1 : 2; const done = i < step; const active = i === step; return <li key={label} className="flex flex-1 items-center gap-2"><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] ${done ? "border-primary bg-primary text-primary-foreground" : active ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{done ? <Check className="h-3.5 w-3.5" /> : i + 1}</span><span className={`hidden sm:inline ${done || active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>{i < 2 && <span className={`h-px flex-1 ${done ? "bg-primary" : "bg-border"}`} />}</li>; })}</ol>
-            <div className="space-y-6">{turns.map((turn, index) => <div key={index} className="space-y-4"><div className="ml-auto max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-4 py-3 text-sm text-primary-foreground">{turn.query}</div>{(turn.questions?.length ?? 0) > 0 && <div className="flex max-w-[90%] gap-3"><img src={logo} alt="" className="mt-1 h-8 w-8 shrink-0 rounded-full border border-border bg-card p-1" /><div className="sourcing-composer rounded-2xl rounded-tl-md border border-border bg-card px-4 py-3 text-sm leading-relaxed"><p className="mb-2 text-xs font-semibold text-muted-foreground">A few quick details would help</p><ul className="space-y-2">{turn.questions?.map((q, qi) => <li key={q.topic} className="flex gap-2"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">{qi + 1}</span>{q.question}</li>)}</ul>{turn.questionsSkipped && <p className="mt-2 text-xs text-muted-foreground">Skipped</p>}</div></div>}</div>)}{busy && <div className="ml-auto max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-4 py-3 text-sm text-primary-foreground">{pendingQuery}</div>}</div>
-            {busy ? <div className="flex items-center gap-3 py-10 text-sm text-muted-foreground" role="status"><Loader2 className="h-5 w-5 animate-spin text-primary" />Reviewing your packaging details…</div> : project?.submitted ? <section role="status" className="sourcing-composer mt-8 rounded-2xl border border-border bg-card p-6 text-center"><span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent"><Check className="h-6 w-6 text-accent-foreground" /></span><h2 className="text-xl font-semibold">Thank you — your request is received.</h2><p className="mt-2 text-sm text-muted-foreground">Someone from our team will reach out to you with the relevant details.</p><Button onClick={startNew} variant="outline" className="mt-5 rounded-full"><Plus />New sourcing request</Button></section> : <>
+            <div className="space-y-6">{turns.map((turn, index) => <div key={index} className="space-y-4"><div className="ml-auto max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-4 py-3 text-sm text-primary-foreground">{turn.query}{(turn.images?.length ?? 0) > 0 && <div className="mt-2 flex flex-wrap gap-2">{turn.images?.map((src, i) => <img key={i} src={src} alt={`Photo ${i + 1}`} className="h-20 w-20 rounded-lg object-cover" />)}</div>}</div>{(turn.questions?.length ?? 0) > 0 && <div className="flex max-w-[90%] gap-3"><img src={logo} alt="" className="mt-1 h-8 w-8 shrink-0 rounded-full border border-border bg-card p-1" /><div className="sourcing-composer rounded-2xl rounded-tl-md border border-border bg-card px-4 py-3 text-sm leading-relaxed"><p className="mb-2 text-xs font-semibold text-muted-foreground">A few quick details would help</p><ul className="space-y-2">{turn.questions?.map((q, qi) => <li key={q.topic} className="flex gap-2"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">{qi + 1}</span>{q.question}</li>)}</ul>{turn.questionsSkipped && <p className="mt-2 text-xs text-muted-foreground">Skipped</p>}</div></div>}</div>)}{busy && <div className="ml-auto max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-4 py-3 text-sm text-primary-foreground">{pendingQuery}</div>}</div>
+            {busy ? <div className="flex items-center gap-3 py-10 text-sm text-muted-foreground" role="status"><Loader2 className="h-5 w-5 animate-spin text-primary" />Reviewing your packaging details…</div> : project?.submitted ? <section role="status" className="sourcing-composer mt-8 rounded-2xl border border-border bg-card p-6 text-center"><span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent"><Check className="h-6 w-6 text-accent-foreground" /></span>{project.phone && <p className="mb-2 text-xs text-muted-foreground">We’ll call {project.phone}</p>}<h2 className="text-xl font-semibold">Thank you — your request is received.</h2><p className="mt-2 text-sm text-muted-foreground">Someone from our team will reach out to you with the relevant details.</p><Button onClick={startNew} variant="outline" className="mt-5 rounded-full"><Plus />New sourcing request</Button></section> : <>
               <div className="mt-6">{composer(true)}</div>
+              {submitting && <p role="status" className="mt-2 flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="h-3.5 w-3.5 animate-spin" />Sending your request…</p>}
               {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, turns: p.turns.map((t, i) => i === p.turns.length - 1 ? { ...t, questionsSkipped: true } : t) } : p))}>Skip for now<ArrowRight /></Button></div>}
-              {!hasQuestions && <form onSubmit={e => { e.preventDefault(); void submitPhone(); }} className="sourcing-composer mt-8 rounded-2xl border border-border bg-card p-6" aria-label="Request a phone follow-up"><h2 className="flex items-center gap-3 text-lg font-semibold"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent"><Phone className="h-4 w-4 text-accent-foreground" /></span>What’s your phone number?</h2><p className="mt-2 text-sm text-muted-foreground">Someone from our team will reach out to you with the relevant details.</p><label htmlFor="sourcing-phone" className="mt-5 block text-xs font-medium">Phone number</label><div className="mt-2 flex flex-col gap-3 sm:flex-row"><Input id="sourcing-phone" type="tel" autoComplete="tel" placeholder="+91" value={phone} maxLength={25} onChange={e => setPhone(e.target.value)} disabled={submitting} required className="h-12 sm:max-w-xs" /><Button type="submit" disabled={submitting || !validSourcingPhone(phone) || !!query.trim()} className="h-12 rounded-full">{submitting ? <Loader2 className="animate-spin" /> : <Phone />}Request a call</Button></div><p className="mt-3 text-xs text-muted-foreground">By requesting a call, you agree to be contacted about this sourcing request.</p>{query.trim() && <p className="mt-2 text-xs text-muted-foreground">Send your additional details before requesting a call.</p>}</form>}
+              {askingPhone && <div className="mt-6 flex max-w-[90%] gap-3"><img src={logo} alt="" className="mt-1 h-8 w-8 shrink-0 rounded-full border border-border bg-card p-1" /><div className="sourcing-composer rounded-2xl rounded-tl-md border border-border bg-card px-4 py-3 text-sm leading-relaxed"><p className="flex items-center gap-2 font-medium"><Phone className="h-4 w-4 text-primary" />What’s your phone number?</p><p className="mt-1 text-muted-foreground">Type it below and someone from our team will reach out to you with the relevant details. You can also add more details or photos first.</p></div></div>}
             </>}
           </div>}
           {error && <div role="alert" className="mt-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-card p-4 text-sm text-destructive"><span className="flex-1">{error}</span><Button variant="ghost" size="icon" className="h-6 w-6" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}
