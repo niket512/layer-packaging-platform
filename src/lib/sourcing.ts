@@ -2,8 +2,8 @@ import type { DirectoryManufacturer } from "@/data/directory";
 
 export interface SourcingMatch { id: string; reason: string }
 export interface SourcingQuestion { topic: string; question: string }
-export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean }
-export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean }
+export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean; images?: string[] }
+export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; phone?: string }
 
 export function validSourcingPhone(phone: string): boolean {
   return /^[+\d\s()-]+$/.test(phone.trim()) && /^\d{10,15}$/.test(phone.replace(/\D/g, ""));
@@ -14,7 +14,7 @@ export function sourcingSubmission(turns: SourcingTurn[], phone: string) {
   return {
     contact: phone.trim(),
     requirement: turns.map(turn => [turn.query, ...(turn.questions ?? []).map(q => `Question: ${q.question}`), ...(turn.questionsSkipped ? ["Optional questions skipped"] : [])].join("\n")).join("\n\n"),
-    images: [],
+    images: turns.flatMap(turn => turn.images ?? []).slice(0, 8),
     manufacturers: [],
   };
 }
