@@ -92,7 +92,7 @@ export default function SourcingAgent() {
         <Link to="/sourcing" className="flex items-center gap-2 px-2 text-xl font-bold"><img src={logo} alt="" className="h-8 w-8" />snaplogo<span className="text-primary">.</span></Link>
         <Button onClick={startNew} disabled={busy || submitting} variant="outline" className="mt-8 w-full justify-start rounded-full"><Plus />New sourcing request</Button>
         <p className="mt-8 px-3 text-xs font-semibold text-muted-foreground">Recent requests</p>
-        <div className="mt-2 flex-1 space-y-1 overflow-y-auto">{projects.map(p => <Button key={p.id} variant="ghost" disabled={busy || submitting} onClick={() => { setActiveId(p.id); setPhone(""); setQuery(""); setError(""); }} className={`h-auto w-full justify-start py-2.5 text-left text-xs ${p.id === activeId ? "bg-muted" : "text-muted-foreground"}`}><MessageSquare className="shrink-0" /><span className="truncate">{p.title}</span>{p.submitted && <Check className="ml-auto shrink-0 text-primary" />}</Button>)}</div>
+        <div className="mt-2 flex-1 space-y-1 overflow-y-auto">{projects.map(p => <Button key={p.id} variant="ghost" disabled={busy || submitting} onClick={() => { setActiveId(p.id); setPhotos([]); setQuery(""); setError(""); }} className={`h-auto w-full justify-start py-2.5 text-left text-xs ${p.id === activeId ? "bg-muted" : "text-muted-foreground"}`}><MessageSquare className="shrink-0" /><span className="truncate">{p.title}</span>{p.submitted && <Check className="ml-auto shrink-0 text-primary" />}</Button>)}</div>
       </aside>
       <div className="lg:ml-60">
         <header className="flex h-[72px] items-center justify-between gap-3 border-b border-border/60 px-5 md:px-10">

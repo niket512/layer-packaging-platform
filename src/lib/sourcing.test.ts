@@ -32,3 +32,9 @@ describe("sourcing matches", () => {
     expect(sourcingRequest([{ query: "500 paper bags for Chennai", matches: [] }], "Custom printing ".repeat(40))).toContain("500 paper bags for Chennai");
   });
 });
+describe("sourcing photos", () => {
+  it("sends photos shared in the chat with the request, up to eight", () => {
+    const turns = [{ query: "Bags", matches: [], images: Array(10).fill("data:image/jpeg;base64,x") }];
+    expect(sourcingSubmission(turns, "+91 98765 43210")?.images).toHaveLength(8);
+  });
+});
