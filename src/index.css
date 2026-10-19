@@ -55,6 +55,24 @@
   }
 
   /* Compact public directory — reference-matched dark surfaces */
+  .theme-sourcing {
+    --background: 150 24% 97%;
+    --foreground: 160 18% 13%;
+    --primary: 222 81% 54%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 153 36% 92%;
+    --accent-foreground: 157 36% 25%;
+    --secondary: 153 36% 92%;
+    --secondary-foreground: 157 36% 25%;
+    --muted: 150 15% 94%;
+    --muted-foreground: 155 7% 45%;
+    --border: 150 15% 87%;
+    --input: 150 15% 87%;
+    --ring: 222 81% 54%;
+    --sourcing-shadow: 0 8px 32px hsl(155 20% 20% / 0.05);
+  }
+  .sourcing-composer { box-shadow: var(--sourcing-shadow); }
+
   .theme-directory {
     --background: 220 15% 7%;
     --foreground: 210 20% 96%;
