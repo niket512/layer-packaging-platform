@@ -1,4 +1,4 @@
-# Sourcing agent
-- [x] Add a separate AI sourcing workspace with real manufacturer matching.
-- [x] Add saved conversations, supplier shortlisting, comparison and direct contact.
-- [x] Verify the sourcing flow and page layout.
+# Sourcing intake
+- [ ] Replace supplier suggestions with a focused question-and-answer conversation.
+- [ ] Collect a phone number and save the request for human follow-up.
+- [ ] Verify questions, phone submission and absence of supplier details.
