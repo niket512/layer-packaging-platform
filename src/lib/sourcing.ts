@@ -1,7 +1,8 @@
 import type { DirectoryManufacturer } from "@/data/directory";
 
 export interface SourcingMatch { id: string; reason: string }
-export interface SourcingTurn { query: string; matches: SourcingMatch[] }
+export interface SourcingQuestion { topic: string; question: string }
+export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean }
 export interface SourcingProject { id: string; title: string; turns: SourcingTurn[] }
 
 export function validatedMatches(value: unknown, manufacturers: DirectoryManufacturer[]): SourcingMatch[] {
@@ -16,7 +17,23 @@ export function validatedMatches(value: unknown, manufacturers: DirectoryManufac
 }
 
 export function sourcingRequest(turns: SourcingTurn[], query: string) {
-  return [...turns.map(turn => turn.query), query].join("\nFollow-up: ").slice(-500);
+  return [...turns.map(turn => turn.query), query].filter(Boolean).join("\nFollow-up: ").slice(0, 4000);
+}
+
+export function validatedQuestions(value: unknown, turns: SourcingTurn[]): SourcingQuestion[] {
+  if (!Array.isArray(value)) return [];
+  const asked = turns.flatMap(turn => turn.questions ?? []);
+  const seen = new Set(asked.map(item => item.topic));
+  const remaining = Math.max(0, 2 - asked.length);
+  const allowed = new Set(["quantity", "format", "size", "printing", "delivery", "budget", "timeline", "material"]);
+  const questions: SourcingQuestion[] = [];
+  for (const item of value) {
+    if (questions.length >= remaining) break;
+    if (!item || typeof item.topic !== "string" || typeof item.question !== "string" || !allowed.has(item.topic) || seen.has(item.topic) || !item.question.trim()) continue;
+    seen.add(item.topic);
+    questions.push({ topic: item.topic, question: item.question.trim().slice(0, 200) });
+  }
+  return questions;
 }
 
 export function readSaved<T>(key: string, fallback: T): T {

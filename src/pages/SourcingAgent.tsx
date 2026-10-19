@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SourcingSupplier } from "@/components/directory/SourcingSupplier";
 import { fetchPublishedManufacturers, CUSTOMIZATION, placeOf, PACKAGING_CATEGORIES, type DirectoryManufacturer } from "@/data/directory";
 import { supabase } from "@/integrations/supabase/client";
-import { readSaved, sourcingRequest, validatedMatches, type SourcingProject } from "@/lib/sourcing";
+import { readSaved, sourcingRequest, validatedMatches, validatedQuestions, type SourcingProject } from "@/lib/sourcing";
 import logo from "@/assets/snaplogo-orange.png";
 
 const suggestions = [
@@ -54,9 +54,9 @@ export default function SourcingAgent() {
     setBusy(true); setError(""); setPendingQuery(trimmed); setTab("source");
     const id = activeId ?? crypto.randomUUID();
     try {
-      const { data, error: requestError } = await supabase.functions.invoke("directory-search", { body: { query: sourcingRequest(turns, trimmed), manufacturers } });
+      const { data, error: requestError } = await supabase.functions.invoke("directory-search", { body: { query: sourcingRequest(turns, trimmed), manufacturers, mode: "sourcing", conversation: turns.map(t => ({ request: t.query, questions: t.questions ?? [], skipped: t.questionsSkipped ?? false })) } });
       if (requestError || data?.error) throw new Error(data?.error || "The sourcing agent couldn’t complete this search. Please try again.");
-      const turn = { query: trimmed, matches: validatedMatches(data?.matches, manufacturers) };
+      const turn = { query: trimmed, matches: validatedMatches(data?.matches, manufacturers), questions: validatedQuestions(data?.questions, turns) };
       setProjects(prev => {
         const existing = prev.find(p => p.id === id);
         return existing ? prev.map(p => p.id === id ? { ...p, turns: [...p.turns, turn] } : p) : [{ id, title: trimmed.slice(0, 65), turns: [turn] }, ...prev];
@@ -113,8 +113,9 @@ export default function SourcingAgent() {
 
           {tab === "source" && (current || busy) && <div className="py-8">
             <div className="mb-6 flex items-center gap-2 text-xs text-muted-foreground"><Sparkles className="h-4 w-4 text-primary" />Sourcing conversation</div>
-            <div className="space-y-3">{turns.map((turn, index) => <div key={index} className="ml-auto max-w-[85%] rounded-lg bg-muted px-4 py-3 text-sm">{turn.query}</div>)}{busy && <div className="ml-auto max-w-[85%] rounded-lg bg-muted px-4 py-3 text-sm">{pendingQuery}</div>}</div>
+            <div className="space-y-3">{turns.map((turn, index) => <div key={index}><div className="ml-auto max-w-[85%] rounded-lg bg-muted px-4 py-3 text-sm">{turn.query}</div>{index < turns.length - 1 && !turn.questionsSkipped && (turn.questions?.length ?? 0) > 0 && <div className="mt-3 space-y-1 px-2 text-sm text-muted-foreground">{turn.questions?.map(q => <p key={q.topic}>{q.question}</p>)}</div>}</div>)}{busy && <div className="ml-auto max-w-[85%] rounded-lg bg-muted px-4 py-3 text-sm">{pendingQuery}</div>}</div>
             {busy ? <div className="flex items-center gap-3 py-12 text-sm text-muted-foreground" role="status"><Loader2 className="h-5 w-5 animate-spin text-primary" />Matching your requirements with listed manufacturers…</div> : current && <>
+              {!current.questionsSkipped && (current.questions?.length ?? 0) > 0 && <section aria-label="Sourcing follow-up questions" className="mt-6 border-l-2 border-primary pl-4"><p className="mb-2 flex items-center gap-2 text-xs font-medium text-primary"><Sparkles className="h-4 w-4" />A couple of details to narrow this down</p><div className="space-y-2 text-sm leading-relaxed">{current.questions?.map(q => <p key={q.topic}>{q.question}</p>)}</div><div className="mt-3 flex flex-wrap gap-2"><Button variant="outline" size="sm" className="rounded-full" onClick={() => input.current?.focus()}>Add details<ArrowDownIcon /></Button><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, turns: p.turns.map((t, i) => i === p.turns.length - 1 ? { ...t, questionsSkipped: true } : t) } : p))}>Skip for now</Button></div></section>}
               <div className="mb-5 mt-8"><h1 className="text-xl font-semibold">{current.matches.length ? "Your manufacturer matches" : "No listed manufacturers match this request yet"}</h1><p className="mt-1 text-xs text-muted-foreground">{current.matches.length ? "Matched against the Snaplogo directory. Prices and availability need supplier confirmation." : "Try a different packaging format, or adjust your quantity and customization requirements."}</p></div>
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{current.matches.map(match => { const m = manufacturers.find(v => v.id === match.id); return m ? <SourcingSupplier key={m.id} manufacturer={m} reason={match.reason} saved={saved.includes(m.id)} onSave={() => toggleSave(m.id)} requirement={sourcingRequest(turns, "")} /> : null; })}</div>
               {current.matches.length > 0 && <Button onClick={() => setTab("compare")} variant="ghost" className="mt-4 text-primary"><SlidersHorizontal />Compare saved suppliers<ArrowRight /></Button>}
@@ -137,3 +138,4 @@ function EmptyState({ title, onSource }: { title: string; onSource: () => void }
 }
 
 function ArrowUpRightIcon() { return <ExternalLink className="!h-3 !w-3" />; }
+function ArrowDownIcon() { return <ArrowUp className="h-3 w-3 rotate-180" />; }
