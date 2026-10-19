@@ -1,8 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { sourcingRequest, validatedMatches, validatedQuestions } from "./sourcing";
+import { sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
 
 describe("sourcing matches", () => {
+  it("requires a valid phone number for follow-up", () => {
+    expect(validSourcingPhone("+91 98765 43210")).toBe(true);
+    expect(validSourcingPhone("123")).toBe(false);
+    expect(validSourcingPhone("call me 9876543210")).toBe(false);
+    expect(sourcingSubmission([{ query: "Paper bags", matches: [] }], "")).toBeNull();
+  });
+  it("saves answers and phone without suggesting suppliers", () => {
+    expect(sourcingSubmission([{ query: "Paper bags", matches: [{ id: "evenpack", reason: "Legacy match" }], questions: [{ topic: "quantity", question: "How many?" }] }, { query: "500 units", matches: [] }], "+91 98765 43210")).toEqual({ contact: "+91 98765 43210", requirement: "Paper bags\nQuestion: How many?\n\n500 units", images: [], manufacturers: [] });
+  });
   it("only returns known published manufacturers, without duplicates", async () => {
     const manufacturers = await fetchPublishedManufacturers();
     expect(validatedMatches([{ id: "evenpack", reason: "Paper bags" }, { id: "invented", reason: "Unknown" }, { id: "evenpack", reason: "Duplicate" }], manufacturers)).toEqual([{ id: "evenpack", reason: "Paper bags" }]);
