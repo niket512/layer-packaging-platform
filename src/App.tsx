@@ -15,7 +15,7 @@ import AppStore from "./pages/AppStore.tsx";
 import AppAdmin from "./pages/AppAdmin.tsx";
 import ManufacturersDirectory from "./pages/ManufacturersDirectory.tsx";
 import ManufacturerProfile from "./pages/ManufacturerProfile.tsx";
-import SourcingAgent from "./pages/SourcingAgent.tsx";
+import PackagingDesigns from "./pages/PackagingDesigns.tsx";
 
 const queryClient = new QueryClient();
 const host = typeof window !== "undefined" ? window.location.hostname : "";
