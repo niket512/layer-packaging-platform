@@ -5,7 +5,7 @@ import { Check, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequirementForm } from "@/components/directory/RequirementForm";
 import { ManufacturerCard, ManufacturerCardSkeleton } from "@/components/directory/ManufacturerCard";
-import { fetchPublishedManufacturers, categoryLabel, placeOf, PACKAGING_CATEGORIES, moqUnits, waDigits, type DirectoryManufacturer } from "@/data/directory";
+import { fetchPublishedManufacturers, categoryLabel, placeOf, PACKAGING_CATEGORIES, CATEGORY_DESIGNS, moqUnits, waDigits, type DirectoryManufacturer } from "@/data/directory";
 
 export default function ManufacturersDirectory() {
   const [params, setParams] = useSearchParams();
