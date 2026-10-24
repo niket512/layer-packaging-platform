@@ -33,6 +33,32 @@ export const CUSTOMIZATION = {
 } as const;
 export type CustomizationKey = keyof typeof CUSTOMIZATION;
 
+/** Designs buyers can ask for, per packaging category. Shown on the explore page. */
+export const CATEGORY_DESIGNS: Partial<Record<CategoryKey, { name: string; note: string }[]>> = {
+  corrugated: [
+    { name: "Regular slotted carton (RSC)", note: "Standard shipping box, 3/5/7-ply" },
+    { name: "Die-cut box", note: "Custom shape, self-locking" },
+    { name: "Mailer / e-commerce box", note: "Easy-fold, branded unboxing" },
+    { name: "Telescopic box", note: "Separate lid and base" },
+    { name: "Auto-lock bottom box", note: "Quick assembly for packing lines" },
+    { name: "Partition / divider box", note: "For bottles, jars and fragile items" },
+    { name: "Heavy-duty export box", note: "5-ply and 7-ply for long transit" },
+    { name: "Pizza & food box", note: "Food-grade, grease-resistant" },
+    { name: "Printed retail display box", note: "Counter and shelf-ready" },
+  ],
+  flexible: [
+    { name: "Stand-up pouch", note: "With or without zipper" },
+    { name: "Flat / three-side seal pouch", note: "Sachets and single-serve" },
+    { name: "Pillow pouch", note: "Back-seal, snacks and powders" },
+    { name: "Spout pouch", note: "Liquids, oils and purees" },
+    { name: "Gusseted pouch", note: "Side or bottom gusset, higher volume" },
+    { name: "Quad-seal pouch", note: "Premium coffee and pet food" },
+    { name: "Stick pack", note: "Slim single-dose format" },
+    { name: "Roll stock", note: "Printed film for form-fill-seal lines" },
+    { name: "Vacuum pouch", note: "High-barrier, extended shelf life" },
+  ],
+};
+
 export const CAPABILITIES = {
   "digital-printing": "Digital printing",
   "offset-printing": "Offset printing",
