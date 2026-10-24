@@ -57,7 +57,10 @@ export default function SourcingAgent() {
     if (!files) return;
     const room = 4 - images.length;
     for (const f of Array.from(files).slice(0, room)) {
-      try { setImages((p) => [...p, await imageFileToDataUrl(f, 800)]); } catch { /* skip bad files */ }
+      try {
+        const url = await imageFileToDataUrl(f, 800);
+        setImages((p) => [...p, url]);
+      } catch { /* skip bad files */ }
     }
   };
 
