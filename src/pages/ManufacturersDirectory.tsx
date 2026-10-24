@@ -5,6 +5,7 @@ import { Check, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequirementForm } from "@/components/directory/RequirementForm";
 import { ManufacturerCard, ManufacturerCardSkeleton } from "@/components/directory/ManufacturerCard";
+import DesignsGallery from "@/components/directory/DesignsGallery";
 import { fetchPublishedManufacturers, categoryLabel, placeOf, PACKAGING_CATEGORIES, CATEGORY_DESIGNS, moqUnits, waDigits, type DirectoryManufacturer } from "@/data/directory";
 
 export default function ManufacturersDirectory() {
@@ -132,6 +133,7 @@ export default function ManufacturersDirectory() {
               : <div className="py-12 text-center"><h3 className="text-lg font-semibold">No manufacturers match yet</h3><p className="mt-1 text-sm text-muted-foreground">Try another packaging type, or share your requirement above and we'll find suppliers for you.</p><Button asChild variant="outline" className="mt-4 rounded-full"><a href="/manufacturers">Show all manufacturers</a></Button></div>}
           </div>
         </section>
+        <DesignsGallery />
       </main>
       {selectedMakers.length > 0 ? (
         <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur">
