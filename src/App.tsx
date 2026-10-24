@@ -31,7 +31,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={isMfrHost ? <ManufacturersDirectory /> : isAppHost ? <AppHome /> : <Index />} />
           <Route path="/manufacturers" element={<ManufacturersDirectory />} />
-          <Route path="/sourcing" element={<SourcingAgent />} />
+          <Route path="/sourcing" element={<PackagingDesigns />} />
           <Route path="/manufacturers/:slug" element={<ManufacturerProfile />} />
           <Route path="/app" element={<AppHome />} />
           <Route path="/app/store" element={<AppStore />} />
