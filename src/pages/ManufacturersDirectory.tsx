@@ -94,7 +94,28 @@ export default function ManufacturersDirectory() {
               <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-background to-transparent" />
             </div>
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+          {category && CATEGORY_DESIGNS[category as keyof typeof CATEGORY_DESIGNS] && (
+            <div className="mt-3 rounded-xl border border-border bg-card p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Designs you can get made — tap to add to your requirement
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {CATEGORY_DESIGNS[category as keyof typeof CATEGORY_DESIGNS]!.map((d) => (
+                  <button
+                    key={d.name}
+                    type="button"
+                    title={d.note}
+                    onClick={() => setReqText((t) => (t.includes(d.name) ? t : `${t.trim()}${t.trim() ? "; " : ""}${d.name}`))}
+                    className="rounded-md bg-muted px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-primary/10 hover:text-primary"
+                  >
+                    <span className="font-medium">{d.name}</span>
+                    <span className="ml-1 text-muted-foreground">· {d.note}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
             <p aria-live="polite">
               {isLoading ? "Loading manufacturers…" : `${results.length} manufacturers found`}
             </p>
