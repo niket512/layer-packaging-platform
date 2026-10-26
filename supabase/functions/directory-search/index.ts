@@ -54,7 +54,8 @@ Deno.serve(async (req) => {
        system: isIntake ? INTAKE_SYSTEM : isSourcing ? SOURCING_SYSTEM : SYSTEM,
        prompt: JSON.stringify({ request: query, ...(isSourcing ? { conversation: Array.isArray(body.conversation) ? body.conversation.slice(-12) : [] } : {}), ...(!isIntake ? { manufacturers: body.manufacturers?.slice(0, 200) } : {}) }).slice(0, 40000),
       abortSignal: req.signal,
-      providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
+      ...(isIntake ? { maxOutputTokens: 400 } : {}),
+      providerOptions: { openai: isIntake ? { store: false } : { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
       onError: ({ error }) => {
         const e = error as { statusCode?: number; message?: string };
         failure = { status: e.statusCode ?? 500, message: e.message ?? "AI request failed" };
