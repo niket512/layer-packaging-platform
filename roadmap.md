@@ -4,5 +4,5 @@
 - [x] Verify questions, phone submission and absence of supplier details.
 
 # Corrugated-box questions
-- [ ] Tailor optional sourcing questions to the supplied corrugated-box options, retaining the two-question limit.
-- [ ] Test option coverage and verify the live chat.
+- [x] Tailor optional sourcing questions to the supplied corrugated-box options, retaining the two-question limit.
+- [x] Test option coverage and verify the live chat.
