@@ -1,6 +1,7 @@
 import { createOpenAI } from "npm:@ai-sdk/openai";
-import { streamText } from "npm:ai";
-import { createLovableAiGatewayRunIdFetch, getLovableAiGatewayRunId } from "../_shared/run-id.ts";
+import { streamText, Output, NoObjectGeneratedError } from "npm:ai";
+import { z } from "npm:zod";
+import { createLovableAiGatewayRunIdFetch, getLovableAiGatewayRunId, withLovableAiGatewayRunIdHeader } from "../_shared/run-id.ts";
 import { INTAKE_QUESTION_LIMIT, INTAKE_SYSTEM } from "../_shared/sourcing-intake.ts";
 
 const cors = {
@@ -27,7 +28,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   if (!apiKey) return json({ error: "AI is not configured" }, 500);
-  let body: { query?: string; manufacturers?: unknown[]; mode?: string; conversation?: unknown[] };
+  let body: { query?: string; manufacturers?: unknown[]; mode?: string; conversation?: unknown[]; stream?: boolean };
   try { body = await req.json(); } catch { return json({ error: "Invalid request" }, 400); }
    const isIntake = body.mode === "intake";
    const isSourcing = body.mode === "sourcing" || isIntake;
@@ -49,12 +50,38 @@ Deno.serve(async (req) => {
        prompt: JSON.stringify({ request: query, ...(isSourcing ? { conversation: Array.isArray(body.conversation) ? body.conversation.slice(-12) : [] } : {}), ...(!isIntake ? { manufacturers: body.manufacturers?.slice(0, 200) } : {}) }).slice(0, 40000),
       abortSignal: req.signal,
       ...(isIntake ? { maxOutputTokens: 800 } : {}),
+      ...(isIntake ? { output: Output.object({ schema: z.object({ questions: z.array(z.object({ topic: z.string(), question: z.string() })) }) }) } : {}),
       providerOptions: { openai: isIntake ? { store: false } : { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
       onError: ({ error }) => {
         const e = error as { statusCode?: number; message?: string };
         failure = { status: e.statusCode ?? 500, message: e.message ?? "AI request failed" };
       },
     });
+    if (isIntake && body.stream) {
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          const send = (event: unknown) => controller.enqueue(encoder.encode(JSON.stringify(event) + "\n"));
+          try {
+            for await (const partial of result.partialOutputStream) {
+              send({ questions: partial.questions?.slice(0, INTAKE_QUESTION_LIMIT) ?? [] });
+            }
+            if (failure) throw failure;
+            let output;
+            try { output = await result.output; }
+            catch (error) {
+              if (!NoObjectGeneratedError.isInstance(error)) throw error;
+              output = JSON.parse(error.text);
+            }
+            send({ questions: output.questions?.slice(0, INTAKE_QUESTION_LIMIT) ?? [], done: true });
+          } catch (error) {
+            const e = (failure ?? error) as { status?: number; message?: string };
+            send({ error: e.status === 403 ? e.message : e.status === 402 ? "AI credits have run out — add credits in Settings → Plans & credits" : e.status === 429 ? "AI is busy right now, please try again in a minute" : "I couldn’t finish this reply. Please try again." });
+          } finally { controller.close(); }
+        },
+      });
+      return withLovableAiGatewayRunIdHeader(new Response(stream, { headers: { ...cors, "Content-Type": "application/x-ndjson", "Cache-Control": "no-cache" } }), runIdFetch);
+    }
     const text = await result.text;
     if (failure) throw failure;
     const m = text.match(/\{[\s\S]*\}/);

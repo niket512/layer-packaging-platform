@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PACKAGING_CATEGORIES } from "@/data/directory";
 import { supabase } from "@/integrations/supabase/client";
-import { readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject } from "@/lib/sourcing";
+import { needsSourcingQuestions, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 import logo from "@/assets/snaplogo-orange.png";
 
@@ -29,6 +29,7 @@ export default function SourcingAgent() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [pendingQuery, setPendingQuery] = useState("");
+  const [liveQuestions, setLiveQuestions] = useState<SourcingQuestion[]>([]);
   const [phone, setPhone] = useState("");
   const input = useRef<HTMLTextAreaElement>(null);
   const project = projects.find(p => p.id === activeId);
@@ -56,16 +57,23 @@ export default function SourcingAgent() {
     const trimmed = text.trim() || (photos.length ? "Photos attached" : "");
     if (askingPhone && validSourcingPhone(trimmed) && !photos.length) { void submitPhone(trimmed); return; }
     if (!trimmed || busy || submitting || project?.submitted) return;
-    setBusy(true); setError(""); setPendingQuery(trimmed);
+    setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]);
     const id = activeId ?? crypto.randomUUID();
     try {
-      const { data, error: requestError } = await supabase.functions.invoke("directory-search", { body: { query: sourcingRequest(turns, trimmed), mode: "intake", conversation: turns.map(t => ({ request: t.query, questions: t.questions ?? [], skipped: t.questionsSkipped ?? false })) } });
-      if (requestError || data?.error) throw new Error(data?.error || "I couldn’t continue this conversation. Please try again.");
-      const turn = { query: trimmed, matches: [], questions: validatedQuestions(data?.questions, turns), images: photos };
+      let questions: unknown = [];
+      if (needsSourcingQuestions(turns)) {
+        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/directory-search`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+          body: JSON.stringify({ query: sourcingRequest(turns, trimmed), mode: "intake", stream: true, conversation: turns.map(t => ({ request: t.query, questions: t.questions ?? [], skipped: t.questionsSkipped ?? false })) }),
+        });
+        questions = await readSourcingStream(response, value => setLiveQuestions(validatedQuestions(value, turns)));
+      }
+      const turn = { query: trimmed, matches: [], questions: validatedQuestions(questions, turns), images: photos };
       setProjects(prev => prev.some(p => p.id === id) ? prev.map(p => p.id === id ? { ...p, turns: [...p.turns, turn] } : p) : [{ id, title: trimmed.slice(0, 65), turns: [turn] }, ...prev]);
       setActiveId(id); setQuery(""); setPhotos([]);
     } catch (e) { setError(e instanceof Error ? e.message : "Something went wrong. Please try again."); }
-    finally { setBusy(false); setPendingQuery(""); }
+    finally { setBusy(false); setPendingQuery(""); setLiveQuestions([]); }
   };
   const submitPhone = async (phone: string) => {
     const payload = sourcingSubmission(turns, phone);
@@ -110,7 +118,7 @@ export default function SourcingAgent() {
           {(current || busy) && <div className="mx-auto max-w-[780px] py-8">
             <ol className="sourcing-composer mb-8 flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-4 md:px-6" aria-label="Progress">{[["Describe need", "Tell us what you're looking for"], ["Add details", "Share a few more specifics"], ["Request a call", "Get a call from our team"]].map(([label, sub], i) => { const step = project?.submitted ? 3 : hasQuestions || busy ? 1 : 2; const done = i < step; const active = i === step; return <li key={label} className="flex flex-1 items-center gap-3"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${done ? "border-primary bg-primary text-primary-foreground" : active ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{done ? <Check className="h-4 w-4" /> : i + 1}</span><span className="hidden min-w-0 md:block"><span className={`block text-sm font-semibold ${done || active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span><span className="block truncate text-xs text-muted-foreground">{sub}</span></span>{i < 2 && <span className={`h-px min-w-4 flex-1 ${done ? "bg-primary" : "bg-border"}`} />}</li>; })}</ol>
             <div className="space-y-6">{turns.map((turn, index) => <div key={index} className="space-y-6"><div className="flex justify-end gap-3"><div className="max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-5 py-3 text-sm text-primary-foreground shadow-sm">{turn.query}{(turn.images?.length ?? 0) > 0 && <div className="mt-2 flex flex-wrap gap-2">{turn.images?.map((src, i) => <img key={i} src={src} alt={`Photo ${i + 1}`} className="h-20 w-20 rounded-lg object-cover" />)}</div>}</div><span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground"><User className="h-4 w-4" /></span></div>{(turn.questions?.length ?? 0) > 0 && <div className="flex max-w-[90%] gap-3"><img src={logo} alt="" className="mt-1 h-9 w-9 shrink-0 rounded-full border border-border bg-card p-1.5" /><div className="sourcing-composer rounded-2xl rounded-tl-md border border-border bg-card px-5 py-4 text-sm leading-relaxed"><p className="mb-3 font-semibold text-foreground">A few quick details would help</p><ul className="space-y-3">{turn.questions?.map((q, qi) => <li key={q.topic} className="flex items-start gap-3"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">{qi + 1}</span><span className="pt-1">{q.question}</span></li>)}</ul>{turn.questionsSkipped && <p className="mt-2 text-xs text-muted-foreground">Skipped</p>}</div></div>}</div>)}{busy && <div className="ml-auto max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-5 py-3 text-sm text-primary-foreground">{pendingQuery}</div>}</div>
-            {busy ? <div className="flex items-center gap-3 py-10 text-sm text-muted-foreground" role="status"><Loader2 className="h-5 w-5 animate-spin text-primary" />Reviewing your packaging details…</div> : project?.submitted ? <section role="status" className="sourcing-composer mt-8 rounded-2xl border border-border bg-card p-6 text-center"><span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent"><Check className="h-6 w-6 text-accent-foreground" /></span>{project.phone && <p className="mb-2 text-xs text-muted-foreground">We’ll call {project.phone}</p>}<h2 className="text-xl font-semibold">Thank you — your request is received.</h2><p className="mt-2 text-sm text-muted-foreground">Someone from our team will reach out to you with the relevant details.</p><Button onClick={startNew} variant="outline" className="mt-5 rounded-full"><Plus />New sourcing request</Button></section> : <>
+            {busy ? <div className="py-6" role="status">{liveQuestions.length > 0 && <div className="mb-4 flex max-w-[90%] gap-3"><img src={logo} alt="" className="h-9 w-9 shrink-0 rounded-full border border-border bg-card p-1.5" /><div className="sourcing-composer rounded-2xl border border-border bg-card px-5 py-4 text-sm leading-relaxed"><p className="mb-3 font-semibold">A few quick details would help</p><ol className="space-y-3">{liveQuestions.map((q, i) => <li key={q.topic} className="flex items-start gap-3"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">{i + 1}</span><span className="pt-1">{q.question}</span></li>)}</ol></div></div>}<div className="flex items-center gap-3 text-sm text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin text-primary" />Reviewing your packaging details…</div></div> : project?.submitted ? <section role="status" className="sourcing-composer mt-8 rounded-2xl border border-border bg-card p-6 text-center"><span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent"><Check className="h-6 w-6 text-accent-foreground" /></span>{project.phone && <p className="mb-2 text-xs text-muted-foreground">We’ll call {project.phone}</p>}<h2 className="text-xl font-semibold">Thank you — your request is received.</h2><p className="mt-2 text-sm text-muted-foreground">Someone from our team will reach out to you with the relevant details.</p><Button onClick={startNew} variant="outline" className="mt-5 rounded-full"><Plus />New sourcing request</Button></section> : <>
               {askingPhone && <div className="mt-6 flex gap-3"><img src={logo} alt="" className="mt-1 h-9 w-9 shrink-0 rounded-full border border-border bg-card p-1.5" /><div className="sourcing-composer flex-1 rounded-2xl rounded-tl-md border border-border bg-card p-5 text-sm leading-relaxed"><p className="font-semibold">Got it! Could you share your phone number so we can reach out with the relevant details?</p><p className="mt-1 text-muted-foreground">You can also add more details or photos first.</p>
                 <form onSubmit={e => { e.preventDefault(); const p = phone.trim(); void submitPhone(p.startsWith("+") ? p : `+91 ${p}`); }} className="mt-4 flex items-center gap-3"><label className="flex h-12 flex-1 items-center gap-3 rounded-full border border-border bg-background px-4"><Phone className="h-4 w-4 text-primary" /><span className="sr-only">Phone number</span><input value={phone} onChange={e => setPhone(e.target.value)} inputMode="tel" placeholder="Enter your phone number" className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted-foreground" /><span className="border-l border-border pl-3 text-muted-foreground">+91</span></label><Button type="submit" size="icon" aria-label="Send phone number" disabled={submitting || !validSourcingPhone(phone.trim().startsWith("+") ? phone : `+91 ${phone}`)} className="h-12 w-12 shrink-0 rounded-full">{submitting ? <Loader2 className="animate-spin" /> : <ArrowRight />}</Button></form>
                 <p className="mt-3 flex items-center gap-2 rounded-xl bg-accent px-3 py-2 text-xs text-accent-foreground"><ShieldCheck className="h-4 w-4" />Your information is safe with us</p>

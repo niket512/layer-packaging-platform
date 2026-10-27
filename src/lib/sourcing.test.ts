@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
 import { CORRUGATED_REQUIREMENTS } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {
@@ -42,6 +42,24 @@ describe("sourcing photos", () => {
   it("sends photos shared in the chat with the request, up to eight", () => {
     const turns = [{ query: "Bags", matches: [], images: Array(10).fill("data:image/jpeg;base64,x") }];
     expect(sourcingSubmission(turns, "+91 98765 43210")?.images).toHaveLength(8);
+  });
+});
+
+describe("sourcing response latency", () => {
+  it("does not call AI again after five questions or an explicit skip", () => {
+    expect(needsSourcingQuestions([])).toBe(true);
+    expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: ["quantity", "size", "format", "wall", "printing"].map(topic => ({ topic, question: "Your preference?" })) }])).toBe(false);
+    expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questionsSkipped: true }])).toBe(false);
+    expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: [{ topic: "size", question: "Dimensions?" }] }])).toBe(true);
+  });
+  it("renders incremental questions and requires a completed reply", async () => {
+    const question = { topic: "size", question: "What dimensions?" };
+    const updates: unknown[] = [];
+    const response = new Response(`${JSON.stringify({ questions: [question] })}\n${JSON.stringify({ questions: [question], done: true })}\n`);
+    expect(await readSourcingStream(response, value => updates.push(value))).toEqual([question]);
+    expect(updates).toEqual([[question]]);
+    await expect(readSourcingStream(new Response('{"questions":[]}\n'), () => {})).rejects.toThrow("interrupted");
+    await expect(readSourcingStream(new Response('{"error":"AI is busy"}\n'), () => {})).rejects.toThrow("AI is busy");
   });
 });
 
