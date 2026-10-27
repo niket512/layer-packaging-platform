@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
 import { sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { CORRUGATED_REQUIREMENTS } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {
   it("requires a valid phone number for follow-up", () => {
@@ -36,5 +37,32 @@ describe("sourcing photos", () => {
   it("sends photos shared in the chat with the request, up to eight", () => {
     const turns = [{ query: "Bags", matches: [], images: Array(10).fill("data:image/jpeg;base64,x") }];
     expect(sourcingSubmission(turns, "+91 98765 43210")?.images).toHaveLength(8);
+  });
+});
+
+describe("corrugated-box requirement configuration", () => {
+  it.each([
+    ["format", ["Shipping", "Mailer", "Die-cut", "Printed", "Tray"]],
+    ["wall", ["3-ply", "5-ply", "7-ply"]],
+    ["printing", ["No printing", "Single-colour", "Multicolour", "Digital printing"]],
+    ["material", ["Kraft liner", "White-top liner", "Other available board grades"]],
+    ["size", ["Length × width × height (include units)"]],
+    ["quantity", ["100–500", "500–1,000", "1,000–5,000", "5,000+"]],
+    ["customisation", ["Custom size", "Printing", "Inserts", "Partitions"]],
+    ["finishing", ["Lamination", "Coating", "Special finishes, where compatible"]],
+    ["usage", ["Shipping", "Retail", "Gifting", "Storage", "Product protection"]],
+    ["manufacturer_location", ["City and state"]],
+    ["budget", ["Target price per box", "Quote-based pricing"]],
+    ["samples", ["Available", "Not available"]],
+  ])("supports the supplied %s requirement choices", (topic, options) => {
+    expect(CORRUGATED_REQUIREMENTS.find(field => field.topic === topic)?.options).toEqual(options);
+  });
+  it.each(["wall", "customisation", "finishing", "usage", "manufacturer_location", "samples"])("accepts %s questions without repeating them", topic => {
+    const question = { topic, question: "What is your preference?" };
+    expect(validatedQuestions([question], [])).toEqual([question]);
+    expect(validatedQuestions([question], [{ query: "Corrugated boxes", matches: [], questions: [question] }])).toEqual([]);
+  });
+  it("keeps the two-question limit for corrugated topics", () => {
+    expect(validatedQuestions(["wall", "samples", "usage"].map(topic => ({ topic, question: "Your preference?" })), [])).toHaveLength(2);
   });
 });
