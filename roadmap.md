@@ -12,5 +12,5 @@
 - [x] Skip unnecessary AI calls after the question budget is exhausted and verify the conversation.
 
 # Flexible-packaging questions
-- [ ] Add snippet-based sachet, pouch and film requirements without catalogue changes.
-- [ ] Verify relevant missing questions, no repeated details and the phone follow-up transition.
+- [x] Add snippet-based sachet, pouch and film requirements without catalogue changes.
+- [x] Verify relevant missing questions, no repeated details and the phone follow-up transition.
