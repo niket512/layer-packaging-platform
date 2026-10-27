@@ -8,5 +8,5 @@
 - [x] Test option coverage and verify the live chat.
 
 # Faster sourcing replies
-- [ ] Show questions as they arrive without changing the AI model or reducing question coverage.
-- [ ] Skip unnecessary AI calls after the question budget is exhausted and verify the conversation.
+- [x] Show questions as they arrive without changing the AI model or reducing question coverage.
+- [x] Skip unnecessary AI calls after the question budget is exhausted and verify the conversation.
