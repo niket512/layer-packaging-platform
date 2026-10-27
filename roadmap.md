@@ -10,3 +10,7 @@
 # Faster sourcing replies
 - [x] Show questions as they arrive without changing the AI model or reducing question coverage.
 - [x] Skip unnecessary AI calls after the question budget is exhausted and verify the conversation.
+
+# Flexible-packaging questions
+- [ ] Add snippet-based sachet, pouch and film requirements without catalogue changes.
+- [ ] Verify relevant missing questions, no repeated details and the phone follow-up transition.

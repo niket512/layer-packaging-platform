@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
 import { needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS } from "../../supabase/functions/_shared/sourcing-intake";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {
   it("requires a valid phone number for follow-up", () => {
@@ -87,5 +87,36 @@ describe("corrugated-box requirement configuration", () => {
   });
   it("keeps the five-question limit for corrugated topics", () => {
     expect(validatedQuestions(["wall", "samples", "usage", "customisation", "finishing", "manufacturer_location"].map(topic => ({ topic, question: "Your preference?" })), [])).toHaveLength(5);
+  });
+});
+
+describe("flexible-packaging requirement configuration", () => {
+  it.each([
+    ["product", ["Dry", "Powder", "Liquid", "Paste", "Oily products"]],
+    ["size", ["Dimensions with units", "Fill weight in g or volume in ml", "Sachet fill bands: under 5 g/ml; 5–10 g/ml; 10–20 g/ml; above 20 g/ml"]],
+    ["quantity", ["Buyer’s initial quantity", "Manufacturer-specific MOQ, to be confirmed"]],
+    ["material", ["Mono-material", "Multilayer laminate", "Paper-based laminate", "Other available structures"]],
+    ["barrier", ["Moisture barrier", "Oxygen barrier", "Light barrier", "High barrier"]],
+    ["closure", ["Heat seal", "Zipper", "Spout", "Tear notch", "Other available closures"]],
+    ["printing", ["Gravure", "Flexographic", "Digital"]],
+    ["finishing", ["Gloss", "Matte", "Transparent", "Metallic effects"]],
+    ["transparency", ["Transparent", "Opaque", "Window"]],
+    ["filling", ["Manual filling", "Preformed-pouch machine", "Form-fill-seal machine"]],
+    ["customisation", ["Custom size", "Printing", "Shape", "Material structure"]],
+    ["certifications", ["Applicable food-contact certification", "Other relevant certifications"]],
+    ["manufacturer_location", ["City and state"]],
+    ["budget", ["Target price per piece", "Quote-based pricing"]],
+    ["shelf_life", ["Target shelf life", "Intended storage conditions"]],
+  ])("supports the supplied %s preferences", (topic, options) => {
+    expect(FLEXIBLE_REQUIREMENTS.find(field => field.topic === topic)?.options).toEqual(options);
+  });
+  it("keeps sachets, stick packs, pouch constructions and film rolls distinct from zipper features", () => {
+    const formats = FLEXIBLE_REQUIREMENTS.find(field => field.topic === "format")?.options;
+    expect(formats).toEqual(["Stand-up pouch", "Flat / three-side-seal pouch", "Centre-seal / pillow pouch", "Side-gusset pouch", "Flat-bottom pouch", "Quad-seal pouch", "Spout pouch", "Shaped pouch", "Vacuum pouch", "Flat sachet", "Three-side-seal sachet", "Four-side-seal sachet", "Pillow sachet", "Stick pack", "Multi-compartment sachet, where supported", "Roll stock / packaging film", "Specialty / retort pouch, where supported"]);
+  });
+  it.each(["product", "barrier", "closure", "transparency", "filling", "certifications", "shelf_life"])("accepts %s questions without repeating answered topics", topic => {
+    const question = { topic, question: "What do you need?" };
+    expect(validatedQuestions([question], [])).toEqual([question]);
+    expect(validatedQuestions([question], [{ query: "Sachets", matches: [], questions: [question] }])).toEqual([]);
   });
 });
