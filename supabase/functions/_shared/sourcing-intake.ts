@@ -13,8 +13,27 @@ export const CORRUGATED_REQUIREMENTS = [
   { topic: "samples", label: "Sample availability preference", options: ["Available", "Not available"] },
 ] as const;
 
+export const FLEXIBLE_REQUIREMENTS = [
+  { topic: "format", label: "Packaging format / construction", options: ["Stand-up pouch", "Flat / three-side-seal pouch", "Centre-seal / pillow pouch", "Side-gusset pouch", "Flat-bottom pouch", "Quad-seal pouch", "Spout pouch", "Shaped pouch", "Vacuum pouch", "Flat sachet", "Three-side-seal sachet", "Four-side-seal sachet", "Pillow sachet", "Stick pack", "Multi-compartment sachet, where supported", "Roll stock / packaging film", "Specialty / retort pouch, where supported"] },
+  { topic: "product", label: "Product to pack / compatibility", options: ["Dry", "Powder", "Liquid", "Paste", "Oily products"] },
+  { topic: "size", label: "Dimensions or fill weight / volume", options: ["Dimensions with units", "Fill weight in g or volume in ml", "Sachet fill bands: under 5 g/ml; 5–10 g/ml; 10–20 g/ml; above 20 g/ml"] },
+  { topic: "quantity", label: "Initial order quantity / acceptable MOQ", options: ["Buyer’s initial quantity", "Manufacturer-specific MOQ, to be confirmed"] },
+  { topic: "material", label: "Material structure", options: ["Mono-material", "Multilayer laminate", "Paper-based laminate", "Other available structures"] },
+  { topic: "barrier", label: "Barrier requirements", options: ["Moisture barrier", "Oxygen barrier", "Light barrier", "High barrier"] },
+  { topic: "closure", label: "Closure / opening feature", options: ["Heat seal", "Zipper", "Spout", "Tear notch", "Other available closures"] },
+  { topic: "printing", label: "Printing", options: ["Gravure", "Flexographic", "Digital"] },
+  { topic: "finishing", label: "Finish", options: ["Gloss", "Matte", "Transparent", "Metallic effects"] },
+  { topic: "transparency", label: "Transparency", options: ["Transparent", "Opaque", "Window"] },
+  { topic: "filling", label: "Filling compatibility", options: ["Manual filling", "Preformed-pouch machine", "Form-fill-seal machine"] },
+  { topic: "customisation", label: "Customisation", options: ["Custom size", "Printing", "Shape", "Material structure"] },
+  { topic: "certifications", label: "Required certifications", options: ["Applicable food-contact certification", "Other relevant certifications"] },
+  { topic: "manufacturer_location", label: "Preferred manufacturer location", options: ["City and state"] },
+  { topic: "budget", label: "Price preference", options: ["Target price per piece", "Quote-based pricing"] },
+  { topic: "shelf_life", label: "Shelf life / storage requirements", options: ["Target shelf life", "Intended storage conditions"] },
+] as const;
+
 export const INTAKE_QUESTION_LIMIT = 5;
-export const INTAKE_TOPICS = ["quantity", "format", "size", "printing", "delivery", "budget", "timeline", "material", "wall", "customisation", "finishing", "usage", "manufacturer_location", "samples"];
+export const INTAKE_TOPICS = ["quantity", "format", "size", "printing", "delivery", "budget", "timeline", "material", "wall", "customisation", "finishing", "usage", "manufacturer_location", "samples", "product", "barrier", "closure", "transparency", "filling", "certifications", "shelf_life"];
 
 export const INTAKE_SYSTEM = `You are Snaplogo's packaging sourcing intake assistant, not a supplier recommendation engine.
 Return only JSON: {"questions":[{"topic":string,"question":string}]}.
@@ -24,4 +43,7 @@ Prioritize packaging format if unclear, then initial quantity or acceptable MOQ;
 For corrugated boxes, use the following optional requirement topics and choices:
 ${CORRUGATED_REQUIREMENTS.map(field => `${field.topic}: ${field.label} — ${field.options.join("; ")}`).join("\n")}
 For a generic corrugated-box request, prioritize initial quantity, dimensions, box type or usage, corrugated wall and printing. If these are supplied, choose the most useful remaining missing topics above based on the intended use, within the remaining question budget. Offer relevant choices within a short question when helpful, not the entire checklist. Accept free-text answers and quantities outside the listed bands. Never assume a wall grade from usage. Treat printing/customisation and format/usage as overlapping when already answered, not reasons to repeat a question. Preferred manufacturer location is not the same as delivery location. Price, sample availability, board availability and finish compatibility are buyer preferences for human follow-up, not known manufacturer facts; never promise them or invent prices.
+For sachets, stick packs, flexible pouches and packaging films, use these optional requirements instead of corrugated-box specifications:
+${FLEXIBLE_REQUIREMENTS.map(field => `${field.topic}: ${field.label} — ${field.options.join("; ")}`).join("\n")}
+For a generic flexible-packaging request, prioritize the product being packed, the format if unclear, fill weight/volume or dimensions, initial quantity, and printing or closure as relevant. If already given, choose the most useful remaining missing topic. Sachets are single-use/sample/small-dose formats, distinct from pouches and film rolls. Liquid, powder and sample/trial describe use; zipper, laminate, tear notch and window are combinable features, not mutually exclusive constructions. If a buyer says stand-up zipper pouch, both format and closure are already supplied. Do not force a buyer to know technical grades or printing methods; accept not sure and free text. Sachet fill bands are suggested ranges, not manufacturing limits; g is weight and ml is volume, never interchange them. For roll stock ask about the filling/sealing machine when useful, not a preformed-pouch closure. Material must suit product, shelf life, sealing process and storage; food-contact compliance, barrier performance, retort suitability and availability must be confirmed by the manufacturer, never inferred from appearance or promised. Ask buyer preferences only. Do not ask corrugated wall/box questions for flexible packaging.
 Allowed topics: ${INTAKE_TOPICS.join(", ")}. Do not ask for a phone number here; the app collects it separately for human follow-up.`;
