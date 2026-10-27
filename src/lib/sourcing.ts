@@ -1,5 +1,5 @@
 import type { DirectoryManufacturer } from "@/data/directory";
-import { INTAKE_TOPICS } from "../../supabase/functions/_shared/sourcing-intake";
+import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS } from "../../supabase/functions/_shared/sourcing-intake";
 
 export interface SourcingMatch { id: string; reason: string }
 export interface SourcingQuestion { topic: string; question: string }
@@ -39,7 +39,7 @@ export function validatedQuestions(value: unknown, turns: SourcingTurn[]): Sourc
   if (!Array.isArray(value)) return [];
   const asked = turns.flatMap(turn => turn.questions ?? []);
   const seen = new Set(asked.map(item => item.topic));
-  const remaining = Math.max(0, 2 - asked.length);
+  const remaining = Math.max(0, INTAKE_QUESTION_LIMIT - asked.length);
   const allowed = new Set(INTAKE_TOPICS);
   const questions: SourcingQuestion[] = [];
   for (const item of value) {
