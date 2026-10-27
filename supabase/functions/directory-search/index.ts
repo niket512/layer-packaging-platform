@@ -1,7 +1,7 @@
 import { createOpenAI } from "npm:@ai-sdk/openai";
 import { streamText } from "npm:ai";
 import { createLovableAiGatewayRunIdFetch, getLovableAiGatewayRunId } from "../_shared/run-id.ts";
-import { INTAKE_SYSTEM } from "../_shared/sourcing-intake.ts";
+import { INTAKE_QUESTION_LIMIT, INTAKE_SYSTEM } from "../_shared/sourcing-intake.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
        system: isIntake ? INTAKE_SYSTEM : isSourcing ? SOURCING_SYSTEM : SYSTEM,
        prompt: JSON.stringify({ request: query, ...(isSourcing ? { conversation: Array.isArray(body.conversation) ? body.conversation.slice(-12) : [] } : {}), ...(!isIntake ? { manufacturers: body.manufacturers?.slice(0, 200) } : {}) }).slice(0, 40000),
       abortSignal: req.signal,
-      ...(isIntake ? { maxOutputTokens: 400 } : {}),
+      ...(isIntake ? { maxOutputTokens: 800 } : {}),
       providerOptions: { openai: isIntake ? { store: false } : { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
       onError: ({ error }) => {
         const e = error as { statusCode?: number; message?: string };
@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     const headers: Record<string, string> = {};
     const runId = runIdFetch.getRunId();
     if (runId) headers["X-Lovable-AIG-Run-ID"] = runId;
-     return new Response(JSON.stringify({ ...(!isIntake ? { matches: Array.isArray(parsed.matches) ? parsed.matches : [] } : {}), ...(isSourcing ? { questions: Array.isArray(parsed.questions) ? parsed.questions.slice(0, 2) : [] } : {}) }), { headers: { ...cors, ...headers, "Content-Type": "application/json" } });
+     return new Response(JSON.stringify({ ...(!isIntake ? { matches: Array.isArray(parsed.matches) ? parsed.matches : [] } : {}), ...(isSourcing ? { questions: Array.isArray(parsed.questions) ? parsed.questions.slice(0, isIntake ? INTAKE_QUESTION_LIMIT : 2) : [] } : {}) }), { headers: { ...cors, ...headers, "Content-Type": "application/json" } });
   } catch (err) {
     const e = (failure ?? err) as { status?: number; statusCode?: number; message?: string };
     const status = e.status ?? e.statusCode ?? 500;
