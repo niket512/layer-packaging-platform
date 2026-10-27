@@ -35,6 +35,41 @@ export function sourcingRequest(turns: SourcingTurn[], query: string) {
   return [...turns.map(turn => turn.query), query].filter(Boolean).join("\nFollow-up: ").slice(0, 4000);
 }
 
+export function needsSourcingQuestions(turns: SourcingTurn[]): boolean {
+  return !turns.some(turn => turn.questionsSkipped) && turns.flatMap(turn => turn.questions ?? []).length < INTAKE_QUESTION_LIMIT;
+}
+
+export async function readSourcingStream(response: Response, onQuestions: (value: unknown) => void): Promise<unknown> {
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.error || "I couldn’t continue this conversation. Please try again.");
+  }
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error("The reply was interrupted. Please try again.");
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let final: unknown;
+  let completed = false;
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      buffer += done ? decoder.decode() : decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        const event = JSON.parse(line);
+        if (event.error) throw new Error(event.error);
+        if (event.done) { final = event.questions; completed = true; }
+        else onQuestions(event.questions);
+      }
+      if (done) break;
+    }
+    if (!completed) throw new Error("The reply was interrupted. Please try again.");
+    return final;
+  } finally { reader.releaseLock(); }
+}
+
 export function validatedQuestions(value: unknown, turns: SourcingTurn[]): SourcingQuestion[] {
   if (!Array.isArray(value)) return [];
   const asked = turns.flatMap(turn => turn.questions ?? []);
