@@ -70,6 +70,9 @@
     --input: 150 15% 87%;
     --ring: 222 81% 54%;
     --sourcing-shadow: 0 8px 32px hsl(155 20% 20% / 0.05);
+    --sourcing-success: 152 60% 36%;
+    --sourcing-warning: 35 92% 40%;
+    --sourcing-warning-soft: 44 96% 94%;
   }
   .sourcing-composer { box-shadow: var(--sourcing-shadow); }
 

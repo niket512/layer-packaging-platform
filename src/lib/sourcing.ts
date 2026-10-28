@@ -9,6 +9,27 @@ export interface SourcingProject { id: string; title: string; turns: SourcingTur
 
 export const BRIEF_LABELS: Record<string, string> = { format: "Packaging type / style", quantity: "Quantity / MOQ", size: "Dimensions / fill", printing: "Printing", delivery: "Delivery destination", budget: "Target price", material: "Material / board", wall: "Corrugated wall", customisation: "Customisation / inserts", finishing: "Finish", usage: "Usage", manufacturer_location: "Preferred manufacturer location", samples: "Samples", product: "Product to pack", barrier: "Barrier requirements", closure: "Closure", transparency: "Transparency", filling: "Filling method", certifications: "Certifications", shelf_life: "Shelf life / storage" };
 
+// Confirmation-screen reading order: style, quantity, size, material, insert, finish, price, printing.
+const BRIEF_ORDER = ["format", "quantity", "size", "material", "customisation", "finishing", "budget", "printing"];
+
+export function sortSourcingBrief(fields: SourcingBriefField[]): SourcingBriefField[] {
+  const rank = (topic: string) => { const index = BRIEF_ORDER.indexOf(topic); return index === -1 ? BRIEF_ORDER.length : index; };
+  return [...fields].sort((a, b) => rank(a.topic) - rank(b.topic));
+}
+
+const UNCLEAR_BRIEF_WORDS = /(not\s+specified|not\s+sure|unsure|unclear|to\s+be\s+confirmed|unspecified)/i;
+
+export function unclearBriefNotes(fields: SourcingBriefField[]): Record<string, string> {
+  const notes: Record<string, string> = {};
+  for (const field of fields) {
+    const value = field.value.trim();
+    if (UNCLEAR_BRIEF_WORDS.test(value)) { notes[field.topic] = "We’ll confirm this with you"; continue; }
+    if (field.topic === "budget" && /\d/.test(value) && !/(₹|\brs\b|inr|usd|\$|€|£)/i.test(value) && !/quote/i.test(value)) notes[field.topic] = "Currency not specified — we’ll confirm";
+    if (field.topic === "printing" && /^(printed|custom(ised)? printing|with printing|yes)\.?$/i.test(value)) notes[field.topic] = "Print type not specified — we’ll confirm";
+  }
+  return notes;
+}
+
 export function mergeSourcingBrief(previous: unknown, next: unknown): SourcingBriefField[] {
   return validatedBrief([...validatedBrief(previous), ...validatedBrief(next)]);
 }
