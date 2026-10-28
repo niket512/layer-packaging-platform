@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { looksLikeSourcingPhone, needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, INTAKE_QUESTION_LIMIT } from "../../supabase/functions/_shared/sourcing-intake";
+import { looksLikeSourcingPhone, needsSourcingDesign, needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {
   it("treats five as a ceiling and preserves fewer quotation questions", () => {
@@ -53,6 +53,21 @@ describe("sourcing matches", () => {
   });
 });
 describe("sourcing photos", () => {
+  it("skips asking for a design already attached to the first request", () => {
+    expect(needsSourcingDesign({ turns: [{ query: "Custom boxes", matches: [], images: ["data:image/jpeg;base64,eA=="] }] })).toBe(false);
+    expect(needsSourcingDesign({ turns: [{ query: "Custom boxes", matches: [] }] })).toBe(true);
+  });
+  it("completes design collection from a sent chat image or optional design reply", () => {
+    expect(needsSourcingDesign({ turns: [{ query: "Boxes", matches: [] }, { query: "My design", matches: [], images: ["data:image/jpeg;base64,eA=="] }] })).toBe(false);
+    expect(needsSourcingDesign({ turns: [{ query: "No design yet", matches: [] }], designDone: true })).toBe(false);
+  });
+  it("passes initial designs as image parts for AI analysis, retaining their actual MIME", () => {
+    const image = "data:image/png;base64,eA==";
+    expect(intakeImageParts([image])).toEqual([{ type: "image", image: new URL(image) }]);
+    expect(intakeImageParts(undefined)).toEqual([]);
+    expect(() => intakeImageParts(["https://example.com/image.png"])).toThrow("valid image");
+    expect(() => intakeImageParts(["data:image/png;base64,"])).toThrow("valid image");
+  });
   it("includes pending design images and remaining details when a WhatsApp number is submitted", () => {
     const payload = sourcingSubmission([{ query: "500 boxes", matches: [] }], "+91 98765 43210", { query: "Matte finish, foam insert", images: ["data:image/jpeg;base64,design"] });
     expect(payload?.requirement).toBe("500 boxes\n\nMatte finish, foam insert");

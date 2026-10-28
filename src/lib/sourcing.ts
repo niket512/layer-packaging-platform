@@ -47,6 +47,14 @@ export function needsSourcingQuestions(turns: SourcingTurn[]): boolean {
   return turns.length === 0;
 }
 
+export function needsSourcingDesign(project: Pick<SourcingProject, "turns" | "designDone">): boolean {
+  return !project.designDone && !project.turns.some(turn => (turn.images?.length ?? 0) > 0);
+}
+
+export function sourcingIntakeImages(images: string[]) {
+  return images.map(image => ({ type: "image" as const, image: new URL(image) }));
+}
+
 export async function readSourcingStream(response: Response, onQuestions: (value: unknown) => void): Promise<unknown> {
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
