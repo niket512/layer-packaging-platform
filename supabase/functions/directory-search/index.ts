@@ -2,7 +2,7 @@ import { createOpenAI } from "npm:@ai-sdk/openai";
 import { streamText, Output, NoObjectGeneratedError } from "npm:ai";
 import { z } from "npm:zod";
 import { createLovableAiGatewayRunIdFetch, getLovableAiGatewayRunId, withLovableAiGatewayRunIdHeader } from "../_shared/run-id.ts";
-import { intakeImageParts, INTAKE_QUESTION_LIMIT, INTAKE_SYSTEM } from "../_shared/sourcing-intake.ts";
+import { CONVERSATIONAL_INTAKE_SYSTEM, intakeImageParts, INTAKE_QUESTION_LIMIT, INTAKE_SYSTEM, INTAKE_STAGES, normalizeIntakeReply, type IntakeReply } from "../_shared/sourcing-intake.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   if (!apiKey) return json({ error: "AI is not configured" }, 500);
-  let body: { query?: string; images?: unknown; manufacturers?: unknown[]; mode?: string; conversation?: unknown[]; stream?: boolean };
+  let body: { query?: string; latest?: string; images?: unknown; manufacturers?: unknown[]; mode?: string; conversation?: unknown[]; stream?: boolean; conversational?: boolean; quotationAsked?: boolean; currentStage?: string };
   try { body = await req.json(); } catch { return json({ error: "Invalid request" }, 400); }
    const isIntake = body.mode === "intake";
    const isSourcing = body.mode === "sourcing" || isIntake;
@@ -37,7 +37,8 @@ Deno.serve(async (req) => {
   let images: ReturnType<typeof intakeImageParts> = [];
   try { if (isIntake) images = intakeImageParts(body.images); }
   catch (error) { return json({ error: error instanceof Error ? error.message : "Invalid images" }, 400); }
-  const prompt = JSON.stringify({ request: query, ...(isSourcing ? { conversation: Array.isArray(body.conversation) ? body.conversation.slice(-12) : [] } : {}), ...(!isIntake ? { manufacturers: body.manufacturers?.slice(0, 200) } : {}) }).slice(0, 40000);
+  const conversational = isIntake && body.conversational === true;
+  const prompt = JSON.stringify({ request: query, ...(conversational ? { latest: body.latest ?? query, quotationAsked: body.quotationAsked === true, currentStage: body.currentStage ?? "clarify" } : {}), ...(isSourcing ? { conversation: Array.isArray(body.conversation) ? body.conversation.slice(-12) : [] } : {}), ...(!isIntake ? { manufacturers: body.manufacturers?.slice(0, 200) } : {}) }).slice(0, 40000);
 
   const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(req));
   const provider = createOpenAI({
@@ -50,11 +51,11 @@ Deno.serve(async (req) => {
   try {
     const result = streamText({
       model: provider.responses("openai/gpt-6-astra"),
-       system: isIntake ? INTAKE_SYSTEM : isSourcing ? SOURCING_SYSTEM : SYSTEM,
+       system: conversational ? CONVERSATIONAL_INTAKE_SYSTEM + INTAKE_SYSTEM.replace("If the conversation already includes a completed assistant reply, return questions: [] even if the buyer answered only some questions; the app will collect optional design/reference images, remaining details and the WhatsApp number next.", "Use quotationAsked to determine whether the quotation round was already used.").replace('Return only JSON: {"questions":[{"topic":string,"question":string}]}.', "Use the conversational response schema.") : isIntake ? INTAKE_SYSTEM : isSourcing ? SOURCING_SYSTEM : SYSTEM,
        ...(images.length ? { messages: [{ role: "user" as const, content: [{ type: "text" as const, text: prompt }, ...images] }] } : { prompt }),
       abortSignal: req.signal,
       ...(isIntake ? { maxOutputTokens: 800 } : {}),
-      ...(isIntake ? { output: Output.object({ schema: z.object({ questions: z.array(z.object({ topic: z.string(), question: z.string() })) }) }) } : {}),
+      ...(isIntake ? { output: Output.object({ schema: conversational ? z.object({ message: z.string(), stage: z.enum(INTAKE_STAGES), hasRequirement: z.boolean(), questions: z.array(z.object({ topic: z.string(), question: z.string() })) }) : z.object({ questions: z.array(z.object({ topic: z.string(), question: z.string() })) }) }) } : {}),
       providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
       onError: ({ error }) => {
         const e = error as { statusCode?: number; message?: string };
@@ -77,10 +78,10 @@ Deno.serve(async (req) => {
               if (!NoObjectGeneratedError.isInstance(error)) throw error;
               output = JSON.parse(error.text);
             }
-            send({ questions: output.questions?.slice(0, INTAKE_QUESTION_LIMIT) ?? [], done: true });
+            send({ ...(conversational ? normalizeIntakeReply(output as IntakeReply, body.latest ?? query, body.quotationAsked === true) : { questions: output.questions?.slice(0, INTAKE_QUESTION_LIMIT) ?? [] }), done: true });
           } catch (error) {
             const e = (failure ?? error) as { status?: number; message?: string };
-            send({ error: e.status === 403 ? e.message : e.status === 402 ? "AI credits have run out — add credits in Settings → Plans & credits" : e.status === 429 ? "AI is busy right now, please try again in a minute" : "I couldn’t finish this reply. Please try again." });
+            send({ error: e.message ?? "I couldn’t finish this reply. Please try again.", status: e.status ?? 500 });
           } finally { controller.close(); }
         },
       });
