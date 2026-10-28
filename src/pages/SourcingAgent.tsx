@@ -16,6 +16,7 @@ const suggestions = [
   { title: "Stand-up pouches", detail: "Flexible · custom packaging", query: "I need stand-up pouches with custom printing for food packaging", category: "flexible" },
 ];
 const PROJECTS_KEY = "snaplogo.sourcing.projects";
+const TEAM_WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("Hi Snaplogo! I'd like to talk to a sourcing expert about my packaging requirement.");
 
 export default function SourcingAgent() {
   const [projects, setProjects] = useState<SourcingProject[]>(() => {
