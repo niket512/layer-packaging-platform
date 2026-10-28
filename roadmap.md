@@ -16,5 +16,5 @@
 - [x] Verify relevant missing questions, no repeated details and the phone follow-up transition.
 
 # Quotation-focused questions
-- [ ] Treat five as a ceiling, remove routine timeline questions, and prioritize only quotation-relevant missing specifications.
-- [ ] Test the question rules and verify the supplied capa-board request in the live chat.
+- [x] Treat five as a ceiling, remove routine timeline questions, and prioritize only quotation-relevant missing specifications.
+- [x] Test the question rules and verify the supplied capa-board request in the live chat.
