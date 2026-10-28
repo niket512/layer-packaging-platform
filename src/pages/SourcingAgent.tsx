@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowUp, Camera, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Phone, Plus, ShieldCheck, Sparkles, User, X } from "lucide-react";
+import { ArrowRight, ArrowUp, Camera, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, Sparkles, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PACKAGING_CATEGORIES } from "@/data/directory";

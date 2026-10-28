@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { looksLikeSourcingPhone, needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
 import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, INTAKE_QUESTION_LIMIT } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {

@@ -10,6 +10,11 @@ export function validSourcingPhone(phone: string): boolean {
   return /^[+\d\s()-]+$/.test(phone.trim()) && /^\d{10,15}$/.test(phone.replace(/\D/g, ""));
 }
 
+export function looksLikeSourcingPhone(text: string): boolean {
+  const trimmed = text.trim();
+  return /^[+\d\s()-]+$/.test(trimmed) && trimmed.replace(/\D/g, "").length >= 8;
+}
+
 export function sourcingSubmission(turns: SourcingTurn[], phone: string, draft?: { query: string; images: string[] }) {
   if (!validSourcingPhone(phone) || !turns.length) return null;
   const collected = draft && (draft.query.trim() || draft.images.length)
