@@ -20,5 +20,5 @@
 - [x] Test the question rules and verify the supplied capa-board request in the live chat.
 
 # One-round quotation intake
-- [ ] Ask quotation questions once, then collect optional design/details and a WhatsApp number.
-- [ ] Preserve unsent designs/details during contact submission and test the complete flow.
+- [x] Ask quotation questions once, then collect optional design/details and a WhatsApp number.
+- [x] Preserve unsent designs/details during contact submission and test the complete flow.
