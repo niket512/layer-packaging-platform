@@ -59,6 +59,7 @@ export function validatedBrief(value: unknown): SourcingBriefField[] {
 }
 
 export function normalizeIntakeReply(reply: IntakeReply, latest: string, quotationAsked: boolean): IntakeReply {
+  reply = { ...reply, brief: validatedBrief(reply.brief) };
   // Explicit dismissal is terminal for this turn, not an answer to specifications.
   if (/^(nothing|stop|cancel|not interested|no thanks|never mind|nevermind)[.!\s]*$/i.test(latest.trim())) {
     return { message: "No problem — we can leave it here. Share a packaging requirement whenever you’re ready.", stage: "paused", hasRequirement: false, questions: [] };
