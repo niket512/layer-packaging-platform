@@ -19,6 +19,11 @@ describe("sourcing matches", () => {
     expect(validSourcingPhone("call me 9876543210")).toBe(false);
     expect(sourcingSubmission([{ query: "Paper bags", matches: [] }], "")).toBeNull();
   });
+  it("treats digit-only chat replies at the phone step as phone attempts", () => {
+    expect(looksLikeSourcingPhone("98765 432")).toBe(true);
+    expect(looksLikeSourcingPhone("+91 98765 43210")).toBe(true);
+    expect(looksLikeSourcingPhone("I need matte finish, 5000 pcs")).toBe(false);
+  });
   it("saves answers and phone without suggesting suppliers", () => {
     expect(sourcingSubmission([{ query: "Paper bags", matches: [{ id: "evenpack", reason: "Legacy match" }], questions: [{ topic: "quantity", question: "How many?" }] }, { query: "500 units", matches: [] }], "+91 98765 43210")).toEqual({ contact: "+91 98765 43210", requirement: "Paper bags\nQuestion: How many?\n\n500 units", images: [], manufacturers: [] });
   });
