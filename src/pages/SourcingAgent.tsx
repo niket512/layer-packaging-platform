@@ -143,7 +143,7 @@ export default function SourcingAgent() {
                 <Button asChild variant="outline" className="rounded-full sm:flex-none"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button>
               </div>
             </section> : <>
-              {askingPhone && !designStep && <div className="mb-5 border-l-2 border-primary pl-4"><h3 className="text-sm font-semibold">What happens next</h3><p className="mt-1 text-sm leading-relaxed text-muted-foreground">We review your brief, identify relevant manufacturers, and share manufacturer details and quotation on WhatsApp. <a href="mailto:contact@snapit.club" className="text-primary underline underline-offset-2">Questions? Contact our team</a></p></div>}
+              {askingPhone && !designStep && <div className="mb-5 border-l-2 border-primary pl-4"><h3 className="text-sm font-semibold">What happens next</h3><p className="mt-1 text-sm leading-relaxed text-muted-foreground">We review your brief, identify relevant manufacturers, and share manufacturer details and quotation on WhatsApp.</p></div>}
               <div className="mt-6">{composer(true)}</div>
               {submitting && <p role="status" className="mt-2 flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="h-3.5 w-3.5 animate-spin" />Sending your request…</p>}
               {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => void search("Skip the optional quotation details for now; use my packaging requirement.")}>Skip for now<ArrowRight /></Button></div>}
@@ -151,7 +151,7 @@ export default function SourcingAgent() {
           </div>}
           {error && <div role="alert" className="mt-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-card p-4 text-sm text-destructive"><span className="flex-1">{error}</span><Button variant="ghost" size="icon" className="h-6 w-6" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}
         </main>
-        <footer className="mx-auto flex max-w-[900px] flex-wrap items-center justify-between gap-2 border-t border-border/60 px-5 py-6 text-xs text-muted-foreground md:px-10"><span>© {new Date().getFullYear()} Snaplogo · India</span><a href="mailto:contact@snapit.club" className="hover:text-foreground">contact@snapit.club</a></footer>
+        <footer className="mx-auto flex max-w-[900px] flex-wrap items-center justify-between gap-2 border-t border-border/60 px-5 py-6 text-xs text-muted-foreground md:px-10"><span>© {new Date().getFullYear()} Snaplogo · India</span></footer>
       </div>
     </div>
   );
