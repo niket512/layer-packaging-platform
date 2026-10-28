@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PACKAGING_CATEGORIES } from "@/data/directory";
 import { supabase } from "@/integrations/supabase/client";
-import { needsSourcingQuestions, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
+import { looksLikeSourcingPhone, needsSourcingQuestions, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 import logo from "@/assets/snaplogo-orange.png";
 
@@ -58,6 +58,7 @@ export default function SourcingAgent() {
   const search = async (text = query) => {
     const trimmed = text.trim() || (photos.length ? "Photos attached" : "");
     if (askingPhone && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }
+    if (askingPhone && looksLikeSourcingPhone(trimmed)) { setError("That doesn’t look like a valid WhatsApp number. Please share a 10-digit number, e.g. 98765 43210."); return; }
     if (!trimmed || busy || submitting || project?.submitted) return;
     setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]);
     const id = activeId ?? crypto.randomUUID();
