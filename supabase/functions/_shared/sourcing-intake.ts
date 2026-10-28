@@ -45,7 +45,18 @@ export function intakeImageParts(value: unknown) {
 
 export const INTAKE_STAGES = ["clarify", "quotation", "design", "phone", "paused"] as const;
 export type IntakeStage = typeof INTAKE_STAGES[number];
-export interface IntakeReply { message: string; stage: IntakeStage; hasRequirement: boolean; questions: { topic: string; question: string }[] }
+export interface SourcingBriefField { topic: string; value: string; source: "text" | "image" | "buyer" }
+export interface IntakeReply { message: string; stage: IntakeStage; hasRequirement: boolean; questions: { topic: string; question: string }[]; brief?: SourcingBriefField[] }
+
+export function validatedBrief(value: unknown): SourcingBriefField[] {
+  if (!Array.isArray(value)) return [];
+  const fields = new Map<string, SourcingBriefField>();
+  for (const field of value) {
+    if (!field || !INTAKE_TOPICS.includes(field.topic) || typeof field.value !== "string" || !field.value.trim() || !["text", "image", "buyer"].includes(field.source)) continue;
+    fields.set(field.topic, { topic: field.topic, value: field.value.trim().slice(0, 240), source: field.source });
+  }
+  return [...fields.values()];
+}
 
 export function normalizeIntakeReply(reply: IntakeReply, latest: string, quotationAsked: boolean): IntakeReply {
   // Explicit dismissal is terminal for this turn, not an answer to specifications.
@@ -61,6 +72,7 @@ export function normalizeIntakeReply(reply: IntakeReply, latest: string, quotati
 
 export const CONVERSATIONAL_INTAKE_SYSTEM = `Analyze the LATEST user message in the context of the complete conversation on EVERY turn. You are a conversational packaging intake assistant, NOT a form that advances on any text.
 Return strict JSON with message (short conversational response), stage (clarify, quotation, design, phone, paused), hasRequirement (boolean), questions (array of topic/question objects).
+Also return brief: an array of {topic, value, source} capturing the CURRENT cumulative packaging specifications. Use allowed topics, concise normalized values preserving units, currency, quantity period and qualifiers. Include ONLY details explicitly stated in the conversation or legibly shown in images; source text for buyer messages, image for legible image details, buyer for supplied edited brief fields. Unknown details MUST be omitted, never filled with guesses. Preserve existing brief fields unless the buyer explicitly corrects them; latest corrections supersede earlier values. An ambiguous NOP after several questions must not mean no printing or no design. Do not turn a refusal into a specification. Never copy the whole request into a field or repeat/concatenate requirement text. Summarize a genuine initial requirement in one short acknowledgement; avoid repetitive confirmations. The single quotation round asks all useful missing questions TOGETHER, never one at a time; the brief must not create another questionnaire or mandatory review step.
 A greeting such as HEY is NOT a packaging requirement. Reply naturally and invite the buyer to describe their packaging need in a single conversational sentence; stage clarify, hasRequirement false, questions []. Do not ask quantity, specifications, design or WhatsApp for a greeting. Greetings after an existing request still do not advance the step.
 NOTHING, stop, cancellation, no interest or unrelated text is NOT a quotation answer. Respect stopping, use paused, questions [], and do not ask for designs/contact. If ambiguous, acknowledge and clarify conversationally without advancing. If asked a question (e.g. why do you need my number, what is 5-ply, can I share a photo), answer it briefly in context without advancing the current step. Never interpret yes, a greeting or unrelated text as specification answers or no design. Distinguish "no design yet" at the design stage (an optional design decline) from "nothing" (no request/stop).
 Use conversation fields quotationAsked and currentStage as state, but interpret the text first. Once a genuine packaging need is established, ask the single quotation-relevant missing-detail round, at most five questions, stage quotation. Greetings/clarification messages do NOT consume this round. Do not repeat prior topics or supplied/image-visible facts. If quotationAsked is true, questions MUST be [] forever for this request. A relevant partial answer, explicit skip/not sure or use what I shared may move to design; unrelated/ambiguous replies must not. If initial specifications are sufficient, move to design immediately.
