@@ -1,7 +1,30 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { looksLikeSourcingPhone, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
+import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
+
+describe("sourcing brief", () => {
+  it("keeps explicit capa-board values and does not invent unknown printing", () => {
+    const brief = validatedBrief([{ topic: "quantity", value: "5,000 pieces/month", source: "text" }, { topic: "size", value: "14 × 8 × 4 cm", source: "text" }, { topic: "budget", value: "₹36–40 per box", source: "text" }, { topic: "printing", value: null, source: "text" }, { topic: "wall", value: "5-ply", source: "inferred" }]);
+    expect(brief.map(f => f.value)).toEqual(["5,000 pieces/month", "14 × 8 × 4 cm", "₹36–40 per box"]);
+    expect(brief.some(f => f.topic === "printing")).toBe(false);
+  });
+  it("preserves prior details while applying buyer corrections to the submitted brief", () => {
+    const brief = mergeSourcingBrief([{ topic: "quantity", value: "5000/month", source: "text" }, { topic: "finishing", value: "Gloss", source: "text" }], [{ topic: "finishing", value: "Matte", source: "buyer" }]);
+    expect(brief).toEqual([{ topic: "quantity", value: "5000/month", source: "text" }, { topic: "finishing", value: "Matte", source: "buyer" }]);
+    const submission = sourcingSubmission([{ query: "Capa-board boxes", matches: [] }], "+91 98765 43210", undefined, brief);
+    expect(submission?.requirement).toContain("Finish: Matte [buyer]");
+    expect(submission?.requirement).toContain("Quantity / MOQ: 5000/month [text]");
+    expect(submission?.manufacturers).toEqual([]);
+  });
+  it("carries the brief with the same completed streamed reply", async () => {
+    const reply: IntakeReply = { message: "Understood", stage: "quotation", hasRequirement: true, questions: [{ topic: "printing", question: "What printing?" }, { topic: "finishing", question: "What finish?" }], brief: [{ topic: "format", value: "Capa-board boxes", source: "text" }] };
+    const replies: IntakeReply[] = [];
+    expect(await readSourcingStream(new Response(JSON.stringify({ ...reply, done: true }) + "\n"), () => {}, value => replies.push(value))).toEqual(reply.questions);
+    expect(replies[0].brief).toEqual(reply.brief);
+    expect(sourcingProjectTitle({ id: "test", title: "Original request", turns: [], brief: [...(reply.brief ?? []), { topic: "quantity", value: "5000/month", source: "text" }] })).toBe("Capa-board boxes · 5000/month");
+  });
+});
 
 describe("sourcing matches", () => {
   it("does not advance HEY without a requirement or NOTHING to design and WhatsApp", () => {
