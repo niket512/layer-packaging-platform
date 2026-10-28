@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
+import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sortSourcingBrief, sourcingRequest, sourcingSubmission, unclearBriefNotes, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply, type SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing brief", () => {
   it("keeps explicit capa-board values and does not invent unknown printing", () => {
