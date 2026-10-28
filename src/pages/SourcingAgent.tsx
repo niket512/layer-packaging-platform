@@ -16,6 +16,7 @@ const suggestions = [
   { title: "Stand-up pouches", detail: "Flexible · custom packaging", query: "I need stand-up pouches with custom printing for food packaging", category: "flexible" },
 ];
 const PROJECTS_KEY = "snaplogo.sourcing.projects";
+const TEAM_WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("Hi Snaplogo! I'd like to talk to a sourcing expert about my packaging requirement.");
 
 export default function SourcingAgent() {
   const [projects, setProjects] = useState<SourcingProject[]>(() => {
@@ -112,12 +113,12 @@ export default function SourcingAgent() {
         <Button onClick={startNew} disabled={busy || submitting} variant="outline" className="mt-8 w-full justify-start rounded-full"><Plus />New sourcing request</Button>
         {projects.length > 0 && <p className="mt-8 px-3 text-xs font-semibold text-muted-foreground">Recent requests</p>}
         <div className="mt-2 flex-1 space-y-1 overflow-y-auto">{projects.map(p => <Button key={p.id} variant="ghost" disabled={busy || submitting} onClick={() => { setActiveId(p.id); setPhotos([]); setQuery(""); setError(""); }} className={`h-auto w-full justify-start py-2.5 text-left text-xs ${p.id === activeId ? "bg-muted" : "text-muted-foreground"}`}><MessageSquare className="shrink-0" /><span className="min-w-0 flex-1"><span className="block truncate" title={sourcingProjectTitle(p)}>{sourcingProjectTitle(p)}</span><span className="mt-1 block text-[11px] font-normal text-muted-foreground">{p.submitted ? "Submitted" : "Draft"}{p.createdAt && ` · ${new Date(p.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`}</span></span></Button>)}</div>
-        <Button asChild variant="ghost" size="sm" className="mt-4 justify-start text-muted-foreground"><a href="mailto:contact@snapit.club"><MessageSquare />Talk to our team</a></Button>
+        <Button asChild variant="ghost" size="sm" className="mt-4 justify-start text-muted-foreground"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button>
       </aside>
       <div className="lg:ml-60">
         <header className="flex h-[72px] items-center justify-between gap-3 border-b border-border/60 px-5 md:px-10">
           <div className="flex items-center gap-2 text-sm"><Link to="/sourcing" className="font-bold lg:hidden">snaplogo<span className="text-primary">.</span></Link><span className="hidden text-muted-foreground sm:inline">Workspace</span><ChevronRight className="hidden h-3 w-3 text-muted-foreground sm:block" /><span className="font-medium">Sourcing agent</span></div>
-          <div className="flex items-center gap-2"><Button asChild size="sm" className="rounded-full"><a href="mailto:contact@snapit.club"><User />Talk to a sourcing expert</a></Button><Button onClick={startNew} disabled={busy || submitting} variant="outline" size="sm" className="rounded-full lg:hidden"><Plus />New</Button></div>
+          <div className="flex items-center gap-2"><Button asChild size="sm" className="rounded-full"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><User />Talk to a sourcing expert</a></Button><Button onClick={startNew} disabled={busy || submitting} variant="outline" size="sm" className="rounded-full lg:hidden"><Plus />New</Button></div>
         </header>
         <main className="mx-auto max-w-[900px] px-5 pb-12 md:px-10">
           {!current && !busy && <div className="mx-auto max-w-[780px] pb-4 pt-10 text-center md:pt-16">
@@ -147,7 +148,7 @@ export default function SourcingAgent() {
               <SourcingBrief fields={project.brief ?? []} submitted onSave={fields => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, brief: fields.filter(f => f.value.trim()) } : p))} />
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button onClick={startNew} className="rounded-full sm:flex-none"><Plus />New sourcing request</Button>
-                <Button asChild variant="outline" className="rounded-full sm:flex-none"><a href="mailto:contact@snapit.club"><MessageSquare />Talk to our team</a></Button>
+                <Button asChild variant="outline" className="rounded-full sm:flex-none"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button>
               </div>
             </section> : <>
               {askingPhone && !designStep && <div className="mb-5 border-l-2 border-primary pl-4"><h3 className="text-sm font-semibold">What happens next</h3><p className="mt-1 text-sm leading-relaxed text-muted-foreground">We review your brief, identify relevant manufacturers, and share manufacturer details and quotation on WhatsApp. <a href="mailto:contact@snapit.club" className="text-primary underline underline-offset-2">Questions? Contact our team</a></p></div>}
