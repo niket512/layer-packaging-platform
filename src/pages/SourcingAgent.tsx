@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowUp, Camera, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Phone, Plus, ShieldCheck, Sparkles, User, X } from "lucide-react";
+import { ArrowRight, ArrowUp, Camera, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, Sparkles, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PACKAGING_CATEGORIES } from "@/data/directory";
 import { supabase } from "@/integrations/supabase/client";
-import { needsSourcingQuestions, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
+import { looksLikeSourcingPhone, needsSourcingQuestions, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 import logo from "@/assets/snaplogo-orange.png";
 
@@ -30,14 +30,12 @@ export default function SourcingAgent() {
   const [error, setError] = useState("");
   const [pendingQuery, setPendingQuery] = useState("");
   const [liveQuestions, setLiveQuestions] = useState<SourcingQuestion[]>([]);
-  const [phone, setPhone] = useState("");
   const input = useRef<HTMLTextAreaElement>(null);
   const project = projects.find(p => p.id === activeId);
   const turns = project?.turns ?? [];
   const current = turns.at(-1);
   const hasQuestions = !current?.questionsSkipped && (current?.questions?.length ?? 0) > 0;
   const askingPhone = !!current && !hasQuestions && !project?.submitted;
-  const phoneValid = validSourcingPhone(phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`);
   const designStep = askingPhone && !project?.designDone;
   const setDesignDone = () => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, designDone: true } : p));
   const addPhotos = async (files: FileList | null) => {
@@ -56,10 +54,11 @@ export default function SourcingAgent() {
     document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirements, answer a few focused questions and request a phone follow-up from Snaplogo.");
   }, []);
 
-  const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setPhone(""); setError(""); input.current?.focus(); };
+  const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
   const search = async (text = query) => {
     const trimmed = text.trim() || (photos.length ? "Photos attached" : "");
     if (askingPhone && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }
+    if (askingPhone && looksLikeSourcingPhone(trimmed)) { setError("That doesn’t look like a valid WhatsApp number. Please share a 10-digit number, e.g. 98765 43210."); return; }
     if (!trimmed || busy || submitting || project?.submitted) return;
     setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]);
     const id = activeId ?? crypto.randomUUID();
@@ -87,7 +86,8 @@ export default function SourcingAgent() {
     try {
       const { error: insertError } = await supabase.from("requirement_submissions").insert(payload);
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
-      setProjects(prev => prev.map(p => p.id === activeId ? { ...p, submitted: true, phone: phone.trim(), turns: draft.query.trim() || draft.images.length ? [...p.turns, { query: draft.query.trim() || "Design/reference images attached", matches: [], images: draft.images }] : p.turns } : p));
+      const phoneDisplay = phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`;
+      setProjects(prev => prev.map(p => p.id === activeId ? { ...p, submitted: true, phone: phone.trim(), turns: [...p.turns, { query: phoneDisplay, matches: [], images: draft.images }, ...(draft.query.trim() ? [{ query: draft.query.trim(), matches: [] }] : [])] } : p));
       setQuery(""); setPhotos([]);
     } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setSubmitting(false); }
@@ -106,7 +106,7 @@ export default function SourcingAgent() {
         <Link to="/sourcing" className="flex items-center gap-2 px-2 text-xl font-bold"><img src={logo} alt="" className="h-8 w-8" />snaplogo<span className="text-primary">.</span></Link>
         <Button onClick={startNew} disabled={busy || submitting} variant="outline" className="mt-8 w-full justify-start rounded-full"><Plus />New sourcing request</Button>
         <p className="mt-8 px-3 text-xs font-semibold text-muted-foreground">Recent requests</p>
-        <div className="mt-2 flex-1 space-y-1 overflow-y-auto">{projects.map(p => <Button key={p.id} variant="ghost" disabled={busy || submitting} onClick={() => { setActiveId(p.id); setPhotos([]); setQuery(""); setPhone(""); setError(""); }} className={`h-auto w-full justify-start py-2.5 text-left text-xs ${p.id === activeId ? "bg-muted" : "text-muted-foreground"}`}><MessageSquare className="shrink-0" /><span className="truncate">{p.title}</span>{p.submitted && <Check className="ml-auto shrink-0 text-primary" />}</Button>)}</div>
+        <div className="mt-2 flex-1 space-y-1 overflow-y-auto">{projects.map(p => <Button key={p.id} variant="ghost" disabled={busy || submitting} onClick={() => { setActiveId(p.id); setPhotos([]); setQuery(""); setError(""); }} className={`h-auto w-full justify-start py-2.5 text-left text-xs ${p.id === activeId ? "bg-muted" : "text-muted-foreground"}`}><MessageSquare className="shrink-0" /><span className="truncate">{p.title}</span>{p.submitted && <Check className="ml-auto shrink-0 text-primary" />}</Button>)}</div>
       </aside>
       <div className="lg:ml-60">
         <header className="flex h-[72px] items-center justify-between gap-3 border-b border-border/60 px-5 md:px-10">
@@ -131,15 +131,7 @@ export default function SourcingAgent() {
                   <Button type="button" variant="outline" onClick={setDesignDone} className="h-11 flex-1 rounded-full text-muted-foreground">No design yet<ArrowRight className="h-4 w-4" /></Button>
                 </div>
               </div></div>}
-              {askingPhone && !designStep && <div className="mt-6 flex gap-3"><img src={logo} alt="" className="mt-1 h-9 w-9 shrink-0 rounded-full border border-border bg-card p-1.5" /><div className="sourcing-composer flex-1 rounded-2xl rounded-tl-md border border-border bg-card p-5 text-sm leading-relaxed">
-                <div className="flex items-center gap-3"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent"><Phone className="h-5 w-5 text-accent-foreground" /></span><span><span className="block font-semibold text-foreground">Please share your WhatsApp number</span><span className="block text-xs text-muted-foreground">We will get back to you with manufacturer details and quotation.</span></span></div>
-                <form onSubmit={e => { e.preventDefault(); const p = phone.trim(); void submitPhone(p.startsWith("+") ? p : `+91 ${p}`); }} className="mt-4 space-y-3">
-                  <label className={`flex h-14 items-center gap-3 rounded-2xl border-2 bg-background px-4 transition-colors ${phone.trim() && !phoneValid ? "border-destructive/50" : "border-border focus-within:border-primary"}`}><span className="flex h-9 shrink-0 items-center rounded-xl bg-accent px-3 text-sm font-semibold text-accent-foreground">+91</span><span className="sr-only">WhatsApp number</span><input value={phone} onChange={e => setPhone(e.target.value)} inputMode="tel" placeholder="98765 43210" className="min-w-0 flex-1 bg-transparent text-base font-medium text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground" />{phoneValid && <Check className="h-5 w-5 shrink-0 text-accent-foreground" aria-hidden="true" />}</label>
-                  {phone.trim() && !phoneValid && <p className="text-xs text-destructive">Please enter a valid 10-digit WhatsApp number.</p>}
-                  <Button type="submit" disabled={submitting || !phoneValid} className="h-12 w-full rounded-full text-[13px] font-bold uppercase tracking-wide">{submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Continue on WhatsApp<ArrowRight className="h-4 w-4" /></>}</Button>
-                </form>
-                <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground"><ShieldCheck className="h-4 w-4 shrink-0 text-accent-foreground" />Your information is safe with us.</p>
-              </div></div>}
+              {askingPhone && !designStep && <div className="mt-6 flex max-w-[90%] gap-3"><img src={logo} alt="" className="mt-1 h-9 w-9 shrink-0 rounded-full border border-border bg-card p-1.5" /><div className="sourcing-composer rounded-2xl rounded-tl-md border border-border bg-card px-5 py-4 text-sm leading-relaxed"><p className="font-semibold text-foreground">Please share your WhatsApp number</p><p className="mt-1 text-muted-foreground">We will get back to you with manufacturer details and quotation. Your information is safe with us.</p></div></div>}
               <div className="mt-6">{composer(true)}</div>
               {submitting && <p role="status" className="mt-2 flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="h-3.5 w-3.5 animate-spin" />Sending your request…</p>}
               {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, turns: p.turns.map((t, i) => i === p.turns.length - 1 ? { ...t, questionsSkipped: true } : t) } : p))}>Skip for now<ArrowRight /></Button></div>}

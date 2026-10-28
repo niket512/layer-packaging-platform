@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { looksLikeSourcingPhone, needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
 import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, INTAKE_QUESTION_LIMIT } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {
@@ -18,6 +18,11 @@ describe("sourcing matches", () => {
     expect(validSourcingPhone("123")).toBe(false);
     expect(validSourcingPhone("call me 9876543210")).toBe(false);
     expect(sourcingSubmission([{ query: "Paper bags", matches: [] }], "")).toBeNull();
+  });
+  it("treats digit-only chat replies at the phone step as phone attempts", () => {
+    expect(looksLikeSourcingPhone("98765 432")).toBe(true);
+    expect(looksLikeSourcingPhone("+91 98765 43210")).toBe(true);
+    expect(looksLikeSourcingPhone("I need matte finish, 5000 pcs")).toBe(false);
   });
   it("saves answers and phone without suggesting suppliers", () => {
     expect(sourcingSubmission([{ query: "Paper bags", matches: [{ id: "evenpack", reason: "Legacy match" }], questions: [{ topic: "quantity", question: "How many?" }] }, { query: "500 units", matches: [] }], "+91 98765 43210")).toEqual({ contact: "+91 98765 43210", requirement: "Paper bags\nQuestion: How many?\n\n500 units", images: [], manufacturers: [] });
