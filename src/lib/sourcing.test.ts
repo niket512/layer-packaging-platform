@@ -48,6 +48,12 @@ describe("sourcing matches", () => {
   });
 });
 describe("sourcing photos", () => {
+  it("includes pending design images and remaining details when a WhatsApp number is submitted", () => {
+    const payload = sourcingSubmission([{ query: "500 boxes", matches: [] }], "+91 98765 43210", { query: "Matte finish, foam insert", images: ["data:image/jpeg;base64,design"] });
+    expect(payload?.requirement).toBe("500 boxes\n\nMatte finish, foam insert");
+    expect(payload?.images).toEqual(["data:image/jpeg;base64,design"]);
+    expect(payload?.contact).toBe("+91 98765 43210");
+  });
   it("sends photos shared in the chat with the request, up to eight", () => {
     const turns = [{ query: "Bags", matches: [], images: Array(10).fill("data:image/jpeg;base64,x") }];
     expect(sourcingSubmission(turns, "+91 98765 43210")?.images).toHaveLength(8);
@@ -59,7 +65,11 @@ describe("sourcing response latency", () => {
     expect(needsSourcingQuestions([])).toBe(true);
     expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: ["quantity", "size", "format", "wall", "printing"].map(topic => ({ topic, question: "Your preference?" })) }])).toBe(false);
     expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questionsSkipped: true }])).toBe(false);
-    expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: [{ topic: "size", question: "Dimensions?" }] }])).toBe(true);
+    expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: [{ topic: "size", question: "Dimensions?" }] }])).toBe(false);
+  });
+  it("never opens a second questionnaire after partial answers or an initially complete request", () => {
+    expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: [{ topic: "size", question: "Dimensions?" }] }, { query: "Not sure, coffee brand", matches: [] }])).toBe(false);
+    expect(needsSourcingQuestions([{ query: "500 printed boxes, 14 × 8 × 4 cm", matches: [], questions: [] }])).toBe(false);
   });
   it("renders incremental questions and requires a completed reply", async () => {
     const question = { topic: "size", question: "What dimensions?" };

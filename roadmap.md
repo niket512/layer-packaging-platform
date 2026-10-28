@@ -18,3 +18,7 @@
 # Quotation-focused questions
 - [x] Treat five as a ceiling, remove routine timeline questions, and prioritize only quotation-relevant missing specifications.
 - [x] Test the question rules and verify the supplied capa-board request in the live chat.
+
+# One-round quotation intake
+- [x] Ask quotation questions once, then collect optional design/details and a WhatsApp number.
+- [x] Preserve unsent designs/details during contact submission and test the complete flow.

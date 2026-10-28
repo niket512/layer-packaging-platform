@@ -10,12 +10,15 @@ export function validSourcingPhone(phone: string): boolean {
   return /^[+\d\s()-]+$/.test(phone.trim()) && /^\d{10,15}$/.test(phone.replace(/\D/g, ""));
 }
 
-export function sourcingSubmission(turns: SourcingTurn[], phone: string) {
+export function sourcingSubmission(turns: SourcingTurn[], phone: string, draft?: { query: string; images: string[] }) {
   if (!validSourcingPhone(phone) || !turns.length) return null;
+  const collected = draft && (draft.query.trim() || draft.images.length)
+    ? [...turns, { query: draft.query.trim() || "Design/reference images attached", matches: [], images: draft.images }]
+    : turns;
   return {
     contact: phone.trim(),
-    requirement: turns.map(turn => [turn.query, ...(turn.questions ?? []).map(q => `Question: ${q.question}`), ...(turn.questionsSkipped ? ["Optional questions skipped"] : [])].join("\n")).join("\n\n"),
-    images: turns.flatMap(turn => turn.images ?? []).slice(0, 8),
+    requirement: collected.map(turn => [turn.query, ...(turn.questions ?? []).map(q => `Question: ${q.question}`), ...(turn.questionsSkipped ? ["Optional questions skipped"] : [])].join("\n")).join("\n\n"),
+    images: collected.flatMap(turn => turn.images ?? []).slice(0, 8),
     manufacturers: [],
   };
 }
@@ -36,7 +39,7 @@ export function sourcingRequest(turns: SourcingTurn[], query: string) {
 }
 
 export function needsSourcingQuestions(turns: SourcingTurn[]): boolean {
-  return !turns.some(turn => turn.questionsSkipped) && turns.flatMap(turn => turn.questions ?? []).length < INTAKE_QUESTION_LIMIT;
+  return turns.length === 0;
 }
 
 export async function readSourcingStream(response: Response, onQuestions: (value: unknown) => void): Promise<unknown> {
