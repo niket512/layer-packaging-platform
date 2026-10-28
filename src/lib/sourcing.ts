@@ -4,7 +4,7 @@ import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS } from "../../supabase/functions/_
 export interface SourcingMatch { id: string; reason: string }
 export interface SourcingQuestion { topic: string; question: string }
 export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean; images?: string[] }
-export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; phone?: string }
+export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; phone?: string; designDone?: boolean }
 
 export function validSourcingPhone(phone: string): boolean {
   return /^[+\d\s()-]+$/.test(phone.trim()) && /^\d{10,15}$/.test(phone.replace(/\D/g, ""));
