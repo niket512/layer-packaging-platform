@@ -202,3 +202,24 @@ describe("flexible-packaging requirement configuration", () => {
     expect(validatedQuestions([question], [{ query: "Sachets", matches: [], questions: [question] }])).toEqual([]);
   });
 });
+
+describe("sourcing confirmation brief", () => {
+  const field = (topic: string, value: string, source: SourcingBriefField["source"] = "text"): SourcingBriefField => ({ topic, value, source });
+  it("reads in the order style, quantity, size, material, insert, finish, price, printing", () => {
+    const ordered = sortSourcingBrief([field("printing", "Digital"), field("budget", "₹36–40"), field("format", "Premium rigid box"), field("quantity", "5,000 monthly"), field("finishing", "Matte"), field("material", "Capa board"), field("customisation", "Foam insert"), field("size", "14×8×4 cm")]).map(f => f.topic);
+    expect(ordered).toEqual(["format", "quantity", "size", "material", "customisation", "finishing", "budget", "printing"]);
+    expect(sortSourcingBrief([field("delivery", "Mumbai"), field("format", "Box")]).map(f => f.topic)).toEqual(["format", "delivery"]);
+  });
+  it("flags a price without currency as a to-confirm note, not an error", () => {
+    expect(unclearBriefNotes([field("budget", "36-40")])).toEqual({ budget: "Currency not specified — we’ll confirm" });
+    expect(unclearBriefNotes([field("budget", "₹36–40 per piece")])).toEqual({});
+    expect(unclearBriefNotes([field("budget", "5000 INR monthly")])).toEqual({});
+    expect(unclearBriefNotes([field("budget", "Quote-based pricing")])).toEqual({});
+  });
+  it("flags unspecified print types and values as to-confirm notes", () => {
+    expect(unclearBriefNotes([field("printing", "Printed")])).toEqual({ printing: "Print type not specified — we’ll confirm" });
+    expect(unclearBriefNotes([field("printing", "Digital printing")])).toEqual({});
+    expect(unclearBriefNotes([field("material", "not specified")])).toEqual({ material: "We’ll confirm this with you" });
+    expect(unclearBriefNotes([field("finishing", "Matte")])).toEqual({});
+  });
+});
