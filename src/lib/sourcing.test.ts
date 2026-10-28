@@ -1,9 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
 import { needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS } from "../../supabase/functions/_shared/sourcing-intake";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, INTAKE_QUESTION_LIMIT } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {
+  it("treats five as a ceiling and preserves fewer quotation questions", () => {
+    expect(INTAKE_QUESTION_LIMIT).toBe(5);
+    const questions = [{ topic: "printing", question: "What printing is needed?" }, { topic: "finishing", question: "What finish is needed?" }];
+    expect(validatedQuestions(questions, [])).toEqual(questions);
+  });
+  it("rejects routine first-batch timeline questions without dropping quotation details", () => {
+    const printing = { topic: "printing", question: "What printing is needed on the box and sleeve?" };
+    expect(validatedQuestions([printing, { topic: "timeline", question: "When would you need the first batch delivered?" }], [])).toEqual([printing]);
+  });
   it("requires a valid phone number for follow-up", () => {
     expect(validSourcingPhone("+91 98765 43210")).toBe(true);
     expect(validSourcingPhone("123")).toBe(false);
