@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { looksLikeSourcingPhone, needsSourcingDesign, needsSourcingQuestions, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { looksLikeSourcingPhone, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
 import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {
@@ -53,6 +53,16 @@ describe("sourcing matches", () => {
   });
 });
 describe("sourcing photos", () => {
+  it("retains design and phone prompts after replies and submission without repeating them", () => {
+    const design = recordSourcingFollowUp({ id: "test", title: "Boxes", turns: [{ query: "Boxes", matches: [] }] });
+    expect(design.turns[0].followUp).toBe("design");
+    const phone = recordSourcingFollowUp({ ...design, designDone: true, turns: [...design.turns, { query: "No design yet", matches: [] }] });
+    expect(phone.turns.map(t => t.followUp)).toEqual(["design", "phone"]);
+    const details = { ...phone, turns: [...phone.turns, { query: "Matte finish", matches: [] }] };
+    expect(recordSourcingFollowUp(details)).toBe(details);
+    const submitted = { ...details, submitted: true, turns: [...details.turns, { query: "+91 98765 43210", matches: [] }] };
+    expect(recordSourcingFollowUp(submitted).turns.map(t => t.followUp)).toEqual(["design", "phone", undefined, undefined]);
+  });
   it("skips asking for a design already attached to the first request", () => {
     expect(needsSourcingDesign({ turns: [{ query: "Custom boxes", matches: [], images: ["data:image/jpeg;base64,eA=="] }] })).toBe(false);
     expect(needsSourcingDesign({ turns: [{ query: "Custom boxes", matches: [] }] })).toBe(true);

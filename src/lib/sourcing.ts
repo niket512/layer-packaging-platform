@@ -3,7 +3,7 @@ import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS } from "../../supabase/functions/_
 
 export interface SourcingMatch { id: string; reason: string }
 export interface SourcingQuestion { topic: string; question: string }
-export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean; images?: string[] }
+export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean; images?: string[]; followUp?: "design" | "phone" }
 export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; phone?: string; designDone?: boolean }
 
 export function validSourcingPhone(phone: string): boolean {
@@ -49,6 +49,14 @@ export function needsSourcingQuestions(turns: SourcingTurn[]): boolean {
 
 export function needsSourcingDesign(project: Pick<SourcingProject, "turns" | "designDone">): boolean {
   return !project.designDone && !project.turns.some(turn => (turn.images?.length ?? 0) > 0);
+}
+
+export function recordSourcingFollowUp(project: SourcingProject): SourcingProject {
+  const current = project.turns.at(-1);
+  if (!current || project.submitted || (!current.questionsSkipped && (current.questions?.length ?? 0) > 0)) return project;
+  const followUp = needsSourcingDesign(project) ? "design" : "phone";
+  if (project.turns.some(turn => turn.followUp === followUp)) return project;
+  return { ...project, turns: project.turns.map((turn, i) => i === project.turns.length - 1 ? { ...turn, followUp } : turn) };
 }
 
 export async function readSourcingStream(response: Response, onQuestions: (value: unknown) => void): Promise<unknown> {
