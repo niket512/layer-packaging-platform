@@ -28,5 +28,5 @@
 - [x] Analyze initial images before asking missing quotation details and verify the flows.
 
 # Context-aware sourcing conversation
-- [ ] Analyze every reply and prevent greetings, refusals and unrelated messages from advancing to design/contact.
-- [ ] Preserve quotation limits, image handling and chat history; test the reported HEY / NOTHING case and genuine sourcing replies.
+- [x] Analyze every reply and prevent greetings, refusals and unrelated messages from advancing to design/contact.
+- [x] Preserve quotation limits, image handling and chat history; test the reported HEY / NOTHING case and genuine sourcing replies.
