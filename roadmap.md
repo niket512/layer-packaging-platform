@@ -30,3 +30,8 @@
 # Context-aware sourcing conversation
 - [x] Analyze every reply and prevent greetings, refusals and unrelated messages from advancing to design/contact.
 - [x] Preserve quotation limits, image handling and chat history; test the reported HEY / NOTHING case and genuine sourcing replies.
+
+# Expert sourcing experience
+- [x] Extract and show an editable, evidence-backed sourcing brief without extra AI calls.
+- [x] Keep missing quotation questions grouped; clarify follow-up, improve request titles/statuses and submission review.
+- [x] Test grouped questions, brief corrections and the full chat submission flow.

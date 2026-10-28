@@ -1,11 +1,24 @@
 import type { DirectoryManufacturer } from "@/data/directory";
-import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS } from "../../supabase/functions/_shared/sourcing-intake";
-import type { IntakeReply, IntakeStage } from "../../supabase/functions/_shared/sourcing-intake";
+import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS, validatedBrief } from "../../supabase/functions/_shared/sourcing-intake";
+import type { IntakeReply, IntakeStage, SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 
 export interface SourcingMatch { id: string; reason: string }
 export interface SourcingQuestion { topic: string; question: string }
 export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean; images?: string[]; followUp?: "design" | "phone"; assistantMessage?: string; stage?: IntakeStage; hasRequirement?: boolean }
-export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; phone?: string; designDone?: boolean }
+export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; phone?: string; designDone?: boolean; brief?: SourcingBriefField[]; createdAt?: string }
+
+export const BRIEF_LABELS: Record<string, string> = { format: "Packaging type / style", quantity: "Quantity / MOQ", size: "Dimensions / fill", printing: "Printing", delivery: "Delivery destination", budget: "Target price", material: "Material / board", wall: "Corrugated wall", customisation: "Customisation / inserts", finishing: "Finish", usage: "Usage", manufacturer_location: "Preferred manufacturer location", samples: "Samples", product: "Product to pack", barrier: "Barrier requirements", closure: "Closure", transparency: "Transparency", filling: "Filling method", certifications: "Certifications", shelf_life: "Shelf life / storage" };
+
+export function mergeSourcingBrief(previous: unknown, next: unknown): SourcingBriefField[] {
+  return validatedBrief([...validatedBrief(previous), ...validatedBrief(next)]);
+}
+
+export function sourcingProjectTitle(project: SourcingProject): string {
+  const brief = validatedBrief(project.brief);
+  const format = brief.find(f => f.topic === "format")?.value;
+  const quantity = brief.find(f => f.topic === "quantity")?.value;
+  return format ? [format, quantity].filter(Boolean).join(" · ") : project.title;
+}
 
 export function validSourcingPhone(phone: string): boolean {
   return /^[+\d\s()-]+$/.test(phone.trim()) && /^\d{10,15}$/.test(phone.replace(/\D/g, ""));
@@ -16,14 +29,14 @@ export function looksLikeSourcingPhone(text: string): boolean {
   return /^[+\d\s()-]+$/.test(trimmed) && trimmed.replace(/\D/g, "").length >= 8;
 }
 
-export function sourcingSubmission(turns: SourcingTurn[], phone: string, draft?: { query: string; images: string[] }) {
+export function sourcingSubmission(turns: SourcingTurn[], phone: string, draft?: { query: string; images: string[] }, brief?: SourcingBriefField[]) {
   if (!validSourcingPhone(phone) || !turns.length) return null;
   const collected = draft && (draft.query.trim() || draft.images.length)
     ? [...turns, { query: draft.query.trim() || "Design/reference images attached", matches: [], images: draft.images }]
     : turns;
   return {
     contact: phone.trim(),
-    requirement: collected.map(turn => [turn.query, ...(turn.questions ?? []).map(q => `Question: ${q.question}`), ...(turn.questionsSkipped ? ["Optional questions skipped"] : [])].join("\n")).join("\n\n"),
+    requirement: [ ...(validatedBrief(brief).length ? ["Sourcing brief (latest captured details)\n" + validatedBrief(brief).map(f => `${BRIEF_LABELS[f.topic]}: ${f.value} [${f.source}]`).join("\n"), "Conversation:"] : []), collected.map(turn => [turn.query, ...(turn.questions ?? []).map(q => `Question: ${q.question}`), ...(turn.questionsSkipped ? ["Optional questions skipped"] : [])].join("\n")).join("\n\n") ].join("\n\n"),
     images: collected.flatMap(turn => turn.images ?? []).slice(0, 8),
     manufacturers: [],
   };
