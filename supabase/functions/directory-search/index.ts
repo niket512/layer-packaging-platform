@@ -2,7 +2,7 @@ import { createOpenAI } from "npm:@ai-sdk/openai";
 import { streamText, Output, NoObjectGeneratedError } from "npm:ai";
 import { z } from "npm:zod";
 import { createLovableAiGatewayRunIdFetch, getLovableAiGatewayRunId, withLovableAiGatewayRunIdHeader } from "../_shared/run-id.ts";
-import { INTAKE_QUESTION_LIMIT, INTAKE_SYSTEM } from "../_shared/sourcing-intake.ts";
+import { intakeImageParts, INTAKE_QUESTION_LIMIT, INTAKE_SYSTEM } from "../_shared/sourcing-intake.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -28,12 +28,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   if (!apiKey) return json({ error: "AI is not configured" }, 500);
-  let body: { query?: string; manufacturers?: unknown[]; mode?: string; conversation?: unknown[]; stream?: boolean };
+  let body: { query?: string; images?: unknown; manufacturers?: unknown[]; mode?: string; conversation?: unknown[]; stream?: boolean };
   try { body = await req.json(); } catch { return json({ error: "Invalid request" }, 400); }
    const isIntake = body.mode === "intake";
    const isSourcing = body.mode === "sourcing" || isIntake;
   const query = typeof body.query === "string" ? body.query.trim().slice(0, isSourcing ? 4000 : 500) : "";
    if (!query || (!isIntake && (!Array.isArray(body.manufacturers) || !body.manufacturers.length))) return json({ error: "Invalid request" }, 400);
+  let images: ReturnType<typeof intakeImageParts> = [];
+  try { if (isIntake) images = intakeImageParts(body.images); }
+  catch (error) { return json({ error: error instanceof Error ? error.message : "Invalid images" }, 400); }
+  const prompt = JSON.stringify({ request: query, ...(isSourcing ? { conversation: Array.isArray(body.conversation) ? body.conversation.slice(-12) : [] } : {}), ...(!isIntake ? { manufacturers: body.manufacturers?.slice(0, 200) } : {}) }).slice(0, 40000);
 
   const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(req));
   const provider = createOpenAI({
@@ -47,11 +51,11 @@ Deno.serve(async (req) => {
     const result = streamText({
       model: provider.responses("openai/gpt-6-astra"),
        system: isIntake ? INTAKE_SYSTEM : isSourcing ? SOURCING_SYSTEM : SYSTEM,
-       prompt: JSON.stringify({ request: query, ...(isSourcing ? { conversation: Array.isArray(body.conversation) ? body.conversation.slice(-12) : [] } : {}), ...(!isIntake ? { manufacturers: body.manufacturers?.slice(0, 200) } : {}) }).slice(0, 40000),
+       ...(images.length ? { messages: [{ role: "user" as const, content: [{ type: "text" as const, text: prompt }, ...images] }] } : { prompt }),
       abortSignal: req.signal,
       ...(isIntake ? { maxOutputTokens: 800 } : {}),
       ...(isIntake ? { output: Output.object({ schema: z.object({ questions: z.array(z.object({ topic: z.string(), question: z.string() })) }) }) } : {}),
-      providerOptions: { openai: isIntake ? { store: false } : { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
+      providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
       onError: ({ error }) => {
         const e = error as { statusCode?: number; message?: string };
         failure = { status: e.statusCode ?? 500, message: e.message ?? "AI request failed" };

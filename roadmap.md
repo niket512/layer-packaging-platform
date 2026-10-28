@@ -22,3 +22,7 @@
 # One-round quotation intake
 - [x] Ask quotation questions once, then collect optional design/details and a WhatsApp number.
 - [x] Preserve unsent designs/details during contact submission and test the complete flow.
+
+# Chat-only design sharing
+- [x] Collect designs through chat only and skip the design prompt when images were already sent.
+- [x] Analyze initial images before asking missing quotation details and verify the flows.
