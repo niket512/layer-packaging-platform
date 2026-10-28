@@ -1,9 +1,10 @@
 import type { DirectoryManufacturer } from "@/data/directory";
 import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS } from "../../supabase/functions/_shared/sourcing-intake";
+import type { IntakeReply, IntakeStage } from "../../supabase/functions/_shared/sourcing-intake";
 
 export interface SourcingMatch { id: string; reason: string }
 export interface SourcingQuestion { topic: string; question: string }
-export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean; images?: string[]; followUp?: "design" | "phone" }
+export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean; images?: string[]; followUp?: "design" | "phone"; assistantMessage?: string; stage?: IntakeStage; hasRequirement?: boolean }
 export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; phone?: string; designDone?: boolean }
 
 export function validSourcingPhone(phone: string): boolean {
@@ -54,12 +55,13 @@ export function needsSourcingDesign(project: Pick<SourcingProject, "turns" | "de
 export function recordSourcingFollowUp(project: SourcingProject): SourcingProject {
   const current = project.turns.at(-1);
   if (!current || project.submitted || (!current.questionsSkipped && (current.questions?.length ?? 0) > 0)) return project;
-  const followUp = needsSourcingDesign(project) ? "design" : "phone";
+  if (current.stage && !["design", "phone"].includes(current.stage)) return project;
+  const followUp = current.stage === "phone" ? "phone" : needsSourcingDesign(project) ? "design" : "phone";
   if (project.turns.some(turn => turn.followUp === followUp)) return project;
   return { ...project, turns: project.turns.map((turn, i) => i === project.turns.length - 1 ? { ...turn, followUp } : turn) };
 }
 
-export async function readSourcingStream(response: Response, onQuestions: (value: unknown) => void): Promise<unknown> {
+export async function readSourcingStream(response: Response, onQuestions: (value: unknown) => void, onReply?: (reply: IntakeReply) => void): Promise<unknown> {
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
     throw new Error(payload.error || "I couldn’t continue this conversation. Please try again.");
@@ -80,7 +82,7 @@ export async function readSourcingStream(response: Response, onQuestions: (value
         if (!line.trim()) continue;
         const event = JSON.parse(line);
         if (event.error) throw new Error(event.error);
-        if (event.done) { final = event.questions; completed = true; }
+        if (event.done) { final = event.questions; completed = true; if (event.stage) onReply?.(event); }
         else onQuestions(event.questions);
       }
       if (done) break;

@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 import logo from "@/assets/snaplogo-orange.png";
+import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
 const suggestions = [
   { title: "Custom paper bags", detail: "100 units · branded printing", query: "I need 100 custom printed kraft paper bags for my brand", category: "paper-bags" },
@@ -35,7 +36,7 @@ export default function SourcingAgent() {
   const turns = project?.turns ?? [];
   const current = turns.at(-1);
   const hasQuestions = !current?.questionsSkipped && (current?.questions?.length ?? 0) > 0;
-  const askingPhone = !!current && !hasQuestions && !project?.submitted;
+  const askingPhone = !!current && !hasQuestions && !project?.submitted && (current.stage ? current.stage === "phone" || current.stage === "design" : true);
   const designStep = askingPhone && !!project && needsSourcingDesign(project);
   const addPhotos = async (files: FileList | null) => {
     if (!files) return;
@@ -60,23 +61,24 @@ export default function SourcingAgent() {
   const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
   const search = async (text = query) => {
     const trimmed = text.trim() || (photos.length ? "Photos attached" : "");
-    if (askingPhone && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }
-    if (askingPhone && looksLikeSourcingPhone(trimmed)) { setError("That doesn’t look like a valid WhatsApp number. Please share a 10-digit number, e.g. 98765 43210."); return; }
+    if (askingPhone && !designStep && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }
+    if (askingPhone && !designStep && looksLikeSourcingPhone(trimmed)) { setError("That doesn’t look like a valid WhatsApp number. Please share a 10-digit number, e.g. 98765 43210."); return; }
     if (!trimmed || busy || submitting || project?.submitted) return;
     setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]);
     const id = activeId ?? crypto.randomUUID();
     try {
       let questions: unknown = [];
-      if (needsSourcingQuestions(turns)) {
+      let reply: IntakeReply | undefined;
+      {
         const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/directory-search`, {
           method: "POST",
           headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
-          body: JSON.stringify({ query: sourcingRequest(turns, trimmed), images: photos, mode: "intake", stream: true, conversation: turns.map(t => ({ request: t.query, questions: t.questions ?? [], skipped: t.questionsSkipped ?? false })) }),
+          body: JSON.stringify({ query: sourcingRequest(turns, trimmed), latest: trimmed, images: photos, mode: "intake", stream: true, conversational: true, quotationAsked: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0), currentStage: current?.stage ?? (hasQuestions ? "quotation" : designStep ? "design" : askingPhone ? "phone" : "clarify"), conversation: turns.map(t => ({ request: t.query, response: t.assistantMessage, stage: t.stage, questions: t.questions ?? [], followUp: t.followUp, hasImages: (t.images?.length ?? 0) > 0, skipped: t.questionsSkipped ?? false })) }),
         });
-        questions = await readSourcingStream(response, value => setLiveQuestions(validatedQuestions(value, turns)));
+        questions = await readSourcingStream(response, value => setLiveQuestions(turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(value, turns)), value => { reply = value; });
       }
-      const turn = { query: trimmed, matches: [], questions: validatedQuestions(questions, turns), images: photos };
-      setProjects(prev => prev.some(p => p.id === id) ? prev.map(p => p.id === id ? { ...p, designDone: p.designDone || designStep, turns: [...p.turns, turn] } : p) : [{ id, title: trimmed.slice(0, 65), turns: [turn] }, ...prev]);
+      const turn = { query: trimmed, matches: [], questions: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(questions, turns), images: photos, assistantMessage: reply?.message, stage: reply?.stage ?? "clarify" as const, hasRequirement: reply?.hasRequirement ?? false };
+      setProjects(prev => prev.some(p => p.id === id) ? prev.map(p => p.id === id ? { ...p, designDone: p.designDone || reply?.stage === "phone", turns: [...p.turns, turn] } : p) : [{ id, title: trimmed.slice(0, 65), turns: [turn] }, ...prev]);
       setActiveId(id); setQuery(""); setPhotos([]);
     } catch (e) { setError(e instanceof Error ? e.message : "Something went wrong. Please try again."); }
     finally { setBusy(false); setPendingQuery(""); setLiveQuestions([]); }
@@ -129,7 +131,7 @@ export default function SourcingAgent() {
             {busy ? <div className="py-6" role="status">{liveQuestions.length > 0 && <div className="mb-4 flex max-w-[90%] gap-3"><img src={logo} alt="" className="h-9 w-9 shrink-0 rounded-full border border-border bg-card p-1.5" /><div className="sourcing-composer rounded-2xl border border-border bg-card px-5 py-4 text-sm leading-relaxed"><p className="mb-3 font-semibold">A few quick details would help</p><ol className="space-y-3">{liveQuestions.map((q, i) => <li key={q.topic} className="flex items-start gap-3"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">{i + 1}</span><span className="pt-1">{q.question}</span></li>)}</ol></div></div>}<div className="flex items-center gap-3 text-sm text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin text-primary" />Reviewing your packaging details…</div></div> : project?.submitted ? <section role="status" className="sourcing-composer mt-8 rounded-2xl border border-border bg-card p-6 text-center"><span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent"><Check className="h-6 w-6 text-accent-foreground" /></span>{project.phone && <p className="mb-2 text-xs text-muted-foreground">WhatsApp contact: {project.phone}</p>}<h2 className="text-xl font-semibold">Thank you — your request is received.</h2><p className="mt-2 text-sm text-muted-foreground">Our team will use your requirements to source relevant manufacturers and reach out with the details.</p><Button onClick={startNew} variant="outline" className="mt-5 rounded-full"><Plus />New sourcing request</Button></section> : <>
               <div className="mt-6">{composer(true)}</div>
               {submitting && <p role="status" className="mt-2 flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="h-3.5 w-3.5 animate-spin" />Sending your request…</p>}
-              {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, turns: p.turns.map((t, i) => i === p.turns.length - 1 ? { ...t, questionsSkipped: true } : t) } : p))}>Skip for now<ArrowRight /></Button></div>}
+              {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => void search("Skip the optional quotation details for now; use my packaging requirement.")}>Skip for now<ArrowRight /></Button></div>}
             </>}
           </div>}
           {error && <div role="alert" className="mt-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-card p-4 text-sm text-destructive"><span className="flex-1">{error}</span><Button variant="ghost" size="icon" className="h-6 w-6" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}

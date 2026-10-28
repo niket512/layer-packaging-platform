@@ -1,9 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
 import { looksLikeSourcingPhone, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT } from "../../supabase/functions/_shared/sourcing-intake";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing matches", () => {
+  it("does not advance HEY without a requirement or NOTHING to design and WhatsApp", () => {
+    const greeting = normalizeIntakeReply({ message: "Hi", stage: "design", hasRequirement: false, questions: [] }, "HEY", false);
+    expect(greeting.stage).toBe("clarify");
+    const dismissal = normalizeIntakeReply({ message: "Got it", stage: "design", hasRequirement: true, questions: [] }, "NOTHING", true);
+    expect(dismissal.stage).toBe("paused");
+    expect(recordSourcingFollowUp({ id: "test", title: "HEY", turns: [{ query: "NOTHING", matches: [], stage: dismissal.stage }] }).turns[0].followUp).toBeUndefined();
+  });
+  it("prevents a second quotation round while allowing conversational replies", () => {
+    expect(normalizeIntakeReply({ message: "Understood", stage: "quotation", hasRequirement: true, questions: [{ topic: "quantity", question: "How many?" }] }, "5000", true).questions).toEqual([]);
+  });
   it("treats five as a ceiling and preserves fewer quotation questions", () => {
     expect(INTAKE_QUESTION_LIMIT).toBe(5);
     const questions = [{ topic: "printing", question: "What printing is needed?" }, { topic: "finishing", question: "What finish is needed?" }];
