@@ -36,7 +36,6 @@ export default function SourcingAgent() {
   const current = turns.at(-1);
   const hasQuestions = !current?.questionsSkipped && (current?.questions?.length ?? 0) > 0;
   const askingPhone = !!current && !hasQuestions && !project?.submitted;
-  const phoneValid = validSourcingPhone(phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`);
   const designStep = askingPhone && !project?.designDone;
   const setDesignDone = () => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, designDone: true } : p));
   const addPhotos = async (files: FileList | null) => {
@@ -55,7 +54,7 @@ export default function SourcingAgent() {
     document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirements, answer a few focused questions and request a phone follow-up from Snaplogo.");
   }, []);
 
-  const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setPhone(""); setError(""); input.current?.focus(); };
+  const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
   const search = async (text = query) => {
     const trimmed = text.trim() || (photos.length ? "Photos attached" : "");
     if (askingPhone && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }
