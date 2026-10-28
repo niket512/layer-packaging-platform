@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
-import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
+import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sortSourcingBrief, sourcingRequest, sourcingSubmission, unclearBriefNotes, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply, type SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing brief", () => {
   it("keeps explicit capa-board values and does not invent unknown printing", () => {
@@ -200,5 +200,26 @@ describe("flexible-packaging requirement configuration", () => {
     const question = { topic, question: "What do you need?" };
     expect(validatedQuestions([question], [])).toEqual([question]);
     expect(validatedQuestions([question], [{ query: "Sachets", matches: [], questions: [question] }])).toEqual([]);
+  });
+});
+
+describe("sourcing confirmation brief", () => {
+  const field = (topic: string, value: string, source: SourcingBriefField["source"] = "text"): SourcingBriefField => ({ topic, value, source });
+  it("reads in the order style, quantity, size, material, insert, finish, price, printing", () => {
+    const ordered = sortSourcingBrief([field("printing", "Digital"), field("budget", "₹36–40"), field("format", "Premium rigid box"), field("quantity", "5,000 monthly"), field("finishing", "Matte"), field("material", "Capa board"), field("customisation", "Foam insert"), field("size", "14×8×4 cm")]).map(f => f.topic);
+    expect(ordered).toEqual(["format", "quantity", "size", "material", "customisation", "finishing", "budget", "printing"]);
+    expect(sortSourcingBrief([field("delivery", "Mumbai"), field("format", "Box")]).map(f => f.topic)).toEqual(["format", "delivery"]);
+  });
+  it("flags a price without currency as a to-confirm note, not an error", () => {
+    expect(unclearBriefNotes([field("budget", "36-40")])).toEqual({ budget: "Currency not specified — we’ll confirm" });
+    expect(unclearBriefNotes([field("budget", "₹36–40 per piece")])).toEqual({});
+    expect(unclearBriefNotes([field("budget", "5000 INR monthly")])).toEqual({});
+    expect(unclearBriefNotes([field("budget", "Quote-based pricing")])).toEqual({});
+  });
+  it("flags unspecified print types and values as to-confirm notes", () => {
+    expect(unclearBriefNotes([field("printing", "Printed")])).toEqual({ printing: "Print type not specified — we’ll confirm" });
+    expect(unclearBriefNotes([field("printing", "Digital printing")])).toEqual({});
+    expect(unclearBriefNotes([field("material", "not specified")])).toEqual({ material: "We’ll confirm this with you" });
+    expect(unclearBriefNotes([field("finishing", "Matte")])).toEqual({});
   });
 });
