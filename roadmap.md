@@ -24,5 +24,5 @@
 - [x] Preserve unsent designs/details during contact submission and test the complete flow.
 
 # Chat-only design sharing
-- [ ] Collect designs through chat only and skip the design prompt when images were already sent.
-- [ ] Analyze initial images before asking missing quotation details and verify the flows.
+- [x] Collect designs through chat only and skip the design prompt when images were already sent.
+- [x] Analyze initial images before asking missing quotation details and verify the flows.
