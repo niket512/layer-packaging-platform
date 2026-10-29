@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, Sparkles, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
+import { designReferenceImage } from "@/components/sourcing/design-reference-image";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
@@ -124,7 +125,11 @@ export default function SourcingAgent() {
             <div className="mt-3 flex flex-wrap justify-center gap-2"><Button type="button" variant="outline" size="sm" className="rounded-full" onClick={() => fileInput.current?.click()}><ImagePlus />Upload my design</Button></div>
             <ol className="mt-10 grid grid-cols-2 gap-3 text-left sm:grid-cols-3">{[["Describe", "Share size, quantity & design"], ["Get matched", "We shortlist suitable manufacturers"], ["Bulk order", "Order direct, no commission"]].map(([t, d], i) => <li key={t} className="rounded-xl border border-border bg-card p-3"><span className="text-xs font-semibold text-primary">0{i + 1}</span><p className="mt-1 text-sm font-semibold">{t}</p><p className="mt-0.5 text-xs text-muted-foreground">{d}</p></li>)}</ol>
             <ul className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">{["Zero commission", "Your design stays confidential", "No exclusivity", "Free to request"].map(t => <li key={t} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{t}</li>)}</ul>
-            <CorrugatedDesigns onUseDesign={prefill => { setQuery(prefill); setError(""); input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" }); }} />
+            <CorrugatedDesigns onUseDesign={(prefill, designs) => {
+              setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
+              input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+              void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
+            }} />
           </div>}
           {(current || busy) && <div className="mx-auto max-w-[780px] py-8">
             <ol className="sourcing-composer mb-8 flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-4 md:px-6" aria-label="Progress">{[["Requirements", "Describe your packaging"], ["Brief", "Capture quotation details"], ["Contact", "Manufacturer details & quotation"]].map(([label, sub], i) => { const step = project?.submitted ? 3 : askingPhone ? 2 : project?.brief?.length ? 1 : 0; const done = i < step; const active = i === step; return <li key={label} className="flex flex-1 items-center gap-3"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${done ? "border-primary bg-primary text-primary-foreground" : active ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{done ? <Check className="h-4 w-4" /> : i + 1}</span><span className="hidden min-w-0 md:block"><span className={`block text-sm font-semibold ${done || active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span><span className="block truncate text-xs text-muted-foreground">{sub}</span></span>{i < 2 && <span className={`h-px min-w-4 flex-1 ${done ? "bg-primary" : "bg-border"}`} />}</li>; })}</ol>
