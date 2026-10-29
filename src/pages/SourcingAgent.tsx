@@ -112,8 +112,8 @@ export default function SourcingAgent() {
       </aside>
       <div className="lg:ml-60">
         <header className="flex h-[72px] items-center justify-between gap-3 border-b border-border/60 px-5 md:px-10">
-          <div className="flex items-center gap-2 text-sm"><Link to="/sourcing" className="font-bold lg:hidden">snaplogo<span className="text-primary">.</span></Link><span className="hidden text-muted-foreground sm:inline">Workspace</span><ChevronRight className="hidden h-3 w-3 text-muted-foreground sm:block" /><span className="font-medium">Sourcing agent</span></div>
-          <div className="flex items-center gap-2"><Button asChild size="sm" className="rounded-full"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><User />Talk to a sourcing expert</a></Button><Button onClick={startNew} disabled={busy || submitting} variant="outline" size="sm" className="rounded-full lg:hidden"><Plus />New</Button></div>
+          <div className="flex items-center gap-2 text-sm"><Link to="/sourcing" className="font-bold lg:hidden">snaplogo<span className="text-primary">.</span></Link><span className="hidden text-muted-foreground sm:inline">Workspace</span><ChevronRight className="hidden h-3 w-3 text-muted-foreground sm:block" /><span className="hidden font-medium sm:inline">Sourcing agent</span></div>
+          <div className="flex items-center gap-2"><Button asChild size="sm" className="rounded-full"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="Talk to a sourcing expert"><User /><span className="sm:hidden">Talk to expert</span><span className="hidden sm:inline">Talk to a sourcing expert</span></a></Button><Button onClick={startNew} disabled={busy || submitting} variant="outline" size="sm" className="rounded-full lg:hidden"><Plus />New</Button></div>
         </header>
         <main className="mx-auto max-w-[900px] px-5 pb-12 md:px-10">
           {!current && !busy && <div className="mx-auto max-w-[780px] pb-4 pt-10 text-center md:pt-16">

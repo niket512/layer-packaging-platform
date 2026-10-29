@@ -1,4 +1,5 @@
 # Sourcing intake
+- [x] Improve the corrugated design catalogue with visual categories, optional filters, richer cards and a chat-connected preview; verify the selection flow.
 - [x] Replace supplier suggestions with a focused question-and-answer conversation.
 - [x] Collect a phone number and save the request for human follow-up.
 - [x] Verify questions, phone submission and absence of supplier details.
