@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Bookmark, Boxes, Search, SlidersHorizontal, X } from "lucide-react";
+import { ArrowRight, Bookmark, Boxes, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,8 +15,6 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   const [family, setFamily] = useState<PackagingFamily>("boxes");
   const [category, setCategory] = useState("all");
   const [filters, setFilters] = useState<CatalogueFilters>(CLEAR_FILTERS);
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("default");
   const [more, setMore] = useState(false);
   const [selected, setSelected] = useState<PackagingDesign | null>(null);
   const [shortlistOpen, setShortlistOpen] = useState(false);
@@ -29,9 +26,9 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   const primary = available ? PRIMARY_FILTERS[family] : [];
   const secondary = SECONDARY_FILTERS.filter(f => !primary.some(p => p.key === f.key));
   const definitions = [...primary, ...secondary];
-  const shown = browseDesigns(DESIGNS, family, category, filters, search, sort);
+  const shown = browseDesigns(DESIGNS, family, category, filters, "", "default");
   const shortlisted = DESIGNS.filter(d => saved.includes(d.id));
-  const reset = () => { setCategory("all"); setFilters(CLEAR_FILTERS); setSearch(""); };
+  const reset = () => { setCategory("all"); setFilters(CLEAR_FILTERS); };
   const switchFamily = (next: PackagingFamily) => { setFamily(next); reset(); setMore(false); };
   const toggleSave = (id: string) => setSaved(previous => previous.includes(id) ? previous.filter(s => s !== id) : [...previous, id]);
   const useDesigns = (designs: PackagingDesign[]) => {
@@ -70,16 +67,11 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
         <p className="text-[11px] text-muted-foreground">Material, finish & order quantity: unspecified unless confirmed.</p>
       </div>
       {more && <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border pt-3 sm:grid-cols-3">{secondary.map(filterControl)}</div>}
-      {(active.length > 0 || category !== "all" || search) && <div className="mt-3 flex flex-wrap items-center gap-1.5">
+      {(active.length > 0 || category !== "all") && <div className="mt-3 flex flex-wrap items-center gap-1.5">
         {category !== "all" && <Button variant="secondary" size="sm" onClick={() => setCategory("all")} className="h-7 rounded-full text-xs" aria-label="Remove category filter">{CATEGORIES[family].find(c => c.id === category)?.label}<X /></Button>}
         {active.map(f => <Button key={f.key} variant="secondary" size="sm" className="h-7 rounded-full text-xs" onClick={() => setFilters(prev => ({ ...prev, [f.key]: "all" }))} aria-label={`Remove ${f.label} filter`}>{f.label}: {filters[f.key]}<X /></Button>)}
-        {search && <Button variant="secondary" size="sm" className="h-7 max-w-full rounded-full text-xs" onClick={() => setSearch("")}><span className="truncate">Search: {search}</span><X /></Button>}
         <Button variant="link" size="sm" className="h-7 text-xs" onClick={reset}>Clear all filters</Button>
       </div>}
-      <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-        <div className="relative min-w-0 flex-1"><Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Search catalogue" placeholder="Search by packaging type, product or use case..." value={search} onChange={e => setSearch(e.target.value)} className="bg-card pl-9 text-xs" /></div>
-        <Select value={sort} onValueChange={setSort}><SelectTrigger aria-label="Sort designs" className="w-full bg-card text-xs sm:w-40"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="default">Catalogue order</SelectItem><SelectItem value="az">A–Z</SelectItem></SelectContent></Select>
-      </div>
       <p aria-live="polite" className="my-3 text-xs text-muted-foreground">{shown.length} {shown.length === 1 ? "design" : "designs"}</p>
       <div className="grid grid-cols-1 gap-4 min-[440px]:grid-cols-2 xl:grid-cols-3">
         {shown.map(d => <DesignCard key={d.id} design={d} saved={saved.includes(d.id)} onSave={() => toggleSave(d.id)} onDetails={() => setSelected(d)} onUse={() => useDesigns([d])} />)}
