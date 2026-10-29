@@ -47,7 +47,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
       })}
     </div>
     <Button variant="outline" size="sm" onClick={() => setShowFilters(v => !v)} aria-expanded={showFilters} className="mt-3 rounded-full text-xs sm:hidden"><SlidersHorizontal />Filters{active.length > 0 && ` (${active.length})`}</Button>
-    <div className={`mt-3 grid-cols-2 gap-2 sm:mt-4 sm:grid sm:grid-cols-4 ${showFilters ? "grid" : "hidden"}`}>{primary.map(filterControl)}</div>
+    <div className={`mt-3 grid-cols-2 gap-2 sm:mt-4 sm:grid sm:grid-cols-2 ${showFilters ? "grid" : "hidden"}`}>{primary.map(filterControl)}</div>
     {(active.length > 0 || category !== "all") && <div className="mt-3 flex flex-wrap items-center gap-1.5">
       {category !== "all" && <Button variant="secondary" size="sm" onClick={() => setCategory("all")} className="h-7 rounded-full text-xs" aria-label="Remove category filter">{CATEGORIES[family].find(c => c.id === category)?.label}<X /></Button>}
       {active.map(f => <Button key={f.key} variant="secondary" size="sm" className="h-7 rounded-full text-xs" onClick={() => setFilters(prev => ({ ...prev, [f.key]: "all" }))} aria-label={`Remove ${f.label} filter`}>{f.label}: {filters[f.key]}<X /></Button>)}

@@ -27,13 +27,9 @@ export const PRIMARY_FILTERS: Record<"boxes" | "pouches", FilterDefinition[]> = 
   boxes: [
     { key: "style", label: "Box style", options: ["Regular Slotted Carton (RSC)", "Die-cut", "Mailer", "Telescope", "Other"] },
     { key: "printing", label: "Printing", options: ["Plain", "One-colour", "Multicolour"] },
-    { key: "material", label: "Material", options: ["Kraft", "White-top", "Other"] },
-    { key: "useCase", label: "Use case", options: ["Shipping", "E-commerce", "Retail", "Gifting", "Subscription"] },
   ],
   pouches: [
     { key: "style", label: "Pouch type", options: ["Stand-up", "Flat", "Pillow", "Flat-bottom", "Spout", "Sachet", "Stick Pack"] },
-    { key: "material", label: "Material", options: ["PET laminate", "PE", "BOPP laminate", "Kraft laminate", "Aluminium foil laminate", "Other"] },
-    { key: "features", label: "Features", options: ["Zipper", "Tear notch", "Hang hole", "Transparent window", "Spout"] },
     { key: "useCase", label: "Application", options: ["Food & Snacks", "Coffee & Tea", "Cosmetics", "Personal Care", "Supplements", "Other"] },
   ],
 };
