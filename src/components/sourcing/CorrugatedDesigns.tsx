@@ -23,7 +23,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   });
   useEffect(() => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(saved)); } catch { /* Session state still works. */ } }, [saved]);
   const available = family === "boxes" || family === "pouches";
-  const primary = available ? PRIMARY_FILTERS[family] : [];
+  const primary = PRIMARY_FILTERS[family as "boxes" | "pouches"];
   const secondary = SECONDARY_FILTERS.filter(f => !primary.some(p => p.key === f.key));
   const definitions = [...primary, ...secondary];
   const shown = browseDesigns(DESIGNS, family, category, filters, "", "default");
@@ -77,7 +77,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
         {shown.map(d => <DesignCard key={d.id} design={d} saved={saved.includes(d.id)} onSave={() => toggleSave(d.id)} onDetails={() => setSelected(d)} onUse={() => useDesigns([d])} />)}
       </div>
       {shown.length === 0 && <div className="py-12 text-center"><Boxes className="mx-auto h-8 w-8 text-muted-foreground" /><p className="mt-3 text-sm font-medium">No designs match your selection</p><p className="mt-1 text-xs text-muted-foreground">Try a different category or fewer filters.</p><Button variant="link" onClick={reset}>Reset filters</Button></div>}
-    </> : <div className="py-16 text-center"><Boxes className="mx-auto h-10 w-10 text-muted-foreground" /><h3 className="mt-4 text-lg font-semibold">{FAMILIES.find(f => f.id === family)?.label} designs coming soon</h3><Button variant="link" onClick={() => switchFamily("boxes")}>Browse corrugated boxes <ArrowRight /></Button></div>}
+    </> : null}
     <Sheet open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg" onCloseAutoFocus={e => e.preventDefault()}>
         {selected && <><SheetHeader className="pr-6 text-left"><SheetTitle>{selected.name}</SheetTitle><SheetDescription>{selected.description}</SheetDescription></SheetHeader>

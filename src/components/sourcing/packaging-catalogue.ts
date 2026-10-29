@@ -17,7 +17,6 @@ export type CatalogueFilters = Record<AttributeKey, string>;
 export const CLEAR_FILTERS: CatalogueFilters = { style: "all", printing: "all", material: "all", useCase: "all", features: "all", finish: "all", quantity: "all" };
 export const FAMILIES: { id: PackagingFamily; label: string }[] = [
   { id: "boxes", label: "Corrugated Boxes" }, { id: "pouches", label: "Flexible Pouches" },
-  { id: "bottles", label: "Bottles & Jars" }, { id: "labels", label: "Labels & Stickers" }, { id: "other", label: "Other Packaging" },
 ];
 export const CATEGORIES: Record<"boxes" | "pouches", { id: string; label: string }[]> = {
   boxes: [{ id: "all", label: "All Boxes" }, { id: "shipping", label: "Shipping Boxes" }, { id: "mailer", label: "E-commerce Mailers" }, { id: "product", label: "Product Boxes" }, { id: "die-cut", label: "Die-cut Boxes" }, { id: "subscription", label: "Subscription Boxes" }, { id: "gift", label: "Gift Boxes" }, { id: "printed", label: "Printed Boxes" }],
