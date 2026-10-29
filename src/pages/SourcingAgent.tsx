@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, Sparkles, User, X } from "lucide-react";
+import { ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, Sparkles, User, X, Phone, Zap, FileText, Handshake, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
 import { designReferenceImage } from "@/components/sourcing/design-reference-image";
@@ -14,6 +14,8 @@ import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-inta
 const PROJECTS_KEY = "snaplogo.sourcing.projects";
 const TEAM_WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("Hi Snaplogo! I'd like to talk to a sourcing expert about my packaging requirement.");
 
+const TEMPLATE = "I need [quantity] custom [box / pouch type] for my [product] brand — size [L×W×H cm], [material, e.g. 3-ply kraft], [printing, e.g. multicolour logo], budget ₹[price] per piece";
+
 export default function SourcingAgent() {
   const [projects, setProjects] = useState<SourcingProject[]>(() => {
     const saved = readSaved<unknown>(PROJECTS_KEY, []);
@@ -21,6 +23,7 @@ export default function SourcingAgent() {
   });
   const [activeId, setActiveId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(true);
   const [photos, setPhotos] = useState<string[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
