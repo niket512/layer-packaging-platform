@@ -23,7 +23,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   });
   useEffect(() => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(saved)); } catch { /* Session state still works. */ } }, [saved]);
   const available = family === "boxes" || family === "pouches";
-  const primary = available ? PRIMARY_FILTERS[family] : [];
+  const primary = PRIMARY_FILTERS[family as "boxes" | "pouches"];
   const secondary = SECONDARY_FILTERS.filter(f => !primary.some(p => p.key === f.key));
   const definitions = [...primary, ...secondary];
   const shown = browseDesigns(DESIGNS, family, category, filters, "", "default");
