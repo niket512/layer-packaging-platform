@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BOX_DESIGNS, CLEAR_FILTERS, browseDesigns, readShortlist, selectedDesignRequirement } from "./packaging-catalogue";
+import { BOX_DESIGNS, CLEAR_FILTERS, browseDesigns, selectedDesignRequirement } from "./packaging-catalogue";
 import { POUCH_DESIGNS } from "./pouch-designs";
 
 const designs = [...BOX_DESIGNS, ...POUCH_DESIGNS];
@@ -25,9 +25,6 @@ describe("packaging browsing", () => {
   it("searches attributes and sorts names", () => {
     const result = browseDesigns(designs, "pouches", "all", CLEAR_FILTERS, "zipper", "az");
     expect(result.map(d => d.id)).toEqual(["reference-flatbottom", "reference-standup"]);
-  });
-  it("retains mixed-category shortlists and discards stale IDs", () => {
-    expect(readShortlist(["kraft-ship", "reference-spout", "missing", "kraft-ship"], designs)).toEqual(["kraft-ship", "reference-spout"]);
   });
   it("populates all references without invented buyer specifications", () => {
     const text = selectedDesignRequirement([BOX_DESIGNS[0], POUCH_DESIGNS[0]]);

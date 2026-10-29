@@ -6,7 +6,7 @@ import tealMailer from "@/assets/design-mailer-teal.jpg";
 import blackMailer from "@/assets/design-mailer-black.jpg";
 import dieCut from "@/assets/design-diecut-open.jpg";
 
-export type PackagingFamily = "boxes" | "pouches" | "bottles" | "labels" | "other";
+export type PackagingFamily = "boxes" | "pouches";
 export type AttributeKey = "style" | "printing" | "material" | "useCase" | "features" | "finish" | "quantity";
 export type PackagingDesign = {
   id: string; name: string; family: PackagingFamily; categories: string[];
@@ -37,11 +37,6 @@ export const PRIMARY_FILTERS: Record<"boxes" | "pouches", FilterDefinition[]> = 
     { key: "useCase", label: "Application", options: ["Food & Snacks", "Coffee & Tea", "Cosmetics", "Personal Care", "Supplements", "Other"] },
   ],
 };
-export const SECONDARY_FILTERS: FilterDefinition[] = [
-  { key: "printing", label: "Printing", options: ["Plain", "One-colour", "Multicolour"] },
-  { key: "finish", label: "Finish", options: ["Matte", "Glossy", "Transparent", "Metallic"] },
-  { key: "quantity", label: "Order quantity", options: ["Under 1,000", "1,000–5,000", "5,000–10,000", "10,000+"] },
-];
 const BOX_IMAGES: Record<string, string> = { "kraft-ship": kraftShip, "die-cut": dieCut, "logo-mailer": whiteMailer, "pattern-mailer": tealMailer, "brand-shipper": printedKraft, "premium-mailer": blackMailer };
 export const BOX_DESIGNS: PackagingDesign[] = DESIGN_SPECS.map(d => ({
   id: d.id, name: d.name, family: "boxes", categories: [...d.categories, ...(d.style === "Mailer" ? ["subscription"] : []), ...(d.useCase === "Gifting" ? ["gift"] : [])],
@@ -60,8 +55,4 @@ export function browseDesigns(designs: PackagingDesign[], family: PackagingFamil
 
 export function selectedDesignRequirement(designs: PackagingDesign[]) {
   return `Please source ${[...new Set(designs.map(d => FAMILIES.find(f => f.id === d.family)?.label.toLowerCase()))].join(" and ")} using these design references:\n` + designs.map(d => `${d.name} [${d.id}]${Object.entries(d.attributes).length ? ` — ${Object.values(d.attributes).flat().join(", ")}` : ""}`).join("\n") + "\nPlease confirm suitability and quotation details with me.";
-}
-
-export function readShortlist(value: unknown, designs: PackagingDesign[]): string[] {
-  return Array.isArray(value) ? [...new Set(value.filter((id): id is string => typeof id === "string" && designs.some(d => d.id === id)))] : [];
 }
