@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SlidersHorizontal } from "lucide-react";
 import { ArrowRight, Boxes, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,6 +14,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   const [family, setFamily] = useState<PackagingFamily>("boxes");
   const [category, setCategory] = useState("all");
   const [filters, setFilters] = useState<CatalogueFilters>(CLEAR_FILTERS);
+  const [showFilters, setShowFilters] = useState(false);
   const [selected, setSelected] = useState<PackagingDesign | null>(null);
   const primary = PRIMARY_FILTERS[family];
   const shown = browseDesigns(DESIGNS, family, category, filters, "", "default");
@@ -30,7 +32,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     </Select>
   </div>;
   const active = primary.filter(f => filters[f.key] !== "all");
-  return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-12 border-t border-border pt-8 text-left">
+  return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-8 border-t border-border pt-6 text-left md:mt-12 md:pt-8">
     <div><h2 className="text-xl font-semibold">Browse packaging designs</h2><p className="mt-1 text-sm text-muted-foreground">Find a format that fits your next product.</p></div>
     <div role="tablist" aria-label="Packaging category" className="mt-5 flex gap-1 overflow-x-auto border-b border-border pb-2">
       {FAMILIES.map(f => <Button key={f.id} role="tab" aria-selected={family === f.id} variant={family === f.id ? "default" : "ghost"} size="sm" onClick={() => switchFamily(f.id)} className="shrink-0 rounded-full text-xs">{f.label}</Button>)}
@@ -38,13 +40,14 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     <div className="mt-4 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Design categories">
       {CATEGORIES[family].map(item => {
         const representative = DESIGNS.find(d => d.family === family && (item.id === "all" || d.categories.includes(item.id)));
-        return <Button key={item.id} variant="outline" role="tab" aria-selected={category === item.id} onClick={() => setCategory(item.id)} className={`h-24 w-28 shrink-0 flex-col gap-1 rounded-xl p-2 hover:bg-muted text-[11px] ${category === item.id ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>
+        return <Button key={item.id} variant="outline" role="tab" aria-selected={category === item.id} onClick={() => setCategory(item.id)} className={`h-20 w-24 shrink-0 flex-col gap-1 rounded-xl p-2 md:h-24 md:w-28 hover:bg-muted text-[11px] ${category === item.id ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>
           {representative ? <img src={representative.image} alt="" width={64} height={52} loading="lazy" className="h-12 w-16 object-contain" /> : <Boxes className="!h-10 !w-10" />}
           <span className="whitespace-normal text-center leading-tight">{item.label}</span>
         </Button>;
       })}
     </div>
-    <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">{primary.map(filterControl)}</div>
+    <Button variant="outline" size="sm" onClick={() => setShowFilters(v => !v)} aria-expanded={showFilters} className="mt-3 rounded-full text-xs sm:hidden"><SlidersHorizontal />Filters{active.length > 0 && ` (${active.length})`}</Button>
+    <div className={`mt-3 grid-cols-2 gap-2 sm:mt-4 sm:grid sm:grid-cols-4 ${showFilters ? "grid" : "hidden"}`}>{primary.map(filterControl)}</div>
     {(active.length > 0 || category !== "all") && <div className="mt-3 flex flex-wrap items-center gap-1.5">
       {category !== "all" && <Button variant="secondary" size="sm" onClick={() => setCategory("all")} className="h-7 rounded-full text-xs" aria-label="Remove category filter">{CATEGORIES[family].find(c => c.id === category)?.label}<X /></Button>}
       {active.map(f => <Button key={f.key} variant="secondary" size="sm" className="h-7 rounded-full text-xs" onClick={() => setFilters(prev => ({ ...prev, [f.key]: "all" }))} aria-label={`Remove ${f.label} filter`}>{f.label}: {filters[f.key]}<X /></Button>)}
