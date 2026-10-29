@@ -30,7 +30,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     </Select>
   </div>;
   const active = primary.filter(f => filters[f.key] !== "all");
-  return <section aria-label="Browse packaging designs" className="mt-12 border-t border-border pt-8 text-left">
+  return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-12 border-t border-border pt-8 text-left">
     <div><h2 className="text-xl font-semibold">Browse packaging designs</h2><p className="mt-1 text-sm text-muted-foreground">Find a format that fits your next product.</p></div>
     <div role="tablist" aria-label="Packaging category" className="mt-5 flex gap-1 overflow-x-auto border-b border-border pb-2">
       {FAMILIES.map(f => <Button key={f.id} role="tab" aria-selected={family === f.id} variant={family === f.id ? "default" : "ghost"} size="sm" onClick={() => switchFamily(f.id)} className="shrink-0 rounded-full text-xs">{f.label}</Button>)}
@@ -38,7 +38,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     <div className="mt-4 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Design categories">
       {CATEGORIES[family].map(item => {
         const representative = DESIGNS.find(d => d.family === family && (item.id === "all" || d.categories.includes(item.id)));
-        return <Button key={item.id} variant="outline" role="tab" aria-selected={category === item.id} onClick={() => setCategory(item.id)} className={`h-24 w-28 shrink-0 flex-col gap-1 rounded-lg p-2 text-[11px] ${category === item.id ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>
+        return <Button key={item.id} variant="outline" role="tab" aria-selected={category === item.id} onClick={() => setCategory(item.id)} className={`h-24 w-28 shrink-0 flex-col gap-1 rounded-xl p-2 hover:bg-muted text-[11px] ${category === item.id ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>
           {representative ? <img src={representative.image} alt="" width={64} height={52} loading="lazy" className="h-12 w-16 object-contain" /> : <Boxes className="!h-10 !w-10" />}
           <span className="whitespace-normal text-center leading-tight">{item.label}</span>
         </Button>;
