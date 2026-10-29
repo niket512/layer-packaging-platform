@@ -1,5 +1,5 @@
 # Architecture rules
-- Corrugated design browsing uses a local catalogue of reference styles with combined optional filters and a same-page preview; selecting a design prefills the existing chat without inventing buyer quantity, size, budget or manufacturer capabilities.
+- Packaging browsing uses local box and pouch reference catalogues with family-specific combined filters, same-page details and a device-local shared shortlist; selected IDs, names and supported attributes prefill the existing chat, with a composite reference photo using its existing attachment path, to preserve multi-design requests without new submission schemas or invented buyer/manufacturer specifications.
 
 - Procurement (RFQs, quotes, POs, suppliers) lives at `/dashboard/procure` with real Cloud auth and `user_roles` (founder/supplier); the catalogue dashboard keeps its no-login brand link — suppliers must only ever see their own data.
 - Suppliers are linked to founders by the email on the founder's `suppliers` row matching the supplier's sign-in email — avoids a separate invite-token system.
