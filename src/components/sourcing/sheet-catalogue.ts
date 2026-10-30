@@ -1,7 +1,9 @@
 import rows from "@/data/catalogue-sheet.json";
 import type { PackagingDesign } from "./packaging-catalogue";
 
-export type SheetRow = { id: string; f: "boxes" | "pouches"; c: string; l2: string; l3: string; n: string; d?: string; t?: string[]; dim?: string; ply?: string; img: string };
+export type SheetRow = { id: string; f: "boxes" | "pouches"; c: string; l2: string; l3: string; n: string; d?: string; t?: string[]; dim?: string; ply?: string; img: string;
+  /** Read from the product photo by AI; preferred over keyword rules when present. */
+  ai?: { style?: string; printing?: string; category?: string; useCase?: string; features?: string[]; description?: string } };
 
 const BOX_CATEGORY: [string, string[]][] = [
   ["1.1.1", ["mailer"]], ["1.1.2", ["shipping"]], ["1.1.3", ["mailer", "die-cut"]], ["1.1.4", ["subscription", "mailer"]],
@@ -41,16 +43,21 @@ function application(tags: string[]) {
 
 export function sheetDesign(r: SheetRow): PackagingDesign {
   const tags = r.t ?? [];
-  const print = printing(tags);
+  const ai = r.ai ?? {};
+  const print = ai.printing ?? printing(tags);
   const isBox = r.f === "boxes";
-  const categories = [...firstMatch(isBox ? BOX_CATEGORY : POUCH_CATEGORY, r.c), ...(isBox && print && print !== "Plain" ? ["printed"] : [])];
-  const app = isBox ? undefined : application(tags);
+  const style = ai.style ?? (isBox ? boxStyle(r.c) : pouchStyle(r.c));
+  const base = firstMatch(isBox ? BOX_CATEGORY : POUCH_CATEGORY, r.c);
+  const pouchCat = ({ "Stand-up": "stand-up", Flat: "flat", Pillow: "pillow", "Flat-bottom": "flat-bottom", Spout: "spout", Sachet: "sachet-stick", "Stick Pack": "sachet-stick" } as Record<string, string>)[style];
+  const categories = [...new Set([...(isBox ? (ai.category ? [ai.category] : base) : pouchCat ? [pouchCat] : base), ...(isBox && style === "Die-cut" ? ["die-cut"] : []), ...(isBox && style === "Mailer" ? ["mailer"] : []), ...(isBox && print && print !== "Plain" ? ["printed"] : [])])];
+  const app = isBox ? undefined : ai.useCase ?? application(tags);
+  const features = ai.features?.length ? ai.features : tags.includes("zipper") ? ["Zipper"] : [];
   return {
     id: r.id, name: r.n, family: r.f, categories, image: r.img, illustrative: false,
-    description: r.d || `${r.l3} — ${r.l2.toLowerCase()}.`,
+    description: ai.description || r.d || `${r.l3} — ${r.l2.toLowerCase()}.`,
     attributes: isBox
-      ? { style: [boxStyle(r.c)], ...(print ? { printing: [print] } : {}) }
-      : { style: [pouchStyle(r.c)], ...(app ? { useCase: [app] } : {}), ...(tags.includes("zipper") ? { features: ["Zipper"] } : {}) },
+      ? { style: [style], ...(print ? { printing: [print] } : {}) }
+      : { style: [style], ...(app ? { useCase: [app] } : {}), ...(features.length ? { features } : {}) },
     details: [["Type", r.l3], ...(r.dim ? [["Size", r.dim]] : []), ...(r.ply ? [["Ply", r.ply]] : []), ...(tags.length ? [["Tags", tags.join(", ")]] : [])] as [string, string][],
   };
 }
