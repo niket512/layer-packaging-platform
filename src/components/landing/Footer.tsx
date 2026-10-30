@@ -12,6 +12,8 @@ export default function Footer() {
           © {new Date().getFullYear()} Snaplogo · Built for India's D2C ecosystem
         </p>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <a href="/team" className="transition-colors hover:text-primary">Team</a>
+          <span>·</span>
           <a href="/privacy-policy" className="transition-colors hover:text-primary">Privacy Policy</a>
           <span>·</span>
           <a href="mailto:contact@snapit.club" className="transition-colors hover:text-primary">Contact</a>
