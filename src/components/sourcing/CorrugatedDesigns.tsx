@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight, Boxes, X } from "lucide-react";
@@ -28,6 +28,16 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     requestAnimationFrame(() => onUseDesign(selectedDesignRequirement(designs), designs));
   };
   const active = primary.filter(f => filters[f.key] !== "all");
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || shown.length <= limit) return;
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) setLimit(l => Math.min(l + PAGE, shown.length));
+    }, { rootMargin: "600px 0px" });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [shown.length, limit]);
   return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-8 border-t border-border pt-6 text-left md:mt-12 md:pt-8">
     <div><h2 className="text-xl font-semibold">Explore formats</h2><p className="mt-1 text-sm text-muted-foreground">Tap a design to add it to your request.</p></div>
     <div role="tablist" aria-label="Packaging category" className="mt-5 flex gap-1 overflow-x-auto border-b border-border pb-2">
@@ -59,7 +69,9 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
       {shown.slice(0, limit).map(d => <DesignCard key={d.id} design={d} onDetails={() => setSelected(d)} onUse={() => useDesigns([d])} />)}
     </div>
-    {shown.length > limit && <div className="mt-6 text-center"><Button variant="outline" className="rounded-full" onClick={() => setLimit(l => l + PAGE)}>Show more designs ({shown.length - limit} more)</Button></div>}
+    {shown.length > limit && (
+      <div ref={sentinelRef} aria-hidden className="h-4" />
+    )}
     {shown.length === 0 && <div className="py-12 text-center"><Boxes className="mx-auto h-8 w-8 text-muted-foreground" /><p className="mt-3 text-sm font-medium">No designs match your selection</p><p className="mt-1 text-xs text-muted-foreground">Try a different category or fewer filters.</p><Button variant="link" onClick={reset}>Reset filters</Button></div>}
     <Sheet open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg" onCloseAutoFocus={e => e.preventDefault()}>
