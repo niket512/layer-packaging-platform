@@ -29,7 +29,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   };
   const active = primary.filter(f => filters[f.key] !== "all");
   return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-8 border-t border-border pt-6 text-left md:mt-12 md:pt-8">
-    <div><h2 className="text-xl font-semibold">Browse packaging designs</h2><p className="mt-1 text-sm text-muted-foreground">Find a format that fits your next product.</p></div>
+    <div><h2 className="text-xl font-semibold">Browse packaging designs</h2><p className="mt-1 text-sm text-muted-foreground">Tap a design to add it to your request.</p></div>
     <div role="tablist" aria-label="Packaging category" className="mt-5 flex gap-1 overflow-x-auto border-b border-border pb-2">
       {FAMILIES.map(f => <Button key={f.id} role="tab" aria-selected={family === f.id} variant={family === f.id ? "default" : "ghost"} size="sm" onClick={() => switchFamily(f.id)} className="shrink-0 rounded-full text-xs">{f.label}</Button>)}
     </div>
@@ -65,9 +65,8 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg" onCloseAutoFocus={e => e.preventDefault()}>
         {selected && <><SheetHeader className="pr-6 text-left"><SheetTitle>{selected.name}</SheetTitle><SheetDescription>{selected.description}</SheetDescription></SheetHeader>
           <img src={selected.image} alt={selected.name} width={640} height={640} className="mt-5 aspect-square w-full rounded-lg bg-card object-contain" />
-          <p className="mt-2 text-xs text-muted-foreground">{selected.illustrative ? "Illustrative reference — not a supplier product." : "Existing catalogue reference — not a verified supplier specification."}</p>
+          <p className="mt-2 text-xs text-muted-foreground">Reference image — specs to be confirmed with the manufacturer.</p>
           <dl className="mt-4 divide-y divide-border text-sm">{PRIMARY_FILTERS[selected.family].map(f => <div key={f.key} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{f.label}</dt><dd className="font-medium">{selected.attributes[f.key]?.join(", ") || "Unspecified"}</dd></div>)}{selected.details?.map(([k, v]) => <div key={k} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{k}</dt><dd className="font-medium">{v}</dd></div>)}</dl>
-          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Material structure, finishes, quantity and suitability require manufacturer confirmation.</p>
           <Button className="mt-6 w-full rounded-full" onClick={() => useDesigns([selected])}>Use this design <ArrowRight /></Button>
         </>}
       </SheetContent>
