@@ -57,6 +57,15 @@ export default function SourcingAgent() {
     document.title = "Snaplogo Sourcing Agent | Share your packaging requirement";
     document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirements, answer a few focused questions and request a phone follow-up from Snaplogo.");
   }, []);
+  const chatAnchor = useRef<HTMLDivElement>(null);
+  const chatShown = useRef(false);
+  useEffect(() => {
+    if ((current || busy) && !chatShown.current) {
+      chatShown.current = true;
+      requestAnimationFrame(() => chatAnchor.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
+    if (!current && !busy) chatShown.current = false;
+  }, [current, busy]);
 
   const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
   const search = async (text = query) => {
