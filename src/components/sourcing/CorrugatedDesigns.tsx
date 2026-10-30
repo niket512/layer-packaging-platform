@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
 import { ArrowRight, Boxes, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { BOX_DESIGNS, CATEGORIES, CLEAR_FILTERS, FAMILIES, PRIMARY_FILTERS, browseDesigns, selectedDesignRequirement, type CatalogueFilters, type FilterDefinition, type PackagingDesign, type PackagingFamily } from "./packaging-catalogue";
+import { BOX_DESIGNS, CATEGORIES, CLEAR_FILTERS, FAMILIES, PRIMARY_FILTERS, browseDesigns, selectedDesignRequirement, type CatalogueFilters, type PackagingDesign, type PackagingFamily } from "./packaging-catalogue";
 import { POUCH_DESIGNS } from "./pouch-designs";
 import { DesignCard } from "./DesignCard";
 import { SHEET_DESIGNS } from "./sheet-catalogue";
@@ -16,7 +14,6 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   const [family, setFamily] = useState<PackagingFamily>("boxes");
   const [category, setCategory] = useState("all");
   const [filters, setFilters] = useState<CatalogueFilters>(CLEAR_FILTERS);
-  const [showFilters, setShowFilters] = useState(false);
   const [limit, setLimit] = useState(PAGE);
   const [selected, setSelected] = useState<PackagingDesign | null>(null);
   const primary = PRIMARY_FILTERS[family];
@@ -27,37 +24,26 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     setSelected(null);
     requestAnimationFrame(() => onUseDesign(selectedDesignRequirement(designs), designs));
   };
-  const filterControl = (filter: FilterDefinition) => <div key={filter.key}>
-    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">{filter.label}</label>
-    <Select value={filters[filter.key]} onValueChange={value => { setFilters(previous => ({ ...previous, [filter.key]: value })); setLimit(PAGE); }}>
-      <SelectTrigger aria-label={filter.label} className="h-9 min-w-0 bg-card text-xs"><SelectValue /></SelectTrigger>
-      <SelectContent><SelectItem value="all">All</SelectItem>{filter.options.map(value => <SelectItem key={value} value={value}>{value}</SelectItem>)}<SelectItem value="unspecified">Unspecified</SelectItem></SelectContent>
-    </Select>
-  </div>;
   const active = primary.filter(f => filters[f.key] !== "all");
   return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-8 border-t border-border pt-6 text-left md:mt-12 md:pt-8">
     <div><h2 className="text-xl font-semibold">Browse packaging designs</h2><p className="mt-1 text-sm text-muted-foreground">Find a format that fits your next product.</p></div>
-    <div role="tablist" aria-label="Packaging category" className="mt-5 flex gap-1 overflow-x-auto border-b border-border pb-2">
-      {FAMILIES.map(f => <Button key={f.id} role="tab" aria-selected={family === f.id} variant={family === f.id ? "default" : "ghost"} size="sm" onClick={() => switchFamily(f.id)} className="shrink-0 rounded-full text-xs">{f.label}</Button>)}
+    <div role="tablist" aria-label="Packaging category" className="mt-5 inline-flex rounded-full border border-border bg-muted p-1">
+      {FAMILIES.map(f => <button type="button" key={f.id} role="tab" aria-selected={family === f.id} onClick={() => switchFamily(f.id)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${family === f.id ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>{f.label}</button>)}
     </div>
-    <div className="mt-4 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Design categories">
-      {CATEGORIES[family].map(item => {
-        const representative = DESIGNS.find(d => d.family === family && (item.id === "all" || d.categories.includes(item.id)));
-        return <Button key={item.id} variant="outline" role="tab" aria-selected={category === item.id} onClick={() => { setCategory(item.id); setLimit(PAGE); }} className={`h-20 w-24 shrink-0 flex-col gap-1 rounded-xl p-2 md:h-24 md:w-28 hover:bg-muted text-[11px] ${category === item.id ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>
-          {representative ? <img src={representative.image} alt="" width={64} height={52} loading="lazy" className="h-12 w-16 object-contain" /> : <Boxes className="!h-10 !w-10" />}
-          <span className="whitespace-normal text-center leading-tight">{item.label}</span>
-        </Button>;
-      })}
+    <div className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0" role="tablist" aria-label="Design categories">
+      {CATEGORIES[family].map(item => { const on = category === item.id; return <button type="button" key={item.id} role="tab" aria-selected={on} onClick={() => { setCategory(item.id); setLimit(PAGE); }} className={`h-8 shrink-0 rounded-full border px-3.5 text-xs font-medium transition-colors ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground"}`}>{item.label}</button>; })}
     </div>
-    <Button variant="outline" size="sm" onClick={() => setShowFilters(v => !v)} aria-expanded={showFilters} className="mt-3 rounded-full text-xs sm:hidden"><SlidersHorizontal />Filters{active.length > 0 && ` (${active.length})`}</Button>
-    <div className={`mt-3 grid-cols-2 gap-2 sm:mt-4 sm:grid sm:grid-cols-2 ${showFilters ? "grid" : "hidden"}`}>{primary.map(filterControl)}</div>
+    {primary.map(filter => <div key={filter.key} className="-mx-4 mt-2 flex items-center gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0" role="group" aria-label={filter.label}>
+      <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{filter.label}</span>
+      {["all", ...filter.options].map(value => { const on = filters[filter.key] === value; return <button type="button" key={value} aria-pressed={on} onClick={() => { setFilters(prev => ({ ...prev, [filter.key]: value })); setLimit(PAGE); }} className={`h-8 shrink-0 rounded-full border px-3.5 text-xs font-medium transition-colors ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:border-foreground/30 hover:text-foreground"}`}>{value === "all" ? "All" : value}</button>; })}
+    </div>)}
     {(active.length > 0 || category !== "all") && <div className="mt-3 flex flex-wrap items-center gap-1.5">
       {category !== "all" && <Button variant="secondary" size="sm" onClick={() => setCategory("all")} className="h-7 rounded-full text-xs" aria-label="Remove category filter">{CATEGORIES[family].find(c => c.id === category)?.label}<X /></Button>}
       {active.map(f => <Button key={f.key} variant="secondary" size="sm" className="h-7 rounded-full text-xs" onClick={() => setFilters(prev => ({ ...prev, [f.key]: "all" }))} aria-label={`Remove ${f.label} filter`}>{f.label}: {filters[f.key]}<X /></Button>)}
       <Button variant="link" size="sm" className="h-7 text-xs" onClick={reset}>Clear all filters</Button>
     </div>}
     <p aria-live="polite" className="my-3 text-xs text-muted-foreground">{shown.length} {shown.length === 1 ? "design" : "designs"}</p>
-    <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
       {shown.slice(0, limit).map(d => <DesignCard key={d.id} design={d} onDetails={() => setSelected(d)} onUse={() => useDesigns([d])} />)}
     </div>
     {shown.length > limit && <div className="mt-6 text-center"><Button variant="outline" className="rounded-full" onClick={() => setLimit(l => l + PAGE)}>Show more designs ({shown.length - limit} more)</Button></div>}

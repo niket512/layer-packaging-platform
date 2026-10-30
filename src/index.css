@@ -56,20 +56,22 @@
 
   /* Compact public directory — reference-matched dark surfaces */
   .theme-sourcing {
-    --background: 150 24% 97%;
-    --foreground: 160 18% 13%;
-    --primary: 222 81% 54%;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-    --accent: 153 36% 92%;
-    --accent-foreground: 157 36% 25%;
-    --secondary: 153 36% 92%;
-    --secondary-foreground: 157 36% 25%;
-    --muted: 150 15% 94%;
-    --muted-foreground: 155 7% 45%;
-    --border: 150 15% 87%;
-    --input: 150 15% 87%;
-    --ring: 222 81% 54%;
-    --sourcing-shadow: 0 8px 32px hsl(155 20% 20% / 0.05);
+    --accent: 214 100% 97%;
+    --accent-foreground: 221 83% 45%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+    --sourcing-shadow: 0 10px 40px -12px hsl(222 47% 11% / 0.12), 0 2px 6px hsl(222 47% 11% / 0.04);
     --sourcing-success: 152 60% 36%;
     --sourcing-warning: 35 92% 40%;
     --sourcing-warning-soft: 44 96% 94%;
