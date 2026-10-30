@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight, Boxes, X } from "lucide-react";
@@ -59,7 +59,9 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
       {shown.slice(0, limit).map(d => <DesignCard key={d.id} design={d} onDetails={() => setSelected(d)} onUse={() => useDesigns([d])} />)}
     </div>
-    {shown.length > limit && <div className="mt-6 text-center"><Button variant="outline" className="rounded-full" onClick={() => setLimit(l => l + PAGE)}>Show more designs ({shown.length - limit} more)</Button></div>}
+    {shown.length > limit && (
+      <div ref={sentinelRef} aria-hidden className="h-4" />
+    )}
     {shown.length === 0 && <div className="py-12 text-center"><Boxes className="mx-auto h-8 w-8 text-muted-foreground" /><p className="mt-3 text-sm font-medium">No designs match your selection</p><p className="mt-1 text-xs text-muted-foreground">Try a different category or fewer filters.</p><Button variant="link" onClick={reset}>Reset filters</Button></div>}
     <Sheet open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg" onCloseAutoFocus={e => e.preventDefault()}>
