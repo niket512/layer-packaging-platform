@@ -7,18 +7,21 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { BOX_DESIGNS, CATEGORIES, CLEAR_FILTERS, FAMILIES, PRIMARY_FILTERS, browseDesigns, selectedDesignRequirement, type CatalogueFilters, type FilterDefinition, type PackagingDesign, type PackagingFamily } from "./packaging-catalogue";
 import { POUCH_DESIGNS } from "./pouch-designs";
 import { DesignCard } from "./DesignCard";
+import { SHEET_DESIGNS } from "./sheet-catalogue";
 
-const DESIGNS = [...BOX_DESIGNS, ...POUCH_DESIGNS];
+const DESIGNS = [...SHEET_DESIGNS, ...BOX_DESIGNS, ...POUCH_DESIGNS];
+const PAGE = 24;
 
 export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: string, designs: PackagingDesign[]) => void }) {
   const [family, setFamily] = useState<PackagingFamily>("boxes");
   const [category, setCategory] = useState("all");
   const [filters, setFilters] = useState<CatalogueFilters>(CLEAR_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
+  const [limit, setLimit] = useState(PAGE);
   const [selected, setSelected] = useState<PackagingDesign | null>(null);
   const primary = PRIMARY_FILTERS[family];
   const shown = browseDesigns(DESIGNS, family, category, filters, "", "default");
-  const reset = () => { setCategory("all"); setFilters(CLEAR_FILTERS); };
+  const reset = () => { setCategory("all"); setFilters(CLEAR_FILTERS); setLimit(PAGE); };
   const switchFamily = (next: PackagingFamily) => { setFamily(next); reset(); };
   const useDesigns = (designs: PackagingDesign[]) => {
     setSelected(null);
@@ -26,7 +29,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   };
   const filterControl = (filter: FilterDefinition) => <div key={filter.key}>
     <label className="mb-1.5 block text-xs font-medium text-muted-foreground">{filter.label}</label>
-    <Select value={filters[filter.key]} onValueChange={value => setFilters(previous => ({ ...previous, [filter.key]: value }))}>
+    <Select value={filters[filter.key]} onValueChange={value => { setFilters(previous => ({ ...previous, [filter.key]: value })); setLimit(PAGE); }}>
       <SelectTrigger aria-label={filter.label} className="h-9 min-w-0 bg-card text-xs"><SelectValue /></SelectTrigger>
       <SelectContent><SelectItem value="all">All</SelectItem>{filter.options.map(value => <SelectItem key={value} value={value}>{value}</SelectItem>)}<SelectItem value="unspecified">Unspecified</SelectItem></SelectContent>
     </Select>
@@ -40,7 +43,7 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     <div className="mt-4 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Design categories">
       {CATEGORIES[family].map(item => {
         const representative = DESIGNS.find(d => d.family === family && (item.id === "all" || d.categories.includes(item.id)));
-        return <Button key={item.id} variant="outline" role="tab" aria-selected={category === item.id} onClick={() => setCategory(item.id)} className={`h-20 w-24 shrink-0 flex-col gap-1 rounded-xl p-2 md:h-24 md:w-28 hover:bg-muted text-[11px] ${category === item.id ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>
+        return <Button key={item.id} variant="outline" role="tab" aria-selected={category === item.id} onClick={() => { setCategory(item.id); setLimit(PAGE); }} className={`h-20 w-24 shrink-0 flex-col gap-1 rounded-xl p-2 md:h-24 md:w-28 hover:bg-muted text-[11px] ${category === item.id ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>
           {representative ? <img src={representative.image} alt="" width={64} height={52} loading="lazy" className="h-12 w-16 object-contain" /> : <Boxes className="!h-10 !w-10" />}
           <span className="whitespace-normal text-center leading-tight">{item.label}</span>
         </Button>;
@@ -55,15 +58,16 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     </div>}
     <p aria-live="polite" className="my-3 text-xs text-muted-foreground">{shown.length} {shown.length === 1 ? "design" : "designs"}</p>
     <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-3">
-      {shown.map(d => <DesignCard key={d.id} design={d} onDetails={() => setSelected(d)} onUse={() => useDesigns([d])} />)}
+      {shown.slice(0, limit).map(d => <DesignCard key={d.id} design={d} onDetails={() => setSelected(d)} onUse={() => useDesigns([d])} />)}
     </div>
+    {shown.length > limit && <div className="mt-6 text-center"><Button variant="outline" className="rounded-full" onClick={() => setLimit(l => l + PAGE)}>Show more designs ({shown.length - limit} more)</Button></div>}
     {shown.length === 0 && <div className="py-12 text-center"><Boxes className="mx-auto h-8 w-8 text-muted-foreground" /><p className="mt-3 text-sm font-medium">No designs match your selection</p><p className="mt-1 text-xs text-muted-foreground">Try a different category or fewer filters.</p><Button variant="link" onClick={reset}>Reset filters</Button></div>}
     <Sheet open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg" onCloseAutoFocus={e => e.preventDefault()}>
         {selected && <><SheetHeader className="pr-6 text-left"><SheetTitle>{selected.name}</SheetTitle><SheetDescription>{selected.description}</SheetDescription></SheetHeader>
           <img src={selected.image} alt={selected.name} width={640} height={640} className="mt-5 aspect-square w-full rounded-lg bg-card object-contain" />
           <p className="mt-2 text-xs text-muted-foreground">{selected.illustrative ? "Illustrative reference — not a supplier product." : "Existing catalogue reference — not a verified supplier specification."}</p>
-          <dl className="mt-4 divide-y divide-border text-sm">{PRIMARY_FILTERS[selected.family].map(f => <div key={f.key} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{f.label}</dt><dd className="font-medium">{selected.attributes[f.key]?.join(", ") || "Unspecified"}</dd></div>)}</dl>
+          <dl className="mt-4 divide-y divide-border text-sm">{PRIMARY_FILTERS[selected.family].map(f => <div key={f.key} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{f.label}</dt><dd className="font-medium">{selected.attributes[f.key]?.join(", ") || "Unspecified"}</dd></div>)}{selected.details?.map(([k, v]) => <div key={k} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{k}</dt><dd className="font-medium">{v}</dd></div>)}</dl>
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Material structure, finishes, quantity and suitability require manufacturer confirmation.</p>
           <Button className="mt-6 w-full rounded-full" onClick={() => useDesigns([selected])}>Use this design <ArrowRight /></Button>
         </>}
