@@ -28,6 +28,16 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     requestAnimationFrame(() => onUseDesign(selectedDesignRequirement(designs), designs));
   };
   const active = primary.filter(f => filters[f.key] !== "all");
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || shown.length <= limit) return;
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) setLimit(l => Math.min(l + PAGE, shown.length));
+    }, { rootMargin: "600px 0px" });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [shown.length, limit]);
   return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-8 border-t border-border pt-6 text-left md:mt-12 md:pt-8">
     <div><h2 className="text-xl font-semibold">Explore formats</h2><p className="mt-1 text-sm text-muted-foreground">Tap a design to add it to your request.</p></div>
     <div role="tablist" aria-label="Packaging category" className="mt-5 flex gap-1 overflow-x-auto border-b border-border pb-2">
