@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
 import { ArrowRight, Boxes, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { BOX_DESIGNS, CATEGORIES, CLEAR_FILTERS, FAMILIES, PRIMARY_FILTERS, browseDesigns, selectedDesignRequirement, type CatalogueFilters, type FilterDefinition, type PackagingDesign, type PackagingFamily } from "./packaging-catalogue";
+import { BOX_DESIGNS, CATEGORIES, CLEAR_FILTERS, FAMILIES, PRIMARY_FILTERS, browseDesigns, selectedDesignRequirement, type CatalogueFilters, type PackagingDesign, type PackagingFamily } from "./packaging-catalogue";
 import { POUCH_DESIGNS } from "./pouch-designs";
 import { DesignCard } from "./DesignCard";
 import { SHEET_DESIGNS } from "./sheet-catalogue";
@@ -16,7 +14,6 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
   const [family, setFamily] = useState<PackagingFamily>("boxes");
   const [category, setCategory] = useState("all");
   const [filters, setFilters] = useState<CatalogueFilters>(CLEAR_FILTERS);
-  const [showFilters, setShowFilters] = useState(false);
   const [limit, setLimit] = useState(PAGE);
   const [selected, setSelected] = useState<PackagingDesign | null>(null);
   const primary = PRIMARY_FILTERS[family];
@@ -27,13 +24,6 @@ export function CorrugatedDesigns({ onUseDesign }: { onUseDesign: (prefill: stri
     setSelected(null);
     requestAnimationFrame(() => onUseDesign(selectedDesignRequirement(designs), designs));
   };
-  const filterControl = (filter: FilterDefinition) => <div key={filter.key}>
-    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">{filter.label}</label>
-    <Select value={filters[filter.key]} onValueChange={value => { setFilters(previous => ({ ...previous, [filter.key]: value })); setLimit(PAGE); }}>
-      <SelectTrigger aria-label={filter.label} className="h-9 min-w-0 bg-card text-xs"><SelectValue /></SelectTrigger>
-      <SelectContent><SelectItem value="all">All</SelectItem>{filter.options.map(value => <SelectItem key={value} value={value}>{value}</SelectItem>)}<SelectItem value="unspecified">Unspecified</SelectItem></SelectContent>
-    </Select>
-  </div>;
   const active = primary.filter(f => filters[f.key] !== "all");
   return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-8 border-t border-border pt-6 text-left md:mt-12 md:pt-8">
     <div><h2 className="text-xl font-semibold">Browse packaging designs</h2><p className="mt-1 text-sm text-muted-foreground">Find a format that fits your next product.</p></div>
