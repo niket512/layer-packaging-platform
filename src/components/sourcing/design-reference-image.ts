@@ -2,11 +2,15 @@ import type { PackagingDesign } from "./packaging-catalogue";
 
 /** Preserve every selected reference in one chat attachment, leaving room for buyer uploads. */
 export async function designReferenceImage(designs: PackagingDesign[]): Promise<string> {
-  const images = await Promise.all(designs.map(async design => {
-    const response = await fetch(design.image);
-    if (!response.ok) throw new Error("Couldn’t attach the design reference. Please try selecting it again.");
-    return createImageBitmap(await response.blob());
+  // Remote catalogue photos may block downloads; keep the ones that load.
+  const loaded = await Promise.all(designs.map(async design => {
+    try {
+      const response = await fetch(design.image);
+      return response.ok ? await createImageBitmap(await response.blob()) : null;
+    } catch { return null; }
   }));
+  const images = loaded.filter((image): image is ImageBitmap => image !== null);
+  if (!images.length) throw new Error("This design’s photo couldn’t be attached, but its name and ID are in your request.");
   try {
     const columns = Math.ceil(Math.sqrt(images.length));
     const cell = images.length === 1 ? 600 : 240;

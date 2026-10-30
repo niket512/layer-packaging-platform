@@ -1,0 +1,14 @@
+import { describe, expect, it } from "vitest";
+import { SHEET_DESIGNS, sheetDesign } from "./sheet-catalogue";
+
+describe("spreadsheet catalogue", () => {
+  it("loads only boxes and pouches with photos", () => {
+    expect(SHEET_DESIGNS.length).toBe(646);
+    expect(SHEET_DESIGNS.every(d => (d.family === "boxes" || d.family === "pouches") && d.image)).toBe(true);
+  });
+  it("leaves printing unspecified when the source does not say", () => {
+    const d = sheetDesign({ id: "X", f: "boxes", c: "1.1.2", l2: "Shipping", l3: "RSC", n: "Box", img: "a", t: ["3-ply"] });
+    expect(d.attributes.printing).toBeUndefined();
+    expect(d.attributes.style).toEqual(["Regular Slotted Carton (RSC)"]);
+  });
+});
