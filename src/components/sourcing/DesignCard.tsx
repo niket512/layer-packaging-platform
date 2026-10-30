@@ -15,7 +15,7 @@ export function DesignCard({ design, onDetails, onUse }: { design: PackagingDesi
       <h3 className="mt-1 text-sm font-semibold leading-snug">{design.name}</h3>
       <p className="mb-2 mt-1 line-clamp-1 text-[11px] text-primary sm:mb-0 sm:mt-2 sm:text-xs">{labels.join(" · ")}</p>
       <p className="mb-3 mt-2 hidden text-xs leading-relaxed sm:block text-muted-foreground">{design.description}</p>
-      <div className="mt-auto flex items-center justify-between gap-2"><Button variant="link" size="sm" onClick={onDetails} className="hidden h-8 px-0 text-xs sm:inline-flex">View details <ArrowRight /></Button><Button size="sm" onClick={onUse} className="h-9 w-full rounded-full px-3 text-xs font-semibold sm:w-auto">Use this design <ArrowRight /></Button></div>
+      <div className="mt-auto flex items-center justify-between gap-2"><Button variant="link" size="sm" onClick={onDetails} className="hidden h-8 px-0 text-xs sm:inline-flex">View details <ArrowRight /></Button><Button size="sm" onClick={onUse} className="h-9 w-full rounded-full px-3 text-xs font-semibold sm:w-auto">Select <ArrowRight /></Button></div>
     </div>
   </article>;
 }
