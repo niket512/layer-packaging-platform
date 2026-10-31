@@ -36,7 +36,7 @@ const App = () => (
         <SeoMetadata />
         <Routes>
           <Route path="/" element={isMfrHost ? <ManufacturersDirectory /> : isAppHost ? <AppHome /> : <SourcingAgent />} />
-          <Route path="/landing" element={<Index />} />
+          <Route path="/about" element={<Index />} />
           <Route path="/manufacturers" element={<ManufacturersDirectory />} />
           <Route path="/sourcing" element={<SourcingAgent />} />
           <Route path="/sourcing/thank-you" element={<SourcingThankYou />} />

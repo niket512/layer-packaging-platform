@@ -20,8 +20,8 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
     description: SITE_DESCRIPTION,
     noindex: true,
   },
-  "/landing": {
-    title: `D2C Procurement | ${SITE_TITLE}`,
+  "/about": {
+    title: `About | ${SITE_TITLE}`,
     description: SITE_DESCRIPTION,
   },
   "/manufacturers": {
