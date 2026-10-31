@@ -8,7 +8,6 @@ import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
-import { recordSourcingLead } from "@/lib/sourcing-conversion";
 import logo from "@/assets/snaplogo-orange.png";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
