@@ -6,7 +6,7 @@ import { fetchPublishedManufacturers } from "@/data/directory";
 const BASE_URL = "https://snaplogo.in";
 const SITE_TITLE = "Corrugated Box, Sachet & Stand-Up Pouch Manufacturers | Snaplogo";
 const SITE_DESCRIPTION = "Source corrugated boxes, sachets and stand-up pouches from vetted manufacturers. Share your preferred city, such as Ahmedabad, and get quotes within 24 hours.";
-const pages: Record<string, { title: string; description: string }> = {
+const pages: Record<string, { title: string; description: string; noindex?: boolean }> = {
   "/": {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
@@ -14,6 +14,11 @@ const pages: Record<string, { title: string; description: string }> = {
   "/sourcing": {
     title: `Sourcing Request | ${SITE_TITLE}`,
     description: SITE_DESCRIPTION,
+  },
+  "/sourcing/thank-you": {
+    title: `Request Received | ${SITE_TITLE}`,
+    description: SITE_DESCRIPTION,
+    noindex: true,
   },
   "/landing": {
     title: `D2C Procurement | ${SITE_TITLE}`,
@@ -58,7 +63,7 @@ export default function SeoMetadata() {
       <title>{title}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonical} />
-      <meta name="robots" content={page ? "index, follow" : "noindex, follow"} />
+      <meta name="robots" content={page && !page.noindex ? "index, follow" : "noindex, follow"} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonical} />
