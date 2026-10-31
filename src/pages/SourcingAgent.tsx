@@ -117,7 +117,6 @@ export default function SourcingAgent() {
         <Button onClick={startNew} disabled={busy || submitting} className="mt-8 w-full justify-start rounded-full shadow-sm"><Plus />New sourcing request</Button>
         {projects.length > 0 && <button type="button" onClick={() => setHistoryOpen(o => !o)} aria-expanded={historyOpen} className="mt-8 flex w-full items-center justify-between px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground">Previous requests<ChevronRight className={`h-3.5 w-3.5 transition-transform ${historyOpen ? "rotate-90" : ""}`} /></button>}
         <div className={`mt-2 flex-1 space-y-0.5 overflow-y-auto ${historyOpen ? "" : "hidden"}`} >{projects.map(p => <button type="button" key={p.id} disabled={busy || submitting} onClick={() => { setActiveId(p.id); setPhotos([]); setQuery(""); setError(""); }} className={`block w-full rounded-lg border-l-2 px-3 py-2.5 text-left transition-colors duration-150 disabled:opacity-60 ${p.id === activeId ? "border-primary bg-accent" : "border-transparent hover:bg-muted"}`}><span className="block truncate text-[13px] font-medium text-foreground" title={sourcingProjectTitle(p)}>{sourcingProjectTitle(p)}</span><span className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground"><span className={`rounded-full px-2 py-px text-[10px] font-semibold ${p.submitted ? "bg-[hsl(var(--sourcing-success)/0.12)] text-[hsl(var(--sourcing-success))]" : "bg-muted text-muted-foreground"}`}>{p.submitted ? "Submitted" : "Draft"}</span>{p.createdAt && new Date(p.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span></button>)}</div>
-        <Button asChild variant="ghost" size="sm" className="mt-4 justify-start text-muted-foreground"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button>
       </aside>
       <div className="lg:ml-60">
         <header className="sticky top-0 z-10 flex h-12 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 backdrop-blur md:h-16 md:px-10">
@@ -165,7 +164,6 @@ export default function SourcingAgent() {
               <SourcingBrief fields={project.brief ?? []} submitted onSave={fields => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, brief: fields.filter(f => f.value.trim()) } : p))} />
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button onClick={startNew} className="rounded-full sm:flex-none"><Plus />New sourcing request</Button>
-                <Button asChild variant="outline" className="rounded-full sm:flex-none"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button>
               </div>
             </section> : <>
               {askingPhone && !designStep && <div className="mb-5 border-l-2 border-primary pl-4"><h3 className="text-sm font-semibold">What happens next</h3><p className="mt-1 text-sm leading-relaxed text-muted-foreground">We match manufacturers and share quotes on WhatsApp.</p></div>}
