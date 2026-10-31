@@ -7,9 +7,9 @@
 - [x] Verify questions, phone submission and absence of supplier details.
 
 # SEO corrections
-- [ ] Improve public page titles, descriptions and social metadata; verify route transitions.
-- [ ] Add a sitemap of public pages and reference it in crawler instructions.
-- [ ] Verify corrections and update the reported SEO findings.
+- [x] Improve public page titles, descriptions and social metadata; verify route transitions.
+- [x] Add a sitemap of public pages and reference it in crawler instructions.
+- [x] Verify corrections and update the reported SEO findings.
 
 # Corrugated-box questions
 - [x] Tailor optional sourcing questions to the supplied corrugated-box options, retaining the five-question limit.
