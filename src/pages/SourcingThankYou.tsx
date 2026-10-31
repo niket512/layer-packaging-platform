@@ -23,16 +23,7 @@ export default function SourcingThankYou() {
   const phoneDisplay = phone.startsWith("+") ? phone : phone ? `+91 ${phone}` : "";
 
   useEffect(() => {
-    document.title = "Request received — Snaplogo";
-    let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
-    if (!robots) {
-      robots = document.createElement("meta");
-      robots.name = "robots";
-      document.head.appendChild(robots);
-    }
-    robots.content = "noindex, nofollow";
     if (payload?.leadId) recordSourcingLead(payload.leadId, true);
-    return () => { if (robots) robots.content = "index, follow"; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
