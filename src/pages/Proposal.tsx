@@ -99,7 +99,6 @@ export default function Proposal() {
 
             {/* CTA */}
             <section className="rounded-xl bg-primary px-5 py-5 text-center md:px-10">
-              <div>
               <h3 className="font-heading text-lg font-semibold tracking-tight text-primary-foreground md:text-xl">
                 Interested in the pilot?
               </h3>
