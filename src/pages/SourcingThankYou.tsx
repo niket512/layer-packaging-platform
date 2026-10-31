@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { Check, MessageSquare, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
-import { readSaved, type SourcingBriefField } from "@/lib/sourcing";
+import { readSaved } from "@/lib/sourcing";
+import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 import { recordSourcingLead } from "@/lib/sourcing-conversion";
 import logo from "@/assets/snaplogo-orange.png";
 
