@@ -1,0 +1,43 @@
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
+import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
+import logo from "@/assets/snaplogo-orange.png";
+
+export const DESIGN_PREFILL_KEY = "snaplogo.design-prefill";
+
+export default function Designs() {
+  const navigate = useNavigate();
+
+  const useDesign = (prefill: string, designs: PackagingDesign[]) => {
+    try {
+      sessionStorage.setItem(DESIGN_PREFILL_KEY, JSON.stringify({ prefill, designs }));
+    } catch {
+      // Storage full or unavailable — the prefill text still carries the reference.
+    }
+    navigate("/");
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-10 flex h-12 items-center gap-2 border-b border-border bg-card/90 px-4 backdrop-blur md:h-16 md:px-10">
+        <Link to="/" className="flex items-center gap-2 font-bold">
+          <img src={logo} alt="" className="h-6 w-6" />snaplogo<span className="text-primary">.</span>
+        </Link>
+        <Button asChild variant="ghost" size="sm" className="ml-auto text-muted-foreground">
+          <Link to="/"><ArrowLeft />Back to sourcing</Link>
+        </Button>
+      </header>
+      <main className="mx-auto max-w-[1000px] px-4 pb-12 pt-8 md:px-10 md:pt-12">
+        <h1 className="text-2xl font-bold tracking-tight md:text-4xl">Packaging design gallery</h1>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          Browse corrugated box and flexible pouch references. Pick a design to start a sourcing request with it attached.
+        </p>
+        <div className="mt-6">
+          <CorrugatedDesigns onUseDesign={useDesign} />
+        </div>
+      </main>
+    </div>
+  );
+}
