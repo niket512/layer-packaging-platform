@@ -22,6 +22,7 @@
 - [x] Test option coverage and verify the live chat.
 
 # Faster sourcing replies
+- [ ] Measure current response delays and reduce streaming/context overhead without changing model or quotation quality.
 - [x] Show questions as they arrive without changing the AI model or reducing question coverage.
 - [x] Skip unnecessary AI calls after the question budget is exhausted and verify the conversation.
 
