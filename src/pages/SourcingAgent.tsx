@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, Sparkles, User, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
@@ -8,7 +8,6 @@ import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
-import { recordSourcingLead } from "@/lib/sourcing-conversion";
 import logo from "@/assets/snaplogo-orange.png";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
@@ -18,6 +17,7 @@ const TEAM_WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("H
 const TEMPLATE = "I need [quantity] custom [box / pouch type] for my [product] brand — size [L×W×H cm], [material, e.g. 3-ply kraft], [printing, e.g. multicolour logo], budget ₹[price] per piece";
 
 export default function SourcingAgent() {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState<SourcingProject[]>(() => {
     const saved = readSaved<unknown>(PROJECTS_KEY, []);
     return Array.isArray(saved) ? saved.filter(p => p && typeof p.id === "string" && typeof p.title === "string" && Array.isArray(p.turns)) : [];
@@ -97,10 +97,11 @@ export default function SourcingAgent() {
     try {
       const { error: insertError } = await supabase.from("requirement_submissions").insert(payload);
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
-      if (activeId) recordSourcingLead(activeId, true);
       const phoneDisplay = phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`;
       setProjects(prev => prev.map(p => p.id === activeId ? { ...p, submitted: true, phone: phone.trim(), turns: [...p.turns, { query: phoneDisplay, matches: [], images: draft.images }, ...(draft.query.trim() ? [{ query: draft.query.trim(), matches: [] }] : [])] } : p));
       setQuery(""); setPhotos([]);
+      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: activeId ?? crypto.randomUUID(), phone: phone.trim(), brief: project?.brief ?? [] })); } catch { /* Confirmation still works without the saved brief. */ }
+      navigate("/sourcing/thank-you");
     } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setSubmitting(false); }
   };

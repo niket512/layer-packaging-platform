@@ -19,6 +19,7 @@ import AppAdmin from "./pages/AppAdmin.tsx";
 import ManufacturersDirectory from "./pages/ManufacturersDirectory.tsx";
 import ManufacturerProfile from "./pages/ManufacturerProfile.tsx";
 import SourcingAgent from "./pages/SourcingAgent.tsx";
+import SourcingThankYou from "./pages/SourcingThankYou.tsx";
 
 const queryClient = new QueryClient();
 const host = typeof window !== "undefined" ? window.location.hostname : "";
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/landing" element={<Index />} />
           <Route path="/manufacturers" element={<ManufacturersDirectory />} />
           <Route path="/sourcing" element={<SourcingAgent />} />
+          <Route path="/sourcing/thank-you" element={<SourcingThankYou />} />
           <Route path="/manufacturers/:slug" element={<ManufacturerProfile />} />
           <Route path="/app" element={<AppHome />} />
           <Route path="/app/store" element={<AppStore />} />
