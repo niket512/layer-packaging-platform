@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fetchPublishedManufacturers } from "@/data/directory";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sortSourcingBrief, sourcingRequest, sourcingSubmission, unclearBriefNotes, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply, type SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, conversationalIntakeContext, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply, type SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 
 describe("sourcing brief", () => {
   it("keeps explicit capa-board values and does not invent unknown printing", () => {
@@ -124,6 +124,32 @@ describe("sourcing photos", () => {
 });
 
 describe("sourcing response latency", () => {
+  it("sends requirements once while preserving prior questions, corrections and state", () => {
+    const conversation = [{ request: "5000 coffee boxes", questions: [{ topic: "size", question: "Dimensions?" }], stage: "quotation", hasImages: true }];
+    const brief = [{ topic: "quantity", value: "5000", source: "buyer" }];
+    const context = conversationalIntakeContext("5000 coffee boxes\nFollow-up: 25 x 20 x 8 cm", "25 x 20 x 8 cm", conversation, brief, true, "quotation");
+    expect(context).toEqual({ latest: "25 x 20 x 8 cm", conversation, brief, quotationAsked: true, currentStage: "quotation" });
+    expect(JSON.stringify(context).match(/5000 coffee boxes/g)).toHaveLength(1);
+    const long = conversationalIntakeContext("initial requirement", "latest", Array.from({ length: 13 }, (_, i) => ({ request: String(i) })), [], true, "design");
+    expect(long.request).toBe("initial requirement");
+    expect(long.conversation).toHaveLength(12);
+  });
+  it("shows partial acknowledgements before completion without advancing state early", async () => {
+    let controller: ReadableStreamDefaultController<Uint8Array> | undefined;
+    const response = new Response(new ReadableStream<Uint8Array>({ start(value) { controller = value; } }));
+    const messages: string[] = [];
+    const replies: IntakeReply[] = [];
+    const reading = readSourcingStream(response, () => {}, reply => replies.push(reply), message => messages.push(message));
+    controller?.enqueue(new TextEncoder().encode('{"message":"Understood","questions":[]}\n'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(messages).toEqual(["Understood"]);
+    expect(replies).toEqual([]);
+    controller?.enqueue(new TextEncoder().encode('{"message":"Understood.","stage":"design","hasRequirement":true,"questions":[],"brief":[],"done":true}\n'));
+    controller?.close();
+    await reading;
+    expect(replies[0].stage).toBe("design");
+    expect(replies[0].message).toBe("Understood.");
+  });
   it("does not call AI again after five questions or an explicit skip", () => {
     expect(needsSourcingQuestions([])).toBe(true);
     expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: ["quantity", "size", "format", "wall", "printing"].map(topic => ({ topic, question: "Your preference?" })) }])).toBe(false);
