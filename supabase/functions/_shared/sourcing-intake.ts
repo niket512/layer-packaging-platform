@@ -48,6 +48,19 @@ export type IntakeStage = typeof INTAKE_STAGES[number];
 export interface SourcingBriefField { topic: string; value: string; source: "text" | "image" | "buyer" }
 export interface IntakeReply { message: string; stage: IntakeStage; hasRequirement: boolean; questions: { topic: string; question: string }[]; brief?: SourcingBriefField[] }
 
+/** Send each user message once; retain the legacy aggregate if older turns fall outside the context window. */
+export function conversationalIntakeContext(query: string, latest: string, conversation: unknown, brief: unknown, quotationAsked: boolean, currentStage: string) {
+  const turns = Array.isArray(conversation) ? conversation : [];
+  return {
+    ...(turns.length > 12 ? { request: query } : {}),
+    latest,
+    brief,
+    quotationAsked,
+    currentStage,
+    conversation: turns.slice(-12),
+  };
+}
+
 export function validatedBrief(value: unknown): SourcingBriefField[] {
   if (!Array.isArray(value)) return [];
   const fields = new Map<string, SourcingBriefField>();
