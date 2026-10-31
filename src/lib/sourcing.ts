@@ -95,7 +95,7 @@ export function recordSourcingFollowUp(project: SourcingProject): SourcingProjec
   return { ...project, turns: project.turns.map((turn, i) => i === project.turns.length - 1 ? { ...turn, followUp } : turn) };
 }
 
-export async function readSourcingStream(response: Response, onQuestions: (value: unknown) => void, onReply?: (reply: IntakeReply) => void): Promise<unknown> {
+export async function readSourcingStream(response: Response, onQuestions: (value: unknown) => void, onReply?: (reply: IntakeReply) => void, onMessage?: (message: string) => void): Promise<unknown> {
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
     throw new Error(payload.error || "I couldn’t continue this conversation. Please try again.");
@@ -117,7 +117,10 @@ export async function readSourcingStream(response: Response, onQuestions: (value
         const event = JSON.parse(line);
         if (event.error) throw new Error(event.error);
         if (event.done) { final = event.questions; completed = true; if (event.stage) onReply?.(event); }
-        else onQuestions(event.questions);
+        else {
+          onQuestions(event.questions);
+          if (typeof event.message === "string") onMessage?.(event.message);
+        }
       }
       if (done) break;
     }

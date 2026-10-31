@@ -34,6 +34,7 @@ export default function SourcingAgent() {
   const [error, setError] = useState("");
   const [pendingQuery, setPendingQuery] = useState("");
   const [liveQuestions, setLiveQuestions] = useState<SourcingQuestion[]>([]);
+  const [liveMessage, setLiveMessage] = useState("");
   const input = useRef<HTMLTextAreaElement>(null);
   const project = projects.find(p => p.id === activeId);
   const turns = project?.turns ?? [];
@@ -84,7 +85,7 @@ export default function SourcingAgent() {
     if (askingPhone && !designStep && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }
     if (askingPhone && !designStep && looksLikeSourcingPhone(trimmed)) { setError("That doesn’t look like a valid WhatsApp number. Please share a 10-digit number, e.g. 98765 43210."); return; }
     if (!trimmed || busy || submitting || project?.submitted) return;
-    setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]);
+    setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]); setLiveMessage("");
     const id = activeId ?? crypto.randomUUID();
     try {
       let questions: unknown = [];
@@ -95,13 +96,13 @@ export default function SourcingAgent() {
           headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
           body: JSON.stringify({ query: sourcingRequest(turns, trimmed), latest: trimmed, images: photos, brief: project?.brief ?? [], mode: "intake", stream: true, conversational: true, quotationAsked: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0), currentStage: current?.stage ?? (hasQuestions ? "quotation" : designStep ? "design" : askingPhone ? "phone" : "clarify"), conversation: turns.map(t => ({ request: t.query, response: t.assistantMessage, stage: t.stage, questions: t.questions ?? [], followUp: t.followUp, hasImages: (t.images?.length ?? 0) > 0, skipped: t.questionsSkipped ?? false })) }),
         });
-        questions = await readSourcingStream(response, value => setLiveQuestions(turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(value, turns)), value => { reply = value; });
+        questions = await readSourcingStream(response, value => setLiveQuestions(turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(value, turns)), value => { reply = value; }, setLiveMessage);
       }
       const turn = { query: trimmed, matches: [], questions: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(questions, turns), images: photos, assistantMessage: reply?.message, stage: reply?.stage ?? "clarify" as const, hasRequirement: reply?.hasRequirement ?? false };
       setProjects(prev => prev.some(p => p.id === id) ? prev.map(p => p.id === id ? { ...p, brief: mergeSourcingBrief(p.brief, reply?.brief), designDone: p.designDone || reply?.stage === "phone", turns: [...p.turns, turn] } : p) : [{ id, title: trimmed.slice(0, 65), createdAt: new Date().toISOString(), brief: mergeSourcingBrief([], reply?.brief), turns: [turn] }, ...prev]);
       setActiveId(id); setQuery(""); setPhotos([]);
     } catch (e) { setError(e instanceof Error ? e.message : "Something went wrong. Please try again."); }
-    finally { setBusy(false); setPendingQuery(""); setLiveQuestions([]); }
+    finally { setBusy(false); setPendingQuery(""); setLiveQuestions([]); setLiveMessage(""); }
   };
   const submitPhone = async (phone: string) => {
     const draft = { query: validSourcingPhone(query.trim()) ? "" : query, images: photos };
