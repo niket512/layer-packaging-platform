@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, FileText, Clock, MessageCircle, Truck, RefreshCw, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/snaplogo-orange.png";
 
@@ -144,7 +143,6 @@ export default function Proposal() {
                       {submitting ? "..." : "Get Started"} <ArrowRight className="ml-1.5 h-4 w-4" />
                     </Button>
                   </form>
-                </>
                 </>
               )}
             </section>
