@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, FileText, Clock, MessageCircle, Truck, RefreshCw, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -26,6 +27,7 @@ const terms = [
 ];
 
 export default function Proposal() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [brand, setBrand] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -46,7 +48,8 @@ export default function Proposal() {
       return;
     }
     setSubmitted(true);
-    toast({ title: "Interest recorded", description: "We will reach out within 24 hours." });
+    toast({ title: "Interest recorded", description: "Taking you back to the main page." });
+    setTimeout(() => navigate("/"), 1500);
   };
 
   return (
