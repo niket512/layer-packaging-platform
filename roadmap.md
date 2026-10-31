@@ -6,6 +6,11 @@
 - [x] Collect a phone number and save the request for human follow-up.
 - [x] Verify questions, phone submission and absence of supplier details.
 
+# SEO corrections
+- [ ] Improve public page titles, descriptions and social metadata; verify route transitions.
+- [ ] Add a sitemap of public pages and reference it in crawler instructions.
+- [ ] Verify corrections and update the reported SEO findings.
+
 # Corrugated-box questions
 - [x] Tailor optional sourcing questions to the supplied corrugated-box options, retaining the five-question limit.
 - [x] Test option coverage and verify the live chat.
