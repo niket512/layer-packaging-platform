@@ -183,7 +183,6 @@ export default function SourcingAgent() {
                 <Button onClick={startNew} className="rounded-full sm:flex-none"><Plus />New sourcing request</Button>
               </div>
             </section> : <>
-              {askingPhone && !designStep && <div className="mb-2 rounded-xl border border-border bg-card px-4 py-3"><p className="text-sm font-semibold text-foreground">Your brief is ready to send</p><p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">We’ll send this to our manufacturer network with your enquiry. Check it’s correct before submitting.</p><SourcingBrief fields={project?.brief ?? []} onSave={fields => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, brief: fields.filter(f => f.value.trim()) } : p))} /></div>}
               <div className="mt-6">{composer(true)}</div>
               {submitting && <p role="status" className="mt-2 flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="h-3.5 w-3.5 animate-spin" />Sending your request…</p>}
               {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => void search("Skip the optional quotation details for now; use my packaging requirement.")}>Skip for now<ArrowRight /></Button></div>}
