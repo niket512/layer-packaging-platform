@@ -31,25 +31,12 @@ export default function Proposal() {
   const [email, setEmail] = useState("");
   const [brand, setBrand] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !brand.trim()) return;
     setSubmitting(true);
-    const { error } = await supabase.from("access_requests").insert({
-      brand: brand.trim(),
-      email: email.trim(),
-      requirement: "Proposal page interest",
-    });
-    setSubmitting(false);
-    if (error) {
-      toast({ title: "Submission failed", description: error.message, variant: "destructive" });
-      return;
-    }
-    setSubmitted(true);
-    toast({ title: "Interest recorded", description: "Taking you back to the main page." });
-    setTimeout(() => navigate("/"), 1500);
+    navigate("/");
   };
 
   return (
