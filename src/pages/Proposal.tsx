@@ -145,6 +145,7 @@ export default function Proposal() {
                     </Button>
                   </form>
                 </>
+                </>
               )}
             </section>
           </div>
