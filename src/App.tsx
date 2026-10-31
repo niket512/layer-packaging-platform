@@ -4,6 +4,7 @@ import { HelmetProvider } from "react-helmet-async";
 import SeoMetadata from "@/components/SeoMetadata";
 import Team from "./pages/Team.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
+import Designs from "./pages/Designs.tsx";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/proposal" element={<Proposal />} />
           <Route path="/team" element={<Team />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/designs" element={<Designs />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard/procure" element={<Procure />} />

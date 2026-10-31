@@ -44,6 +44,10 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
     title: `Privacy Policy | ${SITE_TITLE}`,
     description: "How Snaplogo collects, uses and protects the information you share when sourcing packaging manufacturers.",
   },
+  "/designs": {
+    title: `Packaging Design Gallery | ${SITE_TITLE}`,
+    description: "Browse corrugated box and flexible pouch design references and start a sourcing request with the design you like.",
+  },
 };
 
 export default function SeoMetadata() {
