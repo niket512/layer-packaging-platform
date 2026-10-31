@@ -1,4 +1,5 @@
 # Sourcing intake
+- [x] Create and verify a pouch-only design page; publish it on request.
 - [x] Extend browsing with distinct box/pouch catalogues, combined filters, search, sorting and persistent shortlists.
 - [x] Connect single and multiple references to the chat; test filtering and verify the live selection flow.
 - [x] Improve the corrugated design catalogue with visual categories, optional filters, richer cards and a chat-connected preview; verify the selection flow.

@@ -52,6 +52,7 @@ const App = () => (
           <Route path="/team" element={<Team />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/designs" element={<Designs />} />
+          <Route path="/designs/flexible-pouches" element={<Designs onlyFamily="pouches" />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard/procure" element={<Procure />} />

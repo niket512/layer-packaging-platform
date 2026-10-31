@@ -2,12 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
-import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
+import type { PackagingDesign, PackagingFamily } from "@/components/sourcing/packaging-catalogue";
 import logo from "@/assets/snaplogo-orange.png";
 
 export const DESIGN_PREFILL_KEY = "snaplogo.design-prefill";
 
-export default function Designs() {
+export default function Designs({ onlyFamily }: { onlyFamily?: PackagingFamily }) {
   const navigate = useNavigate();
 
   const useDesign = (prefill: string, designs: PackagingDesign[]) => {
@@ -30,12 +30,13 @@ export default function Designs() {
         </Button>
       </header>
       <main className="mx-auto max-w-[1000px] px-4 pb-12 pt-8 md:px-10 md:pt-12">
-        <h1 className="text-2xl font-bold tracking-tight md:text-4xl">Packaging design gallery</h1>
+        <h1 className="text-2xl font-bold tracking-tight md:text-4xl">{onlyFamily === "pouches" ? "Flexible pouch designs" : "Packaging design gallery"}</h1>
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Browse corrugated box and flexible pouch references. Pick a design to start a sourcing request with it attached.
+          {onlyFamily === "pouches" ? "Stand-up pouches, sachets and more — find a reference for your next packaging order." : "Browse corrugated box and flexible pouch references. Pick a design to start a sourcing request with it attached."}
         </p>
+        {!onlyFamily && <Button asChild variant="link" className="mt-2 px-0"><Link to="/designs/flexible-pouches">Browse flexible pouch designs</Link></Button>}
         <div className="mt-6">
-          <CorrugatedDesigns onUseDesign={useDesign} />
+          <CorrugatedDesigns key={onlyFamily ?? "all"} onUseDesign={useDesign} onlyFamily={onlyFamily} />
         </div>
       </main>
     </div>
