@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import SeoMetadata from "@/components/SeoMetadata";
 import Team from "./pages/Team.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -48,6 +49,7 @@ const App = () => (
           <Route path="/admin" element={<AppAdmin />} />
           <Route path="/proposal" element={<Proposal />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard/procure" element={<Procure />} />
