@@ -142,8 +142,7 @@ export default function Proposal() {
                       {submitting ? "..." : "Get Started"} <ArrowRight className="ml-1.5 h-4 w-4" />
                     </Button>
                   </form>
-                </>
-              )}
+              </div>
             </section>
           </div>
         </article>
