@@ -34,6 +34,8 @@ export default function SourcingAgent() {
   const [error, setError] = useState("");
   const [pendingQuery, setPendingQuery] = useState("");
   const [liveQuestions, setLiveQuestions] = useState<SourcingQuestion[]>([]);
+  const [phoneValue, setPhoneValue] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const input = useRef<HTMLTextAreaElement>(null);
   const project = projects.find(p => p.id === activeId);
   const turns = project?.turns ?? [];
