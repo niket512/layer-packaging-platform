@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import SeoMetadata from "@/components/SeoMetadata";
 import Team from "./pages/Team.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
