@@ -113,17 +113,10 @@ export default function Proposal() {
 
             {/* CTA */}
             <section className="rounded-xl bg-primary px-5 py-5 text-center md:px-10">
-              {submitted ? (
-                <div>
-                  <CheckCircle2 className="mx-auto h-8 w-8 text-primary-foreground" />
-                  <h3 className="mt-2 font-heading text-lg font-semibold text-primary-foreground">We will be in touch within 24 hours</h3>
-                  <p className="text-xs text-primary-foreground/80">Thanks for your interest</p>
-                </div>
-              ) : (
-                <>
-                  <h3 className="font-heading text-lg font-semibold tracking-tight text-primary-foreground md:text-xl">
-                    Interested in the pilot?
-                  </h3>
+              <div>
+                <h3 className="font-heading text-lg font-semibold tracking-tight text-primary-foreground md:text-xl">
+                  Interested in the pilot?
+                </h3>
                   <p className="mt-1 text-xs text-primary-foreground/80">Share your email and we will get started</p>
                   <form onSubmit={handleSubmit} className="mx-auto mt-3 flex w-full max-w-lg flex-col gap-2 sm:flex-row">
                     <input
