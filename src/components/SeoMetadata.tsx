@@ -40,6 +40,10 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
     title: `Team | ${SITE_TITLE}`,
     description: SITE_DESCRIPTION,
   },
+  "/privacy-policy": {
+    title: `Privacy Policy | ${SITE_TITLE}`,
+    description: "How Snaplogo collects, uses and protects the information you share when sourcing packaging manufacturers.",
+  },
 };
 
 export default function SeoMetadata() {
