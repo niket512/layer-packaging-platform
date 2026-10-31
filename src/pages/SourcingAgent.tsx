@@ -121,7 +121,7 @@ export default function SourcingAgent() {
       <div className="lg:ml-60">
         <header className="sticky top-0 z-10 flex h-12 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 backdrop-blur md:h-16 md:px-10">
           <nav aria-label="Sections" className="flex items-center gap-1 text-sm"><Link to="/sourcing" className="mr-2 flex items-center gap-2 font-bold lg:hidden"><img src={logo} alt="" className="h-6 w-6" />snaplogo<span className="text-primary">.</span></Link><button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hidden rounded-full bg-muted px-3 py-1.5 font-medium sm:inline">Workspace</button><button type="button" onClick={() => { if (current) startNew(); setTimeout(() => document.getElementById("browse-designs")?.scrollIntoView({ behavior: "smooth" }), 50); }} className="hidden rounded-full px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground sm:inline">Browse designs</button></nav>
-          <div className="flex items-center gap-1.5 sm:gap-2"><Button asChild size="sm" variant="outline" className="hidden h-8 rounded-full px-3 text-xs sm:inline-flex sm:h-9 sm:px-4 sm:text-sm"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="Talk to a sourcing expert"><MessageSquare />Talk to a sourcing expert</a></Button><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-8 rounded-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm lg:hidden"><Plus /><span>New Request</span></Button></div>
+          <div className="flex items-center gap-1.5 sm:gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-8 rounded-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm lg:hidden"><Plus /><span>New Request</span></Button></div>
         </header>
         <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
           {!current && !busy && <div className="mx-auto pb-4 pt-6 text-center sm:pt-8 md:pt-16">
@@ -174,7 +174,7 @@ export default function SourcingAgent() {
           </div>}
           {error && <div role="alert" className="mt-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-card p-4 text-sm text-destructive"><span className="flex-1">{error}</span><Button variant="ghost" size="icon" className="h-6 w-6" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}
         </main>
-        <footer className="mx-auto flex max-w-[900px] flex-wrap items-center justify-between gap-2 border-t border-border/60 px-5 py-6 text-xs text-muted-foreground md:px-10"><span>© {new Date().getFullYear()} Snaplogo · India</span></footer>
+        <footer className="mx-auto flex max-w-[900px] flex-wrap items-center justify-between gap-2 border-t border-border/60 px-5 py-6 text-xs text-muted-foreground md:px-10"><span>© {new Date().getFullYear()} Snaplogo · India</span><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button></footer>
       </div>
     </div>
   );
