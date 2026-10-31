@@ -105,6 +105,12 @@ export default function SourcingAgent() {
     } catch (e) { setError(e instanceof Error ? e.message : "Something went wrong. Please try again."); }
     finally { setBusy(false); setPendingQuery(""); setLiveQuestions([]); }
   };
+  const submitEnquiry = () => {
+    const trimmed = phoneValue.trim();
+    if (!validSourcingPhone(trimmed)) { setPhoneError("Please enter a valid 10-digit WhatsApp number, e.g. 98765 43210."); return; }
+    setPhoneError("");
+    void submitPhone(trimmed);
+  };
   const submitPhone = async (phone: string) => {
     const draft = { query: validSourcingPhone(query.trim()) ? "" : query, images: photos };
     const payload = sourcingSubmission(turns, phone, draft, project?.brief);
