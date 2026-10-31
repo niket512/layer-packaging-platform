@@ -1,4 +1,5 @@
 # Architecture rules
+- Public route metadata is owned centrally by `SeoMetadata` through Helmet, with homepage fallbacks in `index.html`; keep the static sitemap aligned with public routes and published directory records, omit private/auth routes and avoid invented lastmod dates so crawlers get accurate page identities.
 - Packaging browsing uses local box and pouch reference catalogues with family-specific combined filters, same-page details and a device-local shared shortlist; selected IDs, names and supported attributes prefill the existing chat, with a composite reference photo using its existing attachment path, to preserve multi-design requests without new submission schemas or invented buyer/manufacturer specifications.
 
 - Procurement (RFQs, quotes, POs, suppliers) lives at `/dashboard/procure` with real Cloud auth and `user_roles` (founder/supplier); the catalogue dashboard keeps its no-login brand link — suppliers must only ever see their own data.

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Check, MessageCircle, X } from "lucide-react";
@@ -16,10 +16,6 @@ export default function ManufacturersDirectory() {
   const [contact, setContact] = useState("");
   const [reqText, setReqText] = useState("");
   const [review, setReview] = useState(false);
-  useEffect(() => {
-    document.title = "Find packaging manufacturers in India | Snaplogo";
-    document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirement, pick manufacturers and WhatsApp them directly.");
-  }, []);
   const update = (key: string, value: string) => {
     const next = new URLSearchParams(params);
     if (value) next.set(key, value); else next.delete(key);

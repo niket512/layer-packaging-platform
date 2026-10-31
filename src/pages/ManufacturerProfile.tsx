@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ExternalLink, MapPin, MessageCircle, Phone } from "lucide-react";
@@ -10,7 +9,6 @@ export default function ManufacturerProfile() {
   const { data, isLoading } = useQuery({ queryKey: ["directory"], queryFn: fetchPublishedManufacturers });
   const m = data?.find((x) => x.slug === slug);
 
-  useEffect(() => { if (m) document.title = `${m.name} – packaging manufacturer | Snaplogo`; }, [m]);
 
   return (
     <div className="min-h-screen bg-background">

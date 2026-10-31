@@ -53,10 +53,6 @@ export default function SourcingAgent() {
     const updated = recordSourcingFollowUp(project);
     if (updated !== project) setProjects(prev => prev.map(p => p.id === project.id ? updated : p));
   }, [project, busy, submitting]);
-  useEffect(() => {
-    document.title = "Snaplogo Sourcing Agent | Share your packaging requirement";
-    document.querySelector('meta[name="description"]')?.setAttribute("content", "Share your packaging requirements, answer a few focused questions and request a phone follow-up from Snaplogo.");
-  }, []);
   const chatAnchor = useRef<HTMLDivElement>(null);
   const chatShown = useRef(false);
   useEffect(() => {
