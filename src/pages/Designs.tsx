@@ -38,6 +38,7 @@ export default function Designs({ onlyFamily }: { onlyFamily?: PackagingFamily }
         <div className="mt-6">
           <CorrugatedDesigns key={onlyFamily ?? "all"} onUseDesign={useDesign} onlyFamily={onlyFamily} />
         </div>
+        <nav aria-label="Packaging advice" className="mt-8 flex flex-wrap gap-4 border-t border-border pt-6 text-sm text-primary"><Link to="/blog/packaging-specification-sheet-template">Prepare your packaging specification sheet</Link><Link to="/blog/custom-corrugated-boxes-pricing-guide">Understand custom corrugated box prices</Link><Link to="/blog">All packaging guides</Link></nav>
       </main>
     </div>
   );

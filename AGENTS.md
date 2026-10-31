@@ -1,4 +1,5 @@
 # Architecture rules
+- Packaging guides share a Markdown article catalogue and renderer at `/blog`; central metadata, self-referencing Article/Breadcrumb schema and sitemap entries stay aligned without invented author credentials or dates.
 - Dedicated packaging-family design pages reuse the existing gallery with a locked family, preserving the same filters, automatic loading and sourcing handoff without duplicating catalogues.
 - The site-wide Google Ads base tag initializes once in `index.html` and shares the existing data layer; conversion actions remain separately configured for saved sourcing enquiries, never generic visits or contact clicks.
 - Sourcing redirects to the noindexed `/sourcing/thank-you` page after a successful saved enquiry and emits the contact-free `sourcing_lead_submitted` data-layer event there; this URL is the Google Ads conversion goal, and tags must be configured separately so chat starts and WhatsApp clicks are not mistaken for completed leads.

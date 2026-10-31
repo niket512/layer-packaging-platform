@@ -2,11 +2,17 @@ import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublishedManufacturers } from "@/data/directory";
+import articles from "@/data/packaging-articles.json";
 
 const BASE_URL = "https://snaplogo.in";
 const SITE_TITLE = "Corrugated Box, Sachet & Stand-Up Pouch Manufacturers | Snaplogo";
 const SITE_DESCRIPTION = "Source corrugated boxes, sachets and stand-up pouches from vetted manufacturers. Share your preferred city, such as Ahmedabad, and get quotes within 24 hours.";
 const pages: Record<string, { title: string; description: string; noindex?: boolean }> = {
+  "/blog": {
+    title: "Packaging Guides for D2C Brands | Snaplogo",
+    description: "Practical packaging guides for D2C brands: find manufacturers, understand corrugated box pricing, prepare RFQs and compare shipping boxes with mailer boxes.",
+  },
+  ...Object.fromEntries(articles.map(article => [`/blog/${article.slug}`, { title: `${article.title} | Snaplogo`, description: article.description }])),
   "/": {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
