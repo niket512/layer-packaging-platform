@@ -23,7 +23,8 @@ const terms = [
   { title: "No Exclusivity", desc: "Free to keep sourcing through other channels." },
 ];
 
-
+export default function Proposal() {
+  const navigate = useNavigate();
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {/* Header */}
