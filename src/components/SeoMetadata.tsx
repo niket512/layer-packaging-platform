@@ -48,6 +48,10 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
     title: `Packaging Design Gallery | ${SITE_TITLE}`,
     description: "Browse corrugated box and flexible pouch design references and start a sourcing request with the design you like.",
   },
+  "/designs/flexible-pouches": {
+    title: `Flexible Pouch Designs | ${SITE_TITLE}`,
+    description: "Browse flexible pouch, stand-up pouch and sachet design references. Choose a design and request custom packaging quotations through Snaplogo.",
+  },
 };
 
 export default function SeoMetadata() {
