@@ -30,7 +30,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={isMfrHost ? <ManufacturersDirectory /> : isAppHost ? <AppHome /> : <Index />} />
+          <Route path="/" element={isMfrHost ? <ManufacturersDirectory /> : isAppHost ? <AppHome /> : <SourcingAgent />} />
+          <Route path="/landing" element={<Index />} />
           <Route path="/manufacturers" element={<ManufacturersDirectory />} />
           <Route path="/sourcing" element={<SourcingAgent />} />
           <Route path="/manufacturers/:slug" element={<ManufacturerProfile />} />
