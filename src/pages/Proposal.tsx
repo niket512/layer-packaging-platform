@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, FileText, Clock, MessageCircle, Truck, RefreshCw, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/snaplogo-orange.png";
 
 const deliverables = [
@@ -31,25 +29,12 @@ export default function Proposal() {
   const [email, setEmail] = useState("");
   const [brand, setBrand] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !brand.trim()) return;
     setSubmitting(true);
-    const { error } = await supabase.from("access_requests").insert({
-      brand: brand.trim(),
-      email: email.trim(),
-      requirement: "Proposal page interest",
-    });
-    setSubmitting(false);
-    if (error) {
-      toast({ title: "Submission failed", description: error.message, variant: "destructive" });
-      return;
-    }
-    setSubmitted(true);
-    toast({ title: "Interest recorded", description: "Taking you back to the main page." });
-    setTimeout(() => navigate("/"), 1500);
+    navigate("/");
   };
 
   return (
@@ -126,17 +111,10 @@ export default function Proposal() {
 
             {/* CTA */}
             <section className="rounded-xl bg-primary px-5 py-5 text-center md:px-10">
-              {submitted ? (
-                <div>
-                  <CheckCircle2 className="mx-auto h-8 w-8 text-primary-foreground" />
-                  <h3 className="mt-2 font-heading text-lg font-semibold text-primary-foreground">We will be in touch within 24 hours</h3>
-                  <p className="text-xs text-primary-foreground/80">Thanks for your interest</p>
-                </div>
-              ) : (
-                <>
-                  <h3 className="font-heading text-lg font-semibold tracking-tight text-primary-foreground md:text-xl">
-                    Interested in the pilot?
-                  </h3>
+              <div>
+                <h3 className="font-heading text-lg font-semibold tracking-tight text-primary-foreground md:text-xl">
+                  Interested in the pilot?
+                </h3>
                   <p className="mt-1 text-xs text-primary-foreground/80">Share your email and we will get started</p>
                   <form onSubmit={handleSubmit} className="mx-auto mt-3 flex w-full max-w-lg flex-col gap-2 sm:flex-row">
                     <input
@@ -164,8 +142,7 @@ export default function Proposal() {
                       {submitting ? "..." : "Get Started"} <ArrowRight className="ml-1.5 h-4 w-4" />
                     </Button>
                   </form>
-                </>
-              )}
+              </div>
             </section>
           </div>
         </article>
