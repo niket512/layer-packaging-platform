@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, FileText, Clock, MessageCircle, Truck, RefreshCw, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,18 +23,6 @@ const terms = [
   { title: "No Exclusivity", desc: "Free to keep sourcing through other channels." },
 ];
 
-export default function Proposal() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [brand, setBrand] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !brand.trim()) return;
-    setSubmitting(true);
-    navigate("/");
-  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
