@@ -8,6 +8,7 @@ import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
+import { recordSourcingLead } from "@/lib/sourcing-conversion";
 import logo from "@/assets/snaplogo-orange.png";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
@@ -96,6 +97,7 @@ export default function SourcingAgent() {
     try {
       const { error: insertError } = await supabase.from("requirement_submissions").insert(payload);
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
+      if (activeId) recordSourcingLead(activeId, true);
       const phoneDisplay = phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`;
       setProjects(prev => prev.map(p => p.id === activeId ? { ...p, submitted: true, phone: phone.trim(), turns: [...p.turns, { query: phoneDisplay, matches: [], images: draft.images }, ...(draft.query.trim() ? [{ query: draft.query.trim(), matches: [] }] : [])] } : p));
       setQuery(""); setPhotos([]);
