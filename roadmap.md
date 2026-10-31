@@ -7,6 +7,7 @@
 - [x] Verify questions, phone submission and absence of supplier details.
 
 # SEO corrections
+- [ ] Strengthen existing sourcing content for box, sachet and stand-up pouch manufacturer searches; verify page and report indexing limitations.
 - [x] Improve public page titles, descriptions and social metadata; verify route transitions.
 - [x] Add a sitemap of public pages and reference it in crawler instructions.
 - [x] Verify corrections and update the reported SEO findings.
