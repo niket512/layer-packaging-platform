@@ -100,37 +100,16 @@ export default function Proposal() {
             {/* CTA */}
             <section className="rounded-xl bg-primary px-5 py-5 text-center md:px-10">
               <div>
-                <h3 className="font-heading text-lg font-semibold tracking-tight text-primary-foreground md:text-xl">
-                  Interested in the pilot?
-                </h3>
-                  <p className="mt-1 text-xs text-primary-foreground/80">Share your email and we will get started</p>
-                  <form onSubmit={handleSubmit} className="mx-auto mt-3 flex w-full max-w-lg flex-col gap-2 sm:flex-row">
-                    <input
-                      type="text"
-                      required
-                      value={brand}
-                      onChange={(e) => setBrand(e.target.value)}
-                      placeholder="Brand name"
-                      className="h-11 flex-1 rounded-full border-0 bg-primary-foreground px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground"
-                    />
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@brand.com"
-                      className="h-11 flex-1 rounded-full border-0 bg-primary-foreground px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground"
-                    />
-                    <Button
-                      type="submit"
-                      disabled={submitting}
-                      variant="secondary"
-                      className="h-11 shrink-0 rounded-full bg-background px-5 text-[12px] font-bold uppercase tracking-wider text-foreground hover:bg-background/90 disabled:opacity-60"
-                    >
-                      {submitting ? "..." : "Get Started"} <ArrowRight className="ml-1.5 h-4 w-4" />
-                    </Button>
-                  </form>
-              </div>
+              <h3 className="font-heading text-lg font-semibold tracking-tight text-primary-foreground md:text-xl">
+                Interested in the pilot?
+              </h3>
+              <Button
+                onClick={() => navigate("/")}
+                variant="secondary"
+                className="mx-auto mt-4 h-11 rounded-full bg-background px-8 text-[12px] font-bold uppercase tracking-wider text-foreground hover:bg-background/90"
+              >
+                Get Started <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Button>
             </section>
           </div>
         </article>
