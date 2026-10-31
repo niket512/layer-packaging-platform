@@ -8,6 +8,7 @@
 - [x] Verify questions, phone submission and absence of supplier details.
 
 # SEO corrections
+- [x] Prepare four supplied packaging guides with readable tables, metadata, schema and internal links; verify article navigation and sourcing CTA and request publishing.
 - [x] Prepare an India-wide ₹500/day Google Search campaign and launch checklist.
 - [x] Prepare successful-enquiry measurement; tests pass and real chat reaches contact collection without premature conversion. Final saved-lead/Google delivery check waits for owner-approved test contact and tag setup.
 - [ ] Activate Google Ads conversion tracking (blocked by missing Google tag ID and conversion label).
