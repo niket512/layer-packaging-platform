@@ -119,7 +119,8 @@ export default function SourcingAgent() {
     if (!payload || busy || submitting || project?.submitted) return;
     setSubmitting(true); setError("");
     try {
-      const { data: submissionId, error: insertError } = await supabase.rpc("submit_monitored_sourcing_request", { _payload: JSON.parse(JSON.stringify(payload)) });
+      const submissionId = crypto.randomUUID();
+      const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: submissionId });
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
       const phoneDisplay = phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`;
       if (project) {

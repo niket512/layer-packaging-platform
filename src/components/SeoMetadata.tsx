@@ -8,6 +8,8 @@ const BASE_URL = "https://snaplogo.in";
 const SITE_TITLE = "Corrugated Box, Sachet & Stand-Up Pouch Manufacturers | Snaplogo";
 const SITE_DESCRIPTION = "Source corrugated boxes, sachets and stand-up pouches from vetted manufacturers. Share your preferred city, such as Ahmedabad, and get quotes within 24 hours.";
 const pages: Record<string, { title: string; description: string; noindex?: boolean }> = {
+  "/admin/chats": { title: "Private Chats | Snaplogo", description: "Private sourcing conversation inbox for Snaplogo administrators.", noindex: true },
+  "/app/admin/chats": { title: "Private Chats | Snaplogo", description: "Private sourcing conversation inbox for Snaplogo administrators.", noindex: true },
   "/blog": {
     title: "Packaging Guides for D2C Brands | Snaplogo",
     description: "Practical packaging guides for D2C brands: find manufacturers, understand corrugated box pricing, prepare RFQs and compare shipping boxes with mailer boxes.",

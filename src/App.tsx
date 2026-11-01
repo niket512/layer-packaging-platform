@@ -19,6 +19,7 @@ import Procure from "./pages/Procure.tsx";
 import AppHome from "./pages/AppHome.tsx";
 import AppStore from "./pages/AppStore.tsx";
 import AppAdmin from "./pages/AppAdmin.tsx";
+import AdminChats from "./pages/AdminChats";
 import ManufacturersDirectory from "./pages/ManufacturersDirectory.tsx";
 import ManufacturerProfile from "./pages/ManufacturerProfile.tsx";
 import SourcingAgent from "./pages/SourcingAgent.tsx";
@@ -49,6 +50,8 @@ const App = () => (
           <Route path="/app/admin" element={<AppAdmin />} />
           <Route path="/store" element={<AppStore />} />
           <Route path="/admin" element={<AppAdmin />} />
+          <Route path="/admin/chats" element={<AdminChats />} />
+          <Route path="/app/admin/chats" element={<AdminChats />} />
           <Route path="/proposal" element={<Proposal />} />
           <Route path="/team" element={<Team />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
