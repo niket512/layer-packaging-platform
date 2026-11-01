@@ -151,7 +151,7 @@ export default function SourcingAgent() {
             <ol aria-label="How it works" className="mx-auto mt-4 hidden max-w-[860px] items-center justify-center gap-1.5 sm:flex">{["Describe", "Receive relevant manufacturers", "Quotes within 24 hours"].map((t, i) => <li key={t} className="flex items-center gap-1"><span className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${i === 0 ? "bg-accent text-primary" : "text-muted-foreground"}`}><span className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full text-[8px] font-semibold ${i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>{t}</span>{i < 2 && <ChevronRight className="h-3 w-3 text-muted-foreground/50" />}</li>)}</ol>
             <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left">
               <h2 id="why-snaplogo" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Why brands source through Snaplogo</h2>
-              <ul className="mt-2.5 flex flex-nowrap gap-x-6 gap-y-2 overflow-x-auto pb-1 text-xs sm:flex-wrap sm:overflow-visible">
+              <ul className="mt-2.5 flex flex-wrap gap-x-6 gap-y-2 text-xs">
                 {([
                   ["Vetted manufacturers", "Screened for capabilities", ShieldCheck],
                   ["Comparable quotes", "Compare prices and MOQs", ArrowLeftRight],
