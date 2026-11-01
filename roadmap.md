@@ -1,5 +1,6 @@
 # Sourcing intake
-- [ ] Add private administrator chat inbox with ongoing chat capture and historical submissions; verify access and readback.
+- [x] Add private administrator chat inbox with ongoing capture and historical submissions; 77 tests pass, sent test chat saved, signed-out and founder access denied.
+- [ ] Verify administrator inbox readback (blocked: requesting account has founder role, needs approved administrator access).
 - [x] Create and verify a pouch-only design page; publish it on request.
 - [x] Extend browsing with distinct box/pouch catalogues, combined filters, search, sorting and persistent shortlists.
 - [x] Connect single and multiple references to the chat; test filtering and verify the live selection flow.
