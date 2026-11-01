@@ -54,23 +54,23 @@
     --text-muted: 215 16% 47%;
   }
 
-  /* Compact public directory — reference-matched dark surfaces */
+  /* Sourcing workspace — original Snaplogo landing-page theme */
   .theme-sourcing {
-    --background: 210 40% 98%;
+    --background: 210 33% 97%;            /* #F7F9FC */
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-    --primary: 221 83% 53%;
+    --primary: 24 95% 53%;                /* orange #F97316 */
     --primary-foreground: 0 0% 100%;
-    --accent: 214 100% 97%;
-    --accent-foreground: 221 83% 45%;
+    --accent: 24 100% 96%;                /* pale orange #FFF7ED */
+    --accent-foreground: 24 95% 40%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --ring: 24 95% 40%;
     --sourcing-shadow: 0 10px 40px -12px hsl(222 47% 11% / 0.12), 0 2px 6px hsl(222 47% 11% / 0.04);
     --sourcing-success: 152 60% 36%;
     --sourcing-warning: 35 92% 40%;
