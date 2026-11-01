@@ -148,18 +148,28 @@ export default function SourcingAgent() {
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">Corrugated box manufacturers, stand-up pouch manufacturers &amp; sachet manufacturers for your D2C brand.</p>
             <ul className="mx-auto mt-5 grid max-w-[860px] grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card py-3 shadow-sm sm:mt-6">{([["24h Quotes", Zap], ["100+ Vetted Suppliers", Handshake], ["0% Commission", ShieldCheck]] as const).map(([t, Icon]) => <li key={t} className="flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-semibold text-foreground sm:flex-row sm:justify-center sm:gap-1.5 sm:text-sm"><Icon className="h-4 w-4 shrink-0 text-primary" /><span className="text-center leading-tight">{t}</span></li>)}</ul>
             <div className="mx-auto max-w-[860px] text-left">{composer()}</div>
-            <ol aria-label="How it works" className="mx-auto mt-6 hidden max-w-[860px] items-center justify-center gap-2 sm:flex md:mt-8">{["Describe", "Receive relevant manufacturers", "Quotes within 24 hours"].map((t, i) => <li key={t} className="flex items-center gap-2"><span className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold ${i === 0 ? "border-primary/30 bg-accent text-primary" : "border-border bg-card text-muted-foreground"}`}><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>{t}</span>{i < 2 && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />}</li>)}</ol>
-            <section aria-labelledby="how-snaplogo-vets" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
-              <h2 id="how-snaplogo-vets" className="text-xl font-semibold">What “vetted” means at Snaplogo</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">We don’t just list manufacturers — our sourcing team works with them on real briefs. Here’s what happens behind every quotation you receive.</p>
-              <ul className="mt-5 grid gap-4 sm:grid-cols-2">
-                {[
-                  ["Screened before they join", "Manufacturers are reviewed for their packaging capability, production setup and experience with D2C brands before entering our network. Makers who can’t support brand-scale orders don’t make the cut."],
-                  ["Categories we cover", "Corrugated boxes (shipping, mailer, die-cut, printed) and flexible packaging (stand-up pouches, sachets, roll stock). Every manufacturer is mapped to the categories they actually produce."],
-                  ["Quotations collected & compared", "Your brief goes to relevant manufacturers, and our team collects their quotations, MOQs and lead times. You receive comparable options on WhatsApp — not a single take-it-or-leave-it price."],
-                  ["A team that coordinates for you", "Snaplogo’s sourcing team handles the back-and-forth with suppliers — clarifying specs, following up on quotes and keeping your requirement confidential. Zero commission, no exclusivity."],
-                ].map(([title, body]) => <li key={title} className="rounded-2xl border border-border bg-card p-5 shadow-sm"><p className="flex items-center gap-2 text-sm font-semibold text-foreground"><ShieldCheck className="h-4 w-4 shrink-0 text-primary" />{title}</p><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p></li>)}
+            <ol aria-label="How it works" className="mx-auto mt-4 hidden max-w-[860px] items-center justify-center gap-1.5 sm:flex">{["Describe", "Receive relevant manufacturers", "Quotes within 24 hours"].map((t, i) => <li key={t} className="flex items-center gap-1"><span className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${i === 0 ? "bg-accent text-primary" : "text-muted-foreground"}`}><span className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full text-[8px] font-semibold ${i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>{t}</span>{i < 2 && <ChevronRight className="h-3 w-3 text-muted-foreground/50" />}</li>)}</ol>
+            <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left">
+              <h2 id="why-snaplogo" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Why brands source through Snaplogo</h2>
+              <ul className="mt-2.5 flex flex-nowrap gap-x-6 gap-y-2 overflow-x-auto pb-1 text-xs sm:flex-wrap sm:overflow-visible">
+                {([
+                  ["Vetted manufacturers", "Screened for capabilities", ShieldCheck],
+                  ["Comparable quotes", "Compare prices and MOQs", ArrowLeftRight],
+                  ["Sourcing support", "Our team coordinates", Users],
+                ] as const).map(([title, sub, Icon]) => <li key={title} className="flex shrink-0 items-center gap-2 sm:shrink"><Icon className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" /><span className="whitespace-nowrap"><span className="font-medium text-foreground">{title}</span><span className="text-muted-foreground"> – {sub}</span></span></li>)}
               </ul>
+              <details className="mt-2.5 group/vet">
+                <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-details-marker]:hidden">
+                  How does Snaplogo vet manufacturers?<ChevronRight className="h-3 w-3 transition-transform group-open/vet:rotate-90" />
+                </summary>
+                <div className="mt-3 max-w-2xl space-y-3 text-xs leading-relaxed text-muted-foreground">
+                  <p>We don’t just list manufacturers — our sourcing team works with them on real briefs. Here’s what happens behind every quotation you receive.</p>
+                  <p><strong className="font-semibold text-foreground">Screened before they join.</strong> Manufacturers are reviewed for their packaging capability, production setup and experience with D2C brands before entering our network. Makers who can’t support brand-scale orders don’t make the cut.</p>
+                  <p><strong className="font-semibold text-foreground">Categories we cover.</strong> Corrugated boxes (shipping, mailer, die-cut, printed) and flexible packaging (stand-up pouches, sachets, roll stock). Every manufacturer is mapped to the categories they actually produce.</p>
+                  <p><strong className="font-semibold text-foreground">Quotations collected &amp; compared.</strong> Your brief goes to relevant manufacturers, and our team collects their quotations, MOQs and lead times. You receive comparable options on WhatsApp — not a single take-it-or-leave-it price.</p>
+                  <p><strong className="font-semibold text-foreground">A team that coordinates for you.</strong> Snaplogo’s sourcing team handles the back-and-forth with suppliers — clarifying specs, following up on quotes and keeping your requirement confidential. Zero commission, no exclusivity.</p>
+                </div>
+              </details>
             </section>
             <CorrugatedDesigns onUseDesign={(prefill, designs) => {
               setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
