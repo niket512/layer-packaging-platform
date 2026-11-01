@@ -1,8 +1,8 @@
 # Architecture rules
 - Packaging guides share a Markdown article catalogue and renderer at `/blog`; central metadata, self-referencing Article/Breadcrumb schema and sitemap entries stay aligned without invented author credentials or dates.
 - Dedicated packaging-family design pages reuse the existing gallery with a locked family, preserving the same filters, automatic loading and sourcing handoff without duplicating catalogues.
-- The site-wide Google Ads base tag initializes once in `index.html` and shares the existing data layer; conversion actions remain separately configured for saved sourcing enquiries, never generic visits or contact clicks.
-- Sourcing redirects to the noindexed `/sourcing/thank-you` page after a successful saved enquiry and emits the contact-free `sourcing_lead_submitted` data-layer event there; this URL is the Google Ads conversion goal, and tags must be configured separately so chat starts and WhatsApp clicks are not mistaken for completed leads.
+- Google Ads initializes once in `index.html`; only saved enquiries redirect to noindexed `/sourcing/thank-you` and emit contact-free `sourcing_lead_submitted`. Configure conversion tags separately; visits, chats and WhatsApp clicks are not leads.
+- Visitor behaviour uses contact-free session snapshots, write-capability RPCs and admin-only chat-inbox reports; count catalogue cards only after 50% visibility for one second, keeping browsing separate from conversions.
 - Public route metadata is owned centrally by `SeoMetadata` through Helmet, with homepage fallbacks in `index.html`; keep the static sitemap aligned with public routes and published directory records, omit private/auth routes and avoid invented lastmod dates so crawlers get accurate page identities.
 - Packaging browsing uses local box and pouch reference catalogues with family-specific combined filters, same-page details and a device-local shared shortlist; selected IDs, names and supported attributes prefill the existing chat, with a composite reference photo using its existing attachment path, to preserve multi-design requests without new submission schemas or invented buyer/manufacturer specifications.
 
