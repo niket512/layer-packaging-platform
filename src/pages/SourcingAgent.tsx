@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, Sparkles, User, X, Zap, Handshake } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, Sparkles, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
 import { designReferenceImage } from "@/components/sourcing/design-reference-image";
@@ -142,11 +142,11 @@ export default function SourcingAgent() {
           <div className="flex items-center gap-1.5 sm:gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-8 rounded-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm lg:hidden"><Plus /><span>New Request</span></Button></div>
         </header>
         <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
-          {!current && !busy && <div className="mx-auto pb-4 pt-6 text-center sm:pt-8 md:pt-16">
+          {!current && !busy && <div className="mx-auto pb-4 pt-5 text-center sm:pt-6 md:pt-10">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-semibold text-muted-foreground shadow-sm"><Sparkles className="h-3.5 w-3.5 text-primary" />AI Sourcing Engine</p>
-            <h1 className="mx-auto mt-3 max-w-[760px] max-sm:max-w-[360px] text-[28px] font-bold leading-8 tracking-normal sm:text-[32px] sm:leading-[1.15] md:text-[52px]">Find custom packaging manufacturers</h1>
-            <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">Corrugated box manufacturers, stand-up pouch manufacturers &amp; sachet manufacturers for your D2C brand.</p>
-            <ul className="mx-auto mt-5 grid max-w-[860px] grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card py-3 shadow-sm sm:mt-6">{([["24h Quotes", Zap], ["100+ Vetted Suppliers", Handshake], ["0% Commission", ShieldCheck]] as const).map(([t, Icon]) => <li key={t} className="flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-semibold text-foreground sm:flex-row sm:justify-center sm:gap-1.5 sm:text-sm"><Icon className="h-4 w-4 shrink-0 text-primary" /><span className="text-center leading-tight">{t}</span></li>)}</ul>
+            <h1 className="mx-auto mt-2.5 max-w-[760px] max-sm:max-w-[360px] text-[28px] font-bold leading-8 tracking-normal sm:text-[32px] sm:leading-[1.15] md:text-[52px]">Find custom packaging manufacturers</h1>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">Corrugated box manufacturers, stand-up pouch manufacturers &amp; sachet manufacturers for your D2C brand.</p>
+            <ul className="mx-auto mt-4 grid max-w-[860px] grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card py-2.5 shadow-sm sm:mt-5">{([["24h Quotes", Zap], ["100+ Vetted Suppliers", Handshake], ["0% Commission", ShieldCheck]] as const).map(([t, Icon]) => <li key={t} className="flex min-w-0 flex-col items-center gap-1 px-1 py-0.5 text-[11px] font-semibold text-foreground sm:flex-row sm:justify-center sm:gap-1.5 sm:text-sm"><Icon className="h-4 w-4 shrink-0 text-primary" /><span className="text-center leading-tight">{t}</span></li>)}</ul>
             <div className="mx-auto max-w-[860px] text-left">{composer()}</div>
             <ol aria-label="How it works" className="mx-auto mt-4 hidden max-w-[860px] items-center justify-center gap-1.5 sm:flex">{["Describe", "Receive relevant manufacturers", "Quotes within 24 hours"].map((t, i) => <li key={t} className="flex items-center gap-1"><span className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${i === 0 ? "bg-accent text-primary" : "text-muted-foreground"}`}><span className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full text-[8px] font-semibold ${i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>{t}</span>{i < 2 && <ChevronRight className="h-3 w-3 text-muted-foreground/50" />}</li>)}</ol>
             <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left">
