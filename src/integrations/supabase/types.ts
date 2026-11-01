@@ -484,6 +484,56 @@ export type Database = {
         }
         Relationships: []
       }
+      sourcing_chats: {
+        Row: {
+          brief: Json
+          contact: string | null
+          created_at: string
+          id: string
+          revision: number
+          status: string
+          submission_id: string | null
+          title: string
+          transcript: Json
+          updated_at: string
+          write_token_hash: string
+        }
+        Insert: {
+          brief?: Json
+          contact?: string | null
+          created_at?: string
+          id: string
+          revision?: number
+          status?: string
+          submission_id?: string | null
+          title: string
+          transcript?: Json
+          updated_at?: string
+          write_token_hash: string
+        }
+        Update: {
+          brief?: Json
+          contact?: string | null
+          created_at?: string
+          id?: string
+          revision?: number
+          status?: string
+          submission_id?: string | null
+          title?: string
+          transcript?: Json
+          updated_at?: string
+          write_token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sourcing_chats_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "requirement_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stores: {
         Row: {
           categories: string | null
@@ -600,6 +650,15 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_supplier_contact: { Args: { _supplier_id: string }; Returns: boolean }
       owns_rfq: { Args: { _rfq_id: string }; Returns: boolean }
+      save_sourcing_chat: {
+        Args: {
+          _id: string
+          _revision: number
+          _snapshot: Json
+          _token: string
+        }
+        Returns: undefined
+      }
       supplier_update_po: {
         Args: { _note: string; _po_id: string; _ship: string; _status: string }
         Returns: undefined

@@ -15,6 +15,13 @@
       "when": 1791908392988,
       "tag": "0001_add_manufacturers_to_requirement_submissions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793550600636,
+      "tag": "0002_private_sourcing_chat_monitoring",
+      "breakpoints": true
     }
   ]
 }
