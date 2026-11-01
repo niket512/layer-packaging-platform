@@ -149,11 +149,6 @@ export default function SourcingAgent() {
             <ul className="mx-auto mt-5 grid max-w-[860px] grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card py-3 shadow-sm sm:mt-6">{([["24h Quotes", Zap], ["100+ Vetted Suppliers", Handshake], ["0% Commission", ShieldCheck]] as const).map(([t, Icon]) => <li key={t} className="flex min-w-0 flex-col items-center gap-1 px-1 py-1 text-[11px] font-semibold text-foreground sm:flex-row sm:justify-center sm:gap-1.5 sm:text-sm"><Icon className="h-4 w-4 shrink-0 text-primary" /><span className="text-center leading-tight">{t}</span></li>)}</ul>
             <div className="mx-auto max-w-[860px] text-left">{composer()}</div>
             <ol aria-label="How it works" className="mx-auto mt-6 hidden max-w-[860px] items-center justify-center gap-2 sm:flex md:mt-8">{["Describe", "Receive relevant manufacturers", "Quotes within 24 hours"].map((t, i) => <li key={t} className="flex items-center gap-2"><span className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold ${i === 0 ? "border-primary/30 bg-accent text-primary" : "border-border bg-card text-muted-foreground"}`}><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>{t}</span>{i < 2 && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />}</li>)}</ol>
-            <CorrugatedDesigns onUseDesign={(prefill, designs) => {
-              setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
-              input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-              void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
-            }} />
             <section aria-labelledby="how-snaplogo-vets" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
               <h2 id="how-snaplogo-vets" className="text-xl font-semibold">What “vetted” means at Snaplogo</h2>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">We don’t just list manufacturers — our sourcing team works with them on real briefs. Here’s what happens behind every quotation you receive.</p>
@@ -166,6 +161,11 @@ export default function SourcingAgent() {
                 ].map(([title, body]) => <li key={title} className="rounded-2xl border border-border bg-card p-5 shadow-sm"><p className="flex items-center gap-2 text-sm font-semibold text-foreground"><ShieldCheck className="h-4 w-4 shrink-0 text-primary" />{title}</p><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p></li>)}
               </ul>
             </section>
+            <CorrugatedDesigns onUseDesign={(prefill, designs) => {
+              setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
+              input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+              void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
+            }} />
             <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
               <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
               <div className="mt-4 divide-y divide-border">
