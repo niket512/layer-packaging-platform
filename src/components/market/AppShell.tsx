@@ -72,7 +72,7 @@ export default function AppShell({ children, isAdmin, user }: { children: ReactN
   const links = [
     { to: appPath(""), label: "Search" },
     { to: appPath("/store"), label: "My store" },
-    ...(isAdmin ? [{ to: appPath("/admin"), label: "Admin review" }] : []),
+    ...(isAdmin ? [{ to: appPath("/admin"), label: "Admin review" }, { to: "/admin/chats", label: "Chats" }] : []),
   ];
   return (
     <div className="min-h-screen bg-muted">

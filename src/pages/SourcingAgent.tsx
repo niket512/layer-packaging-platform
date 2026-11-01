@@ -10,6 +10,7 @@ import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
+import { syncSourcingChat } from "@/lib/chat-monitoring";
 import logo from "@/assets/snaplogo-orange.png";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
@@ -37,6 +38,12 @@ export default function SourcingAgent() {
   const [liveMessage, setLiveMessage] = useState("");
   const input = useRef<HTMLTextAreaElement>(null);
   const project = projects.find(p => p.id === activeId);
+  useEffect(() => {
+    if (!project) return;
+    void syncSourcingChat(project).catch(() => { /* Local history remains available; retry below. */ });
+    const retry = window.setInterval(() => void syncSourcingChat(project).catch(() => {}), 15000);
+    return () => window.clearInterval(retry);
+  }, [project]);
   const turns = project?.turns ?? [];
   const current = turns.at(-1);
   const hasQuestions = !current?.questionsSkipped && (current?.questions?.length ?? 0) > 0;
@@ -87,6 +94,8 @@ export default function SourcingAgent() {
     if (!trimmed || busy || submitting || project?.submitted) return;
     setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]); setLiveMessage("");
     const id = activeId ?? crypto.randomUUID();
+    // Save sent messages even when the assistant is interrupted or the visitor leaves.
+    void syncSourcingChat({ ...(project ?? { id, title: trimmed.slice(0, 65), turns: [] }), turns: [...turns, { query: trimmed, matches: [], images: photos }] }).catch(() => {});
     try {
       let questions: unknown = [];
       let reply: IntakeReply | undefined;
@@ -110,10 +119,15 @@ export default function SourcingAgent() {
     if (!payload || busy || submitting || project?.submitted) return;
     setSubmitting(true); setError("");
     try {
-      const { error: insertError } = await supabase.from("requirement_submissions").insert(payload);
+      const submissionId = crypto.randomUUID();
+      const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: submissionId });
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
       const phoneDisplay = phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`;
-      setProjects(prev => prev.map(p => p.id === activeId ? { ...p, submitted: true, phone: phone.trim(), turns: [...p.turns, { query: phoneDisplay, matches: [], images: draft.images }, ...(draft.query.trim() ? [{ query: draft.query.trim(), matches: [] }] : [])] } : p));
+      if (project) {
+        const submittedProject = { ...project, submitted: true, submissionId, phone: phone.trim(), turns: [...project.turns, { query: phoneDisplay, matches: [], images: draft.images }, ...(draft.query.trim() ? [{ query: draft.query.trim(), matches: [] }] : [])] };
+        await syncSourcingChat(submittedProject).catch(() => {});
+        setProjects(prev => prev.map(p => p.id === activeId ? submittedProject : p));
+      }
       setQuery(""); setPhotos([]);
       try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: activeId ?? crypto.randomUUID(), phone: phone.trim(), brief: project?.brief ?? [] })); } catch { /* Confirmation still works without the saved brief. */ }
       navigate("/sourcing/thank-you");

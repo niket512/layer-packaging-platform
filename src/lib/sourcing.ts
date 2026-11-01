@@ -5,7 +5,7 @@ import type { IntakeReply, IntakeStage, SourcingBriefField } from "../../supabas
 export interface SourcingMatch { id: string; reason: string }
 export interface SourcingQuestion { topic: string; question: string }
 export interface SourcingTurn { query: string; matches: SourcingMatch[]; questions?: SourcingQuestion[]; questionsSkipped?: boolean; images?: string[]; followUp?: "design" | "phone"; assistantMessage?: string; stage?: IntakeStage; hasRequirement?: boolean }
-export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; phone?: string; designDone?: boolean; brief?: SourcingBriefField[]; createdAt?: string }
+export interface SourcingProject { id: string; title: string; turns: SourcingTurn[]; submitted?: boolean; submissionId?: string; phone?: string; designDone?: boolean; brief?: SourcingBriefField[]; createdAt?: string }
 
 export const BRIEF_LABELS: Record<string, string> = { format: "Packaging type / style", quantity: "Quantity / MOQ", size: "Dimensions / fill", printing: "Printing", delivery: "Delivery destination", budget: "Target price", material: "Material / board", wall: "Corrugated wall", customisation: "Customisation / inserts", finishing: "Finish", usage: "Usage", manufacturer_location: "Preferred manufacturer location", samples: "Samples", product: "Product to pack", barrier: "Barrier requirements", closure: "Closure", transparency: "Transparency", filling: "Filling method", certifications: "Certifications", shelf_life: "Shelf life / storage" };
 
