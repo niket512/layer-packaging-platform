@@ -633,6 +633,51 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_behaviour: {
+        Row: {
+          created_at: string
+          device: string
+          id: string
+          opened_designs: string[]
+          revision: number
+          scroll_depth: Json
+          selected_designs: string[]
+          source: string
+          steps: Json
+          updated_at: string
+          viewed_designs: string[]
+          write_token: string
+        }
+        Insert: {
+          created_at?: string
+          device: string
+          id: string
+          opened_designs?: string[]
+          revision?: number
+          scroll_depth?: Json
+          selected_designs?: string[]
+          source: string
+          steps?: Json
+          updated_at?: string
+          viewed_designs?: string[]
+          write_token: string
+        }
+        Update: {
+          created_at?: string
+          device?: string
+          id?: string
+          opened_designs?: string[]
+          revision?: number
+          scroll_depth?: Json
+          selected_designs?: string[]
+          source?: string
+          steps?: Json
+          updated_at?: string
+          viewed_designs?: string[]
+          write_token?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -659,10 +704,20 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_visitor_behaviour: {
+        Args: {
+          _id: string
+          _revision: number
+          _snapshot: Json
+          _token: string
+        }
+        Returns: undefined
+      }
       supplier_update_po: {
         Args: { _note: string; _po_id: string; _ship: string; _status: string }
         Returns: undefined
       }
+      visitor_behaviour_report: { Args: { _days?: number }; Returns: Json }
     }
     Enums: {
       app_role: "founder" | "supplier" | "manufacturer" | "admin"
