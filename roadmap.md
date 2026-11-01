@@ -1,4 +1,5 @@
 # Sourcing intake
+- [x] Add private funnel reporting, scroll depth and unique catalogue views; 82 tests passed and real scroll/design/chat activity verified in signed-in admin report (one labelled test visit).
 - [x] Add private administrator chat inbox with ongoing capture and historical submissions; 77 tests pass, sent test chat saved, signed-out and founder access denied.
 - [x] Grant requested administrator access and verify signed-in inbox readback of the saved test conversation.
 - [x] Create and verify a pouch-only design page; publish it on request.
