@@ -24,6 +24,9 @@ import ManufacturersDirectory from "./pages/ManufacturersDirectory.tsx";
 import ManufacturerProfile from "./pages/ManufacturerProfile.tsx";
 import SourcingAgent from "./pages/SourcingAgent.tsx";
 import SourcingThankYou from "./pages/SourcingThankYou.tsx";
+import { useVisitorTracking } from "@/lib/visitor-tracking";
+
+function VisitorTracking() { useVisitorTracking(); return null; }
 
 const queryClient = new QueryClient();
 const host = typeof window !== "undefined" ? window.location.hostname : "";
@@ -38,6 +41,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <SeoMetadata />
+        <VisitorTracking />
         <Routes>
           <Route path="/" element={isMfrHost ? <ManufacturersDirectory /> : isAppHost ? <AppHome /> : <SourcingAgent />} />
           <Route path="/about" element={<Index />} />

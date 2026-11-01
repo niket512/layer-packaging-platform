@@ -9,6 +9,7 @@ const sections: { heading: string; body: string[] }[] = [
       "When you submit a sourcing request, we collect the details you share with us: your packaging requirements, any design files or photos you upload, and your WhatsApp number so our team can reach you.",
       "If you sign in to our procurement dashboard, we also store your account details (such as your email address) and the procurement records you create, such as enquiries, quotes and purchase orders.",
       "Your sourcing conversations are stored on your device and securely saved as you send messages, including before you share a contact number. Only authorised Snaplogo administrators can review these chats to coordinate sourcing and improve support; other visitors cannot see them.",
+      "We measure sourcing steps reached, scroll depth and catalogue designs viewed, opened or selected using a random browser-session identifier. These measurements include broad device and traffic-source categories, but exclude messages, photos, phone numbers, full referring URLs and advertising click identifiers. Only authorised administrators can view these measurements; we use them to understand incomplete visits and improve the sourcing experience.",
     ],
   },
   {

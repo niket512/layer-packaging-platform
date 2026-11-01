@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
+import { trackFunnel, flushVisitorTracking } from "@/lib/visitor-tracking";
 import logo from "@/assets/snaplogo-orange.png";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
@@ -49,6 +50,12 @@ export default function SourcingAgent() {
   const hasQuestions = !current?.questionsSkipped && (current?.questions?.length ?? 0) > 0;
   const askingPhone = !!current && !hasQuestions && !project?.submitted && (current.stage ? current.stage === "phone" || current.stage === "design" : true);
   const designStep = askingPhone && !!project && needsSourcingDesign(project);
+  useEffect(() => {
+    if (!current || busy || submitting || project?.submitted) return;
+    if (hasQuestions) trackFunnel("questions_shown");
+    if (designStep) trackFunnel("design_shown");
+    if (askingPhone && !designStep) { trackFunnel("brief_shown"); trackFunnel("contact_shown"); }
+  }, [current, busy, submitting, project?.submitted, hasQuestions, designStep, askingPhone]);
   const addPhotos = async (files: FileList | null) => {
     if (!files) return;
     try {
@@ -92,6 +99,7 @@ export default function SourcingAgent() {
     if (askingPhone && !designStep && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }
     if (askingPhone && !designStep && looksLikeSourcingPhone(trimmed)) { setError("That doesn’t look like a valid WhatsApp number. Please share a 10-digit number, e.g. 98765 43210."); return; }
     if (!trimmed || busy || submitting || project?.submitted) return;
+    if (!turns.length) trackFunnel("first_message");
     setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]); setLiveMessage("");
     const id = activeId ?? crypto.randomUUID();
     // Save sent messages even when the assistant is interrupted or the visitor leaves.
@@ -108,6 +116,8 @@ export default function SourcingAgent() {
         questions = await readSourcingStream(response, value => setLiveQuestions(turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(value, turns)), value => { reply = value; }, setLiveMessage);
       }
       const turn = { query: trimmed, matches: [], questions: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(questions, turns), images: photos, assistantMessage: reply?.message, stage: reply?.stage ?? "clarify" as const, hasRequirement: reply?.hasRequirement ?? false };
+      if (hasQuestions && reply?.stage && reply.stage !== "quotation" && reply.stage !== "clarify") trackFunnel(trimmed === "Skip the optional quotation details for now; use my packaging requirement." ? "questions_skipped" : "questions_answered");
+      if (designStep && reply?.stage === "phone") trackFunnel("design_answered");
       setProjects(prev => prev.some(p => p.id === id) ? prev.map(p => p.id === id ? { ...p, brief: mergeSourcingBrief(p.brief, reply?.brief), designDone: p.designDone || reply?.stage === "phone", turns: [...p.turns, turn] } : p) : [{ id, title: trimmed.slice(0, 65), createdAt: new Date().toISOString(), brief: mergeSourcingBrief([], reply?.brief), turns: [turn] }, ...prev]);
       setActiveId(id); setQuery(""); setPhotos([]);
     } catch (e) { setError(e instanceof Error ? e.message : "Something went wrong. Please try again."); }
@@ -117,11 +127,14 @@ export default function SourcingAgent() {
     const draft = { query: validSourcingPhone(query.trim()) ? "" : query, images: photos };
     const payload = sourcingSubmission(turns, phone, draft, project?.brief);
     if (!payload || busy || submitting || project?.submitted) return;
+    trackFunnel("contact_submitted");
     setSubmitting(true); setError("");
     try {
       const submissionId = crypto.randomUUID();
       const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: submissionId });
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
+      trackFunnel("request_saved");
+      void flushVisitorTracking();
       const phoneDisplay = phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`;
       if (project) {
         const submittedProject = { ...project, submitted: true, submissionId, phone: phone.trim(), turns: [...project.turns, { query: phoneDisplay, matches: [], images: draft.images }, ...(draft.query.trim() ? [{ query: draft.query.trim(), matches: [] }] : [])] };

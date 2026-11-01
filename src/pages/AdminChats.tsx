@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { SourcingTurn } from "@/lib/sourcing";
 import { BRIEF_LABELS } from "@/lib/sourcing";
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import { VisitorAnalytics } from "@/components/sourcing/VisitorAnalytics";
 
 type Chat = { id: string; title: string; status: string; contact: string | null; updated_at: string; created_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; requirement?: string; images?: string[] };
 const date = (value: string) => new Date(value).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -70,6 +71,7 @@ export default function AdminChats() {
   return <AppShell user={user} isAdmin>
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><p className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase text-primary"><ShieldCheck className="h-3.5 w-3.5" />Private workspace</p><h1 className="text-3xl font-bold">Chats <span className="text-lg font-normal text-muted-foreground">{chats.length}</span></h1></div><div className="flex items-center gap-3"><span className="text-xs text-muted-foreground">{lastUpdated && `Updated ${lastUpdated}`}</span><Button variant="outline" size="icon" onClick={() => void refresh()} disabled={refreshing} aria-label="Refresh chats" title="Refresh chats"><RefreshCw className={refreshing ? "animate-spin" : ""} /></Button></div></div>
     {error && <p role="alert" className="mb-3 text-sm text-destructive">{error}</p>}
+    <VisitorAnalytics />
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><Tabs value={filter} onValueChange={setFilter}><TabsList><TabsTrigger value="all">All</TabsTrigger><TabsTrigger value="ongoing">Ongoing</TabsTrigger><TabsTrigger value="submitted">Submitted</TabsTrigger></TabsList></Tabs><div className="relative w-full sm:w-72"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search chats or contact…" aria-label="Search chats" className="pl-9" /></div></div>
     <div className="grid min-h-[600px] overflow-hidden rounded-lg border border-border bg-background md:grid-cols-[320px_minmax(0,1fr)]">
       <aside aria-label="Chat list" className={`max-h-[750px] overflow-y-auto border-border md:border-r ${selected ? "hidden md:block" : ""}`}>

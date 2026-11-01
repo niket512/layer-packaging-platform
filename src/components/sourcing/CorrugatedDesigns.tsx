@@ -8,6 +8,7 @@ import { BOX_DESIGNS, CATEGORIES, CLEAR_FILTERS, FAMILIES, PRIMARY_FILTERS, brow
 import { POUCH_DESIGNS } from "./pouch-designs";
 import { DesignCard } from "./DesignCard";
 import { SHEET_DESIGNS } from "./sheet-catalogue";
+import { trackDesign } from "@/lib/visitor-tracking";
 
 const DESIGNS = [...SHEET_DESIGNS, ...BOX_DESIGNS, ...POUCH_DESIGNS];
 const PAGE = 24;
@@ -24,6 +25,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (p
   const reset = () => { setCategory("all"); setFilters(CLEAR_FILTERS); setLimit(PAGE); };
   const switchFamily = (next: PackagingFamily) => { setFamily(next); reset(); };
   const useDesigns = (designs: PackagingDesign[]) => {
+    designs.forEach(design => trackDesign("selected", design.id));
     setSelected(null);
     requestAnimationFrame(() => onUseDesign(selectedDesignRequirement(designs), designs));
   };
@@ -67,7 +69,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (p
     </div>}
     <p aria-live="polite" className="my-3 text-xs text-muted-foreground">{shown.length} {shown.length === 1 ? "design" : "designs"}</p>
     <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
-      {shown.slice(0, limit).map(d => <DesignCard key={d.id} design={d} onDetails={() => setSelected(d)} onUse={() => useDesigns([d])} />)}
+      {shown.slice(0, limit).map(d => <DesignCard key={d.id} design={d} onDetails={() => { trackDesign("opened", d.id); setSelected(d); }} onUse={() => useDesigns([d])} />)}
     </div>
     {shown.length > limit && (
       <div ref={sentinelRef} aria-hidden className="h-4" />

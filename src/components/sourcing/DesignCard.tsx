@@ -1,10 +1,26 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { PackagingDesign } from "./packaging-catalogue";
+import { useEffect, useRef } from "react";
+import { trackDesign } from "@/lib/visitor-tracking";
 
 export function DesignCard({ design, onDetails, onUse }: { design: PackagingDesign; onDetails: () => void; onUse: () => void }) {
+  const card = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const node = card.current;
+    if (!node) return;
+    let timer: number | undefined;
+    const observer = new IntersectionObserver(entries => {
+      window.clearTimeout(timer);
+      if (entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= 0.5) && document.visibilityState === "visible") {
+        timer = window.setTimeout(() => { if (document.visibilityState === "visible") trackDesign("viewed", design.id); }, 1000);
+      }
+    }, { threshold: [0, 0.5] });
+    observer.observe(node);
+    return () => { observer.disconnect(); window.clearTimeout(timer); };
+  }, [design.id]);
   const labels = [design.attributes.style?.[0], design.attributes.features?.[0], design.attributes.printing?.[0]].filter(Boolean);
-  return <article className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md">
+  return <article ref={card} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md">
     <div className="relative aspect-square bg-muted/40">
       <Button variant="ghost" aria-label={`View ${design.name}`} onClick={onDetails} className="h-full w-full rounded-none p-2 sm:p-3">
         <img src={design.image} alt={design.name} loading="lazy" width={640} height={640} className="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover:scale-[1.02]" />
