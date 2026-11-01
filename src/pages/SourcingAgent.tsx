@@ -154,6 +154,18 @@ export default function SourcingAgent() {
               input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
               void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
             }} />
+            <section aria-labelledby="how-snaplogo-vets" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
+              <h2 id="how-snaplogo-vets" className="text-xl font-semibold">What “vetted” means at Snaplogo</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">We don’t just list manufacturers — our sourcing team works with them on real briefs. Here’s what happens behind every quotation you receive.</p>
+              <ul className="mt-5 grid gap-4 sm:grid-cols-2">
+                {[
+                  ["Screened before they join", "Manufacturers are reviewed for their packaging capability, production setup and experience with D2C brands before entering our network. Makers who can’t support brand-scale orders don’t make the cut."],
+                  ["Categories we cover", "Corrugated boxes (shipping, mailer, die-cut, printed) and flexible packaging (stand-up pouches, sachets, roll stock). Every manufacturer is mapped to the categories they actually produce."],
+                  ["Quotations collected & compared", "Your brief goes to relevant manufacturers, and our team collects their quotations, MOQs and lead times. You receive comparable options on WhatsApp — not a single take-it-or-leave-it price."],
+                  ["A team that coordinates for you", "Snaplogo’s sourcing team handles the back-and-forth with suppliers — clarifying specs, following up on quotes and keeping your requirement confidential. Zero commission, no exclusivity."],
+                ].map(([title, body]) => <li key={title} className="rounded-2xl border border-border bg-card p-5 shadow-sm"><p className="flex items-center gap-2 text-sm font-semibold text-foreground"><ShieldCheck className="h-4 w-4 shrink-0 text-primary" />{title}</p><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p></li>)}
+              </ul>
+            </section>
             <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
               <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
               <div className="mt-4 divide-y divide-border">
