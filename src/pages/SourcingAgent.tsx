@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeftRight, ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, Sparkles, User, Users, X, Zap, Handshake } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
 import { designReferenceImage } from "@/components/sourcing/design-reference-image";
@@ -20,7 +20,43 @@ const TEAM_WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("H
 
 const TEMPLATE = "I need [quantity] custom [box / pouch type] for my [product] brand — size [L×W×H cm], [material, e.g. 3-ply kraft], [printing, e.g. multicolour logo], budget ₹[price] per piece";
 
-export default function SourcingAgent() {
+export type SourcingCategory = "corrugated-boxes" | "flexible-pouches" | "sachets" | "cosmetic-packaging" | "mailer-boxes";
+const LANDINGS: Record<SourcingCategory, { headline: string; copy: string; cta: string }> = {
+  "corrugated-boxes": {
+    headline: "Find Corrugated Box Manufacturers for Your Business",
+    copy: "Get matched with vetted manufacturers for your required box size, board grade, printing and order quantity.",
+    cta: "Get Corrugated Box Quotes",
+  },
+  "flexible-pouches": {
+    headline: "Find Flexible Pouch Manufacturers for Your Brand",
+    copy: "Source custom printed stand-up pouches, zipper pouches and other flexible packaging formats.",
+    cta: "Get Pouch Quotes",
+  },
+  "sachets": {
+    headline: "Find Sachet & Stick Pack Manufacturers for Your Brand",
+    copy: "Source custom printed sachets, stick packs and single-serve flexible packaging from vetted manufacturers.",
+    cta: "Get Sachet Quotes",
+  },
+  "cosmetic-packaging": {
+    headline: "Find Cosmetic Packaging Manufacturers for Your Brand",
+    copy: "Source bottles, jars, tubes and boxes for skincare and beauty products from vetted manufacturers.",
+    cta: "Get Cosmetic Packaging Quotes",
+  },
+  "mailer-boxes": {
+    headline: "Find Mailer Box Manufacturers for Your Brand",
+    copy: "Get matched with vetted manufacturers for custom printed mailer and e-commerce shipping boxes.",
+    cta: "Get Mailer Box Quotes",
+  },
+};
+const SUGGESTIONS: { label: string; phrase: string }[] = [
+  { label: "Corrugated Boxes", phrase: "I need corrugated boxes" },
+  { label: "Flexible Pouches", phrase: "I need flexible pouches" },
+  { label: "Sachets", phrase: "I need sachets" },
+  { label: "Bottles", phrase: "I need bottles or jars" },
+];
+
+export default function SourcingAgent({ category }: { category?: SourcingCategory } = {}) {
+  const landing = category ? LANDINGS[category] : undefined;
   const navigate = useNavigate();
   const [projects, setProjects] = useState<SourcingProject[]>(() => {
     const saved = readSaved<unknown>(PROJECTS_KEY, []);
