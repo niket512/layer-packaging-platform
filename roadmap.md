@@ -1,7 +1,7 @@
 # Google Ads mobile landing
-- [ ] New hero badge/headline/copy, labeled "Get Packaging Quotes" CTA, suggestion chips, compact 3 steps.
-- [ ] Category landing routes (corrugated boxes, flexible pouches, sachets, cosmetic, mailer) with per-category copy, SEO metadata, sitemap and funnel tracking.
-- [ ] Verify mobile/desktop rendering and existing chat flow unbroken.
+- [x] New hero badge/headline/copy, labeled "Get Packaging Quotes" CTA, suggestion chips, compact 3 steps.
+- [x] Category landing routes (corrugated boxes, flexible pouches, sachets, cosmetic, mailer) with per-category copy, SEO metadata, sitemap and funnel tracking.
+- [x] Verify mobile/desktop rendering and existing chat flow unbroken.
 
 # Sourcing intake
 - [x] Add private funnel reporting, scroll depth and unique catalogue views; 82 tests passed and real scroll/design/chat activity verified in signed-in admin report (one labelled test visit).
