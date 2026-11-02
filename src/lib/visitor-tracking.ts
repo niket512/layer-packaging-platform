@@ -56,8 +56,8 @@ export function trackDesign(kind: "viewed" | "opened" | "selected", id: string) 
 export function useVisitorTracking() {
   const { pathname } = useLocation();
   useEffect(() => {
-    if (!PATHS.includes(pathname) || /^(app|manufacturers|makers)\./.test(location.hostname)) return;
-    if (pathname === "/" || pathname === "/sourcing") trackFunnel("page_opened");
+    if (!trackedPath(pathname) || /^(app|manufacturers|makers)\./.test(location.hostname)) return;
+    if (pathname === "/" || pathname.startsWith("/sourcing")) trackFunnel("page_opened");
     else changed();
     const onScroll = () => {
       const active = current();
