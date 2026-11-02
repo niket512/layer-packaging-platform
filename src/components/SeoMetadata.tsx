@@ -23,6 +23,26 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
     title: `Sourcing Request | ${SITE_TITLE}`,
     description: SITE_DESCRIPTION,
   },
+  "/sourcing/corrugated-boxes": {
+    title: "Corrugated Box Manufacturers — Quotes in 24 Hours | Snaplogo",
+    description: "Get matched with vetted corrugated box manufacturers for your required box size, board grade, printing and order quantity. Quotes within 24 hours.",
+  },
+  "/sourcing/flexible-pouches": {
+    title: "Flexible Pouch Manufacturers — Quotes in 24 Hours | Snaplogo",
+    description: "Source custom printed stand-up pouches, zipper pouches and other flexible packaging formats from vetted manufacturers. Quotes within 24 hours.",
+  },
+  "/sourcing/sachets": {
+    title: "Sachet & Stick Pack Manufacturers — Quotes in 24 Hours | Snaplogo",
+    description: "Source custom printed sachets, stick packs and single-serve flexible packaging from vetted manufacturers. Quotes within 24 hours.",
+  },
+  "/sourcing/cosmetic-packaging": {
+    title: "Cosmetic Packaging Manufacturers — Quotes in 24 Hours | Snaplogo",
+    description: "Source bottles, jars, tubes and boxes for skincare and beauty products from vetted manufacturers. Quotes within 24 hours.",
+  },
+  "/sourcing/mailer-boxes": {
+    title: "Mailer Box Manufacturers — Quotes in 24 Hours | Snaplogo",
+    description: "Get matched with vetted manufacturers for custom printed mailer and e-commerce shipping boxes. Quotes within 24 hours.",
+  },
   "/sourcing/thank-you": {
     title: `Request Received | ${SITE_TITLE}`,
     description: SITE_DESCRIPTION,

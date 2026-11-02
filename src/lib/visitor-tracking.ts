@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { addDesign, scrollDepth, trafficSource, type FunnelStep, type VisitorSnapshot } from "./visitor-metrics";
 
 const KEY = "snaplogo.visitor.session";
-const PATHS = ["/", "/sourcing", "/designs", "/designs/flexible-pouches"];
+const trackedPath = (pathname: string) => pathname === "/" || pathname === "/designs" || pathname === "/designs/flexible-pouches" || (pathname.startsWith("/sourcing") && pathname !== "/sourcing/thank-you");
 type Session = { id: string; token: string; last: number; snapshot: VisitorSnapshot };
 let session: Session | undefined;
 let timer: number | undefined;
@@ -56,8 +56,8 @@ export function trackDesign(kind: "viewed" | "opened" | "selected", id: string) 
 export function useVisitorTracking() {
   const { pathname } = useLocation();
   useEffect(() => {
-    if (!PATHS.includes(pathname) || /^(app|manufacturers|makers)\./.test(location.hostname)) return;
-    if (pathname === "/" || pathname === "/sourcing") trackFunnel("page_opened");
+    if (!trackedPath(pathname) || /^(app|manufacturers|makers)\./.test(location.hostname)) return;
+    if (pathname === "/" || pathname.startsWith("/sourcing")) trackFunnel("page_opened");
     else changed();
     const onScroll = () => {
       const active = current();

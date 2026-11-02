@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeftRight, ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, Sparkles, User, Users, X, Zap, Handshake } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
 import { designReferenceImage } from "@/components/sourcing/design-reference-image";
@@ -20,7 +20,43 @@ const TEAM_WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("H
 
 const TEMPLATE = "I need [quantity] custom [box / pouch type] for my [product] brand — size [L×W×H cm], [material, e.g. 3-ply kraft], [printing, e.g. multicolour logo], budget ₹[price] per piece";
 
-export default function SourcingAgent() {
+export type SourcingCategory = "corrugated-boxes" | "flexible-pouches" | "sachets" | "cosmetic-packaging" | "mailer-boxes";
+const LANDINGS: Record<SourcingCategory, { headline: string; copy: string; cta: string }> = {
+  "corrugated-boxes": {
+    headline: "Find Corrugated Box Manufacturers for Your Business",
+    copy: "Get matched with vetted manufacturers for your required box size, board grade, printing and order quantity.",
+    cta: "Get Corrugated Box Quotes",
+  },
+  "flexible-pouches": {
+    headline: "Find Flexible Pouch Manufacturers for Your Brand",
+    copy: "Source custom printed stand-up pouches, zipper pouches and other flexible packaging formats.",
+    cta: "Get Pouch Quotes",
+  },
+  "sachets": {
+    headline: "Find Sachet & Stick Pack Manufacturers for Your Brand",
+    copy: "Source custom printed sachets, stick packs and single-serve flexible packaging from vetted manufacturers.",
+    cta: "Get Sachet Quotes",
+  },
+  "cosmetic-packaging": {
+    headline: "Find Cosmetic Packaging Manufacturers for Your Brand",
+    copy: "Source bottles, jars, tubes and boxes for skincare and beauty products from vetted manufacturers.",
+    cta: "Get Cosmetic Packaging Quotes",
+  },
+  "mailer-boxes": {
+    headline: "Find Mailer Box Manufacturers for Your Brand",
+    copy: "Get matched with vetted manufacturers for custom printed mailer and e-commerce shipping boxes.",
+    cta: "Get Mailer Box Quotes",
+  },
+};
+const SUGGESTIONS: { label: string; phrase: string }[] = [
+  { label: "Corrugated Boxes", phrase: "I need corrugated boxes" },
+  { label: "Flexible Pouches", phrase: "I need flexible pouches" },
+  { label: "Sachets", phrase: "I need sachets" },
+  { label: "Bottles", phrase: "I need bottles or jars" },
+];
+
+export default function SourcingAgent({ category }: { category?: SourcingCategory } = {}) {
+  const landing = category ? LANDINGS[category] : undefined;
   const navigate = useNavigate();
   const [projects, setProjects] = useState<SourcingProject[]>(() => {
     const saved = readSaved<unknown>(PROJECTS_KEY, []);
@@ -150,9 +186,9 @@ export default function SourcingAgent() {
   const composer = (compact = false) => (
     <form onSubmit={e => { e.preventDefault(); void search(); }} className={`sourcing-composer rounded-2xl border border-border bg-card p-2.5 sm:p-4 focus-within:ring-2 focus-within:ring-primary/20 ${compact ? "" : "mt-3 md:mt-5"}`}>
       <label htmlFor="sourcing-query" className="sr-only">{compact ? "Your answer" : "Packaging requirement"}</label>
-      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} maxLength={500} disabled={busy || submitting} rows={compact ? 3 : 3} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Your answer, or any other details…" : "Describe what you need (e.g. 5,000 coffee boxes, 3-ply kraft, logo print)…"} className="w-full resize-none bg-transparent px-1 pt-1 text-base leading-relaxed sm:px-2 sm:pt-2 text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
+      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} maxLength={500} disabled={busy || submitting} rows={compact ? 3 : 3} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Your answer, or any other details…" : "What packaging do you need? For example, 5,000 kraft corrugated boxes with custom printing, delivered to Bengaluru."} className="w-full resize-none bg-transparent px-1 pt-1 text-base leading-relaxed sm:px-2 sm:pt-2 text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
       {photos.length > 0 && <div className="flex flex-wrap gap-2 px-2 pt-2">{photos.map((src, i) => <div key={i} className="relative"><img src={src} alt={`Attached photo ${i + 1}`} className="h-16 w-16 rounded-lg border border-border object-cover" /><button type="button" aria-label="Remove photo" onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))} className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background"><X className="h-3 w-3" /></button></div>)}</div>}
-      <div className="mt-2 flex items-center justify-between gap-2 border-t border-border pt-2.5"><div className="flex items-center gap-1"><input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={e => void addPhotos(e.target.files)} /><Button type="button" variant="ghost" size="sm" disabled={busy || submitting || photos.length >= 4} onClick={() => fileInput.current?.click()} className="h-10 px-2 text-xs text-muted-foreground sm:text-sm"><ImagePlus /><span className="sm:hidden">Add photo</span><span className="hidden sm:inline">Add design / photos</span></Button>{!compact && <Button type="button" variant="ghost" size="sm" disabled={busy || submitting} onClick={() => { setQuery(TEMPLATE); input.current?.focus(); }} className="h-10 px-2 text-xs text-muted-foreground sm:text-sm"><Zap /><span className="sm:hidden">Template</span><span className="hidden sm:inline">Use template</span></Button>}</div><Button type="submit" size="icon" disabled={busy || submitting || (!query.trim() && !photos.length)} aria-label="Send answer" className="h-10 w-10 rounded-full shadow-sm disabled:opacity-100 disabled:bg-primary/70">{busy ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button></div>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2.5"><div className="flex items-center gap-1"><input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={e => void addPhotos(e.target.files)} /><Button type="button" variant="ghost" size="sm" disabled={busy || submitting || photos.length >= 4} onClick={() => fileInput.current?.click()} className="h-10 px-2 text-xs text-muted-foreground sm:text-sm"><ImagePlus /><span className="sm:hidden">Add photo</span><span className="hidden sm:inline">Add design / photos</span></Button>{!compact && <Button type="button" variant="ghost" size="sm" disabled={busy || submitting} onClick={() => { setQuery(TEMPLATE); input.current?.focus(); }} className="h-10 px-2 text-xs text-muted-foreground sm:text-sm"><Zap /><span className="sm:hidden">Template</span><span className="hidden sm:inline">Use template</span></Button>}</div>{compact ? <Button type="submit" size="icon" disabled={busy || submitting || (!query.trim() && !photos.length)} aria-label="Send answer" className="h-10 w-10 rounded-full shadow-sm disabled:opacity-100 disabled:bg-primary/70">{busy ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button> : <Button type="submit" disabled={busy || submitting || (!query.trim() && !photos.length)} className="h-10 shrink-0 rounded-full px-3 text-[11px] font-bold uppercase tracking-wide shadow-sm disabled:opacity-100 disabled:bg-primary/70 max-sm:order-first max-sm:w-full sm:px-5 sm:text-[13px]">{busy ? <Loader2 className="animate-spin" /> : <>{landing?.cta ?? "Get Packaging Quotes"}<ArrowRight /></>}</Button>}</div>
     </form>
   );
   return (
@@ -170,12 +206,13 @@ export default function SourcingAgent() {
         </header>
         <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
           {!current && !busy && <div className="mx-auto pb-4 pt-4 text-center sm:pt-6 md:pt-10">
-            <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-semibold text-muted-foreground shadow-sm"><Sparkles className="h-3.5 w-3.5 text-primary" />AI Sourcing Engine</p>
-            <h1 className="mx-auto mt-2 max-w-[760px] max-sm:max-w-[360px] text-[28px] font-bold leading-8 tracking-normal sm:text-[32px] sm:leading-[1.15] md:text-[52px]">Find custom packaging manufacturers</h1>
-            <p className="mx-auto mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">Corrugated box manufacturers, stand-up pouch manufacturers &amp; sachet manufacturers for your D2C brand.</p>
-            <ul className="mx-auto mt-3 grid max-w-[860px] grid-cols-3 divide-x divide-border rounded-full border border-border bg-card px-2 py-1.5 shadow-sm sm:mt-5 sm:px-6 sm:py-2">{([["24h Quotes", Zap], ["100+ Vetted Suppliers", Handshake], ["0% Commission", ShieldCheck]] as const).map(([t, Icon]) => <li key={t} className="flex min-w-0 items-center justify-center gap-1 px-1 py-0.5 text-[11px] font-semibold text-foreground sm:gap-1.5 sm:text-sm"><Icon className="h-3.5 w-3.5 shrink-0 text-primary sm:h-4 sm:w-4" /><span className="leading-tight">{t}</span></li>)}</ul>
+            <p className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-[10px] font-semibold uppercase tracking-[1.5px] text-muted-foreground shadow-sm">Packaging sourcing for D2C brands</p>
+            <h1 className="mx-auto mt-2 max-w-[760px] max-sm:max-w-[360px] text-[28px] font-bold leading-8 tracking-normal sm:text-[32px] sm:leading-[1.15] md:text-[52px]">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
+            <p className="mx-auto mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">{landing?.copy ?? "Find manufacturers for corrugated boxes, flexible pouches, sachets and more. Share your requirements once and get matched with suitable suppliers."}</p>
+            <ul className="mx-auto mt-3 grid max-w-[860px] grid-cols-3 divide-x divide-border rounded-full border border-border bg-card px-2 py-1.5 shadow-sm sm:mt-5 sm:px-6 sm:py-2">{([["Quotes Within 24 Hours", Zap], ["100+ Vetted Suppliers", Handshake], ["0% Supplier Commission", ShieldCheck]] as const).map(([t, Icon]) => <li key={t} className="flex min-w-0 items-center justify-center gap-1 px-1 py-0.5 text-[11px] font-semibold text-foreground sm:gap-1.5 sm:text-sm"><Icon className="h-3.5 w-3.5 shrink-0 text-primary sm:h-4 sm:w-4" /><span className="leading-tight">{t}</span></li>)}</ul>
             <div className="mx-auto max-w-[860px] text-left">{composer()}</div>
-            <ol aria-label="How it works" className="mx-auto mt-4 hidden max-w-[860px] items-center justify-center gap-1.5 sm:flex">{["Describe", "Get matched", "Quotes in 24h"].map((t, i) => <li key={t} className="flex items-center gap-1"><span className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${i === 0 ? "text-foreground" : "text-muted-foreground"}`}><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>{t}</span>{i < 2 && <ChevronRight className="h-3 w-3 text-muted-foreground/50" />}</li>)}</ol>
+            <div className="mx-auto mt-3 flex max-w-[860px] flex-wrap items-center justify-center gap-2">{SUGGESTIONS.map(s => <button key={s.label} type="button" onClick={() => { setQuery(previous => previous.trim() ? `${previous.trim()} — ${s.phrase}` : s.phrase); setError(""); input.current?.focus(); }} className="rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-primary">{s.label}</button>)}</div>
+            <ol aria-label="How it works" className="mx-auto mt-4 hidden max-w-[860px] items-center justify-center gap-1.5 sm:flex">{["Share your requirements", "Get matched with manufacturers", "Compare quotes & sampling"].map((t, i) => <li key={t} className="flex items-center gap-1"><span className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${i === 0 ? "text-foreground" : "text-muted-foreground"}`}><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>{t}</span>{i < 2 && <ChevronRight className="h-3 w-3 text-muted-foreground/50" />}</li>)}</ol>
             <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left sm:mt-8">
               <p className="text-center text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">Trusted sourcing network</p>
               <h2 id="why-snaplogo" className="mt-1 text-center text-xl font-semibold text-foreground sm:mt-1.5 sm:text-2xl">Why brands source through Snaplogo</h2>
