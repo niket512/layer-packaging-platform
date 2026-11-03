@@ -6,6 +6,7 @@ import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { readSaved } from "@/lib/sourcing";
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 import { recordSourcingLead } from "@/lib/sourcing-conversion";
+import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/snaplogo-orange.png";
 
 const THANKYOU_KEY = "snaplogo.sourcing.thankyou";
@@ -23,7 +24,17 @@ export default function SourcingThankYou() {
   const phoneDisplay = phone.startsWith("+") ? phone : phone ? `+91 ${phone}` : "";
 
   useEffect(() => {
-    if (payload?.leadId) recordSourcingLead(payload.leadId, true);
+    if (payload?.leadId && recordSourcingLead(payload.leadId, true)) {
+      const w = window as Window & { rdt?: (...args: unknown[]) => void };
+      w.rdt?.("track", "Lead", { conversionId: payload.leadId });
+      let clickId: string | undefined;
+      try { clickId = localStorage.getItem("rdt_cid") ?? undefined; } catch { /* optional */ }
+      if (phone) {
+        supabase.functions.invoke("reddit-capi", {
+          body: { conversionId: payload.leadId, phone, clickId, screen: { width: screen.width, height: screen.height } },
+        }).catch(() => { /* Pixel still records the lead. */ });
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

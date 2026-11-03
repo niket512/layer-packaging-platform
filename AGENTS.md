@@ -7,8 +7,8 @@
 - Packaging browsing uses local box and pouch reference catalogues with family-specific combined filters, same-page details and a device-local shared shortlist; selected IDs, names and supported attributes prefill the existing chat, with a composite reference photo using its existing attachment path, to preserve multi-design requests without new submission schemas or invented buyer/manufacturer specifications.
 
 - Procurement (RFQs, quotes, POs, suppliers) lives at `/dashboard/procure` with real Cloud auth and `user_roles` (founder/supplier); the catalogue dashboard keeps its no-login brand link — suppliers must only ever see their own data.
-- Suppliers are linked to founders by the email on the founder's `suppliers` row matching the supplier's sign-in email — avoids a separate invite-token system.
-- AI helpers go through the `procure-ai` edge function (Lovable AI, `openai/gpt-6-astra`) — keeps keys server-side.
+- Suppliers are linked to founders by the email on the founder's `suppliers` row matching the supplier's sign-in email.
+- AI helpers go through the `procure-ai` edge function (Lovable AI, `openai/gpt-6-astra`).
 - The manufacturer marketplace (search, store, admin review) is served on the `app.` subdomain (and `/app/*` elsewhere) by hostname check in `App.tsx` — one Lovable project, one deployment.
 - Admin rights come only from an `admin` row in `user_roles` checked via `is_admin()`; users can never self-assign it.
 - Catalogue PDFs go to the private `catalogue-pdfs` bucket; the browser sends the PDF's page text (or, for scanned PDFs, small page pictures) to `extract-catalogue` in small batches with a non-streamed AI call, because whole large PDFs exceed the edge function's CPU limit. Products come back as drafts with page + photo box; photos are cropped in the browser and stored as small JPEG data URLs on the row because public storage buckets are blocked for this workspace.
@@ -23,3 +23,4 @@
 - Sourcing follow-up prompts are recorded on conversation turns and rendered from that saved history rather than current-step conditions — preserves chronological design and contact questions after replies and submission.
 - Sourcing briefs are extracted in the existing intake response with allowlisted topics and evidence sources; buyer edits are saved locally and sent with subsequent context and the existing submission text — avoids extra AI calls or a mandatory review step while preserving corrections and unknowns.
 - The design gallery also loads in-scope products exported from the Snaplogo catalogue spreadsheet into `src/data/catalogue-sheet.json` (re-export to update); categories/filters are mapped only from the sheet’s category IDs and tags, and supplier names, URLs, prices and MOQs are left out so third-party listings are not shown as Snaplogo offers.
+- Reddit Pixel (PageVisit) loads in `index.html`; Lead fires only on `/sourcing/thank-you` via Pixel plus `reddit-capi` sharing a conversionId for dedup; CAPI reports only enquiries saved within the hour.
