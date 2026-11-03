@@ -23,3 +23,5 @@
 - Sourcing follow-up prompts are recorded on conversation turns and rendered from that saved history rather than current-step conditions — preserves chronological design and contact questions after replies and submission.
 - Sourcing briefs are extracted in the existing intake response with allowlisted topics and evidence sources; buyer edits are saved locally and sent with subsequent context and the existing submission text — avoids extra AI calls or a mandatory review step while preserving corrections and unknowns.
 - The design gallery also loads in-scope products exported from the Snaplogo catalogue spreadsheet into `src/data/catalogue-sheet.json` (re-export to update); categories/filters are mapped only from the sheet’s category IDs and tags, and supplier names, URLs, prices and MOQs are left out so third-party listings are not shown as Snaplogo offers.
+
+- Reddit Pixel (PageVisit) initializes in `index.html`; Lead fires only on `/sourcing/thank-you` via Pixel and the `reddit-capi` edge function with a shared conversionId for deduplication, and CAPI only reports enquiries saved in the last hour.
