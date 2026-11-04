@@ -1,3 +1,7 @@
+# Reddit click ID correction
+- [ ] Validate Reddit click IDs before saving or sending them; discard the reported test value without losing saved Lead events.
+- [ ] Run regression tests and verify the outgoing conversion payload without creating another live lead.
+
 # Google Ads mobile landing
 - [x] New hero badge/headline/copy, labeled "Get Packaging Quotes" CTA, suggestion chips, compact 3 steps.
 - [x] Category landing routes (corrugated boxes, flexible pouches, sachets, cosmetic, mailer) with per-category copy, SEO metadata, sitemap and funnel tracking.
