@@ -1,4 +1,7 @@
 # Architecture rules
+<!-- LOVABLE:BEGIN -->
+- Preserve opaque Reddit URL click IDs; omit unusable or known test IDs through shared browser/CAPI validation, because fabricated values cannot attribute ad clicks.
+<!-- LOVABLE:END -->
 - Packaging guides share a Markdown article catalogue and renderer at `/blog`; central metadata, self-referencing Article/Breadcrumb schema and sitemap entries stay aligned without invented author credentials or dates.
 - Dedicated packaging-family design pages reuse the existing gallery with a locked family, preserving the same filters, automatic loading and sourcing handoff without duplicating catalogues.
 - Google Ads initializes once in `index.html`; only saved enquiries redirect to noindexed `/sourcing/thank-you` and emit contact-free `sourcing_lead_submitted`. Configure conversion tags separately; visits, chats and WhatsApp clicks are not leads.
