@@ -1,3 +1,7 @@
+# Reddit click ID correction
+- [x] Validate Reddit click IDs before saving or sending them; discard the reported test value without losing saved Lead events. CAPI deployed; browser capture awaits website publishing.
+- [x] Run regression tests and verify the outgoing conversion payload without creating another live lead; 13 tests passed, intercepted browser Lead omitted fake ID, build OK.
+
 # Google Ads mobile landing
 - [x] New hero badge/headline/copy, labeled "Get Packaging Quotes" CTA, suggestion chips, compact 3 steps.
 - [x] Category landing routes (corrugated boxes, flexible pouches, sachets, cosmetic, mailer) with per-category copy, SEO metadata, sitemap and funnel tracking.

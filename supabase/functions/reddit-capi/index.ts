@@ -1,6 +1,7 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { z } from "npm:zod@3";
+import { redditClickMatch } from "../_shared/reddit-click-id.ts";
 
 const PIXEL_ID = "a2_jykx84cbgi9e";
 const Body = z.object({
@@ -39,7 +40,7 @@ Deno.serve(async req => {
   const event = {
     event_at: new Date().toISOString(),
     event_type: { tracking_type: "Lead" },
-    ...(clickId ? { click_id: clickId } : {}),
+    ...redditClickMatch(clickId),
     event_metadata: { conversion_id: conversionId },
     user: {
       phone_number: await sha256(e164),
