@@ -6,6 +6,7 @@ import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { readSaved } from "@/lib/sourcing";
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 import { recordSourcingLead } from "@/lib/sourcing-conversion";
+import { readRedditClickId } from "@/lib/reddit-attribution";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/snaplogo-orange.png";
 
@@ -28,7 +29,7 @@ export default function SourcingThankYou() {
       const w = window as Window & { rdt?: (...args: unknown[]) => void };
       w.rdt?.("track", "Lead", { conversionId: payload.leadId });
       let clickId: string | undefined;
-      try { clickId = localStorage.getItem("rdt_cid") ?? undefined; } catch { /* optional */ }
+      try { clickId = readRedditClickId(localStorage); } catch { /* optional */ }
       if (phone) {
         supabase.functions.invoke("reddit-capi", {
           body: { conversionId: payload.leadId, phone, clickId, screen: { width: screen.width, height: screen.height } },

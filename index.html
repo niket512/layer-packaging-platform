@@ -13,10 +13,16 @@
     </script>
     <!-- Reddit Pixel -->
     <script>
+      // Discard the fabricated integration-test ID before the Pixel reads the URL.
+      try {
+        var url = new URL(location.href), c = url.searchParams.get('rdt_cid');
+        var usable = function(v){return typeof v === 'string' && v.length > 0 && v.length <= 500 && !/\s/.test(v) && v.toLowerCase() !== 'lovable_test_click';};
+        if (c !== null && !usable(c)) {url.searchParams.delete('rdt_cid');history.replaceState(history.state,'',url.pathname+url.search+url.hash);c=null;}
+        try {var saved=localStorage.getItem('rdt_cid');if(saved!==null&&!usable(saved))localStorage.removeItem('rdt_cid');if(usable(c))localStorage.setItem('rdt_cid',c);}catch(e){}
+      } catch(e) {}
       !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);
       rdt('init','a2_jykx84cbgi9e');
       rdt('track','PageVisit');
-      try{var c=new URLSearchParams(location.search).get('rdt_cid');if(c)localStorage.setItem('rdt_cid',c);}catch(e){}
     </script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>Corrugated Box, Sachet &amp; Stand-Up Pouch Manufacturers | Snaplogo</title>
