@@ -41,7 +41,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (p
     return () => observer.disconnect();
   }, [shown.length, limit]);
   return <section id="browse-designs" aria-label="Browse packaging designs" className="mt-8 border-t border-border pt-6 text-left md:mt-12 md:pt-8">
-    <div><h2 className="text-xl font-semibold">Explore formats</h2><p className="mt-1 text-sm text-muted-foreground">Tap a design to add it to your request.</p></div>
+    <div><h2 className="text-xl font-semibold">Explore formats</h2></div>
     {!onlyFamily && <div role="tablist" aria-label="Packaging category" className="mt-5 flex gap-1 overflow-x-auto border-b border-border pb-2">
       {FAMILIES.map(f => <Button key={f.id} role="tab" aria-selected={family === f.id} variant={family === f.id ? "default" : "ghost"} size="sm" onClick={() => switchFamily(f.id)} className="shrink-0 rounded-full text-xs">{f.label}</Button>)}
     </div>}
