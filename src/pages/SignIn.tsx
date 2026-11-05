@@ -17,7 +17,7 @@ export default function SignIn() {
       return;
     }
     setBrand(value);
-    navigate("/dashboard");
+    navigate("/bottles");
   };
 
   return (

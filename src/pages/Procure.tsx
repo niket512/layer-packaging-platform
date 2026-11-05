@@ -59,7 +59,7 @@ export default function Procure() {
             </button>
           ))}
           {role === "founder" && (
-            <Link to="/dashboard" className="flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-foreground hover:bg-background">
+            <Link to="/bottles" className="flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-foreground hover:bg-background">
               <Package className="h-4 w-4" />Packaging catalogue
             </Link>
           )}
