@@ -263,18 +263,6 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                   ["End-to-end coordination", "Direct WhatsApp & team support to clarify specs and follow up with suppliers.", Users],
                 ] as const).map(([title, sub, Icon]) => <li key={title} className="flex items-start gap-3 rounded-xl border border-border bg-card p-3 shadow-sm sm:block sm:p-4"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-primary sm:h-9 sm:w-9"><Icon className="h-4 w-4" aria-hidden="true" /></span><span className="min-w-0"><h3 className="text-sm font-semibold text-foreground sm:mt-3">{title}</h3><p className="mt-0.5 text-xs leading-relaxed text-muted-foreground sm:mt-1">{sub}</p></span></li>)}
               </ul>
-              <details className="group/vet mt-3 rounded-xl border border-border bg-card shadow-sm">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-details-marker]:hidden">
-                  How does Snaplogo vet manufacturers?<ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open/vet:rotate-90" />
-                </summary>
-                <div className="space-y-3 border-t border-border px-4 py-4 text-xs leading-relaxed text-muted-foreground">
-                  <p>We don’t just list manufacturers — our sourcing team works with them on real briefs. Here’s what happens behind every quotation you receive.</p>
-                  <p><strong className="font-semibold text-foreground">Screened before they join.</strong> Manufacturers are reviewed for their packaging capability, production setup and experience with D2C brands before entering our network. Makers who can’t support brand-scale orders don’t make the cut.</p>
-                  <p><strong className="font-semibold text-foreground">Categories we cover.</strong> Corrugated boxes (shipping, mailer, die-cut, printed) and flexible packaging (stand-up pouches, sachets, roll stock). Every manufacturer is mapped to the categories they actually produce.</p>
-                  <p><strong className="font-semibold text-foreground">Quotations collected &amp; compared.</strong> Your brief goes to relevant manufacturers, and our team collects their quotations, MOQs and lead times. You receive comparable options on WhatsApp — not a single take-it-or-leave-it price.</p>
-                  <p><strong className="font-semibold text-foreground">A team that coordinates for you.</strong> Snaplogo’s sourcing team handles the back-and-forth with suppliers — clarifying specs, following up on quotes and keeping your requirement confidential. Zero commission, no exclusivity.</p>
-                </div>
-              </details>
             </section>
             {designGallery}
             <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
