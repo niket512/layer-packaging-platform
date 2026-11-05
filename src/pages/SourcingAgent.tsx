@@ -225,7 +225,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 text-center">
-            <section aria-label="Sourcing chat" className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-[820px] flex-col justify-center py-6 text-left">
+            <section aria-label="Sourcing chat" className="mx-auto flex max-w-[820px] flex-col pt-10 pb-6 sm:pt-16 text-left">
             <div className="text-center">
             <div className="relative mx-auto max-w-[820px]" style={current || busy ? { height: introHeight } : undefined}>
             {current || busy ? (
