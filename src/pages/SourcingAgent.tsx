@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeftRight, ArrowRight, ArrowUp, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
 import { designReferenceImage } from "@/components/sourcing/design-reference-image";
@@ -48,12 +48,22 @@ const LANDINGS: Record<SourcingCategory, { headline: string; copy: string; cta: 
     cta: "Get Mailer Box Quotes",
   },
 };
-const SUGGESTIONS: { label: string; phrase: string }[] = [
-  { label: "Corrugated Boxes", phrase: "I need corrugated boxes" },
-  { label: "Flexible Pouches", phrase: "I need flexible pouches" },
-  { label: "Sachets", phrase: "I need sachets" },
-  { label: "Bottles", phrase: "I need bottles or jars" },
+const PROMPT_TABS: { label: string; prompts: string[] }[] = [
+  { label: "Corrugated boxes", prompts: ["I need [quantity] 3-ply printed corrugated shipping boxes, size [L×W×H cm], budget ₹[price] per box", "Find mailer boxes for my [product] brand with a one-colour logo print, MOQ around [quantity]", "I need 5-ply heavy-duty boxes for [product], delivered to [city]"] },
+  { label: "Pouches & sachets", prompts: ["I need [quantity] stand-up zipper pouches for [product], size [W×H cm], multicolour print", "Find sachet manufacturers for [product], [ml/g] per sachet, MOQ [quantity]", "I need kraft pouches with a window for [product], budget ₹[price] per piece"] },
+  { label: "From my design", prompts: ["I'm attaching my packaging design — find manufacturers who can make this", "I saw this packaging on another brand — help me source something similar for my [product]"] },
+  { label: "Compare quotes", prompts: ["I already have a quote of ₹[price] for [quantity] [packaging] — find me better options", "Compare MOQs and lead times for [packaging] from manufacturers near [city]"] },
 ];
+
+function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
+  const [tab, setTab] = useState(0);
+  return (
+    <div className="mx-auto mt-4 max-w-[860px] text-left">
+      <div role="tablist" aria-label="Example requests" className="flex gap-1 overflow-x-auto pb-1 [scrollbar-width:none]">{PROMPT_TABS.map((t, i) => <button key={t.label} role="tab" type="button" aria-selected={tab === i} onClick={() => setTab(i)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${tab === i ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground"}`}>{t.label}</button>)}</div>
+      <ul role="tabpanel" className="mt-1 divide-y divide-border">{PROMPT_TABS[tab].prompts.map(p => <li key={p}><button type="button" onClick={() => onPick(p)} className="group flex w-full items-center gap-3 px-2 py-3 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"><span className="min-w-0 flex-1 truncate">{p}</span><ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground/60 group-hover:text-primary" /></button></li>)}</ul>
+    </div>
+  );
+}
 
 export default function SourcingAgent({ category }: { category?: SourcingCategory } = {}) {
   const landing = category ? LANDINGS[category] : undefined;
@@ -191,7 +201,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
   const composer = (compact = false) => (
     <form onSubmit={e => { e.preventDefault(); void search(); }} className={`sourcing-composer rounded-2xl border border-border bg-card p-2.5 sm:p-4 focus-within:ring-2 focus-within:ring-primary/20 ${compact ? "" : "mt-3 md:mt-5"}`}>
       <label htmlFor="sourcing-query" className="sr-only">{compact ? "Your answer" : "Packaging requirement"}</label>
-      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} maxLength={500} disabled={busy || submitting} rows={compact ? 3 : 3} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Your answer, or any other details…" : "What packaging do you need? For example, 5,000 kraft corrugated boxes with custom printing, delivered to Bengaluru."} className="w-full resize-none bg-transparent px-1 pt-1 text-base leading-relaxed sm:px-2 sm:pt-2 text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
+      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} maxLength={500} disabled={busy || submitting} rows={compact ? 3 : 3} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Your answer, or any other details…" : "Ask Snaplogo Sourcing Expert… e.g. 5,000 printed kraft corrugated boxes, delivered to Bengaluru"} className="w-full resize-none bg-transparent px-1 pt-1 text-base leading-relaxed sm:px-2 sm:pt-2 text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
       {photos.length > 0 && <div className="flex flex-wrap gap-2 px-2 pt-2">{photos.map((src, i) => <div key={i} className="relative"><img src={src} alt={`Attached photo ${i + 1}`} className="h-16 w-16 rounded-lg border border-border object-cover" /><button type="button" aria-label="Remove photo" onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))} className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background"><X className="h-3 w-3" /></button></div>)}</div>}
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2.5"><div className="flex items-center gap-1"><input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={e => void addPhotos(e.target.files)} /><Button type="button" variant="ghost" size="sm" disabled={busy || submitting || photos.length >= 4} onClick={() => fileInput.current?.click()} className="h-10 px-2 text-xs text-muted-foreground sm:text-sm"><ImagePlus /><span className="sm:hidden">Add photo</span><span className="hidden sm:inline">Add design / photos</span></Button>{!compact && <Button type="button" variant="ghost" size="sm" disabled={busy || submitting} onClick={() => { setQuery(TEMPLATE); input.current?.focus(); }} className="h-10 px-2 text-xs text-muted-foreground sm:text-sm"><Zap /><span className="sm:hidden">Template</span><span className="hidden sm:inline">Use template</span></Button>}</div>{compact ? <Button type="submit" size="icon" disabled={busy || submitting || (!query.trim() && !photos.length)} aria-label="Send answer" className="h-10 w-10 rounded-full shadow-sm disabled:opacity-100 disabled:bg-primary/70">{busy ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button> : <Button type="submit" disabled={busy || submitting || (!query.trim() && !photos.length)} className="h-10 shrink-0 rounded-full px-3 text-[11px] font-bold uppercase tracking-wide shadow-sm disabled:opacity-100 disabled:bg-primary/70 max-sm:order-first max-sm:w-full sm:px-5 sm:text-[13px]">{busy ? <Loader2 className="animate-spin" /> : <>{landing?.cta ?? "Get Packaging Quotes"}<ArrowRight /></>}</Button>}</div>
     </form>
@@ -205,16 +215,10 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
   );
   return (
     <div className="theme-sourcing min-h-screen bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-60 flex-col border-r border-border bg-card px-4 py-6 lg:flex">
-        <Link to="/sourcing" className="flex items-center gap-2 px-2 text-xl font-bold"><img src={logo} alt="" className="h-8 w-8" />snaplogo<span className="text-primary">.</span></Link>
-        <Button onClick={startNew} disabled={busy || submitting} className="mt-8 w-full justify-start rounded-full shadow-sm"><Plus />New sourcing request</Button>
-        {projects.length > 0 && <button type="button" onClick={() => setHistoryOpen(o => !o)} aria-expanded={historyOpen} className="mt-8 flex w-full items-center justify-between px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground">Previous requests<ChevronRight className={`h-3.5 w-3.5 transition-transform ${historyOpen ? "rotate-90" : ""}`} /></button>}
-        <div className={`mt-2 flex-1 space-y-0.5 overflow-y-auto ${historyOpen ? "" : "hidden"}`} >{projects.map(p => <button type="button" key={p.id} disabled={busy || submitting} onClick={() => { setActiveId(p.id); setPhotos([]); setQuery(""); setError(""); }} className={`block w-full rounded-lg border-l-2 px-3 py-2.5 text-left transition-colors duration-150 disabled:opacity-60 ${p.id === activeId ? "border-primary bg-accent" : "border-transparent hover:bg-muted"}`}><span className="block truncate text-[13px] font-medium text-foreground" title={sourcingProjectTitle(p)}>{sourcingProjectTitle(p)}</span><span className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground"><span className={`rounded-full px-2 py-px text-[10px] font-semibold ${p.submitted ? "bg-[hsl(var(--sourcing-success)/0.12)] text-[hsl(var(--sourcing-success))]" : "bg-muted text-muted-foreground"}`}>{p.submitted ? "Submitted" : "Draft"}</span>{p.createdAt && new Date(p.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span></button>)}</div>
-      </aside>
-      <div className="lg:ml-60">
+      <div>
         <header className="sticky top-0 z-10 flex h-12 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 backdrop-blur md:h-16 md:px-10">
-          <nav aria-label="Sections" className="flex items-center gap-1 text-sm"><Link to="/sourcing" className="mr-2 flex items-center gap-2 font-bold lg:hidden"><img src={logo} alt="" className="h-6 w-6" />snaplogo<span className="text-primary">.</span></Link><button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hidden rounded-full bg-muted px-3 py-1.5 font-medium sm:inline">Workspace</button><button type="button" onClick={() => { if (current) startNew(); setTimeout(() => document.getElementById("browse-designs")?.scrollIntoView({ behavior: "smooth" }), 50); }} className="hidden rounded-full px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground sm:inline">Browse designs</button></nav>
-          <div className="flex items-center gap-1.5 sm:gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-8 rounded-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm lg:hidden"><Plus /><span>New Request</span></Button></div>
+          <nav aria-label="Sections" className="flex items-center gap-1 text-sm"><Link to="/sourcing" className="mr-2 flex items-center gap-2 font-bold"><img src={logo} alt="" className="h-6 w-6" />snaplogo<span className="text-primary">.</span></Link><button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hidden rounded-full bg-muted px-3 py-1.5 font-medium sm:inline">Workspace</button><button type="button" onClick={() => { if (current) startNew(); setTimeout(() => document.getElementById("browse-designs")?.scrollIntoView({ behavior: "smooth" }), 50); }} className="hidden rounded-full px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground sm:inline">Browse designs</button></nav>
+          <div className="flex items-center gap-1.5 sm:gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-8 rounded-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm"><Plus /><span>New Request</span></Button></div>
         </header>
         <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
           <div className="mx-auto pb-4 pt-4 text-center sm:pt-6 md:pt-10">
@@ -243,15 +247,18 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </>}
             </div>
             ) : <div ref={intro}>
-            <p className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-[10px] font-semibold uppercase tracking-[1.5px] text-muted-foreground shadow-sm">Packaging sourcing for D2C brands</p>
-            <h1 className="mx-auto mt-2 max-w-[760px] max-sm:max-w-[360px] text-[28px] font-bold leading-8 tracking-normal sm:text-[32px] sm:leading-[1.15] md:text-[52px]">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
-            <p className="mx-auto mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">{landing?.copy ?? "Find manufacturers for corrugated boxes, flexible pouches, sachets and more. Share your requirements once and get matched with suitable suppliers."}</p>
-            <ul className="mx-auto mt-3 grid max-w-[860px] grid-cols-3 divide-x divide-border rounded-full border border-border bg-card px-2 py-1.5 shadow-sm sm:mt-5 sm:px-6 sm:py-2">{([["Quotes Within 24 Hours", Zap], ["100+ Vetted Suppliers", Handshake], ["0% Supplier Commission", ShieldCheck]] as const).map(([t, Icon]) => <li key={t} className="flex min-w-0 items-center justify-center gap-1 px-1 py-0.5 text-[11px] font-semibold text-foreground sm:gap-1.5 sm:text-sm"><Icon className="h-3.5 w-3.5 shrink-0 text-primary sm:h-4 sm:w-4" /><span className="leading-tight">{t}</span></li>)}</ul>
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-end sm:justify-center sm:gap-5">
+              <div className="relative shrink-0" aria-hidden="true"><span className="absolute -right-2 top-2 h-[88%] w-full rotate-6 rounded-2xl border border-border bg-accent" /><span className="relative flex w-28 flex-col items-center rounded-2xl border border-border bg-card p-2 shadow-sm sm:w-32"><span className="flex h-14 w-full items-center justify-center rounded-xl bg-accent sm:h-16"><img src={logo} alt="" className="h-9 w-9 sm:h-10 sm:w-10" /></span><span className="mt-1.5 text-[11px] font-semibold leading-tight text-foreground sm:text-xs">Snaplogo Sourcing Expert</span></span></div>
+              <div className="text-center sm:pb-2 sm:text-left">
+                <h1 className="text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
+                <p className="mt-1 text-[26px] font-bold leading-8 text-foreground sm:text-[34px] sm:leading-tight">What packaging are we sourcing today?</p>
+                <p className="mt-1 text-sm text-muted-foreground">Quotes from <strong className="font-semibold text-foreground">100+ vetted manufacturers</strong> within <strong className="font-semibold text-foreground">24 hours</strong> · 0% commission</p>
+              </div>
+            </div>
             </div>}
             </div>
             <div className="mx-auto max-w-[860px] text-left">{composer()}</div>
-            <div className="mx-auto mt-3 flex max-w-[860px] flex-wrap items-center justify-center gap-2">{SUGGESTIONS.map(s => <button key={s.label} type="button" onClick={() => { setQuery(previous => previous.trim() ? `${previous.trim()} — ${s.phrase}` : s.phrase); setError(""); input.current?.focus(); }} className="rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-primary">{s.label}</button>)}</div>
-            <ol aria-label="How it works" className="mx-auto mt-4 hidden max-w-[860px] items-center justify-center gap-1.5 sm:flex">{["Share your requirements", "Get matched with manufacturers", "Compare quotes & sampling"].map((t, i) => <li key={t} className="flex items-center gap-1"><span className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${i === 0 ? "text-foreground" : "text-muted-foreground"}`}><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>{t}</span>{i < 2 && <ChevronRight className="h-3 w-3 text-muted-foreground/50" />}</li>)}</ol>
+            {!current && !busy && <PromptTabs onPick={phrase => { setQuery(phrase); setError(""); input.current?.focus(); }} />}
             <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left sm:mt-8">
               <p className="text-center text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">Trusted sourcing network</p>
               <h2 id="why-snaplogo" className="mt-1 text-center text-xl font-semibold text-foreground sm:mt-1.5 sm:text-2xl">Why brands source through Snaplogo</h2>
