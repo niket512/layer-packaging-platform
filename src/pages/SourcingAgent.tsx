@@ -312,6 +312,34 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         </main>
         <footer className="mx-auto flex max-w-[900px] flex-wrap items-center justify-between gap-2 border-t border-border/60 px-5 py-6 text-xs text-muted-foreground md:px-10"><span>© {new Date().getFullYear()} Snaplogo · India</span><nav className="flex flex-wrap items-center gap-1" aria-label="Site"><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/about">About</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/manufacturers">Manufacturers</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/designs">Designs</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/blog">Packaging guides</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/team">Team</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/privacy-policy">Privacy</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button></nav></footer>
       </div>
+      <CommunityPopup hidden={!!activeId || busy} />
+    </div>
+  );
+}
+
+function CommunityPopup({ hidden }: { hidden: boolean }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (sessionStorage.getItem("snaplogo-community-popup")) return;
+    const show = () => { if (!sessionStorage.getItem("snaplogo-community-popup")) { sessionStorage.setItem("snaplogo-community-popup", "1"); setOpen(true); } };
+    const timer = window.setTimeout(show, 25000);
+    const onScroll = () => { const h = document.documentElement; if ((h.scrollTop + h.clientHeight) / h.scrollHeight > 0.6) show(); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.clearTimeout(timer); window.removeEventListener("scroll", onScroll); };
+  }, []);
+  if (!open || hidden) return null;
+  return (
+    <div role="dialog" aria-label="Join the Snaplogo WhatsApp community" className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-[400px] animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-border bg-card p-4 shadow-2xl md:inset-x-auto md:right-6 md:bottom-6">
+      <button type="button" aria-label="Close" onClick={() => setOpen(false)} className="absolute right-2.5 top-2.5 rounded-full p-1 text-muted-foreground hover:bg-muted"><X className="h-4 w-4" /></button>
+      <div className="flex items-center gap-3 pr-6">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
+        <div>
+          <p className="text-sm font-semibold text-foreground">Join 500+ D2C founders</p>
+          <p className="text-xs text-muted-foreground">Real MOQ & price benchmarks, shared on WhatsApp</p>
+        </div>
+      </div>
+      <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-full bg-[hsl(var(--sourcing-success))] text-[13px] font-bold uppercase tracking-wide text-white hover:opacity-90">Join free on WhatsApp <ArrowRight className="h-4 w-4" /></a>
+      <p className="mt-1.5 text-center text-[11px] text-muted-foreground">Free · No spam · Leave anytime</p>
     </div>
   );
 }
