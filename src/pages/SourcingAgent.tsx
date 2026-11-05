@@ -191,6 +191,13 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2.5"><div className="flex items-center gap-1"><input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={e => void addPhotos(e.target.files)} /><Button type="button" variant="ghost" size="sm" disabled={busy || submitting || photos.length >= 4} onClick={() => fileInput.current?.click()} className="h-10 px-2 text-xs text-muted-foreground sm:text-sm"><ImagePlus /><span className="sm:hidden">Add photo</span><span className="hidden sm:inline">Add design / photos</span></Button>{!compact && <Button type="button" variant="ghost" size="sm" disabled={busy || submitting} onClick={() => { setQuery(TEMPLATE); input.current?.focus(); }} className="h-10 px-2 text-xs text-muted-foreground sm:text-sm"><Zap /><span className="sm:hidden">Template</span><span className="hidden sm:inline">Use template</span></Button>}</div>{compact ? <Button type="submit" size="icon" disabled={busy || submitting || (!query.trim() && !photos.length)} aria-label="Send answer" className="h-10 w-10 rounded-full shadow-sm disabled:opacity-100 disabled:bg-primary/70">{busy ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button> : <Button type="submit" disabled={busy || submitting || (!query.trim() && !photos.length)} className="h-10 shrink-0 rounded-full px-3 text-[11px] font-bold uppercase tracking-wide shadow-sm disabled:opacity-100 disabled:bg-primary/70 max-sm:order-first max-sm:w-full sm:px-5 sm:text-[13px]">{busy ? <Loader2 className="animate-spin" /> : <>{landing?.cta ?? "Get Packaging Quotes"}<ArrowRight /></>}</Button>}</div>
     </form>
   );
+  const designGallery = (
+    <CorrugatedDesigns onUseDesign={(prefill, designs) => {
+      setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
+      input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
+    }} />
+  );
   return (
     <div className="theme-sourcing min-h-screen bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 z-20 hidden w-60 flex-col border-r border-border bg-card px-4 py-6 lg:flex">
@@ -236,11 +243,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                 </div>
               </details>
             </section>
-            <CorrugatedDesigns onUseDesign={(prefill, designs) => {
-              setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
-              input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-              void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
-            }} />
+            {designGallery}
             <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
               <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
               <div className="mt-4 divide-y divide-border">
@@ -276,6 +279,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => void search("Skip the optional quotation details for now; use my packaging requirement.")}>Skip for now<ArrowRight /></Button></div>}
             </>}
           </div>}
+          {(current || busy) && designGallery}
           {error && <div role="alert" className="mt-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-card p-4 text-sm text-destructive"><span className="flex-1">{error}</span><Button variant="ghost" size="icon" className="h-6 w-6" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}
         </main>
         <footer className="mx-auto flex max-w-[900px] flex-wrap items-center justify-between gap-2 border-t border-border/60 px-5 py-6 text-xs text-muted-foreground md:px-10"><span>© {new Date().getFullYear()} Snaplogo · India</span><nav className="flex flex-wrap items-center gap-1" aria-label="Site"><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/about">About</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/manufacturers">Manufacturers</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/designs">Designs</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/blog">Packaging guides</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/team">Team</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/privacy-policy">Privacy</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button></nav></footer>
