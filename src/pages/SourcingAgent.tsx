@@ -195,7 +195,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
     finally { setSubmitting(false); }
   };
   const composer = (compact = false) => (
-    <form onSubmit={e => { e.preventDefault(); void search(); }} className={`sourcing-composer rounded-2xl border border-border bg-card p-2.5 sm:p-4 focus-within:ring-2 focus-within:ring-primary/20 ${compact ? "" : "mt-3 md:mt-5"}`}>
+    <form onSubmit={e => { e.preventDefault(); void search(); }} className={`sourcing-composer rounded-2xl border border-border bg-background p-2.5 sm:p-4 focus-within:ring-2 focus-within:ring-primary/20 ${compact ? "" : "mt-3 md:mt-5"}`}>
       <label htmlFor="sourcing-query" className="sr-only">{compact ? "Your answer" : "Packaging requirement"}</label>
       <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} maxLength={500} disabled={busy || submitting} rows={compact ? 3 : 3} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Your answer, or any other details…" : "Ask Snaplogo Sourcing Expert… e.g. 5,000 printed kraft corrugated boxes, delivered to Bengaluru"} className="w-full resize-none bg-transparent px-1 pt-1 text-base leading-relaxed sm:px-2 sm:pt-2 text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
       {photos.length > 0 && <div className="flex flex-wrap gap-2 px-2 pt-2">{photos.map((src, i) => <div key={i} className="relative"><img src={src} alt={`Attached photo ${i + 1}`} className="h-16 w-16 rounded-lg border border-border object-cover" /><button type="button" aria-label="Remove photo" onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))} className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background"><X className="h-3 w-3" /></button></div>)}</div>}
@@ -231,6 +231,9 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         </header>
         <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
           <div className="mx-auto pb-4 pt-10 text-center sm:pt-14 md:pt-20">
+            <section aria-label="Sourcing chat" className="sourcing-composer mx-auto max-w-[900px] overflow-hidden rounded-3xl border border-border bg-card text-left">
+            <div className="flex items-center gap-3 border-b border-border px-4 py-3 sm:px-6"><img src={logo} alt="" className="h-9 w-9 rounded-full border border-border bg-accent p-1.5" /><div className="min-w-0"><p className="text-sm font-semibold text-foreground">Snaplogo Sourcing Expert</p><p className="flex items-center gap-1.5 text-xs text-muted-foreground"><span className="h-2 w-2 rounded-full bg-[hsl(var(--sourcing-success))]" />Online · replies in seconds</p></div></div>
+            <div className="p-3 text-center sm:p-6">
             <div className="relative mx-auto max-w-[860px]" style={current || busy ? { height: introHeight } : undefined}>
             {current || busy ? (
             <div ref={transcript} role="region" aria-label="Conversation" className="absolute inset-0 overflow-y-auto overscroll-contain text-left [overflow-anchor:none]">
@@ -266,6 +269,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>}
             </div>
             <div className="mx-auto max-w-[860px] text-left">{composer()}</div>
+            </div></section>
             <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left sm:mt-8">
               <p className="text-center text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">Trusted sourcing network</p>
               <h2 id="why-snaplogo" className="mt-1 text-center text-xl font-semibold text-foreground sm:mt-1.5 sm:text-2xl">Why brands source through Snaplogo</h2>
