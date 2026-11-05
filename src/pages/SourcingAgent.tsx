@@ -230,10 +230,10 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
           </nav>
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
-          <div className="mx-auto pb-4 pt-10 text-center sm:pt-14 md:pt-20">
-            <section aria-label="Sourcing chat" className="sourcing-composer mx-auto max-w-[1180px] min-h-[70vh] overflow-hidden rounded-3xl border border-border bg-card text-left">
-            <div className="p-3 text-center sm:p-6">
-            <div className="relative mx-auto max-w-[1100px]" style={current || busy ? { height: introHeight } : undefined}>
+          <div className="mx-auto pb-4 text-center">
+            <section aria-label="Sourcing chat" className="mx-auto flex min-h-[calc(100svh-6.5rem)] max-w-[820px] flex-col justify-center py-6 text-left">
+            <div className="text-center">
+            <div className="relative mx-auto max-w-[820px]" style={current || busy ? { height: introHeight } : undefined}>
             {current || busy ? (
             <div ref={transcript} role="region" aria-label="Conversation" className="absolute inset-0 overflow-y-auto overscroll-contain text-left [overflow-anchor:none]">
             <ol className="sourcing-composer mb-4 flex items-center gap-3 rounded-2xl border border-border bg-card px-3 py-2" aria-label="Progress">{["Requirements", "Brief", "Contact"].map((label, i) => { const step = project?.submitted ? 3 : askingPhone ? 2 : project?.brief?.length ? 1 : 0; const done = i < step; const active = i === step; return <li key={label} className="flex flex-1 items-center gap-3"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${done ? "border-primary bg-primary text-primary-foreground" : active ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{done ? <Check className="h-4 w-4" /> : i + 1}</span><span className={`hidden min-w-0 text-sm font-semibold md:block ${done || active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>{i < 2 && <span className={`h-px min-w-4 flex-1 ${done ? "bg-primary" : "bg-border"}`} />}</li>; })}</ol>
@@ -261,13 +261,13 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-end sm:justify-center sm:gap-5">
               <div className="text-center">
                 <h1 className="text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
-                <p className="mt-1 text-[26px] font-bold leading-8 text-foreground sm:text-[34px] sm:leading-tight">What packaging are we sourcing today?</p>
+                <p className="mt-1 mb-6 text-[28px] font-semibold leading-9 text-foreground sm:text-[36px] sm:leading-tight">What packaging are we sourcing today?</p>
                 <p className="mt-1 text-sm text-muted-foreground">Quotes from <strong className="font-semibold text-foreground">100+ vetted manufacturers</strong> within <strong className="font-semibold text-foreground">24 hours</strong> · 0% commission</p>
               </div>
             </div>
             </div>}
             </div>
-            <div className="mx-auto max-w-[860px] text-left">{composer()}</div>
+            <div className="mx-auto w-full max-w-[820px] text-left">{composer()}</div>
             </div></section>
             <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left sm:mt-8">
               <p className="text-center text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">Trusted sourcing network</p>
