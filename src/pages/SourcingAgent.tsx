@@ -276,7 +276,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </section> : <>
               <div className="mt-6">{composer(true)}</div>
               {submitting && <p role="status" className="mt-2 flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="h-3.5 w-3.5 animate-spin" />Sending your request…</p>}
-              {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => void search("Skip the optional quotation details for now; use my packaging requirement.")}>Skip for now<ArrowRight /></Button></div>}
+              {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" disabled={busy || submitting} className="text-muted-foreground" onClick={() => void search("Skip the optional quotation details for now; use my packaging requirement.")}>Skip for now<ArrowRight /></Button></div>}
             </>}
           </div>}
           {(current || busy) && designGallery}
