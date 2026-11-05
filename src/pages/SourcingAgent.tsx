@@ -279,8 +279,8 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                     <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--sourcing-success))]" />100+ Brands, 20+ Manufacturers</p>
                   </div>
                 </div>
-                <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" className="flex h-9 w-full items-center justify-center gap-2 whitespace-nowrap md:h-10 rounded-full bg-[hsl(var(--sourcing-success))] md:w-auto md:px-6 text-[13px] font-bold uppercase tracking-wide text-white transition-opacity hover:opacity-90">Join free on WhatsApp <ArrowRight className="h-4 w-4" /></a>
-                <p className="-mt-1.5 flex md:col-span-2 md:-mt-3 md:justify-end items-center justify-center gap-1.5 text-[11px] text-muted-foreground">Free · No spam or sales calls · Leave anytime</p>
+                <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" className="flex h-9 w-full items-center justify-center gap-2 whitespace-nowrap md:h-10 rounded-full bg-[hsl(var(--sourcing-success))] md:w-auto md:px-6 text-[13px] font-bold uppercase tracking-wide text-white transition-opacity hover:opacity-90">JOIN  WHATSAPP COMMUNITY <ArrowRight className="h-4 w-4" /></a>
+                <p className="-mt-1.5 flex md:col-span-2 md:-mt-3 md:justify-end items-center justify-center gap-1.5 text-[11px] text-muted-foreground"></p>
               </div>
               <figure className="mx-auto mt-8 hidden sm:block max-w-[560px] overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm">
                 <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Example</span></figcaption>
