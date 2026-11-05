@@ -254,7 +254,6 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>}
             </div>
             <div className="mx-auto max-w-[860px] text-left">{composer()}</div>
-            {!current && !busy && <PromptTabs onPick={phrase => { setQuery(phrase); setError(""); input.current?.focus(); }} />}
             <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left sm:mt-8">
               <p className="text-center text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">Trusted sourcing network</p>
               <h2 id="why-snaplogo" className="mt-1 text-center text-xl font-semibold text-foreground sm:mt-1.5 sm:text-2xl">Why brands source through Snaplogo</h2>
