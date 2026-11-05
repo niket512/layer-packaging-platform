@@ -244,8 +244,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>
             ) : <div ref={intro}>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-end sm:justify-center sm:gap-5">
-              <div className="relative shrink-0" aria-hidden="true"><span className="absolute -right-2 top-2 h-[88%] w-full rotate-6 rounded-2xl border border-border bg-accent" /><span className="relative flex w-28 flex-col items-center rounded-2xl border border-border bg-card p-2 shadow-sm sm:w-32"><span className="flex h-14 w-full items-center justify-center rounded-xl bg-accent sm:h-16"><img src={logo} alt="" className="h-9 w-9 sm:h-10 sm:w-10" /></span><span className="mt-1.5 text-[11px] font-semibold leading-tight text-foreground sm:text-xs">Snaplogo Sourcing Expert</span></span></div>
-              <div className="text-center sm:pb-2 sm:text-left">
+              <div className="text-center">
                 <h1 className="text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
                 <p className="mt-1 text-[26px] font-bold leading-8 text-foreground sm:text-[34px] sm:leading-tight">What packaging are we sourcing today?</p>
                 <p className="mt-1 text-sm text-muted-foreground">Quotes from <strong className="font-semibold text-foreground">100+ vetted manufacturers</strong> within <strong className="font-semibold text-foreground">24 hours</strong> · 0% commission</p>
