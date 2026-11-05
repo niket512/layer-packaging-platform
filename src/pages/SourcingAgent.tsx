@@ -243,11 +243,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                 </div>
               </details>
             </section>
-            <CorrugatedDesigns onUseDesign={(prefill, designs) => {
-              setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
-              input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-              void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
-            }} />
+            {designGallery}
             <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
               <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
               <div className="mt-4 divide-y divide-border">
