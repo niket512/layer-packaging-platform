@@ -72,7 +72,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard/procure" element={<Procure />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/:brandSlug" element={<Dashboard />} />
+          <Route path="/bottles" element={<Dashboard />} />
+          <Route path="/dashboard/gramiyaa" element={<Navigate to="/bottles" replace />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
