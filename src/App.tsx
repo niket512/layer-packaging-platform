@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import SeoMetadata from "@/components/SeoMetadata";
 import Team from "./pages/Team.tsx";
@@ -72,7 +72,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard/procure" element={<Procure />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/:brandSlug" element={<Dashboard />} />
+          <Route path="/bottles" element={<Dashboard />} />
+          <Route path="/dashboard/gramiyaa" element={<Navigate to="/bottles" replace />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
