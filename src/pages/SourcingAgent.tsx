@@ -283,7 +283,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                   </div>
                 </div>
                 <ul className="hidden grid-cols-2 gap-x-2 gap-y-1 text-[12px] md:grid leading-snug text-foreground sm:text-[13px]">
-                  {["Real MOQ & price benchmarks","Ask founders before you order","New manufacturer onboardings","Packaging tips & compliance"].map((t)=>(<li key={t} className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--sourcing-success))]" />{t}</li>))}
+                  {["Real MOQ & price benchmarks","Ask founders before you order","New manufacturer onboardings","Packaging tips & compliance"].map((t)=>(<li key={t} className="flex items-start gap-1.5">{t}</li>))}
                 </ul>
                 <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" className="flex h-9 w-full items-center justify-center gap-2 whitespace-nowrap md:h-10 rounded-full bg-[hsl(var(--sourcing-success))] md:w-auto md:px-6 text-[13px] font-bold uppercase tracking-wide text-white transition-opacity hover:opacity-90">Join free on WhatsApp <ArrowRight className="h-4 w-4" /></a>
                 <p className="-mt-1.5 flex md:col-span-3 md:-mt-3 md:justify-end items-center justify-center gap-1.5 text-[11px] text-muted-foreground"><ShieldCheck className="h-3.5 w-3.5" />Free · No spam or sales calls · Leave anytime</p>
