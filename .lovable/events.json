@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "events": {
+    "project.whatsapp_group_opened": {
+      "event_schema_version": 1,
+      "description": "A visitor clicked to open the Brands and Manufacturers WhatsApp group from the card or popup.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "placement"
+        ],
+        "properties": {
+          "placement": {
+            "type": "string",
+            "enum": [
+              "card",
+              "popup"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
