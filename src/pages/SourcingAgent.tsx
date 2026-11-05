@@ -232,7 +232,6 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
           <div className="mx-auto pb-4 pt-10 text-center sm:pt-14 md:pt-20">
             <section aria-label="Sourcing chat" className="sourcing-composer mx-auto max-w-[900px] overflow-hidden rounded-3xl border border-border bg-card text-left">
-            <div className="flex items-center gap-3 border-b border-border px-4 py-3 sm:px-6"><img src={logo} alt="" className="h-9 w-9 rounded-full border border-border bg-accent p-1.5" /><div className="min-w-0"><p className="text-sm font-semibold text-foreground">Snaplogo Sourcing Expert</p><p className="flex items-center gap-1.5 text-xs text-muted-foreground"><span className="h-2 w-2 rounded-full bg-[hsl(var(--sourcing-success))]" />Online · replies in seconds</p></div></div>
             <div className="p-3 text-center sm:p-6">
             <div className="relative mx-auto max-w-[860px]" style={current || busy ? { height: introHeight } : undefined}>
             {current || busy ? (
