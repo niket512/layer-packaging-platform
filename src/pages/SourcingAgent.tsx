@@ -216,22 +216,16 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
           <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-3 px-4 md:h-16 md:px-8">
             <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-bold md:text-xl"><img src={logo} alt="" className="h-7 w-7 md:h-8 md:w-8" />snaplogo<span className="-ml-2 text-primary">.</span></Link>
             <nav aria-label="Main" className="hidden items-center gap-1 text-sm font-medium md:flex">
-              <Link to="/manufacturers" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Manufacturers</Link>
               <Link to="/designs" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Designs</Link>
               <Link to="/blog" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Guides</Link>
               <Link to="/about" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">About</Link>
             </nav>
             <div className="flex items-center gap-2"><Link to="/manufacturers" className="hidden rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:text-primary sm:inline-flex md:hidden lg:inline-flex">For manufacturers</Link><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-9 rounded-full px-4 text-sm"><Plus /><span>New Request</span></Button></div>
           </div>
-          <nav aria-label="Packaging categories" className="border-t border-border/70">
-            <div className="mx-auto flex max-w-[1200px] items-center gap-1 overflow-x-auto px-3 py-1.5 text-[13px] [scrollbar-width:none] md:px-7">
-              {([["All packaging", "/"], ["Corrugated boxes", "/sourcing/corrugated-boxes"], ["Mailer boxes", "/sourcing/mailer-boxes"], ["Flexible pouches", "/sourcing/flexible-pouches"], ["Sachets", "/sourcing/sachets"], ["Cosmetic packaging", "/sourcing/cosmetic-packaging"]] as const).map(([label, to]) => { const active = (to === "/" && !category) || to.endsWith(`/${category}`); return <Link key={to} to={to} aria-current={active ? "page" : undefined} className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 font-medium transition-colors ${active ? "bg-accent text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>{label}</Link>; })}
-            </div>
-          </nav>
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 text-center">
-            <section aria-label="Sourcing chat" className="mx-auto flex min-h-[calc(100svh-6.5rem)] max-w-[820px] flex-col justify-center py-6 text-left">
+            <section aria-label="Sourcing chat" className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-[820px] flex-col justify-center py-6 text-left">
             <div className="text-center">
             <div className="relative mx-auto max-w-[820px]" style={current || busy ? { height: introHeight } : undefined}>
             {current || busy ? (
