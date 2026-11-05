@@ -217,7 +217,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
           <div className="flex items-center gap-1.5 sm:gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-8 rounded-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm"><Plus /><span>New Request</span></Button></div>
         </header>
         <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
-          <div className="mx-auto pb-4 pt-4 text-center sm:pt-6 md:pt-10">
+          <div className="mx-auto pb-4 pt-10 text-center sm:pt-14 md:pt-20">
             <div className="relative mx-auto max-w-[860px]" style={current || busy ? { height: introHeight } : undefined}>
             {current || busy ? (
             <div ref={transcript} role="region" aria-label="Conversation" className="absolute inset-0 overflow-y-auto overscroll-contain text-left [overflow-anchor:none]">
