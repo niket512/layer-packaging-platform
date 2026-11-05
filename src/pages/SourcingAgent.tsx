@@ -275,7 +275,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                 <div className="flex min-w-0 flex-1 items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full md:h-11 md:w-11 bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-foreground md:text-[15px]">Brand and Mnaufacturer Group</p>
+                    <p className="truncate text-sm font-semibold text-foreground md:text-[15px]">Brands and Manufacturers Group</p>
                     <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--sourcing-success))]" />100+ Brands, 20+ Manufacturers</p>
                   </div>
                 </div>
