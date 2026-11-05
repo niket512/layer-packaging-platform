@@ -271,7 +271,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               </div>
               <ol className="mx-auto mt-8 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your need", "Text or upload a design"], ["We match makers", "Screened box & pouch factories"], ["Compare quotes", "Price, MOQ & lead time on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
               <div className="-mx-4 mt-8 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-1 text-left [scrollbar-width:none] sm:mx-auto sm:grid sm:max-w-[820px] sm:grid-cols-3 sm:overflow-visible sm:px-0">{[["Got 3 comparable quotes in a day and saved 18% on our mailer boxes.", "Riya S.", "Bloomly · Mumbai"], ["Found a pouch maker with a 1,000 MOQ when others asked 10,000.", "Arjun M.", "Kaapi Co. · Bengaluru"], ["Sharing our design felt safe, and the sample came before bulk.", "Neha K.", "Nutriva · Delhi"]].map(([q, n, r]) => <figure key={n} className="w-[82%] shrink-0 snap-start rounded-2xl border border-border bg-card p-4 shadow-sm sm:w-auto"><div className="text-xs tracking-widest text-primary" aria-label="5 stars">★★★★★</div><blockquote className="mt-1.5 text-sm leading-relaxed text-foreground">“{q}”</blockquote><figcaption className="mt-2 text-xs text-muted-foreground"><span className="font-semibold text-foreground">{n}</span> · {r}</figcaption></figure>)}</div>
-              <div className="mx-auto mt-4 grid max-w-[1100px] gap-2.5 rounded-2xl border border-border bg-card p-3 text-left shadow-sm md:grid-cols-[1.1fr_1.6fr_auto] md:items-center md:gap-6 md:p-5">
+              <div className="mx-auto mt-4 grid max-w-[1100px] gap-2 rounded-xl border border-border bg-card p-2.5 text-left shadow-sm md:grid-cols-[1.1fr_1.6fr_auto] md:items-center md:gap-6 md:p-5">
                 <div className="flex items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full md:h-11 md:w-11 bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
                   <div className="min-w-0 flex-1">
@@ -282,10 +282,10 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                     {["DS","RK","PM"].map((x)=>(<span key={x} className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-card bg-accent text-[10px] font-bold text-primary">{x}</span>))}
                   </div>
                 </div>
-                <ul className="grid grid-cols-2 gap-x-2 gap-y-1 text-[12px] leading-snug text-foreground sm:text-[13px]">
+                <ul className="hidden grid-cols-2 gap-x-2 gap-y-1 text-[12px] md:grid leading-snug text-foreground sm:text-[13px]">
                   {["Real MOQ & price benchmarks","Ask founders before you order","New manufacturer onboardings","Packaging tips & compliance"].map((t)=>(<li key={t} className="flex items-start gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--sourcing-success))]" />{t}</li>))}
                 </ul>
-                <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" className="flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap md:h-11 rounded-full bg-[hsl(var(--sourcing-success))] md:w-auto md:px-6 text-[13px] font-bold uppercase tracking-wide text-white transition-opacity hover:opacity-90">Join free on WhatsApp <ArrowRight className="h-4 w-4" /></a>
+                <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" className="flex h-9 w-full items-center justify-center gap-2 whitespace-nowrap md:h-10 rounded-full bg-[hsl(var(--sourcing-success))] md:w-auto md:px-6 text-[13px] font-bold uppercase tracking-wide text-white transition-opacity hover:opacity-90">Join free on WhatsApp <ArrowRight className="h-4 w-4" /></a>
                 <p className="-mt-1.5 flex md:col-span-3 md:-mt-3 md:justify-end items-center justify-center gap-1.5 text-[11px] text-muted-foreground"><ShieldCheck className="h-3.5 w-3.5" />Free · No spam or sales calls · Leave anytime</p>
               </div>
               <figure className="mx-auto mt-8 hidden sm:block max-w-[560px] overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm">
@@ -329,16 +329,16 @@ function CommunityPopup({ hidden }: { hidden: boolean }) {
   }, []);
   if (!open || hidden) return null;
   return (
-    <div role="dialog" aria-label="Join the Snaplogo WhatsApp community" className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-[400px] animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-border bg-card p-4 shadow-2xl md:inset-x-auto md:right-6 md:bottom-6">
+    <div role="dialog" aria-label="Join the Snaplogo WhatsApp community" className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-[320px] animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-border bg-card p-3 shadow-xl md:inset-x-auto md:right-6 md:bottom-6">
       <button type="button" aria-label="Close" onClick={() => setOpen(false)} className="absolute right-2.5 top-2.5 rounded-full p-1 text-muted-foreground hover:bg-muted"><X className="h-4 w-4" /></button>
       <div className="flex items-center gap-3 pr-6">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-4 w-4" /></span>
         <div>
           <p className="text-sm font-semibold text-foreground">Join 500+ D2C founders</p>
           <p className="text-xs text-muted-foreground">Real MOQ & price benchmarks, shared on WhatsApp</p>
         </div>
       </div>
-      <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-full bg-[hsl(var(--sourcing-success))] text-[13px] font-bold uppercase tracking-wide text-white hover:opacity-90">Join free on WhatsApp <ArrowRight className="h-4 w-4" /></a>
+      <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="mt-2.5 flex h-9 w-full items-center justify-center gap-2 rounded-full bg-[hsl(var(--sourcing-success))] text-[13px] font-bold uppercase tracking-wide text-white hover:opacity-90">Join free on WhatsApp <ArrowRight className="h-4 w-4" /></a>
       <p className="mt-1.5 text-center text-[11px] text-muted-foreground">Free · No spam · Leave anytime</p>
     </div>
   );
