@@ -49,7 +49,6 @@ const LANDINGS: Record<SourcingCategory, { headline: string; copy: string; cta: 
   },
 };
 const PROMPT_TABS: { label: string; prompts: string[] }[] = [
-  { label: "Corrugated boxes", prompts: ["I need [quantity] 3-ply printed corrugated shipping boxes, size [L×W×H cm], budget ₹[price] per box", "Find mailer boxes for my [product] brand with a one-colour logo print, MOQ around [quantity]", "I need 5-ply heavy-duty boxes for [product], delivered to [city]"] },
   { label: "Pouches & sachets", prompts: ["I need [quantity] stand-up zipper pouches for [product], size [W×H cm], multicolour print", "Find sachet manufacturers for [product], [ml/g] per sachet, MOQ [quantity]", "I need kraft pouches with a window for [product], budget ₹[price] per piece"] },
 ];
 
