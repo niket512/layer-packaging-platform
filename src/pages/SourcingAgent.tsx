@@ -229,11 +229,11 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>
           </nav>
         </header>
-        <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
+        <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 pt-10 text-center sm:pt-14 md:pt-20">
-            <section aria-label="Sourcing chat" className="sourcing-composer mx-auto max-w-[900px] overflow-hidden rounded-3xl border border-border bg-card text-left">
+            <section aria-label="Sourcing chat" className="sourcing-composer mx-auto max-w-[1180px] min-h-[70vh] overflow-hidden rounded-3xl border border-border bg-card text-left">
             <div className="p-3 text-center sm:p-6">
-            <div className="relative mx-auto max-w-[860px]" style={current || busy ? { height: introHeight } : undefined}>
+            <div className="relative mx-auto max-w-[1100px]" style={current || busy ? { height: introHeight } : undefined}>
             {current || busy ? (
             <div ref={transcript} role="region" aria-label="Conversation" className="absolute inset-0 overflow-y-auto overscroll-contain text-left [overflow-anchor:none]">
             <ol className="sourcing-composer mb-4 flex items-center gap-3 rounded-2xl border border-border bg-card px-3 py-2" aria-label="Progress">{["Requirements", "Brief", "Contact"].map((label, i) => { const step = project?.submitted ? 3 : askingPhone ? 2 : project?.brief?.length ? 1 : 0; const done = i < step; const active = i === step; return <li key={label} className="flex flex-1 items-center gap-3"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${done ? "border-primary bg-primary text-primary-foreground" : active ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{done ? <Check className="h-4 w-4" /> : i + 1}</span><span className={`hidden min-w-0 text-sm font-semibold md:block ${done || active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>{i < 2 && <span className={`h-px min-w-4 flex-1 ${done ? "bg-primary" : "bg-border"}`} />}</li>; })}</ol>
