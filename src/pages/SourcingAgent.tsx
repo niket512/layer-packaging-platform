@@ -263,7 +263,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>
             <div className="mx-auto w-full max-w-[820px] text-left">{composer()}</div>
             </div></section>
-            <section aria-labelledby="why-snaplogo" className="mx-auto mt-5 max-w-[860px] text-left sm:mt-8">
+            <section aria-labelledby="why-snaplogo" className="mx-auto hidden sm:block mt-5 max-w-[860px] text-left sm:mt-8">
               <p className="text-center text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">Trusted sourcing network</p>
               <h2 id="why-snaplogo" className="mt-1 text-center text-xl font-semibold text-foreground sm:mt-1.5 sm:text-2xl">Why brands source through Snaplogo</h2>
               <ul className="mt-3 grid gap-2 sm:mt-5 sm:grid-cols-3 sm:gap-3">
