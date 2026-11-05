@@ -74,7 +74,6 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
   });
   const [activeId, setActiveId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [historyOpen, setHistoryOpen] = useState(true);
   const [photos, setPhotos] = useState<string[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
