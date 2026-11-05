@@ -225,7 +225,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 text-center">
-            <section aria-label="Sourcing chat" className="mx-auto flex max-w-[820px] flex-col pt-10 pb-6 sm:pt-16 text-left">
+            <section aria-label="Sourcing chat" className="mx-auto flex max-w-[820px] flex-col pt-6 pb-4 sm:pt-16 sm:pb-6 text-left">
             <div className="text-center">
             <div className="relative mx-auto max-w-[820px]" style={current || busy ? { height: introHeight } : undefined}>
             {current || busy ? (
@@ -254,8 +254,8 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             ) : <div ref={intro}>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-end sm:justify-center sm:gap-5">
               <div className="text-center">
-                <h1 className="text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
-                <p className="mt-1 mb-6 text-[28px] font-semibold leading-9 text-foreground sm:text-[36px] sm:leading-tight">What packaging are we sourcing today?</p>
+                <h1 className="text-[10px] font-semibold uppercase tracking-[1px] text-primary sm:text-[11px] sm:tracking-[1.5px]">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
+                <p className="mt-1 mb-4 text-[24px] font-semibold leading-8 sm:mb-6 text-foreground sm:text-[36px] sm:leading-tight">What packaging are we sourcing today?</p>
                 <p className="mt-1 text-sm text-muted-foreground">Quotes from <strong className="font-semibold text-foreground">100+ vetted manufacturers</strong> within <strong className="font-semibold text-foreground">24 hours</strong> · 0% commission</p>
               </div>
             </div>
