@@ -212,9 +212,22 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
   return (
     <div className="theme-sourcing min-h-screen bg-background text-foreground">
       <div>
-        <header className="sticky top-0 z-10 flex h-12 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 backdrop-blur md:h-16 md:px-10">
-          <nav aria-label="Sections" className="flex items-center gap-1 text-sm"><Link to="/sourcing" className="mr-2 flex items-center gap-2 font-bold"><img src={logo} alt="" className="h-6 w-6" />snaplogo<span className="text-primary">.</span></Link><button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="hidden rounded-full bg-muted px-3 py-1.5 font-medium sm:inline">Workspace</button><button type="button" onClick={() => { if (current) startNew(); setTimeout(() => document.getElementById("browse-designs")?.scrollIntoView({ behavior: "smooth" }), 50); }} className="hidden rounded-full px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground sm:inline">Browse designs</button></nav>
-          <div className="flex items-center gap-1.5 sm:gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-8 rounded-full px-3 text-xs sm:h-9 sm:px-4 sm:text-sm"><Plus /><span>New Request</span></Button></div>
+        <header className="sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur">
+          <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-3 px-4 md:h-16 md:px-8">
+            <Link to="/" className="flex shrink-0 items-center gap-2 text-lg font-bold md:text-xl"><img src={logo} alt="" className="h-7 w-7 md:h-8 md:w-8" />snaplogo<span className="-ml-2 text-primary">.</span></Link>
+            <nav aria-label="Main" className="hidden items-center gap-1 text-sm font-medium md:flex">
+              <Link to="/manufacturers" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Manufacturers</Link>
+              <Link to="/designs" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Designs</Link>
+              <Link to="/blog" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Guides</Link>
+              <Link to="/about" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">About</Link>
+            </nav>
+            <div className="flex items-center gap-2"><Link to="/manufacturers" className="hidden rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:text-primary sm:inline-flex md:hidden lg:inline-flex">For manufacturers</Link><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-9 rounded-full px-4 text-sm"><Plus /><span>New Request</span></Button></div>
+          </div>
+          <nav aria-label="Packaging categories" className="border-t border-border/70">
+            <div className="mx-auto flex max-w-[1200px] items-center gap-1 overflow-x-auto px-3 py-1.5 text-[13px] [scrollbar-width:none] md:px-7">
+              {([["All packaging", "/"], ["Corrugated boxes", "/sourcing/corrugated-boxes"], ["Mailer boxes", "/sourcing/mailer-boxes"], ["Flexible pouches", "/sourcing/flexible-pouches"], ["Sachets", "/sourcing/sachets"], ["Cosmetic packaging", "/sourcing/cosmetic-packaging"]] as const).map(([label, to]) => { const active = (to === "/" && !category) || to.endsWith(`/${category}`); return <Link key={to} to={to} aria-current={active ? "page" : undefined} className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 font-medium transition-colors ${active ? "bg-accent text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>{label}</Link>; })}
+            </div>
+          </nav>
         </header>
         <main className="mx-auto max-w-[1000px] px-4 pb-12 md:px-10">
           <div className="mx-auto pb-4 pt-10 text-center sm:pt-14 md:pt-20">
