@@ -81,7 +81,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (p
           <img src={selected.image} alt={selected.name} width={640} height={640} className="mt-5 aspect-square w-full rounded-lg bg-card object-contain" />
           <p className="mt-2 text-xs text-muted-foreground">Reference image — specs to be confirmed with the manufacturer.</p>
           <dl className="mt-4 divide-y divide-border text-sm">{PRIMARY_FILTERS[selected.family].map(f => <div key={f.key} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{f.label}</dt><dd className="font-medium">{selected.attributes[f.key]?.join(", ") || "Unspecified"}</dd></div>)}{selected.details?.map(([k, v]) => <div key={k} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{k}</dt><dd className="font-medium">{v}</dd></div>)}</dl>
-          <Button className="mt-6 w-full rounded-full" onClick={() => useDesigns([selected])}>Use this design <ArrowRight /></Button>
+          <Button className="mt-6 w-full rounded-full" onClick={() => useDesigns([selected])}>Get a quote for this design <ArrowRight /></Button>
         </>}
       </SheetContent>
     </Sheet>
