@@ -193,8 +193,8 @@ describe("corrugated-box requirement configuration", () => {
     expect(validatedQuestions([question], [])).toEqual([question]);
     expect(validatedQuestions([question], [{ query: "Corrugated boxes", matches: [], questions: [question] }])).toEqual([]);
   });
-  it("keeps the five-question limit for corrugated topics", () => {
-    expect(validatedQuestions(["wall", "samples", "usage", "customisation", "finishing", "manufacturer_location"].map(topic => ({ topic, question: "Your preference?" })), [])).toHaveLength(5);
+  it("keeps the two-question limit for corrugated topics", () => {
+    expect(validatedQuestions(["wall", "samples", "usage", "customisation", "finishing", "manufacturer_location"].map(topic => ({ topic, question: "Your preference?" })), [])).toHaveLength(2);
   });
 });
 
