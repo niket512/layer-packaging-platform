@@ -37,8 +37,8 @@ describe("sourcing matches", () => {
   it("prevents a second quotation round while allowing conversational replies", () => {
     expect(normalizeIntakeReply({ message: "Understood", stage: "quotation", hasRequirement: true, questions: [{ topic: "quantity", question: "How many?" }] }, "5000", true).questions).toEqual([]);
   });
-  it("treats five as a ceiling and preserves fewer quotation questions", () => {
-    expect(INTAKE_QUESTION_LIMIT).toBe(5);
+  it("treats two as a ceiling and preserves fewer quotation questions", () => {
+    expect(INTAKE_QUESTION_LIMIT).toBe(2);
     const questions = [{ topic: "printing", question: "What printing is needed?" }, { topic: "finishing", question: "What finish is needed?" }];
     expect(validatedQuestions(questions, [])).toEqual(questions);
   });
@@ -67,19 +67,19 @@ describe("sourcing matches", () => {
   it("keeps the requirement when refining the conversation", () => {
     expect(sourcingRequest([{ query: "100 kraft paper bags", matches: [] }], "With custom printing")).toBe("100 kraft paper bags\nFollow-up: With custom printing");
   });
-  it("accepts four or five missing-detail questions together, but not six", () => {
+  it("accepts at most two missing-detail questions together", () => {
     const questions = ["quantity", "size", "printing", "wall", "usage", "budget"].map(topic => ({ topic, question: "Your preference?" }));
-    expect(validatedQuestions(questions.slice(0, 4), [])).toHaveLength(4);
-    expect(validatedQuestions(questions, [])).toHaveLength(5);
+    expect(validatedQuestions(questions.slice(0, 1), [])).toHaveLength(1);
+    expect(validatedQuestions(questions, [])).toHaveLength(2);
   });
   it("does not repeat topics already asked, including skipped questions", () => {
     expect(validatedQuestions([{ topic: "quantity", question: "How many?" }, { topic: "delivery", question: "Which city?" }], [{ query: "Pouches", matches: [], questions: [{ topic: "quantity", question: "How many packs?" }], questionsSkipped: true }])).toEqual([{ topic: "delivery", question: "Which city?" }]);
   });
-  it("stops asking after five questions", () => {
-    expect(validatedQuestions([{ topic: "budget", question: "Budget?" }], [{ query: "Bags", matches: [], questions: ["quantity", "size", "printing", "material", "delivery"].map(topic => ({ topic, question: "Your preference?" })) }])).toEqual([]);
+  it("stops asking after two questions", () => {
+    expect(validatedQuestions([{ topic: "budget", question: "Budget?" }], [{ query: "Bags", matches: [], questions: ["quantity", "size"].map(topic => ({ topic, question: "Your preference?" })) }])).toEqual([]);
   });
-  it("counts earlier questions against the five-question budget", () => {
-    expect(validatedQuestions(["wall", "samples", "usage", "budget"].map(topic => ({ topic, question: "Your preference?" })), [{ query: "Boxes", matches: [], questions: ["quantity", "size"].map(topic => ({ topic, question: "Your preference?" })) }])).toHaveLength(3);
+  it("counts earlier questions against the two-question budget", () => {
+    expect(validatedQuestions(["wall", "samples"].map(topic => ({ topic, question: "Your preference?" })), [{ query: "Boxes", matches: [], questions: ["quantity"].map(topic => ({ topic, question: "Your preference?" })) }])).toHaveLength(1);
   });
   it("retains the initial details in longer conversations", () => {
     expect(sourcingRequest([{ query: "500 paper bags for Chennai", matches: [] }], "Custom printing ".repeat(40))).toContain("500 paper bags for Chennai");
@@ -150,9 +150,9 @@ describe("sourcing response latency", () => {
     expect(replies[0].stage).toBe("design");
     expect(replies[0].message).toBe("Understood.");
   });
-  it("does not call AI again after five questions or an explicit skip", () => {
+  it("does not call AI again after two questions or an explicit skip", () => {
     expect(needsSourcingQuestions([])).toBe(true);
-    expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: ["quantity", "size", "format", "wall", "printing"].map(topic => ({ topic, question: "Your preference?" })) }])).toBe(false);
+    expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: ["quantity", "size"].map(topic => ({ topic, question: "Your preference?" })) }])).toBe(false);
     expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questionsSkipped: true }])).toBe(false);
     expect(needsSourcingQuestions([{ query: "Boxes", matches: [], questions: [{ topic: "size", question: "Dimensions?" }] }])).toBe(false);
   });
@@ -193,8 +193,8 @@ describe("corrugated-box requirement configuration", () => {
     expect(validatedQuestions([question], [])).toEqual([question]);
     expect(validatedQuestions([question], [{ query: "Corrugated boxes", matches: [], questions: [question] }])).toEqual([]);
   });
-  it("keeps the five-question limit for corrugated topics", () => {
-    expect(validatedQuestions(["wall", "samples", "usage", "customisation", "finishing", "manufacturer_location"].map(topic => ({ topic, question: "Your preference?" })), [])).toHaveLength(5);
+  it("keeps the two-question limit for corrugated topics", () => {
+    expect(validatedQuestions(["wall", "samples", "usage", "customisation", "finishing", "manufacturer_location"].map(topic => ({ topic, question: "Your preference?" })), [])).toHaveLength(2);
   });
 });
 
