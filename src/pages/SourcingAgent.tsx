@@ -137,7 +137,11 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
     return () => observer.disconnect();
   }, [current, busy]);
   useLayoutEffect(() => {
-    if (transcript.current) transcript.current.scrollTo({ top: transcript.current.scrollHeight, behavior: "smooth" });
+    const el = transcript.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    const timer = window.setTimeout(() => el.scrollTo({ top: el.scrollHeight, behavior: "smooth" }), 350);
+    return () => window.clearTimeout(timer);
   }, [turns.length, busy, liveMessage, liveQuestions, askingPhone, designStep, project?.brief?.length]);
 
   const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
