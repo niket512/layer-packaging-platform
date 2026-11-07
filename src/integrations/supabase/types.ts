@@ -695,6 +695,7 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_supplier_contact: { Args: { _supplier_id: string }; Returns: boolean }
       owns_rfq: { Args: { _rfq_id: string }; Returns: boolean }
+      recent_request_activity: { Args: never; Returns: Json }
       save_sourcing_chat: {
         Args: {
           _id: string
