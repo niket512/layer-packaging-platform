@@ -139,10 +139,34 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
   useLayoutEffect(() => {
     const el = transcript.current;
     if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-    const timer = window.setTimeout(() => el.scrollTo({ top: el.scrollHeight, behavior: "smooth" }), 350);
-    return () => window.clearTimeout(timer);
-  }, [turns.length, busy, liveMessage, liveQuestions, askingPhone, designStep, project?.brief?.length]);
+    let frame = 0;
+    const scrollToLatest = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        // Scroll only the conversation, after mobile layout/keyboard changes settle.
+        // Repeated smooth animations can be interrupted by streamed replies.
+        el.scrollTop = el.scrollHeight;
+      });
+    };
+    const resizeObserver = new ResizeObserver(scrollToLatest);
+    const observeContent = () => {
+      resizeObserver.disconnect();
+      resizeObserver.observe(el);
+      Array.from(el.children).forEach(child => resizeObserver.observe(child));
+      scrollToLatest();
+    };
+    const mutationObserver = new MutationObserver(observeContent);
+    mutationObserver.observe(el, { childList: true, subtree: true, characterData: true });
+    observeContent();
+    const viewport = window.visualViewport;
+    viewport?.addEventListener("resize", scrollToLatest);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      viewport?.removeEventListener("resize", scrollToLatest);
+    };
+  }, [!!(current || busy)]);
 
   const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
   const search = async (text = query) => {
