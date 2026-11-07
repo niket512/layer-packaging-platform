@@ -14,11 +14,11 @@ function timeAgo(iso: string) {
 
 export function LiveRequestFeed() {
   const [activity, setActivity] = useState<Activity | null>(null);
+  const [idx, setIdx] = useState(0);
 
   useEffect(() => {
     let stop = false;
     const load = async () => {
-      // recent_request_activity is a security-definer RPC added after types were generated.
       const rpc = supabase.rpc as unknown as (name: string) => Promise<{ data: unknown }>;
       const { data } = await rpc("recent_request_activity");
       if (!stop && data) setActivity(data as Activity);
@@ -28,18 +28,32 @@ export function LiveRequestFeed() {
     return () => { stop = true; clearInterval(timer); };
   }, []);
 
-  if (!activity || activity.recent.length === 0) return null;
-  const latest = activity.recent[0];
+  const recent = activity?.recent.slice(0, 5) ?? [];
+  useEffect(() => {
+    if (recent.length < 2) return;
+    const t = setInterval(() => setIdx((i) => (i + 1) % recent.length), 3500);
+    return () => clearInterval(t);
+  }, [recent.length]);
+
+  if (!activity || recent.length === 0) return null;
+  const item = recent[idx % recent.length];
+  const week = Math.max(activity.week ?? 0, activity.today);
 
   return (
-    <div className="mx-auto mt-4 flex max-w-[820px] items-center justify-center gap-2 text-xs text-muted-foreground sm:text-sm" aria-live="polite">
-      <span className="relative flex h-2 w-2 shrink-0">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[hsl(var(--sourcing-success))] opacity-60" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-[hsl(var(--sourcing-success))]" />
-      </span>
-      <span>
-        <strong className="font-semibold text-foreground">{activity.today}</strong> request{activity.today === 1 ? "" : "s"} in the last 24 hours · latest {timeAgo(latest.at)}
-      </span>
+    <div className="mx-auto mt-4 flex max-w-[820px] justify-center" aria-live="polite">
+      <div className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-border bg-card py-1.5 pl-2 pr-3.5 text-xs shadow-sm sm:text-sm">
+        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[hsl(var(--sourcing-success)/0.12)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[hsl(var(--sourcing-success))]">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[hsl(var(--sourcing-success))] opacity-70" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[hsl(var(--sourcing-success))]" />
+          </span>
+          Live
+        </span>
+        <span key={item.id} className="min-w-0 truncate text-muted-foreground animate-in fade-in slide-in-from-bottom-1 duration-500">
+          A brand requested quotes <strong className="font-semibold text-foreground">{timeAgo(item.at)}</strong>
+          <span className="hidden sm:inline"> · <strong className="font-semibold text-foreground">{week}</strong> brands sourcing this week</span>
+        </span>
+      </div>
     </div>
   );
 }
