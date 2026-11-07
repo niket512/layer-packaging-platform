@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import logo from "@/assets/snaplogo-orange.png";
 
 const deliverables = [
-  "A shortlist of trusted, high-quality contract manufacturers within 24 hours",
+  "A shortlist of trusted, high-quality contract manufacturers within 4 hours",
   "Apples-to-apples quotes comparison across price, MOQ, lead time, and all parameters",
   "Proactive updates on production, quality checks, delivery tracking, and payments",
 ];
 
 const steps = [
   { icon: FileText, title: "Share the requirement", desc: "Product type, material, volume, target/current price, timeline." },
-  { icon: Clock, title: "Matching within 24 hours", desc: "Standardized, side-by-side quotes within 1 business day." },
+  { icon: Clock, title: "Matching within 4 hours", desc: "Standardized, side-by-side quotes from multiple manufacturers within 4 hours." },
   { icon: MessageCircle, title: "Sampling & handshake", desc: "Shortlist, receive samples, and choose with full transparency." },
   { icon: Truck, title: "Post-order coordination", desc: "WhatsApp/email updates on production, quality, delivery, payment." },
   { icon: RefreshCw, title: "Reordering", desc: "Say the word — we handle the repeat." },
@@ -47,10 +47,10 @@ export default function Proposal() {
           <div className="bg-primary px-6 py-5 text-center md:px-10 md:py-6">
             <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-primary-foreground/80">Pilot Proposal</p>
             <h1 className="mx-auto mt-2 max-w-2xl font-heading text-[22px] font-semibold leading-tight tracking-tight text-primary-foreground md:text-[32px]">
-              Your next packaging manufacturer, matched within 24 hours
+              Your next packaging manufacturer, matched within 4 hours
             </h1>
             <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-primary-foreground/90 md:text-[15px]">
-              Simplify your packaging procurement with Snaplogo — a platform that matches you with the most relevant manufacturer within 24 hours, and streamlines your post-discovery journey from quote generation to order delivery
+              Simplify your packaging procurement with Snaplogo — a platform that matches you with the most relevant manufacturer within 4 hours, and streamlines your post-discovery journey from quote generation to order delivery
             </p>
           </div>
 
