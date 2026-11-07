@@ -19,7 +19,8 @@ export function LiveRequestFeed() {
     let stop = false;
     const load = async () => {
       // recent_request_activity is a security-definer RPC added after types were generated.
-      const { data } = await (supabase.rpc as (name: string) => Promise<{ data: unknown }>)("recent_request_activity");
+      const rpc = supabase.rpc as unknown as (name: string) => Promise<{ data: unknown }>;
+      const { data } = await rpc("recent_request_activity");
       if (!stop && data) setActivity(data as Activity);
     };
     void load();
