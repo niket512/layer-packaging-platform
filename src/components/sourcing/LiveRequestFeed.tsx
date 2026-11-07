@@ -19,8 +19,7 @@ export function LiveRequestFeed() {
   useEffect(() => {
     let stop = false;
     const load = async () => {
-      const rpc = supabase.rpc as unknown as (name: string) => Promise<{ data: unknown }>;
-      const { data } = await rpc("recent_request_activity");
+      const { data } = await (supabase as unknown as { rpc: (name: string) => Promise<{ data: unknown }> }).rpc("recent_request_activity");
       if (!stop && data) setActivity(data as Activity);
     };
     void load();
