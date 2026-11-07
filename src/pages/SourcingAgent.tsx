@@ -8,6 +8,7 @@ import { DESIGN_PREFILL_KEY } from "@/pages/Designs";
 import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { LiveRequestFeed } from "@/components/sourcing/LiveRequestFeed";
+import { ManufacturerNetwork } from "@/components/sourcing/ManufacturerNetwork";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -307,6 +308,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                 </span>
                 <span className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[hsl(var(--sourcing-success))] px-4 text-xs font-bold uppercase tracking-wide text-white"><span className="sm:hidden">Join</span><span className="hidden sm:inline">Join WhatsApp community</span><ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
               </a>
+              <ManufacturerNetwork />
               <figure className="mx-auto mt-8 hidden sm:block max-w-[560px] overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm">
                 <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Example</span></figcaption>
                 <table className="w-full text-xs sm:text-sm"><thead className="text-muted-foreground"><tr><th className="px-4 py-2 text-left font-medium">Manufacturer</th><th className="px-2 py-2 text-right font-medium whitespace-nowrap">Per unit</th><th className="px-2 py-2 text-right font-medium">MOQ</th><th className="px-4 py-2 text-right font-medium whitespace-nowrap"><span className="sm:hidden">Lead</span><span className="hidden sm:inline">Lead time</span></th></tr></thead><tbody>{[["Maker A", "₹—", "1,000", "10 days", true], ["Maker B", "₹—", "2,000", "14 days", false], ["Maker C", "₹—", "500", "12 days", false]].map(([m, pr, moq, lt, best]) => <tr key={m as string} className="border-t border-border"><td className="px-4 py-2.5 font-medium text-foreground">{m}{best && <span className="ml-2 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-semibold text-primary">Best fit</span>}</td><td className="px-2 py-2.5 text-right text-muted-foreground">{pr}</td><td className="px-2 py-2.5 text-right">{moq}</td><td className="px-4 py-2.5 text-right">{lt}</td></tr>)}</tbody></table>
