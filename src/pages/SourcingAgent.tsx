@@ -7,6 +7,7 @@ import { designReferenceImage } from "@/components/sourcing/design-reference-ima
 import { DESIGN_PREFILL_KEY } from "@/pages/Designs";
 import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
+import { LiveRequestFeed } from "@/components/sourcing/LiveRequestFeed";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -286,6 +287,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               <h1 className="sr-only">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
               <p className="mx-auto mt-4 max-w-[680px] text-[30px] font-bold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-[48px]">Custom packaging quotes in <span className="text-primary">4 hours</span>.</p>
               <p className="mx-auto mt-3 mb-5 max-w-[560px] text-[15px] leading-relaxed text-muted-foreground sm:mb-7 sm:text-base">Tell us your box or pouch need. Get comparable quotes on WhatsApp — free, 0% commission.</p>
+              <LiveRequestFeed />
             </div>
             </div>}
             </div>
