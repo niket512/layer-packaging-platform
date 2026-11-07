@@ -5,8 +5,8 @@ import { fetchPublishedManufacturers } from "@/data/directory";
 import articles from "@/data/packaging-articles.json";
 
 const BASE_URL = "https://snaplogo.in";
-const SITE_TITLE = "Corrugated Box, Sachet & Stand-Up Pouch Manufacturers | Snaplogo";
-const SITE_DESCRIPTION = "Source corrugated boxes, sachets and stand-up pouches from vetted manufacturers. Share your preferred city, such as Ahmedabad, and get quotes within 24 hours.";
+const SITE_TITLE = "Snaplogo — Vetted Packaging Manufacturers, Quotes in 24 Hours";
+const SITE_DESCRIPTION = "Get quotes from 100+ vetted Indian manufacturers for corrugated boxes, sachets and stand-up pouches. Share your requirement — quotes within 24 hours.";
 const pages: Record<string, { title: string; description: string; noindex?: boolean }> = {
   "/admin/chats": { title: "Private Chats | Snaplogo", description: "Private sourcing conversation inbox for Snaplogo administrators.", noindex: true },
   "/app/admin/chats": { title: "Private Chats | Snaplogo", description: "Private sourcing conversation inbox for Snaplogo administrators.", noindex: true },
