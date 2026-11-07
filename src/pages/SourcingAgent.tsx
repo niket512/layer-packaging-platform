@@ -7,6 +7,7 @@ import { designReferenceImage } from "@/components/sourcing/design-reference-ima
 import { DESIGN_PREFILL_KEY } from "@/pages/Designs";
 import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
+import { LiveRequestFeed } from "@/components/sourcing/LiveRequestFeed";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -269,7 +270,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                   <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">Shortlisting from <span className="font-semibold text-foreground">100+ vetted manufacturers</span> — quotations <span className="font-semibold text-foreground">within 4 hours</span>.</p>
                 </div>
               </div>
-              <ol aria-label="What happens next" className="mt-8 grid gap-4 rounded-xl border border-border/70 bg-background/60 p-4 sm:grid-cols-3 md:p-5">{[[true, "Brief received", "With our sourcing team"], [false, "Manufacturer matching", "From 100+ vetted makers"], [false, "Quote on WhatsApp", "Details & pricing in 24 hrs"]].map(([done, label, sub], i) => <li key={label as string} className="flex items-start gap-3"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${done ? "border-transparent bg-[hsl(var(--sourcing-success))] text-white" : "border-border bg-card text-muted-foreground"}`}>{done ? <Check className="h-4 w-4" /> : i + 1}</span><span className="min-w-0"><span className="block text-sm font-semibold">{label}</span><span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{sub}</span></span></li>)}</ol>
+              <ol aria-label="What happens next" className="mt-8 grid gap-4 rounded-xl border border-border/70 bg-background/60 p-4 sm:grid-cols-3 md:p-5">{[[true, "Brief received", "With our sourcing team"], [false, "Manufacturer matching", "From 100+ vetted makers"], [false, "Quote on WhatsApp", "Details & pricing in 4 hrs"]].map(([done, label, sub], i) => <li key={label as string} className="flex items-start gap-3"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${done ? "border-transparent bg-[hsl(var(--sourcing-success))] text-white" : "border-border bg-card text-muted-foreground"}`}>{done ? <Check className="h-4 w-4" /> : i + 1}</span><span className="min-w-0"><span className="block text-sm font-semibold">{label}</span><span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{sub}</span></span></li>)}</ol>
               <SourcingBrief fields={project.brief ?? []} submitted onSave={fields => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, brief: fields.filter(f => f.value.trim()) } : p))} />
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button onClick={startNew} className="rounded-full sm:flex-none"><Plus />New sourcing request</Button>
@@ -286,6 +287,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               <h1 className="sr-only">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
               <p className="mx-auto mt-4 max-w-[680px] text-[30px] font-bold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-[48px]">Custom packaging quotes in <span className="text-primary">4 hours</span>.</p>
               <p className="mx-auto mt-3 mb-5 max-w-[560px] text-[15px] leading-relaxed text-muted-foreground sm:mb-7 sm:text-base">Tell us your box or pouch need. Get comparable quotes on WhatsApp — free, 0% commission.</p>
+              <LiveRequestFeed />
             </div>
             </div>}
             </div>
