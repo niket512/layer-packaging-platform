@@ -8,8 +8,8 @@ import { filterNetwork, manufacturerContact, networkManufacturers, networkStates
 
 function ContactDetails({ entry }: { entry: NetworkManufacturer }) {
   const contact = manufacturerContact(entry.company_name);
-  return <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-3">
-    {contact.whatsapp ? <Button asChild variant="ghost" size="sm" className="h-8 px-0 text-xs text-primary"><a href={contact.whatsapp} target="_blank" rel="noopener noreferrer" title="Open this listed number in WhatsApp; account availability is unconfirmed"><MessageCircle className="h-3.5 w-3.5" />{contact.phone} <ExternalLink className="h-3 w-3" /></a></Button> : <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><MessageCircle className="h-3.5 w-3.5" />Contact not published</span>}
+  return <div className="min-w-0">
+    {contact.whatsapp ? <Button asChild variant="ghost" size="sm" className="h-11 px-0 text-sm text-primary sm:h-8 sm:text-xs"><a href={contact.whatsapp} target="_blank" rel="noopener noreferrer" title="Open this listed number in WhatsApp; account availability is unconfirmed"><MessageCircle className="h-4 w-4" />{contact.phone} <ExternalLink className="h-3 w-3" /></a></Button> : <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><MessageCircle className="h-3.5 w-3.5" />Contact not published</span>}
   </div>;
 }
 
@@ -30,20 +30,20 @@ export default function ManufacturerNetwork() {
     <header className="border-b border-border">
       <div className="mx-auto flex max-w-content items-center justify-between gap-3 px-4 py-4 sm:px-6">
         <Link to="/" className="text-xl font-bold">snaplogo<span className="text-primary">.</span></Link>
-        <Button asChild size="sm" className="rounded-full"><Link to="/">Get packaging quotes <ArrowRight /></Link></Button>
+        <Button asChild size="sm" className="rounded-full"><Link to="/"><span className="sm:hidden">Get quotes</span><span className="hidden sm:inline">Get packaging quotes</span> <ArrowRight /></Link></Button>
       </div>
     </header>
     <main className="mx-auto max-w-content px-4 pb-12 sm:px-6">
       <Link to="/" className="mt-5 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary"><ArrowLeft className="h-3.5 w-3.5" />Back to sourcing</Link>
-      <section className="grid gap-5 border-b border-border pb-6 pt-5 md:grid-cols-[1fr_260px] md:items-end">
+      <section className="grid gap-3 border-b border-border pb-4 pt-3 sm:gap-5 sm:pb-6 sm:pt-5 md:grid-cols-[1fr_260px] md:items-end">
         <div>
           <p className="text-xs font-semibold uppercase text-primary">Packaging · India</p>
-          <h1 className="mt-2 text-3xl font-bold leading-tight sm:text-4xl">Manufacturer network</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">Explore packaging businesses across India. See what they make, where they’re based and how to reach them directly.</p>
+          <h1 className="mt-2 text-2xl font-bold leading-tight sm:text-4xl">Manufacturer network</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">Packaging businesses across India — products, locations and direct contacts.</p>
         </div>
         <div className="flex gap-7 md:justify-end">
-          <div><p className="text-2xl font-bold">{networkManufacturers.length}</p><p className="text-xs text-muted-foreground">Listed businesses</p></div>
-          <div><p className="text-2xl font-bold">{networkStates.length}</p><p className="text-xs text-muted-foreground">States covered</p></div>
+          <div className="flex items-baseline gap-2 md:block"><p className="text-lg font-bold sm:text-2xl">{networkManufacturers.length}</p><p className="text-xs text-muted-foreground">Listed businesses</p></div>
+          <div className="flex items-baseline gap-2 md:block"><p className="text-lg font-bold sm:text-2xl">{networkStates.length}</p><p className="text-xs text-muted-foreground">States covered</p></div>
         </div>
       </section>
       <section aria-label="Manufacturer directory" className="mt-5">
@@ -53,14 +53,15 @@ export default function ManufacturerNetwork() {
         </div>
         <div className="my-4 flex items-center justify-between"><p aria-live="polite" className="text-sm text-muted-foreground">{results.length} businesses{state && ` in ${state}`}</p>{(query || state) && <Button variant="ghost" size="sm" onClick={() => { setParams({}); setLimit(24); }}>Clear filters</Button>}</div>
         <div className="grid gap-3 md:grid-cols-2">
-          {results.slice(0, limit).map(entry => <article key={`${entry.company_name}-${entry.city}`} className="flex min-w-0 flex-col rounded-lg border border-border bg-card p-4">
+          {results.slice(0, limit).map(entry => <article key={`${entry.company_name}-${entry.city}`} className="flex min-w-0 flex-col rounded-lg border border-border bg-card p-3 sm:p-4">
             <div className="flex gap-3">
-              <div className="min-w-0"><h2 className="break-words text-base font-semibold leading-snug">{entry.company_name}</h2><p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3 shrink-0" />{[entry.city, entry.state].filter(Boolean).join(", ") || "Location not provided"}</p></div>
+              <div className="min-w-0"><h2 className="break-words text-base font-semibold leading-snug">{entry.company_name}</h2><p className="mt-1 flex items-start gap-1 text-sm text-muted-foreground sm:text-xs"><MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />{[entry.city, entry.state].filter(Boolean).join(", ") || "Location not provided"}</p></div>
             </div>
-            <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground"><span className="font-semibold text-foreground">Makes · </span>{entry.products_and_capabilities || "Product details to be confirmed."}</p>
-            <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground"><span className="font-semibold text-foreground">Address · </span>{entry.address || "Not published"}</p>
-            <ContactDetails entry={entry} />
-            <div className="mt-auto flex flex-wrap items-center justify-end gap-2 pt-3"><Button variant="outline" size="sm" className="h-8 rounded-full text-xs" onClick={() => setSelected(entry)}>Details <ArrowRight /></Button></div>
+            <dl className="mt-3 grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-2 gap-y-2 text-sm leading-relaxed sm:text-xs">
+              <dt className="font-semibold text-foreground">Makes</dt><dd className="line-clamp-3 break-words text-muted-foreground">{entry.products_and_capabilities || "Product details to be confirmed."}</dd>
+              <dt className="font-semibold text-foreground">Address</dt><dd className="line-clamp-2 break-words text-muted-foreground">{entry.address || "Not published"}</dd>
+            </dl>
+            <div className="mt-auto pt-3"><div className="flex items-center justify-between gap-2 border-t border-border pt-1 sm:pt-2"><ContactDetails entry={entry} /><Button variant="ghost" size="sm" className="h-11 shrink-0 px-2 text-xs sm:h-8" onClick={() => setSelected(entry)}>Details <ArrowRight /></Button></div></div>
           </article>)}
         </div>
         {!results.length && <div className="py-12 text-center"><Building2 className="mx-auto h-8 w-8 text-muted-foreground" /><h2 className="mt-3 font-semibold">No matching businesses</h2><p className="mt-1 text-sm text-muted-foreground">Try another city, packaging type or state.</p></div>}
