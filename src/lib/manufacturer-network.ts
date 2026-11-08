@@ -13,6 +13,9 @@ export function manufacturerContact(name: string) {
     if (url.protocol === "https:" && ["wa.me", "api.whatsapp.com", "www.whatsapp.com"].includes(url.hostname)) whatsapp = url.href;
   } catch { /* No explicitly published WhatsApp link. */ }
   const dialNumber = /^\d{10}$/.test(digits) ? `+91${digits}` : digits;
+  if (!whatsapp && /^\+?\d{10,15}$/.test(dialNumber)) {
+    whatsapp = `https://wa.me/${dialNumber.replace(/^\+/, "")}`;
+  }
   return { phone: primaryPhone, tel: /^\+?\d{10,15}$/.test(dialNumber) ? `tel:${dialNumber}` : undefined, whatsapp, source: contact?.source };
 }
 

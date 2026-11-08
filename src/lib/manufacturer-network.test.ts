@@ -5,9 +5,10 @@ describe("Uploaded manufacturer references", () => {
   it("does not invent unpublished contact details", () => {
     expect(manufacturerContact("Unknown manufacturer")).toEqual({ phone: undefined, tel: undefined, whatsapp: undefined, source: undefined });
   });
-  it("restores supplied phone numbers without assuming WhatsApp availability", () => {
+  it("opens supplied phone numbers through WhatsApp with an international number", () => {
     expect(manufacturerContact("Prime Pack Industries").tel).toBe("tel:+919885534567");
-    expect(manufacturerContact("Prime Pack Industries").whatsapp).toBeUndefined();
+    expect(manufacturerContact("Prime Pack Industries").whatsapp).toBe("https://wa.me/919885534567");
+    expect(manufacturerContact("M R Print Pack (Marutiram Print Pack)").whatsapp).toBe("https://wa.me/918885094004");
   });
   it("assigns increasing map density from actual listing counts", () => {
     expect([0, 1, 4, 9, 16].map(listingDensity)).toEqual(["none", "low", "medium", "high", "highest"]);
