@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Refine directory scanning on mobile/desktop and verify canonical sitemap inclusion.
 - [x] Add uploaded flexible-pouch businesses and preserve supplied contacts, MOQ and product details.
 - [x] Add packaging/type/contact filters and automatic loading; verify desktop/mobile browsing.
 - [x] Build isolated /request local mock chat with brief editing, attachments, retry/offline and mobile scrolling.
