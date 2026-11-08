@@ -1,7 +1,5 @@
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchPublishedManufacturers } from "@/data/directory";
 import articles from "@/data/packaging-articles.json";
 
 const BASE_URL = "https://snaplogo.in";
@@ -53,10 +51,6 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
     title: `About | ${SITE_TITLE}`,
     description: SITE_DESCRIPTION,
   },
-  "/manufacturers": {
-    title: `Directory | ${SITE_TITLE}`,
-    description: SITE_DESCRIPTION,
-  },
   "/manufacturer-network": {
     title: `Manufacturer Network | ${SITE_TITLE}`,
     description: "Explore packaging businesses across India by company, city and state, with product capabilities and transparent listing sources.",
@@ -90,16 +84,9 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
 export default function SeoMetadata() {
   const { pathname } = useLocation();
   const host = window.location.hostname;
-  const directoryHost = host.startsWith("manufacturers.") || host.startsWith("makers.");
-  const route = pathname === "/" && directoryHost ? "/manufacturers" : pathname === "/" && host.startsWith("app.") ? "/app" : pathname;
-  const slug = pathname.match(/^\/manufacturers\/([^/]+)\/?$/)?.[1];
-  const { data } = useQuery({ queryKey: ["directory"], queryFn: fetchPublishedManufacturers, enabled: !!slug });
-  const manufacturer = data?.find((item) => item.slug === slug);
-  const page = manufacturer ? {
-    title: `${manufacturer.name} | ${SITE_TITLE}`,
-    description: SITE_DESCRIPTION,
-  } : pages[route];
-  const title = page?.title ?? `${slug ? "Manufacturer Not Found" : "Account and Workspace"} | ${SITE_TITLE}`;
+  const route = pathname === "/" && host.startsWith("app.") ? "/app" : pathname;
+  const page = pages[route];
+  const title = page?.title ?? `Account and Workspace | ${SITE_TITLE}`;
   const description = page?.description ?? SITE_DESCRIPTION;
   const canonical = `${BASE_URL}${route}`;
 
