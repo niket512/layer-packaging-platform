@@ -1,5 +1,5 @@
 # Manufacturer network
-- [ ] Remove questions from /request-form and check page order, all form steps and phone/desktop layouts.
+- [x] Remove questions from /request-form and check page order, all form steps and phone/desktop layouts.
 - [x] Reorder /request-form around request entry, quote/network evidence, questions, community and designs; verify phone/desktop and design prefill.
 - [x] Copy landing at /request-form with guided requirements, preserving homepage and gallery.
 - [x] Verify saved form enquiry and linked admin record, plus phone/desktop layouts; authenticated inbox UI readback was inconclusive.
