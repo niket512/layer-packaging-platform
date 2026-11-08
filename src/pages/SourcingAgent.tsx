@@ -17,7 +17,6 @@ import { trackFunnel, flushVisitorTracking } from "@/lib/visitor-tracking";
 import logo from "@/assets/snaplogo-orange.png";
 import catBoxes from "@/assets/design-ship-kraft.jpg";
 import catPouches from "@/assets/category-stand-up-pouches.jpg";
-import catBottles from "@/assets/cat-bottles.jpg";
 import catLabels from "@/assets/cat-labels.jpg";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
@@ -58,11 +57,10 @@ const PROMPT_TABS: { label: string; prompts: string[] }[] = [
   { label: "Pouches & sachets", prompts: ["I need [quantity] stand-up zipper pouches for [product], size [W×H cm], multicolour print", "Find sachet manufacturers for [product], [ml/g] per sachet, MOQ [quantity]", "I need kraft pouches with a window for [product], budget ₹[price] per piece"] },
 ];
 
-type SourceCategoryId = "boxes" | "pouches" | "bottles" | "labels";
+type SourceCategoryId = "boxes" | "pouches" | "labels";
 const SOURCE_CATEGORIES: { id: SourceCategoryId; label: string; image: string; context: string; placeholder: string; suggestions: string[] }[] = [
   { id: "boxes", label: "Corrugated Boxes", image: catBoxes, context: "Corrugated boxes", placeholder: "I need 5,000 kraft shipping boxes, approximately 12 x 10 x 8 inches…", suggestions: ["Shipping boxes", "E-commerce mailers", "Product boxes", "Die-cut boxes", "Printed boxes"] },
   { id: "pouches", label: "Flexible Pouches", image: catPouches, context: "Flexible pouches", placeholder: "I need 5,000 stand-up zipper pouches for my snack brand…", suggestions: ["Stand-up pouches", "Flat pouches", "Pillow pouches", "Flat-bottom pouches", "Spout pouches", "Sachets & stick packs"] },
-  { id: "bottles", label: "Bottles & Jars", image: catBottles, context: "Bottles and jars", placeholder: "Tell us about your product and the packaging you need…", suggestions: [] },
   { id: "labels", label: "Labels & Stickers", image: catLabels, context: "Labels and stickers", placeholder: "Tell us about your product and the packaging you need…", suggestions: [] },
 ];
 
@@ -308,7 +306,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>
             {!(current || busy) && !landing && (
               <div className="mx-auto w-full max-w-[820px]">
-                <div className="mt-3 grid grid-cols-4 gap-2 sm:gap-3">
+                <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
                   {SOURCE_CATEGORIES.map(c => (
                     <Button key={c.id} type="button" variant="outline" aria-pressed={sourceCategory === c.id} onClick={() => { setSourceCategory(prev => prev === c.id ? null : c.id); if (sourceCategory !== c.id) trackFunnel("category_selected"); input.current?.focus(); }} className={`group h-auto flex-col justify-start gap-0 overflow-hidden whitespace-normal rounded-lg p-0 text-left ${sourceCategory === c.id ? "border-primary bg-accent ring-1 ring-primary/30" : "bg-card hover:border-primary/40"}`}>
                       <img src={c.image} alt="" loading="lazy" className="h-14 w-full object-cover sm:h-20" />
