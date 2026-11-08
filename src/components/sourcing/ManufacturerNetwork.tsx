@@ -1,6 +1,3 @@
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { IndiaNetworkMap } from "./IndiaNetworkMap";
 import { networkManufacturers, networkStates } from "@/lib/manufacturer-network";
 
@@ -11,7 +8,6 @@ export function ManufacturerNetwork() {
         <div>
           <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Manufacturers across India.</h2>
         </div>
-        <Button asChild variant="link" size="sm" className="shrink-0 px-0 text-xs"><Link to="/manufacturer-network">View list <ArrowRight className="h-4 w-4" /></Link></Button>
       </div>
       <dl className="mt-3 flex divide-x divide-border">
         {[[`${networkManufacturers.length}`, "listed businesses"], [`${networkStates.length}`, "states represented"]].map(([value, label]) => (
