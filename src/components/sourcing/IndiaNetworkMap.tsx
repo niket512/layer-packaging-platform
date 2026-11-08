@@ -23,7 +23,6 @@ export function IndiaNetworkMap() {
         })}
       </svg>
       <div className="absolute bottom-3 left-3 flex flex-col gap-1 rounded-md border border-border bg-background/95 px-3 py-2"><p className="text-[10px] font-medium text-muted-foreground">Listing density</p><div className="flex items-center gap-1.5"><span className="text-[10px] text-muted-foreground">Lower</span><div className="flex gap-0.5" aria-label="Light orange to dark orange represents increasing listing density">{["low", "medium", "high", "highest"].map(level => <span key={level} className={`network-density-swatch-${level} h-2.5 w-5 rounded-sm`} />)}</div><span className="text-[10px] text-muted-foreground">Higher</span></div></div>
-      <a href="https://github.com/udit-001/india-maps-data" target="_blank" rel="noopener noreferrer" className="absolute bottom-3 right-3 text-[10px] text-muted-foreground underline">Map boundaries</a>
     </div>
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-t border-border bg-card px-4 py-3">
       <div className="flex items-center gap-2"><h3 className="text-sm font-semibold">{state || "Across India"}</h3>{state && <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => setState("")}>All India</Button>}</div>
