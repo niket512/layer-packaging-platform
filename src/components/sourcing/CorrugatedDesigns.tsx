@@ -26,6 +26,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (p
   const switchFamily = (next: PackagingFamily) => { setFamily(next); reset(); };
   const useDesigns = (designs: PackagingDesign[]) => {
     designs.forEach(design => trackDesign("selected", design.id));
+    window.__lovableEvents?.track?.("project.design_used", { family: designs[0]?.family ?? family, count: designs.length });
     setSelected(null);
     requestAnimationFrame(() => onUseDesign(selectedDesignRequirement(designs), designs));
   };
