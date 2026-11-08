@@ -286,7 +286,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 text-center">
-            <section aria-label={requirementMode === "form" ? "Guided sourcing request" : "Sourcing chat"} className={`mx-auto flex max-w-[820px] flex-col text-left ${requirementMode === "form" ? "pt-4 pb-3 sm:pt-6 sm:pb-4" : "pt-6 pb-4 sm:pt-10 sm:pb-6"}`}>
+            <section aria-label={requirementMode === "form" ? "Guided sourcing request" : "Sourcing chat"} className={`mx-auto flex max-w-[820px] flex-col text-left ${requirementMode === "form" ? "pt-3 pb-2 sm:pt-5 sm:pb-3" : "pt-6 pb-4 sm:pt-10 sm:pb-6"}`}>
             <div className="text-center">
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
