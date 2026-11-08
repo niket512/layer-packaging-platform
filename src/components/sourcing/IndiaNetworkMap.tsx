@@ -7,10 +7,10 @@ import { networkManufacturers, networkStates } from "@/lib/manufacturer-network"
 export function IndiaNetworkMap() {
   const [state, setState] = useState("");
   const key = import.meta.env['VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY'];
-  const channel = import.meta.env['VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID'];
   const authorizedOrigin = /(^|\.)(lovable\.app|lovableproject\.com)$/.test(window.location.hostname);
   const canLoadMap = !!key && authorizedOrigin;
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(key ?? "")}&q=${encodeURIComponent(state ? `${state}, India` : "India")}&zoom=${state ? 6 : 4}&maptype=roadmap&language=en${channel ? `&channel=${encodeURIComponent(channel)}` : ""}`;
+  // Maps Embed does not accept the Maps JavaScript API's channel parameter.
+  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(key ?? "")}&q=${encodeURIComponent(state ? `${state}, India` : "India")}&zoom=${state ? 6 : 4}&maptype=roadmap&language=en`;
   const count = state ? networkManufacturers.filter(entry => entry.state === state).length : networkManufacturers.length;
   const listUrl = `/manufacturer-network${state ? `?state=${encodeURIComponent(state)}` : ""}`;
 
