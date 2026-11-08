@@ -20,8 +20,6 @@ import AppHome from "./pages/AppHome.tsx";
 import AppStore from "./pages/AppStore.tsx";
 import AppAdmin from "./pages/AppAdmin.tsx";
 import AdminChats from "./pages/AdminChats";
-import ManufacturersDirectory from "./pages/ManufacturersDirectory.tsx";
-import ManufacturerProfile from "./pages/ManufacturerProfile.tsx";
 import ManufacturerNetworkPage from "./pages/ManufacturerNetwork";
 import SourcingAgent from "./pages/SourcingAgent.tsx";
 import RequestPreview from "./pages/RequestPreview";
@@ -33,7 +31,6 @@ function VisitorTracking() { useVisitorTracking(); return null; }
 const queryClient = new QueryClient();
 const host = typeof window !== "undefined" ? window.location.hostname : "";
 const isAppHost = host.startsWith("app.");
-const isMfrHost = host.startsWith("manufacturers.") || host.startsWith("makers.");
 
 const App = () => (
   <HelmetProvider>
@@ -45,9 +42,8 @@ const App = () => (
         <SeoMetadata />
         <VisitorTracking />
         <Routes>
-          <Route path="/" element={isMfrHost ? <ManufacturersDirectory /> : isAppHost ? <AppHome /> : <SourcingAgent />} />
+          <Route path="/" element={isAppHost ? <AppHome /> : <SourcingAgent />} />
           <Route path="/about" element={<Index />} />
-          <Route path="/manufacturers" element={<ManufacturersDirectory />} />
           <Route path="/manufacturer-network" element={<ManufacturerNetworkPage />} />
           <Route path="/sourcing" element={<SourcingAgent />} />
           <Route path="/request" element={<RequestPreview />} />
@@ -57,7 +53,6 @@ const App = () => (
           <Route path="/sourcing/cosmetic-packaging" element={<SourcingAgent category="cosmetic-packaging" />} />
           <Route path="/sourcing/mailer-boxes" element={<SourcingAgent category="mailer-boxes" />} />
           <Route path="/sourcing/thank-you" element={<SourcingThankYou />} />
-          <Route path="/manufacturers/:slug" element={<ManufacturerProfile />} />
           <Route path="/app" element={<AppHome />} />
           <Route path="/app/store" element={<AppStore />} />
           <Route path="/app/admin" element={<AppAdmin />} />

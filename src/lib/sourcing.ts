@@ -1,4 +1,3 @@
-import type { DirectoryManufacturer } from "@/data/directory";
 import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS, validatedBrief } from "../../supabase/functions/_shared/sourcing-intake";
 import type { IntakeReply, IntakeStage, SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 
@@ -63,7 +62,7 @@ export function sourcingSubmission(turns: SourcingTurn[], phone: string, draft?:
   };
 }
 
-export function validatedMatches(value: unknown, manufacturers: DirectoryManufacturer[]): SourcingMatch[] {
+export function validatedMatches(value: unknown, manufacturers: { id: string; listing_status: string }[]): SourcingMatch[] {
   if (!Array.isArray(value)) return [];
   const allowed = new Set(manufacturers.filter(m => m.listing_status === "published").map(m => m.id));
   const seen = new Set<string>();

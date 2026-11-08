@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { fetchPublishedManufacturers } from "@/data/directory";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sortSourcingBrief, sourcingRequest, sourcingSubmission, unclearBriefNotes, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
 import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, conversationalIntakeContext, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply, type SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 
@@ -60,8 +59,8 @@ describe("sourcing matches", () => {
   it("saves answers and phone without suggesting suppliers", () => {
     expect(sourcingSubmission([{ query: "Paper bags", matches: [{ id: "evenpack", reason: "Legacy match" }], questions: [{ topic: "quantity", question: "How many?" }] }, { query: "500 units", matches: [] }], "+91 98765 43210")).toEqual({ contact: "+91 98765 43210", requirement: "Paper bags\nQuestion: How many?\n\n500 units", images: [], manufacturers: [] });
   });
-  it("only returns known published manufacturers, without duplicates", async () => {
-    const manufacturers = await fetchPublishedManufacturers();
+  it("only returns known published manufacturers, without duplicates", () => {
+    const manufacturers = [{ id: "evenpack", listing_status: "published" }, { id: "draft-one", listing_status: "draft" }];
     expect(validatedMatches([{ id: "evenpack", reason: "Paper bags" }, { id: "invented", reason: "Unknown" }, { id: "evenpack", reason: "Duplicate" }], manufacturers)).toEqual([{ id: "evenpack", reason: "Paper bags" }]);
   });
   it("keeps the requirement when refining the conversation", () => {
