@@ -65,7 +65,7 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
     try {
       const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: savedId.current });
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
-      trackFunnel("request_saved"); void flushVisitorTracking();
+      trackFunnel("request_saved"); window.__lovableEvents?.track?.("project.sourcing_request_submitted", { channel: "form" }); void flushVisitorTracking();
       await syncSourcingChat({ id: id.current, title: "Guided packaging request", brief, submitted: true, submissionId: savedId.current, phone, turns: [{ query: payload.requirement, matches: [], images: allImages }] }).catch(() => {});
       try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: id.current, phone, brief })); } catch { /* Saved enquiry remains available. */ }
       navigate("/sourcing/thank-you");

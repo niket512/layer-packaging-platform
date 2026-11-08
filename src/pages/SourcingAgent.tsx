@@ -231,6 +231,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
       const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: submissionId });
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
       trackFunnel("request_saved");
+      window.__lovableEvents?.track?.("project.sourcing_request_submitted", { channel: "chat" });
       void flushVisitorTracking();
       const phoneDisplay = phone.trim().startsWith("+") ? phone.trim() : `+91 ${phone.trim()}`;
       if (project) {

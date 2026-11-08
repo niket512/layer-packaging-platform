@@ -25,6 +25,26 @@
         }
       }
     },
+    "project.sourcing_request_submitted": {
+      "event_schema_version": 1,
+      "description": "A visitor's packaging request was saved successfully, via the chat or the guided form.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "channel"
+        ],
+        "properties": {
+          "channel": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "project.whatsapp_group_opened": {
       "event_schema_version": 1,
       "description": "A visitor clicked to open the Brands and Manufacturers WhatsApp group from the card or popup.",
