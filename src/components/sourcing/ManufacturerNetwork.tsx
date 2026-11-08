@@ -16,8 +16,8 @@ export function ManufacturerNetwork() {
       <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[[`${networkManufacturers.length}`, "listed manufacturers"], [`${networkStates.length}`, "states covered"], ["4 hrs", "quote turnaround"], ["0%", "commission"]].map(([value, label]) => (
           <div key={label} className="rounded-xl border border-border bg-card px-3 py-2.5 text-center">
-            <dt className="order-2 mt-0.5 block text-[11px] font-medium text-muted-foreground">{label}</dt>
-            <dd className="order-1 block text-lg font-bold text-foreground">{value}</dd>
+            <dd className="block text-lg font-bold text-foreground">{value}</dd>
+            <dt className="mt-0.5 block text-[11px] font-medium text-muted-foreground">{label}</dt>
           </div>
         ))}
       </dl>
