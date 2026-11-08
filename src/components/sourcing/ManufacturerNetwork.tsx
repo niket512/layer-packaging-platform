@@ -9,8 +9,7 @@ export function ManufacturerNetwork() {
     <section aria-label="Manufacturer directory coverage" className="min-w-0 text-left">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase text-primary">Explore the manufacturer directory</p>
-          <h2 className="mt-1 text-xl font-semibold text-foreground sm:text-2xl">Real businesses. Across India.</h2>
+          <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Manufacturers across India.</h2>
         </div>
         <Button asChild variant="link" size="sm" className="shrink-0 px-0 text-xs"><Link to="/manufacturer-network">View list <ArrowRight className="h-4 w-4" /></Link></Button>
       </div>
@@ -23,7 +22,7 @@ export function ManufacturerNetwork() {
         ))}
       </dl>
       <IndiaNetworkMap />
-      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Company names, locations and available WhatsApp contacts. Directory coverage is not proof of a verified partnership.</p>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Directory listings—not confirmed partners.</p>
     </section>
   );
 }
