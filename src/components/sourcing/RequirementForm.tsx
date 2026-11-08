@@ -101,7 +101,7 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
       </>}
       {step === 1 && <>
         <div>{field("quantity", "Initial quantity", "e.g. 2,000 pieces")}{presets("quantity", ["500 pieces", "1,000 pieces", "5,000 pieces"])}</div>
-        <div>{field("size", family === "boxes" ? "Box dimensions (optional)" : "Dimensions or fill (optional)", family === "boxes" ? "Length × width × height, e.g. 20 × 15 × 10 cm" : "e.g. 250 g or width × height in cm")}{presets("size", family === "boxes" ? ["15 × 10 × 5 cm", "20 × 15 × 10 cm"] : ["100 g", "250 g", "500 g"])}<p className="mt-2 text-xs text-muted-foreground">{family === "boxes" ? "Dimensions in cm · Example sizes, editable" : "Fill weight or dimensions · Examples, editable"}</p></div>
+        <div>{field("size", family === "boxes" ? "Box dimensions (optional)" : "Dimensions or fill (optional)", family === "boxes" ? "Length × width × height, e.g. 20 × 15 × 10 cm" : "e.g. 250 g or width × height in cm")}<p className="mt-2 text-xs text-muted-foreground">{family === "boxes" ? "Dimensions in cm" : "Fill weight or dimensions"}</p></div>
       </>}
       {step === 2 && <>
         {choices("printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"])}
