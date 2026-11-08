@@ -22,7 +22,6 @@ export function ManufacturerNetwork() {
         ))}
       </dl>
       <IndiaNetworkMap />
-      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Directory listings—not confirmed partners.</p>
     </section>
   );
 }
