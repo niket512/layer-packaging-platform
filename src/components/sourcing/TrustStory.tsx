@@ -1,5 +1,3 @@
-import { Quote } from "lucide-react";
-
 const brands = ["Dastaan", "Bloom Naturals", "Kaapi Co.", "Urban Roots", "Masala Tales", "Pure Sip"];
 const reviews = [
   ["We had three box quotes on WhatsApp the same afternoon — and the cheapest one was also the best fit.", "Riya S.", "Founder, Dastaan"],
@@ -9,17 +7,16 @@ const reviews = [
 
 export default function TrustStory() {
   return (
-    <section aria-label="Sourcing support and illustrative reviews" className="mx-auto mt-8 w-full max-w-[1120px] border-t border-border py-6 text-left sm:mt-10 sm:py-8">
+    <section aria-label="Sourcing support and illustrative reviews" className="mx-auto mt-5 w-full max-w-[1120px] border-y border-border py-3 text-left sm:mt-6 sm:py-4">
       <div>
-        <p className="text-xs font-semibold text-muted-foreground">Sample brands & fictional reviews · Not customer endorsements</p>
-        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">{brands.map(b => <span key={b} className="text-xs font-semibold text-muted-foreground">{b}</span>)}</div>
+        <p className="text-[11px] font-medium text-muted-foreground">Fictional brand & review preview · Not endorsements</p>
+        <div className="mt-2 flex gap-x-4 overflow-x-auto pb-1 sm:flex-wrap sm:gap-y-1">{brands.map(b => <span key={b} className="shrink-0 text-xs font-semibold text-foreground/80">{b}</span>)}</div>
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-2 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
         {reviews.map(([q, n, r]) => (
-          <figure key={n} className="rounded-lg border border-border bg-card p-3">
-            <div className="flex items-center justify-between"><Quote className="h-4 w-4 text-primary" /><span className="text-[10px] font-medium text-muted-foreground">Sample review</span></div>
-            <blockquote className="mt-2 text-sm leading-relaxed text-foreground">{q}</blockquote>
-            <figcaption className="mt-3 text-xs"><span className="font-semibold text-foreground">{n}</span><span className="text-muted-foreground"> · {r}</span></figcaption>
+          <figure key={n} className="w-[88%] shrink-0 snap-start border-l-2 border-primary/30 pl-3 sm:w-auto">
+            <blockquote className="text-xs leading-relaxed text-foreground">“{q}”</blockquote>
+            <figcaption className="mt-1.5 text-[11px] leading-relaxed"><span className="font-semibold text-foreground">{n}</span><span className="text-muted-foreground"> · {r}</span></figcaption>
           </figure>
         ))}
       </div>
