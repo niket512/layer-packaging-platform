@@ -291,8 +291,9 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
             <div className="relative text-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>
+              {requirementMode === "chat" && <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>}
               <h1 className={`mx-auto max-w-[720px] font-bold tracking-normal text-foreground ${requirementMode === "form" ? "mt-3 text-[28px] leading-[32px] sm:mt-3 sm:text-[32px] sm:leading-[1.15]" : "mt-3 text-[28px] leading-[32px] sm:mt-4 sm:text-[48px] sm:leading-[1.15]"}`}>{landing ? landing.headline : <>Find your packaging<br className="hidden sm:block" /> <span className="text-primary">manufacturer within 4 hours.</span></>}</h1>
+              {requirementMode === "form" && <p className="mt-2 text-xs font-medium text-muted-foreground"><span className="font-semibold text-primary">100+ vetted manufacturers</span> across India</p>}
               {landing && <p className="mx-auto mt-3 max-w-[580px] text-sm leading-relaxed text-muted-foreground sm:text-base">{landing.copy}</p>}
               <ol className={`mx-auto grid max-w-[720px] grid-cols-3 text-center ${requirementMode === "form" ? "mb-2 mt-3 sm:mb-3" : "mb-4 mt-5 sm:mb-5"}`} aria-label="How it works">{["Tell us your needs", "We find manufacturers", "Compare multiple quotes within 4 hours"].map((t, i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className={`absolute left-1/2 h-px w-full bg-border ${requirementMode === "form" ? "top-3" : "top-4"}`} />}<span className={`relative mx-auto flex items-center justify-center rounded-full border border-primary/30 bg-card font-bold text-primary ${requirementMode === "form" ? "h-6 w-6 text-xs" : "h-8 w-8 text-sm"}`}>{i + 1}</span><p className={`font-semibold text-foreground ${requirementMode === "form" ? "mt-1 text-xs leading-4" : "mt-2 text-xs sm:text-sm"}`}>{t}</p></li>)}</ol>
             </div>
@@ -353,6 +354,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
               </figure>
               </div>
               </div>
+            {requirementMode === "form" && designGallery}
             {(
               <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => window.__lovableEvents?.track?.("project.whatsapp_group_opened", { placement: "card" })} className="group mx-auto mt-4 flex max-w-[820px] items-center gap-3 rounded-2xl border border-[hsl(var(--sourcing-success)/0.25)] bg-[hsl(var(--sourcing-success)/0.06)] px-3.5 py-3 text-left transition-colors hover:bg-[hsl(var(--sourcing-success)/0.1)] sm:px-5">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
@@ -363,7 +365,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 <span className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[hsl(var(--sourcing-success))] px-4 text-xs font-bold uppercase tracking-wide text-white"><span className="sm:hidden">Join</span><span className="hidden sm:inline">Join WhatsApp community</span><ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
               </a>
             )}
-            {designGallery}
+            {requirementMode === "chat" && designGallery}
             <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
               <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
               <div className="mt-4 divide-y divide-border">
