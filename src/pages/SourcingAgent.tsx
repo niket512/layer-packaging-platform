@@ -367,7 +367,6 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
               </figure>
               </div>
               </div>
-            {requirementMode === "form" && sourcingQuestions}
             {(
               <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => window.__lovableEvents?.track?.("project.whatsapp_group_opened", { placement: "card" })} className="group mx-auto mt-4 flex max-w-[820px] items-center gap-3 rounded-2xl border border-[hsl(var(--sourcing-success)/0.25)] bg-[hsl(var(--sourcing-success)/0.06)] px-3.5 py-3 text-left transition-colors hover:bg-[hsl(var(--sourcing-success)/0.1)] sm:px-5">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
