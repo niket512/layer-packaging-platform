@@ -1,23 +1,30 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { networkManufacturers, networkStates } from "@/lib/manufacturer-network";
+import statePaths from "@/data/india-state-paths.json";
 
 export function IndiaNetworkMap() {
   const [state, setState] = useState("");
-  const key = import.meta.env['VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY'];
-  const authorizedOrigin = /(^|\.)(lovable\.app|lovableproject\.com)$/.test(window.location.hostname);
-  const canLoadMap = !!key && authorizedOrigin;
-  // Maps Embed does not accept the Maps JavaScript API's channel parameter.
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(key ?? "")}&q=${encodeURIComponent(state ? `${state}, India` : "India")}&zoom=${state ? 6 : 4}&maptype=roadmap&language=en`;
   const count = state ? networkManufacturers.filter(entry => entry.state === state).length : networkManufacturers.length;
   const listUrl = `/manufacturer-network${state ? `?state=${encodeURIComponent(state)}` : ""}`;
 
   return <div className="mt-4 grid overflow-hidden rounded-lg border border-border sm:grid-cols-[1fr_220px]">
-    <div className="relative h-[320px] bg-muted sm:h-[380px]">
-      {canLoadMap ? <iframe title={state ? `Manufacturer region: ${state}, India` : "Manufacturer regions across India"} src={mapUrl} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" className="h-full w-full border-0" allowFullScreen />
-        : <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center"><MapPin className="h-8 w-8 text-primary" /><p className="font-semibold">{state || "India"}</p><p className="max-w-xs text-xs leading-relaxed text-muted-foreground">The interactive map is available in the Lovable preview. The manufacturer list is available here.</p><Button asChild variant="outline" size="sm" className="rounded-full"><Link to={listUrl}>View {count} listings <ArrowRight /></Link></Button></div>}
+    <div className="relative h-[360px] bg-muted/40 p-3 sm:h-[420px]">
+      <svg viewBox="0 0 440 450" className="h-full w-full" aria-label="India manufacturer network by state">
+        {statePaths.map(region => {
+          const listings = networkManufacturers.filter(entry => entry.state === region.name).length;
+          return <path key={region.name} d={region.path} fillRule="evenodd" role={listings ? "button" : undefined} tabIndex={listings ? 0 : undefined} aria-label={`${region.name}: ${listings} listings`} aria-pressed={listings ? state === region.name : undefined}
+            onClick={() => { if (listings) setState(region.name); }}
+            onKeyDown={event => { if (listings && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); setState(region.name); } }}
+            className={`stroke-background stroke-[1.2] transition-colors ${state === region.name ? "fill-primary" : listings ? "cursor-pointer fill-primary/30 hover:fill-primary/60 focus:fill-primary/60 focus:outline-none" : "fill-border"}`}>
+            <title>{region.name} · {listings} listings</title>
+          </path>;
+        })}
+      </svg>
+      <div className="absolute bottom-3 left-3 rounded-md border border-border bg-background/95 px-3 py-2"><p className="text-xs font-semibold">{state || "Across India"}</p><p className="text-xs text-muted-foreground">{count} manufacturer listings</p></div>
+      <a href="https://github.com/udit-001/india-maps-data" target="_blank" rel="noopener noreferrer" className="absolute bottom-3 right-3 text-[10px] text-muted-foreground underline">Map boundaries</a>
     </div>
     <div className="flex min-w-0 flex-col border-t border-border bg-card p-4 sm:border-l sm:border-t-0">
       <div className="flex items-center justify-between gap-2"><h3 className="text-sm font-semibold">Explore by state</h3>{state && <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => setState("")}>All India</Button>}</div>
