@@ -1,13 +1,20 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Building2, ExternalLink, FileText, MapPin, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, ExternalLink, FileText, MapPin, Search, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { filterNetwork, networkManufacturers, networkStates, sourceLinks, type NetworkManufacturer } from "@/lib/manufacturer-network";
-import { PACKAGING_CATEGORIES } from "@/data/directory";
+import { filterNetwork, manufacturerContact, networkManufacturers, networkStates, sourceLinks, type NetworkManufacturer } from "@/lib/manufacturer-network";
 
 const sourceLabel = (source: string) => source === "official website" ? "Company website source" : source === "credible directory" ? "Directory source" : "Further checks needed";
+
+function ContactDetails({ entry }: { entry: NetworkManufacturer }) {
+  const contact = manufacturerContact(entry.company_name);
+  return <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-3">
+    {contact.tel ? <Button asChild variant="ghost" size="sm" className="h-8 px-0 text-xs"><a href={contact.tel}><Phone className="h-3.5 w-3.5" />{contact.phone}</a></Button> : <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Phone className="h-3.5 w-3.5" />Phone not published</span>}
+    {contact.whatsapp ? <Button asChild variant="ghost" size="sm" className="h-8 px-0 text-xs text-primary"><a href={contact.whatsapp} target="_blank" rel="noopener noreferrer"><MessageCircle className="h-3.5 w-3.5" />WhatsApp <ExternalLink className="h-3 w-3" /></a></Button> : <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><MessageCircle className="h-3.5 w-3.5" />WhatsApp not published</span>}
+  </div>;
+}
 
 export default function ManufacturerNetwork() {
   const [params, setParams] = useSearchParams();
@@ -52,13 +59,14 @@ export default function ManufacturerNetwork() {
         </div>
         <div className="my-4 flex items-center justify-between"><p aria-live="polite" className="text-sm text-muted-foreground">{results.length} businesses{state && ` in ${state}`}</p>{(query || state || source) && <Button variant="ghost" size="sm" onClick={() => { setParams({}); setLimit(24); }}>Clear filters</Button>}</div>
         <div className="grid gap-3 md:grid-cols-2">
-          {results.slice(0, limit).map(entry => <article key={`${entry.company_name}-${entry.city}`} className="flex min-w-0 flex-col rounded-lg border border-border bg-card p-4 sm:p-5">
+          {results.slice(0, limit).map(entry => <article key={`${entry.company_name}-${entry.city}`} className="flex min-w-0 flex-col rounded-lg border border-border bg-card p-4">
             <div className="flex gap-3">
-              <img src={PACKAGING_CATEGORIES[0].image} alt="" className="h-12 w-12 shrink-0 rounded-md object-cover" />
               <div className="min-w-0"><h2 className="break-words text-base font-semibold leading-snug">{entry.company_name}</h2><p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3 shrink-0" />{[entry.city, entry.state].filter(Boolean).join(", ") || "Location not provided"}</p></div>
             </div>
-            <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{entry.products_and_capabilities || "Product details to be confirmed."}</p>
-            <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-4"><span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground"><FileText className="h-3.5 w-3.5" />{sourceLabel(entry.verification_status)}</span><Button variant="outline" size="sm" className="h-8 rounded-full text-xs" onClick={() => setSelected(entry)}>View details <ArrowRight /></Button></div>
+            <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground"><span className="font-semibold text-foreground">Makes · </span>{entry.products_and_capabilities || "Product details to be confirmed."}</p>
+            <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground"><span className="font-semibold text-foreground">Address · </span>{entry.address || "Not published"}</p>
+            <ContactDetails entry={entry} />
+            <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-3"><span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground"><FileText className="h-3.5 w-3.5" />{sourceLabel(entry.verification_status)}</span><div className="flex items-center gap-2">{sourceLinks(entry)[0] && <Button asChild variant="ghost" size="sm" className="h-8 px-2 text-xs"><a href={sourceLinks(entry)[0]} target="_blank" rel="noopener noreferrer">Website <ExternalLink className="h-3 w-3" /></a></Button>}<Button variant="outline" size="sm" className="h-8 rounded-full text-xs" onClick={() => setSelected(entry)}>Details <ArrowRight /></Button></div></div>
           </article>)}
         </div>
         {!results.length && <div className="py-12 text-center"><Building2 className="mx-auto h-8 w-8 text-muted-foreground" /><h2 className="mt-3 font-semibold">No matching businesses</h2><p className="mt-1 text-sm text-muted-foreground">Try another city, packaging type or state.</p></div>}
@@ -69,6 +77,8 @@ export default function ManufacturerNetwork() {
     <Dialog open={!!selected} onOpenChange={open => { if (!open) setSelected(null); }}>
       <DialogContent className="max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-lg">
         {selected && <><DialogHeader><DialogTitle className="pr-6 text-xl leading-snug">{selected.company_name}</DialogTitle><DialogDescription>{[selected.city, selected.state].filter(Boolean).join(", ")} · {sourceLabel(selected.verification_status)}</DialogDescription></DialogHeader>
+          <ContactDetails entry={selected} />
+          {manufacturerContact(selected.company_name).source && <a href={manufacturerContact(selected.company_name).source} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline">Contact source</a>}
           <dl className="space-y-4 text-sm">{[["Products & capabilities", selected.products_and_capabilities], ["Address", selected.address], ["Industries served", selected.industries_served], ["Order notes", selected.moq_or_packaging_notes], ["Supplier quality claims · not independently verified", selected.certifications_or_quality_claims], ["Research notes", selected.notes]].filter(([, value]) => value).map(([label, value]) => <div key={label}><dt className="font-semibold">{label}</dt><dd className="mt-1 whitespace-pre-wrap break-words leading-relaxed text-muted-foreground">{value}</dd></div>)}</dl>
           <div className="border-t border-border pt-4"><h3 className="text-sm font-semibold">Listing sources</h3><div className="mt-2 space-y-2">{sourceLinks(selected).map((url, index) => <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 break-all text-xs text-primary hover:underline"><ExternalLink className="h-3.5 w-3.5 shrink-0" />{index === 0 ? "Website" : `Source ${index + 1}`} · {new URL(url).hostname}</a>)}</div></div>
           <p className="text-xs leading-relaxed text-muted-foreground">A listing does not imply a partnership or endorsement by Snaplogo. Confirm factory ownership, specifications and commercial terms before ordering.</p>

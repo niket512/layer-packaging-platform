@@ -52,6 +52,10 @@
     --text-heading: 222 47% 11%;
     --text-body: 215 25% 27%;
     --text-muted: 215 16% 47%;
+    --network-density-low: 24 90% 91%;
+    --network-density-medium: 24 95% 77%;
+    --network-density-high: 24 95% 60%;
+    --network-density-highest: 24 85% 40%;
   }
 
   /* Sourcing workspace — original Snaplogo landing-page theme */
@@ -143,6 +147,15 @@
 }
 
 @layer utilities {
+  .network-density-none { fill: hsl(var(--border)); }
+  .network-density-low { fill: hsl(var(--network-density-low)); }
+  .network-density-medium { fill: hsl(var(--network-density-medium)); }
+  .network-density-high { fill: hsl(var(--network-density-high)); }
+  .network-density-highest { fill: hsl(var(--network-density-highest)); }
+  .network-density-swatch-low { background: hsl(var(--network-density-low)); }
+  .network-density-swatch-medium { background: hsl(var(--network-density-medium)); }
+  .network-density-swatch-high { background: hsl(var(--network-density-high)); }
+  .network-density-swatch-highest { background: hsl(var(--network-density-highest)); }
   .text-balance { text-wrap: balance; }
   .text-pretty { text-wrap: pretty; }
   /* WhatsApp brand green for enquiry CTAs */

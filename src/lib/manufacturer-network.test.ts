@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { filterNetwork, networkManufacturers, sourceLinks } from "./manufacturer-network";
+import { filterNetwork, listingDensity, manufacturerContact, networkManufacturers, sourceLinks } from "./manufacturer-network";
 
 describe("Uploaded manufacturer references", () => {
+  it("does not invent unpublished contact details", () => {
+    expect(manufacturerContact("Unknown manufacturer")).toEqual({ phone: undefined, tel: undefined, whatsapp: undefined, source: undefined });
+  });
+  it("assigns increasing map density from actual listing counts", () => {
+    expect([0, 1, 4, 9, 16].map(listingDensity)).toEqual(["none", "low", "medium", "high", "highest"]);
+  });
   it("omits blank spreadsheet rows", () => {
     expect(networkManufacturers).toHaveLength(146);
     expect(networkManufacturers.every(row => row.company_name.trim().length > 0)).toBe(true);
