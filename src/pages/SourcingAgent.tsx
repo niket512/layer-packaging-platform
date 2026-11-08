@@ -286,15 +286,15 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 text-center">
-            <section aria-label={requirementMode === "form" ? "Guided sourcing request" : "Sourcing chat"} className={`mx-auto flex max-w-[820px] flex-col text-left pt-6 pb-4 sm:pt-10 sm:pb-6`}>
+            <section aria-label={requirementMode === "form" ? "Guided sourcing request" : "Sourcing chat"} className={`mx-auto flex max-w-[820px] flex-col text-left ${requirementMode === "form" ? "pt-4 pb-3 sm:pt-6 sm:pb-4" : "pt-6 pb-4 sm:pt-10 sm:pb-6"}`}>
             <div className="text-center">
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
             <div className="relative text-center">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>
-              <h1 className="mx-auto mt-3 max-w-[720px] text-[28px] font-bold leading-[32px] tracking-normal text-foreground sm:mt-4 sm:text-[48px] sm:leading-[1.15]">{landing ? landing.headline : <>Find your packaging<br className="hidden sm:block" /> <span className="text-primary">manufacturer within 4 hours.</span></>}</h1>
+              <h1 className={`mx-auto max-w-[720px] font-bold tracking-normal text-foreground ${requirementMode === "form" ? "mt-2 text-[22px] leading-[26px] sm:mt-3 sm:text-[32px] sm:leading-[1.15]" : "mt-3 text-[28px] leading-[32px] sm:mt-4 sm:text-[48px] sm:leading-[1.15]"}`}>{landing ? landing.headline : <>Find your packaging<br className="hidden sm:block" /> <span className="text-primary">manufacturer within 4 hours.</span></>}</h1>
               {landing && <p className="mx-auto mt-3 max-w-[580px] text-sm leading-relaxed text-muted-foreground sm:text-base">{landing.copy}</p>}
-              <ol className="mx-auto mb-4 mt-5 grid max-w-[720px] grid-cols-3 text-center sm:mb-5" aria-label="How it works">{["Tell us your needs", "We find manufacturers", "Compare multiple quotes within 4 hours"].map((t, i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p></li>)}</ol>
+              <ol className={`mx-auto grid max-w-[720px] grid-cols-3 text-center ${requirementMode === "form" ? "mb-3 mt-3 sm:mb-4" : "mb-4 mt-5 sm:mb-5"}`} aria-label="How it works">{["Tell us your needs", "We find manufacturers", "Compare multiple quotes within 4 hours"].map((t, i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className={`absolute left-1/2 h-px w-full bg-border ${requirementMode === "form" ? "top-3" : "top-4"}`} />}<span className={`relative mx-auto flex items-center justify-center rounded-full border border-primary/30 bg-card font-bold text-primary ${requirementMode === "form" ? "h-6 w-6 text-xs" : "h-8 w-8 text-sm"}`}>{i + 1}</span><p className={`font-semibold text-foreground ${requirementMode === "form" ? "mt-1 text-[11px] sm:text-xs" : "mt-2 text-xs sm:text-sm"}`}>{t}</p></li>)}</ol>
             </div>
             </div>
             {requirementMode === "chat" && (current || busy) && (
