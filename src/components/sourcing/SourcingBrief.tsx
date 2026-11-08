@@ -20,7 +20,7 @@ export function SourcingBrief({ fields, submitted, disabled, onSave }: { fields:
     {editing ? <div className="space-y-2">{draft.map((field, i) => <div key={field.topic} className="flex flex-row items-center gap-3">
       <label htmlFor={`brief-${field.topic}`} className="w-28 shrink-0 text-[11px] font-medium uppercase tracking-wide text-muted-foreground sm:w-36">{BRIEF_LABELS[field.topic]}</label>
       <Input id={`brief-${field.topic}`} className="h-8 flex-1 text-[13px]" value={field.value} maxLength={240} onChange={e => setDraft(prev => prev.map((f, j) => i === j ? { ...f, value: e.target.value, source: "buyer" } : f))} />
-    </div>)}</div> : <dl className="divide-y divide-border/50">{ordered.map(field => <div key={field.topic} className="flex flex-row items-baseline gap-3 py-1.5 first:pt-0 last:pb-0">
+    </div>)}</div> : <dl className="divide-y divide-border/50">{ordered.map(field => <div key={field.topic} className="flex flex-row items-baseline gap-3 py-1 first:pt-0 last:pb-0">
       <dt className="w-28 shrink-0 text-[11px] font-medium uppercase tracking-wide text-muted-foreground sm:w-36">{BRIEF_LABELS[field.topic]}</dt>
       <dd className="min-w-0 flex-1">
         <span className="break-words text-[13px] font-medium leading-snug">{field.value}{field.source === "image" && <span className="ml-1.5 text-[11px] font-normal text-muted-foreground">From design</span>}</span>
