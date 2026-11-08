@@ -18,7 +18,7 @@ export function ManufacturerNetwork() {
       <div className="mt-3 flex items-center justify-between gap-3">
         <dl className="flex items-baseline gap-2">
           <dd className="text-2xl font-bold text-foreground">{networkManufacturers.length}</dd>
-          <dt className="text-xs text-muted-foreground">listed businesses</dt>
+          <dt className="text-xs text-muted-foreground">listed manufacturers</dt>
         </dl>
         <Button asChild size="sm" className="shrink-0 rounded-full text-xs"><Link to={listUrl}>View manufacturers <ArrowRight /></Link></Button>
       </div>
