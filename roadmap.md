@@ -1,5 +1,5 @@
 # Manufacturer network
-- [ ] Simplify landing copy and repeated trust explanations; verify mobile/desktop quote entry.
+- [x] Simplify landing copy and repeated trust explanations; verify mobile/desktop quote entry with simulated replies.
 - [x] Clarify the landing-page story, distinguish real network evidence from illustrative reviews, and verify mobile/desktop quote entry with a simulated reply.
 - [x] Improve landing-page mobile scanning without changing chat or design browsing; verify phone and desktop layouts.
 - [x] Make mobile manufacturer listings compact and readable, with visible contacts and verify phone browsing.
