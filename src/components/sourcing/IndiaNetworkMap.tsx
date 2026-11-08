@@ -9,8 +9,8 @@ export function IndiaNetworkMap() {
   const [state, setState] = useState("");
   const listUrl = `/manufacturer-network${state ? `?state=${encodeURIComponent(state)}` : ""}`;
 
-  return <div className="mt-4 overflow-hidden rounded-lg border border-border">
-    <div className="relative h-[360px] bg-muted/40 p-3 sm:h-[420px]">
+  return <div className="mt-2 overflow-hidden rounded-lg border border-border">
+    <div className="relative h-[240px] bg-muted/40 p-2 sm:h-[280px]">
       <svg viewBox="0 0 440 450" className="h-full w-full" aria-label="India manufacturer network by state">
         {statePaths.map(region => {
           const listings = networkManufacturers.filter(entry => entry.state === region.name).length;
