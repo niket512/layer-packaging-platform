@@ -5,4 +5,4 @@
 - [x] Add an India map with state selection and links to uploaded manufacturer references.
 - [x] Verify non-map controls on desktop and mobile.
 - [x] Remove the unsupported channel parameter from the Google Maps Embed URL.
-- [ ] Validate Google Maps on an authorized deployed origin; snaplogo.in needs a user-owned Google Maps key with domain restrictions configured.
+- [x] Replace Google Maps with a locally drawn India map and verify state selection on desktop/mobile.
