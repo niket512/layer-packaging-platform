@@ -1,5 +1,5 @@
 # Manufacturer network
-- [ ] Reorder /request-form around request entry, quote/network evidence, questions, community and designs; verify phone/desktop and design prefill.
+- [x] Reorder /request-form around request entry, quote/network evidence, questions, community and designs; verify phone/desktop and design prefill.
 - [x] Copy landing at /request-form with guided requirements, preserving homepage and gallery.
 - [x] Verify saved form enquiry and linked admin record, plus phone/desktop layouts; authenticated inbox UI readback was inconclusive.
 - [x] Tailor phone cards, tablet grid and desktop comparison rows; verify 393px, 768px, 998px and 1280px.
