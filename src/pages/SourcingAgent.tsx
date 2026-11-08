@@ -15,6 +15,10 @@ import { imageFileToDataUrl } from "@/lib/image-data-url";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { trackFunnel, flushVisitorTracking } from "@/lib/visitor-tracking";
 import logo from "@/assets/snaplogo-orange.png";
+import catBoxes from "@/assets/design-ship-kraft.jpg";
+import catPouches from "@/assets/category-stand-up-pouches.jpg";
+import catBottles from "@/assets/cat-bottles.jpg";
+import catLabels from "@/assets/cat-labels.jpg";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
 const PROJECTS_KEY = "snaplogo.sourcing.projects";
@@ -54,6 +58,14 @@ const PROMPT_TABS: { label: string; prompts: string[] }[] = [
   { label: "Pouches & sachets", prompts: ["I need [quantity] stand-up zipper pouches for [product], size [W×H cm], multicolour print", "Find sachet manufacturers for [product], [ml/g] per sachet, MOQ [quantity]", "I need kraft pouches with a window for [product], budget ₹[price] per piece"] },
 ];
 
+type SourceCategoryId = "boxes" | "pouches" | "bottles" | "labels";
+const SOURCE_CATEGORIES: { id: SourceCategoryId; label: string; image: string; context: string; placeholder: string; suggestions: string[] }[] = [
+  { id: "boxes", label: "Corrugated Boxes", image: catBoxes, context: "Corrugated boxes", placeholder: "I need 5,000 kraft shipping boxes, approximately 12 x 10 x 8 inches…", suggestions: ["Shipping boxes", "E-commerce mailers", "Product boxes", "Die-cut boxes", "Printed boxes"] },
+  { id: "pouches", label: "Flexible Pouches", image: catPouches, context: "Flexible pouches", placeholder: "I need 5,000 stand-up zipper pouches for my snack brand…", suggestions: ["Stand-up pouches", "Flat pouches", "Pillow pouches", "Flat-bottom pouches", "Spout pouches", "Sachets & stick packs"] },
+  { id: "bottles", label: "Bottles & Jars", image: catBottles, context: "Bottles and jars", placeholder: "Tell us about your product and the packaging you need…", suggestions: [] },
+  { id: "labels", label: "Labels & Stickers", image: catLabels, context: "Labels and stickers", placeholder: "Tell us about your product and the packaging you need…", suggestions: [] },
+];
+
 function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
   const [tab, setTab] = useState(0);
   return (
@@ -74,6 +86,8 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
   const [activeId, setActiveId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
+  const [sourceCategory, setSourceCategory] = useState<SourceCategoryId | null>(null);
+  const selectedSource = SOURCE_CATEGORIES.find(c => c.id === sourceCategory);
   const fileInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -177,6 +191,8 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
     if (askingPhone && !designStep && looksLikeSourcingPhone(trimmed)) { setError("That doesn’t look like a valid WhatsApp number. Please share a 10-digit number, e.g. 98765 43210."); return; }
     if (!trimmed || busy || submitting || project?.submitted) return;
     if (!turns.length) trackFunnel("first_message");
+    // A picked category silently scopes the first message without changing what the user typed.
+    const outgoing = !turns.length && selectedSource ? `${selectedSource.context}: ${trimmed}` : trimmed;
     setBusy(true); setError(""); setPendingQuery(trimmed); setLiveQuestions([]); setLiveMessage("");
     const id = activeId ?? crypto.randomUUID();
     // Save sent messages even when the assistant is interrupted or the visitor leaves.
@@ -188,7 +204,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/directory-search`, {
           method: "POST",
           headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
-          body: JSON.stringify({ query: sourcingRequest(turns, trimmed), latest: trimmed, images: photos, brief: project?.brief ?? [], mode: "intake", stream: true, conversational: true, quotationAsked: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0), currentStage: current?.stage ?? (hasQuestions ? "quotation" : designStep ? "design" : askingPhone ? "phone" : "clarify"), conversation: turns.map(t => ({ request: t.query, response: t.assistantMessage, stage: t.stage, questions: t.questions ?? [], followUp: t.followUp, hasImages: (t.images?.length ?? 0) > 0, skipped: t.questionsSkipped ?? false })) }),
+          body: JSON.stringify({ query: sourcingRequest(turns, outgoing), latest: outgoing, images: photos, brief: project?.brief ?? [], mode: "intake", stream: true, conversational: true, quotationAsked: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0), currentStage: current?.stage ?? (hasQuestions ? "quotation" : designStep ? "design" : askingPhone ? "phone" : "clarify"), conversation: turns.map(t => ({ request: t.query, response: t.assistantMessage, stage: t.stage, questions: t.questions ?? [], followUp: t.followUp, hasImages: (t.images?.length ?? 0) > 0, skipped: t.questionsSkipped ?? false })) }),
         });
         questions = await readSourcingStream(response, value => setLiveQuestions(turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(value, turns)), value => { reply = value; }, setLiveMessage);
       }
@@ -227,9 +243,9 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
   const composer = (compact = false) => (
     <form onSubmit={e => { e.preventDefault(); void search(); }} className={`sourcing-composer rounded-[28px] border border-border bg-card shadow-sm p-2.5 sm:p-3.5 focus-within:border-primary/40 ${compact ? "" : "mt-3 md:mt-5"}`}>
       <label htmlFor="sourcing-query" className="sr-only">{compact ? "Your answer" : "Packaging requirement"}</label>
-      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} maxLength={500} disabled={busy || submitting} rows={compact ? 2 : 3} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Your answer, or any other details…" : "e.g. 5,000 printed kraft boxes, delivered to Bengaluru"} className="w-full resize-none bg-transparent px-1 pt-1 text-base leading-relaxed sm:px-2 sm:pt-2 text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
+      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} onFocus={() => trackFunnel("composer_focused")} maxLength={500} disabled={busy || submitting} rows={compact ? 2 : 3} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Your answer, or any other details…" : selectedSource?.placeholder ?? "Tell us about your product and the packaging you need…"} className="w-full resize-none bg-transparent px-1 pt-1 text-base leading-relaxed sm:px-2 sm:pt-2 text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void search(); } }} />
       {photos.length > 0 && <div className="flex flex-wrap gap-2 px-2 pt-2">{photos.map((src, i) => <div key={i} className="relative"><img src={src} alt={`Attached photo ${i + 1}`} className="h-16 w-16 rounded-lg border border-border object-cover" /><button type="button" aria-label="Remove photo" onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))} className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background"><X className="h-3 w-3" /></button></div>)}</div>}
-      <div className="mt-1 flex flex-wrap items-center justify-between gap-2 sm:mt-2 sm:border-t sm:border-border sm:pt-2.5"><div className="flex items-center gap-1"><input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={e => void addPhotos(e.target.files)} /><Button type="button" variant="ghost" size="sm" disabled={busy || submitting || photos.length >= 4} onClick={() => fileInput.current?.click()} className="h-9 px-2 text-xs text-muted-foreground sm:h-10 sm:text-sm"><ImagePlus /><span className="sm:hidden">Upload design</span><span className="hidden sm:inline">Add design / photos</span></Button></div>{compact ? <Button type="submit" size="icon" disabled={busy || submitting || (!query.trim() && !photos.length)} aria-label="Send answer" className="h-10 w-10 rounded-full shadow-sm disabled:opacity-100 disabled:bg-primary/70">{busy ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button> : <Button type="submit" disabled={busy || submitting || (!query.trim() && !photos.length)} className="h-10 shrink-0 rounded-full px-3 max-sm:w-full text-[11px] font-bold uppercase tracking-wide shadow-sm disabled:opacity-100 disabled:bg-primary/70 sm:px-5 sm:text-[13px]">{busy ? <Loader2 className="animate-spin" /> : <>{landing?.cta ?? "Get Free Quotes"}<ArrowRight /></>}</Button>}</div>
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-2 sm:mt-2 sm:border-t sm:border-border sm:pt-2.5"><div className="flex items-center gap-1"><input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={e => void addPhotos(e.target.files)} /><Button type="button" variant="ghost" size="sm" disabled={busy || submitting || photos.length >= 4} onClick={() => fileInput.current?.click()} className="h-9 px-2 text-xs text-muted-foreground sm:h-10 sm:text-sm"><ImagePlus /><span className="sm:hidden">Upload design</span><span className="hidden sm:inline">Add design / photos <span className="font-normal text-muted-foreground/70">(optional)</span></span></Button></div>{compact ? <Button type="submit" size="icon" disabled={busy || submitting || (!query.trim() && !photos.length)} aria-label="Send answer" className="h-10 w-10 rounded-full shadow-sm disabled:opacity-100 disabled:bg-primary/70">{busy ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button> : <Button type="submit" disabled={busy || submitting || (!query.trim() && !photos.length)} className="h-10 shrink-0 rounded-full px-3 max-sm:w-full text-[11px] font-bold uppercase tracking-wide shadow-sm disabled:opacity-100 disabled:bg-primary/70 sm:px-5 sm:text-[13px]">{busy ? <Loader2 className="animate-spin" /> : <>{landing?.cta ?? "Get Free Quotes"}<ArrowRight /></>}</Button>}</div>
     </form>
   );
   const designGallery = (
@@ -255,7 +271,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 text-center">
-            <section aria-label="Sourcing chat" className={`mx-auto flex max-w-[820px] flex-col text-left pt-6 pb-4 sm:pt-16 sm:pb-6`}>
+            <section aria-label="Sourcing chat" className={`mx-auto flex max-w-[820px] flex-col text-left pt-6 pb-4 sm:pt-10 sm:pb-6`}>
             <div className="text-center">
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
@@ -264,7 +280,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>
               <h1 className="sr-only">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
               <p className="mx-auto mt-3 max-w-[680px] text-[30px] font-bold leading-[1.15] tracking-normal text-foreground sm:mt-4 sm:text-[48px]">Custom packaging quotes in <span className="text-primary">4 hours</span>.</p>
-              <p className="mx-auto mt-2 mb-3 max-w-[560px] text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:mb-7 sm:text-base">Tell us your box or pouch need. Get comparable quotes on WhatsApp — free, 0% commission.</p>
+              <p className="mx-auto mt-2 mb-3 max-w-[560px] text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:mb-5 sm:text-base">Tell us what you’re packaging. We’ll match you with vetted manufacturers and get comparable quotes on WhatsApp. Free, with 0% commission.</p>
             </div>
             </div>
             {(current || busy) && (
@@ -292,13 +308,33 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>
             )}
             </div>
+            {!(current || busy) && !landing && (
+              <div className="mx-auto w-full max-w-[820px]">
+                <p className="text-center text-base font-semibold text-foreground sm:text-lg">What are you looking to source?</p>
+                <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+                  {SOURCE_CATEGORIES.map(c => (
+                    <button key={c.id} type="button" aria-pressed={sourceCategory === c.id} onClick={() => { setSourceCategory(prev => prev === c.id ? null : c.id); if (sourceCategory !== c.id) trackFunnel("category_selected"); input.current?.focus(); }} className={`group overflow-hidden rounded-2xl border bg-card text-left transition-all ${sourceCategory === c.id ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/40 hover:shadow-sm"}`}>
+                      <img src={c.image} alt="" loading="lazy" className="h-20 w-full object-cover sm:h-24" />
+                      <span className={`block px-3 py-2 text-xs font-semibold sm:text-sm ${sourceCategory === c.id ? "text-primary" : "text-foreground"}`}>{c.label}</span>
+                    </button>
+                  ))}
+                </div>
+                {selectedSource && selectedSource.suggestions.length > 0 && (
+                  <div className="mt-3 flex flex-wrap justify-center gap-2">
+                    {selectedSource.suggestions.map(s => <button key={s} type="button" onClick={() => { setQuery(prev => prev.trim() ? prev : `I need ${s.toLowerCase()} for my brand — `); input.current?.focus(); }} className="rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary">{s}</button>)}
+                  </div>
+                )}
+                <p className="mt-3 text-center text-xs text-muted-foreground">Or describe what you need in your own words.</p>
+              </div>
+            )}
             <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}</div>
+            {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · 0% commission · No exclusivity · Your design stays confidential</p>}
             {<div className="mx-auto mt-3 w-full max-w-[820px] text-center">
-              <ol className="mx-auto mt-2 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your need", "Text or upload a design"], ["We match makers", "Screened box & pouch factories"], ["Compare quotes", "Price, MOQ & lead time on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
+              <ol className="mx-auto mt-2 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your requirement", "Describe your needs or upload a reference"], ["We match manufacturers", "Suitable, vetted packaging manufacturers"], ["Compare quotations", "Pricing, MOQ & lead times on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
               <div className="grid items-start gap-4 sm:grid-cols-2">
               <ManufacturerNetwork />
               <figure className="mx-auto mt-4 w-full max-w-[560px] overflow-hidden rounded-lg border border-border bg-card text-left">
-                <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Example</span></figcaption>
+                <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Illustrative example</span></figcaption>
                 <table className="w-full text-xs sm:text-sm"><thead className="text-muted-foreground"><tr><th className="px-4 py-2 text-left font-medium">Manufacturer</th><th className="px-2 py-2 text-right font-medium whitespace-nowrap">Per unit</th><th className="px-2 py-2 text-right font-medium">MOQ</th><th className="px-4 py-2 text-right font-medium whitespace-nowrap"><span className="sm:hidden">Lead</span><span className="hidden sm:inline">Lead time</span></th></tr></thead><tbody>{[["Maker A", "₹—", "1,000", "10 days", true], ["Maker B", "₹—", "2,000", "14 days", false], ["Maker C", "₹—", "500", "12 days", false]].map(([m, pr, moq, lt, best]) => <tr key={m as string} className="border-t border-border"><td className="px-4 py-2.5 font-medium text-foreground">{m}{best && <span className="ml-2 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-semibold text-primary">Best fit</span>}</td><td className="px-2 py-2.5 text-right text-muted-foreground">{pr}</td><td className="px-2 py-2.5 text-right">{moq}</td><td className="px-4 py-2.5 text-right">{lt}</td></tr>)}</tbody></table>
                 <p className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">Illustration only — real prices depend on your size, material, print and quantity.</p>
               </figure>
