@@ -270,6 +270,19 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
       void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
     }} />
   );
+  const sourcingQuestions = (
+    <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
+              <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
+              <div className="mt-4 divide-y divide-border">
+                {[
+                  ["How do I find a corrugated box manufacturer?", "Share your box style, length × width × height, quantity and printing needs. If known, include the corrugated wall grade, such as 3-ply or 5-ply. Snaplogo’s sourcing team reviews your brief and sends matched manufacturer details and quotations on WhatsApp."],
+                  ["How do I find stand-up pouch or sachet manufacturers?", "Describe the product you will pack, pouch or sachet format, size, quantity and printing. Include any known material, barrier or closure requirements and attach a design if you have one. Leave uncertain specifications open for confirmation rather than guessing."],
+                  ["What is the minimum order quantity and price?", "MOQ and price need to be confirmed for your specific design and manufacturer. Share your target quantity and budget so the sourcing team can look for a suitable fit. Catalogue photos are references, not fixed-price offers."],
+                  ["Can I request a manufacturer in Ahmedabad or another city?", "Yes—include your preferred city in your brief. The team will review location preferences alongside your packaging needs; availability in a particular city must be confirmed. Snaplogo connects brands with manufacturers and does not manufacture packaging itself."],
+                ].map(([question, answer]) => <details key={question} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-details-marker]:hidden">{question}<ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" /></summary><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{answer}</p></details>)}
+              </div>
+            </section>
+  );
   return (
     <div className="theme-sourcing min-h-screen bg-background text-foreground">
       <div>
@@ -293,7 +306,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
             <div className="relative text-center">
               {requirementMode === "chat" && <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>}
               <h1 className={`mx-auto max-w-[720px] font-bold tracking-normal text-foreground ${requirementMode === "form" ? "mt-3 text-[28px] leading-[32px] sm:mt-3 sm:text-[32px] sm:leading-[1.15]" : "mt-3 text-[28px] leading-[32px] sm:mt-4 sm:text-[48px] sm:leading-[1.15]"}`}>{landing ? landing.headline : <>Find your packaging<br className="hidden sm:block" /> <span className="text-primary">manufacturer within 4 hours.</span></>}</h1>
-              {requirementMode === "form" && <p className="mt-2 text-xs font-medium text-muted-foreground"><span className="font-semibold text-primary">100+ vetted manufacturers</span> across India</p>}
+              {requirementMode === "form" && <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-medium text-muted-foreground"><p><span className="font-semibold text-primary">100+ vetted manufacturers</span> across India</p><Button asChild variant="link" size="sm" className="h-auto px-0 py-1 text-xs"><a href="#browse-designs">Choose from designs<ArrowUpRight className="h-3 w-3" /></a></Button></div>}
               {landing && <p className="mx-auto mt-3 max-w-[580px] text-sm leading-relaxed text-muted-foreground sm:text-base">{landing.copy}</p>}
               <ol className={`mx-auto grid max-w-[720px] grid-cols-3 text-center ${requirementMode === "form" ? "mb-2 mt-3 sm:mb-3" : "mb-4 mt-5 sm:mb-5"}`} aria-label="How it works">{["Tell us your needs", "We find manufacturers", "Compare multiple quotes within 4 hours"].map((t, i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className={`absolute left-1/2 h-px w-full bg-border ${requirementMode === "form" ? "top-3" : "top-4"}`} />}<span className={`relative mx-auto flex items-center justify-center rounded-full border border-primary/30 bg-card font-bold text-primary ${requirementMode === "form" ? "h-6 w-6 text-xs" : "h-8 w-8 text-sm"}`}>{i + 1}</span><p className={`font-semibold text-foreground ${requirementMode === "form" ? "mt-1 text-xs leading-4" : "mt-2 text-xs sm:text-sm"}`}>{t}</p></li>)}</ol>
             </div>
@@ -345,8 +358,8 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
             </div></section>
             <TrustStory />
               <div className="mx-auto mt-5 grid max-w-[1120px] items-start gap-6 border-t border-border pt-6 text-left sm:mt-8 sm:grid-cols-2 sm:gap-8 sm:pt-8">
-              <ManufacturerNetwork />
-              <div className="min-w-0">
+              <div className={requirementMode === "form" ? "order-2" : ""}><ManufacturerNetwork /></div>
+              <div className={`min-w-0 ${requirementMode === "form" ? "order-1" : ""}`}>
               <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Compare manufacturer quotes.</h2>
               <figure className="mx-auto mt-4 w-full overflow-hidden rounded-lg border border-border bg-card text-left">
                 <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Illustrative example</span></figcaption>
@@ -354,7 +367,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
               </figure>
               </div>
               </div>
-            {requirementMode === "form" && designGallery}
+            {requirementMode === "form" && sourcingQuestions}
             {(
               <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => window.__lovableEvents?.track?.("project.whatsapp_group_opened", { placement: "card" })} className="group mx-auto mt-4 flex max-w-[820px] items-center gap-3 rounded-2xl border border-[hsl(var(--sourcing-success)/0.25)] bg-[hsl(var(--sourcing-success)/0.06)] px-3.5 py-3 text-left transition-colors hover:bg-[hsl(var(--sourcing-success)/0.1)] sm:px-5">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
@@ -365,18 +378,8 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 <span className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[hsl(var(--sourcing-success))] px-4 text-xs font-bold uppercase tracking-wide text-white"><span className="sm:hidden">Join</span><span className="hidden sm:inline">Join WhatsApp community</span><ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
               </a>
             )}
-            {requirementMode === "chat" && designGallery}
-            <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
-              <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
-              <div className="mt-4 divide-y divide-border">
-                {[
-                  ["How do I find a corrugated box manufacturer?", "Share your box style, length × width × height, quantity and printing needs. If known, include the corrugated wall grade, such as 3-ply or 5-ply. Snaplogo’s sourcing team reviews your brief and sends matched manufacturer details and quotations on WhatsApp."],
-                  ["How do I find stand-up pouch or sachet manufacturers?", "Describe the product you will pack, pouch or sachet format, size, quantity and printing. Include any known material, barrier or closure requirements and attach a design if you have one. Leave uncertain specifications open for confirmation rather than guessing."],
-                  ["What is the minimum order quantity and price?", "MOQ and price need to be confirmed for your specific design and manufacturer. Share your target quantity and budget so the sourcing team can look for a suitable fit. Catalogue photos are references, not fixed-price offers."],
-                  ["Can I request a manufacturer in Ahmedabad or another city?", "Yes—include your preferred city in your brief. The team will review location preferences alongside your packaging needs; availability in a particular city must be confirmed. Snaplogo connects brands with manufacturers and does not manufacture packaging itself."],
-                ].map(([question, answer]) => <details key={question} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-details-marker]:hidden">{question}<ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" /></summary><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{answer}</p></details>)}
-              </div>
-            </section>
+            {designGallery}
+            {requirementMode === "chat" && sourcingQuestions}
           </div>
 
         </main>
