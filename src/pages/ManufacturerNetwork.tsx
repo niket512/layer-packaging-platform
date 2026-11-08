@@ -58,8 +58,8 @@ export default function ManufacturerNetwork() {
               <div className="min-w-0"><h2 className="break-words text-base font-semibold leading-snug">{entry.company_name}</h2><p className="mt-1 flex items-start gap-1 text-sm text-muted-foreground sm:text-xs"><MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />{[entry.city, entry.state].filter(Boolean).join(", ") || "Location not provided"}</p></div>
             </div>
             <dl className="mt-3 grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-2 gap-y-2 text-sm leading-relaxed sm:text-xs">
-              <dt className="font-semibold text-foreground">Makes</dt><dd className="break-words text-muted-foreground">{entry.products_and_capabilities || "Product details to be confirmed."}</dd>
-              <dt className="font-semibold text-foreground">Address</dt><dd className="break-words text-muted-foreground">{entry.address || "Not published"}</dd>
+              <dt className="font-semibold text-foreground">Makes</dt><dd className="line-clamp-3 break-words text-muted-foreground">{entry.products_and_capabilities || "Product details to be confirmed."}</dd>
+              <dt className="font-semibold text-foreground">Address</dt><dd className="line-clamp-2 break-words text-muted-foreground">{entry.address || "Not published"}</dd>
             </dl>
             <div className="mt-auto pt-3"><div className="flex items-center justify-between gap-2 border-t border-border pt-1 sm:pt-2"><ContactDetails entry={entry} /><Button variant="ghost" size="sm" className="h-11 shrink-0 px-2 text-xs sm:h-8" onClick={() => setSelected(entry)}>Details <ArrowRight /></Button></div></div>
           </article>)}
