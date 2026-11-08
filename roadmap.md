@@ -1,5 +1,5 @@
 # Manufacturer network
-- [ ] Redesign /request-form into visuals, scale, specifications and final contact steps; verify both packaging families and phone/desktop entry.
+- [x] Redesign /request-form into visuals, scale, specifications and final contact steps; verify both packaging families and phone/desktop entry.
 - [x] Remove questions from /request-form and check page order, all form steps and phone/desktop layouts.
 - [x] Reorder /request-form around request entry, quote/network evidence, questions, community and designs; verify phone/desktop and design prefill.
 - [x] Copy landing at /request-form with guided requirements, preserving homepage and gallery.
