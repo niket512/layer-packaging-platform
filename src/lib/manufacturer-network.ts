@@ -1,7 +1,7 @@
 import entries from "@/data/manufacturer-network.json";
 import publishedContacts from "@/data/manufacturer-contacts.json";
 
-type PublishedContact = { phone?: string; whatsapp?: string; source: string };
+type PublishedContact = { phone?: string; whatsapp?: string };
 const contacts: Record<string, PublishedContact> = publishedContacts;
 export function manufacturerContact(name: string) {
   const contact = contacts[name];
@@ -16,7 +16,7 @@ export function manufacturerContact(name: string) {
   if (!whatsapp && /^\+?\d{10,15}$/.test(dialNumber)) {
     whatsapp = `https://wa.me/${dialNumber.replace(/^\+/, "")}`;
   }
-  return { phone: primaryPhone, tel: /^\+?\d{10,15}$/.test(dialNumber) ? `tel:${dialNumber}` : undefined, whatsapp, source: contact?.source };
+  return { phone: primaryPhone, tel: /^\+?\d{10,15}$/.test(dialNumber) ? `tel:${dialNumber}` : undefined, whatsapp };
 }
 
 export function listingDensity(count: number): "none" | "low" | "medium" | "high" | "highest" {
@@ -30,14 +30,8 @@ export function listingDensity(count: number): "none" | "low" | "medium" | "high
 export type NetworkManufacturer = (typeof entries)[number];
 export const networkManufacturers = entries.filter(entry => entry.company_name.trim());
 export const networkStates = [...new Set(networkManufacturers.map(entry => entry.state).filter(Boolean))].sort();
-export function filterNetwork(query: string, state: string, source: string) {
+export function filterNetwork(query: string, state: string) {
   const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
   return networkManufacturers.filter(entry => (!state || entry.state === state)
-    && (!source || entry.verification_status === source)
     && words.every(word => [entry.company_name, entry.legal_name_or_brand, entry.city, entry.state, entry.products_and_capabilities].join(" ").toLowerCase().includes(word)));
-}
-export function sourceLinks(entry: NetworkManufacturer) {
-  return [...new Set([entry.website, ...entry.source_urls.split(/\s*\|\s*/)].filter(url => {
-    try { return new URL(url).protocol === "https:" || new URL(url).protocol === "http:"; } catch { return false; }
-  }))];
 }
