@@ -11,7 +11,7 @@ describe("guided packaging requirements", () => {
     const brief = formBrief("boxes", { material: "Kraft", finishing: "Matte" });
     const payload = formSubmission(brief, "+91 98765 43210", "", []);
     expect(payload?.requirement).toContain("Material / board: Kraft [buyer]");
-    expect(payload?.requirement).toContain("Finishing: Matte [buyer]");
+    expect(payload?.requirement).toContain("Finish: Matte [buyer]");
   });
   it("prefills supported reference attributes without inventing quantity, size or budget", () => {
     const result = designFormPrefill([{ ...BOX_DESIGNS[0], family: "pouches", attributes: { style: ["Stand-up"], printing: ["Multicolour"], material: ["Kraft"], features: ["Zipper"] } }]);
