@@ -61,7 +61,7 @@ export default function RequestPreview() {
         failUsed.current = true; await new Promise(resolve => schedule(() => resolve(undefined), 800)); throw new Error("Message not sent");
       }
       const current = stateRef.current;
-      const companion = message.kind === "file" ? current.messages.findLast(m => m.role === "user" && m.kind === "text" && m.createdAt >= message.createdAt) : undefined;
+      const companion = message.kind === "file" ? [...current.messages].reverse().find(m => m.role === "user" && m.kind === "text" && m.createdAt >= message.createdAt) : undefined;
       const reply = await sendMessage(current.messages, { text: message.kind === "text" ? message.text : companion?.kind === "text" ? companion.text : "", brief: current.brief, field: current.field, unclear: current.unclear, file: message.kind === "file" ? message.file : undefined });
       dispatch({ type: "sent", id: message.id }); dispatch({ type: "reply", reply });
     } catch { dispatch({ type: "failed", id: message.id }); }
