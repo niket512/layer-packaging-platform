@@ -12,7 +12,7 @@ export function parseBrief(text: string, field?: BriefField): RequestBrief {
   result.product = products.find(([pattern]) => pattern.test(lower))?.[1];
   const number = lower.match(/\b(\d[\d,]*(?:\.\d+)?)\s*(lakh|lakhs|k)?\s*(\+)?/);
   if (number) {
-    const value = Number(number[1].replaceAll(",", "")) * (number[2]?.startsWith("lakh") ? 100000 : number[2] === "k" ? 1000 : 1);
+    const value = Number(number[1].replace(/,/g, "")) * (number[2]?.startsWith("lakh") ? 100000 : number[2] === "k" ? 1000 : 1);
     if (value > 0 && Number.isFinite(value)) result.quantity = value.toLocaleString("en-IN") + (number[3] ? "+" : "");
   }
   const cities: [RegExp, string][] = [[/\bmumbai\b/, "Mumbai"], [/\b(delhi(?: ncr)?|noida|gurugram|ghaziabad)\b/, "Delhi NCR"], [/\bpune\b/, "Pune"], [/\bchennai\b/, "Chennai"], [/\b(bengaluru|bangalore)\b/, "Bengaluru"], [/\bhyderabad\b/, "Hyderabad"], [/\bkolkata\b/, "Kolkata"], [/\bahmedabad\b/, "Ahmedabad"]];
