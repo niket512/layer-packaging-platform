@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Check, ImagePlus, Loader2, X, MapPin, HelpCircle
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SourcingBrief } from "./SourcingBrief";
-import { FORM_FORMATS, designFormPrefill, formBrief, formSubmission, type FormFamily } from "@/lib/sourcing-form";
+import { FORM_FORMATS, FORM_STEPS, designFormPrefill, formBrief, formSubmission, type FormFamily } from "@/lib/sourcing-form";
 import type { PackagingDesign } from "./packaging-catalogue";
 import { validSourcingPhone } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -27,7 +27,7 @@ const STYLE_IMAGES: Record<string, string> = {
   "Stand-up pouch": pouchesImage, "Flat pouch": flatImage, "Flat-bottom pouch": flatbottomImage,
   "Spout pouch": spoutImage, "Sachet / stick pack": flatImage,
 };
-const STEPS = ["Packaging", "Scale", "Specs", "Contact"];
+const STEPS = FORM_STEPS.map(step => step.label);
 
 
 export function RequirementForm({ reference, referencePhotos, referenceDesigns, onActive }: { reference: string; referencePhotos: string[]; referenceDesigns: PackagingDesign[]; onActive: () => void }) {

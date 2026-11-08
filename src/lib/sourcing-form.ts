@@ -7,6 +7,12 @@ export const FORM_FORMATS = {
   pouches: ["Stand-up pouch", "Flat pouch", "Flat-bottom pouch", "Spout pouch", "Sachet / stick pack", "Not sure"],
 };
 export type FormFamily = keyof typeof FORM_FORMATS;
+export const FORM_STEPS = [
+  { label: "Packaging", topics: ["format"] },
+  { label: "Scale", topics: ["quantity", "size"] },
+  { label: "Specs", topics: ["printing", "material", "wall", "closure", "finishing"] },
+  { label: "Contact", topics: ["delivery", "phone", "notes"] },
+] as const;
 export function designFormPrefill(designs: PackagingDesign[]): { family: FormFamily; values: Record<string, string> } | null {
   const first = designs[0];
   if (!first) return null;
