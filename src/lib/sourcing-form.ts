@@ -19,8 +19,6 @@ export function designFormPrefill(designs: PackagingDesign[]): { family: FormFam
   const printing = unique("printing");
   const printOptions: Record<string, string> = { Plain: "Plain", "Logo printed": "Logo only", Multicolour: "Multicolour" };
   if (printing.length === 1 && printOptions[printing[0]]) values.printing = printOptions[printing[0]];
-  const material = unique("material");
-  if (material.length === 1) values.material = material[0];
   const closures = unique("features").filter(feature => ["Zipper", "Spout", "Heat seal"].includes(feature));
   if (first.family === "pouches" && closures.length === 1) values.closure = closures[0];
   return { family: first.family, values };
