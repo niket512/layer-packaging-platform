@@ -1,5 +1,6 @@
 import { MessageResponse } from "@/components/ai-elements/message";
 import TrustStory from "@/components/sourcing/TrustStory";
+import { RequirementForm } from "@/components/sourcing/RequirementForm";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
@@ -75,7 +76,9 @@ function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
   );
 }
 
-export default function SourcingAgent({ category }: { category?: SourcingCategory } = {}) {
+export default function SourcingAgent({ category, requirementMode = "chat" }: { category?: SourcingCategory; requirementMode?: "chat" | "form" } = {}) {
+  const [formKey, setFormKey] = useState(0);
+  const [formActive, setFormActive] = useState(false);
   const landing = category ? LANDINGS[category] : undefined;
   const navigate = useNavigate();
   const [projects, setProjects] = useState<SourcingProject[]>(() => {
@@ -183,7 +186,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
     };
   }, [!!(current || busy)]);
 
-  const startNew = () => { if (busy || submitting) return; setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
+  const startNew = () => { if (busy || submitting) return; setFormKey(k => k + 1); setFormActive(false); setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
   const search = async (text = query) => {
     const trimmed = text.trim() || (photos.length ? "Photos attached" : "");
     if (askingPhone && !designStep && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }
@@ -276,7 +279,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 text-center">
-            <section aria-label="Sourcing chat" className={`mx-auto flex max-w-[820px] flex-col text-left pt-6 pb-4 sm:pt-10 sm:pb-6`}>
+            <section aria-label={requirementMode === "form" ? "Guided sourcing request" : "Sourcing chat"} className={`mx-auto flex max-w-[820px] flex-col text-left pt-6 pb-4 sm:pt-10 sm:pb-6`}>
             <div className="text-center">
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
@@ -287,7 +290,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               <ol className="mx-auto mb-4 mt-5 grid max-w-[720px] grid-cols-3 text-center sm:mb-5" aria-label="How it works">{["Tell us your needs", "We find manufacturers", "Compare multiple quotes within 4 hours"].map((t, i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p></li>)}</ol>
             </div>
             </div>
-            {(current || busy) && (
+            {requirementMode === "chat" && (current || busy) && (
             <div ref={transcript} role="region" aria-label="Conversation" className="mt-3 max-h-[min(38dvh,320px)] overflow-y-auto overscroll-contain rounded-t-2xl border border-b-0 border-border bg-card px-4 py-4 text-left [overflow-anchor:none] sm:px-6 sm:py-5 sm:max-h-[min(48dvh,480px)]">
             
             <div className="space-y-5">{turns.map((turn, index) => <div key={index} className="space-y-3"><div className="flex justify-end gap-2 sm:gap-3"><div className="max-w-[85%] whitespace-pre-wrap [overflow-wrap:anywhere] rounded-[20px] rounded-br-md bg-muted px-4 py-2.5 text-[15px] leading-relaxed md:text-base text-foreground">{turn.query}{(turn.images?.length ?? 0) > 0 && <div className="mt-2 flex flex-wrap gap-2">{turn.images?.map((src, i) => <img key={i} src={src} alt={`Photo ${i + 1}`} className="h-24 w-24 rounded-lg object-cover" />)}</div>}</div></div>{turn.assistantMessage && <p className="flex items-center gap-2 pt-2 text-xs font-semibold text-foreground"><img src={logo} alt="" className="h-5 w-5 object-contain" />Snaplogo</p>}{turn.assistantMessage && <div className="flex max-w-full"><div className="min-w-0 max-w-full rounded-lg bg-accent/60 px-3 py-2 text-[15px] leading-7 [overflow-wrap:anywhere] md:text-base"><MessageResponse>{turn.assistantMessage}</MessageResponse></div></div>}{(turn.questions?.length ?? 0) > 0 && <div className="flex max-w-full"><div className="min-w-0 max-w-full rounded-lg bg-accent/60 px-3 py-2 text-[15px] leading-7 [overflow-wrap:anywhere] md:text-base"><p className="mb-2 font-medium text-foreground">A few quick details would help</p><ul className="space-y-3">{turn.questions?.map((q, qi) => <li key={q.topic} className="flex items-start gap-2.5"><span className="shrink-0 text-sm font-medium text-muted-foreground">{qi + 1}</span><span>{q.question}</span></li>)}</ul>{turn.questionsSkipped && <p className="mt-2 text-xs text-muted-foreground">Skipped</p>}</div></div>}{turn.followUp && <div className="flex max-w-full"><div className="min-w-0 max-w-full rounded-lg bg-accent/60 px-3 py-2 text-[15px] leading-7 [overflow-wrap:anywhere] md:text-base">{turn.followUp === "design" ? <><p className="font-semibold text-foreground">Do you have any design with you?</p><p className="mt-1 text-muted-foreground">Helps manufacturers quote accurately — totally optional.</p></> : <>{askingPhone && !designStep && index === turns.length - 1 && <SourcingBrief fields={project?.brief ?? []} onSave={fields => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, brief: fields.filter(f => f.value.trim()) } : p))} />}<p className="mt-1">We’ll now take your packaging requirements to our manufacturer network and share quotations from multiple manufacturers within 4 hours. <strong className="font-semibold text-foreground">Kindly share your phone number to keep you updated.</strong></p></>}</div></div>}</div>)}{busy && <div className="ml-auto max-w-[85%] whitespace-pre-wrap [overflow-wrap:anywhere] rounded-[20px] rounded-br-md bg-muted px-4 py-2.5 text-[15px] leading-relaxed md:text-base text-foreground">{pendingQuery}</div>}</div>
@@ -312,7 +315,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>
             )}
             </div>
-            {!(current || busy) && !landing && (
+            {requirementMode === "chat" && !(current || busy) && !landing && (
               <div className="mx-auto w-full max-w-[820px]">
                 <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
                   {SOURCE_CATEGORIES.map(c => (
@@ -329,7 +332,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                 )}
               </div>
             )}
-            <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>
+            {requirementMode === "form" ? <RequirementForm key={formKey} reference={query} referencePhotos={photos} onActive={() => setFormActive(true)} /> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
             {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · No commission · Confidential designs</p>}
             </div></section>
             <TrustStory />
@@ -370,7 +373,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
         </main>
         <footer className="mx-auto flex max-w-[900px] flex-wrap items-center justify-between gap-2 border-t border-border/60 px-5 py-6 text-xs text-muted-foreground md:px-10"><span>© {new Date().getFullYear()} Snaplogo · India</span><nav className="flex flex-wrap items-center gap-1" aria-label="Site"><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/about">About</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/designs">Designs</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/blog">Packaging guides</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/team">Team</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><Link to="/privacy-policy">Privacy</Link></Button><Button asChild variant="ghost" size="sm" className="text-muted-foreground"><a href={TEAM_WHATSAPP} target="_blank" rel="noopener noreferrer"><MessageSquare />Talk to our team</a></Button></nav></footer>
       </div>
-      <CommunityPopup hidden={!!activeId || busy} />
+      <CommunityPopup hidden={!!activeId || busy || formActive} />
     </div>
   );
 }
