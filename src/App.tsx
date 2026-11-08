@@ -24,6 +24,7 @@ import ManufacturersDirectory from "./pages/ManufacturersDirectory.tsx";
 import ManufacturerProfile from "./pages/ManufacturerProfile.tsx";
 import ManufacturerNetworkPage from "./pages/ManufacturerNetwork";
 import SourcingAgent from "./pages/SourcingAgent.tsx";
+import RequestPreview from "./pages/RequestPreview";
 import SourcingThankYou from "./pages/SourcingThankYou.tsx";
 import { useVisitorTracking } from "@/lib/visitor-tracking";
 
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/manufacturers" element={<ManufacturersDirectory />} />
           <Route path="/manufacturer-network" element={<ManufacturerNetworkPage />} />
           <Route path="/sourcing" element={<SourcingAgent />} />
+          <Route path="/request" element={<RequestPreview />} />
           <Route path="/sourcing/corrugated-boxes" element={<SourcingAgent category="corrugated-boxes" />} />
           <Route path="/sourcing/flexible-pouches" element={<SourcingAgent category="flexible-pouches" />} />
           <Route path="/sourcing/sachets" element={<SourcingAgent category="sachets" />} />

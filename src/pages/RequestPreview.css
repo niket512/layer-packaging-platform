@@ -1,0 +1,22 @@
+.request-preview {
+  --background: 36 24% 96%; --card: 0 0% 100%; --foreground: 234 32% 13%; --muted-foreground: 230 11% 41%; --border: 36 17% 88%; --primary: 21 89% 42%; --primary-foreground: 0 0% 100%; --accent: 25 79% 92%; --accent-foreground: 234 32% 13%; --ring: 21 89% 42%; --secondary: 25 79% 92%; --secondary-foreground: 234 32% 13%; --muted: 36 17% 91%; --destructive: 4 74% 40%; --destructive-foreground: 0 0% 100%; --request-success: 151 61% 30%; --request-dashed: 36 10% 69%;
+  height: var(--request-height, 100dvh); font-family: Figtree, sans-serif;
+}
+.request-preview h1, .request-preview h2, .request-wordmark { font-family: 'Bricolage Grotesque', sans-serif; }
+.request-preview .brief-empty { border-color: hsl(var(--request-dashed)); }
+.request-preview .progress-done { background: hsl(var(--request-success)); }
+.request-preview .user-content { background: hsl(var(--foreground)); color: hsl(var(--background)); }
+.request-preview .new-bubble { animation: request-rise 180ms ease-out; }
+.request-preview .brief-pop { animation: request-pop 150ms ease-out; }
+.request-preview .typing-dot { animation: request-dot 1s ease-in-out infinite; }
+.request-preview .typing-dot:nth-child(2) { animation-delay: 150ms; }
+.request-preview .typing-dot:nth-child(3) { animation-delay: 300ms; }
+.request-preview .message-time { opacity: 0; }
+.request-preview .message-wrapper:hover .message-time, .request-preview .message-wrapper:focus-within .message-time, .request-preview .show-time .message-time { opacity: 1; }
+@keyframes request-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes request-pop { from { transform: scale(.96); } to { transform: scale(1); } }
+@keyframes request-dot { 0%, 80%, 100% { opacity: .4; } 40% { opacity: 1; } }
+@media (prefers-color-scheme: dark) {
+  .request-preview { --background: 233 17% 9%; --card: 229 15% 14%; --foreground: 40 24% 94%; --muted-foreground: 231 12% 68%; --border: 229 15% 21%; --primary: 22 86% 59%; --primary-foreground: 233 17% 9%; --accent: 24 44% 16%; --accent-foreground: 40 24% 94%; --ring: 22 86% 59%; --secondary: 24 44% 16%; --secondary-foreground: 40 24% 94%; --muted: 229 15% 21%; --destructive: 7 93% 71%; --destructive-foreground: 233 17% 9%; --request-success: 145 58% 61%; --request-dashed: 230 13% 33%; }
+}
+@media (prefers-reduced-motion: reduce) { .request-preview *, .request-preview *::before, .request-preview *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
