@@ -4,7 +4,7 @@ import { BOX_DESIGNS } from "@/components/sourcing/packaging-catalogue";
 describe("guided packaging requirements", () => {
   it("prefills supported reference attributes without inventing quantity, size or budget", () => {
     const result = designFormPrefill([{ ...BOX_DESIGNS[0], family: "pouches", attributes: { style: ["Stand-up"], printing: ["Multicolour"], material: ["Kraft"], features: ["Zipper"] } }]);
-    expect(result).toEqual({ family: "pouches", values: { format: "Stand-up pouch", printing: "Multicolour", material: "Kraft", closure: "Zipper" } });
+    expect(result).toEqual({ family: "pouches", values: { format: "Stand-up pouch", printing: "Multicolour", closure: "Zipper" } });
     expect(result?.values.quantity).toBeUndefined();
     expect(result?.values.size).toBeUndefined();
     expect(result?.values.budget).toBeUndefined();
