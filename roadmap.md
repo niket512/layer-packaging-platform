@@ -1,4 +1,5 @@
 # Manufacturer network
+- [ ] Clarify the landing-page story, distinguish real network evidence from illustrative reviews, and verify mobile/desktop quote entry.
 - [x] Improve landing-page mobile scanning without changing chat or design browsing; verify phone and desktop layouts.
 - [x] Make mobile manufacturer listings compact and readable, with visible contacts and verify phone browsing.
 - [x] Make directory cards scannable with supplied phone contacts and honest missing-phone/WhatsApp states.

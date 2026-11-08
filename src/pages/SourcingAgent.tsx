@@ -276,11 +276,9 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
             <div className="relative text-center">
-              <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 -z-10 h-56 w-[min(640px,100%)] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>
-              <h1 className="sr-only">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
-              <p className="mx-auto mt-3 max-w-[680px] text-[30px] font-bold leading-[1.15] tracking-normal text-foreground sm:mt-4 sm:text-[48px]">Custom packaging quotes in <span className="text-primary">4 hours</span>.</p>
-              <p className="mx-auto mt-2 mb-3 max-w-[560px] text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:mb-5 sm:text-base">Tell us what you’re packaging. We’ll match you with vetted manufacturers and get comparable quotes on WhatsApp. Free, with 0% commission.</p>
+              <h1 className="mx-auto mt-3 max-w-[720px] text-[28px] font-bold leading-[32px] tracking-normal text-foreground sm:mt-4 sm:text-[48px] sm:leading-[1.15]">{landing ? landing.headline : <>Custom packaging.<br className="sm:hidden" /> Multiple quotes in <span className="text-primary">4 hours.</span></>}</h1>
+              <p className="mx-auto mt-3 mb-4 max-w-[580px] text-sm leading-relaxed text-muted-foreground sm:mb-5 sm:text-base">{landing?.copy ?? "Share what you need once. Our sourcing team finds suitable manufacturers so you can compare quotations on WhatsApp."}</p>
             </div>
             </div>
             {(current || busy) && (
@@ -311,12 +309,12 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             {!(current || busy) && !landing && (
               <div className="mx-auto w-full max-w-[820px]">
                 <p className="text-center text-base font-semibold text-foreground sm:text-lg">What are you looking to source?</p>
-                <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+                <div className="mt-3 grid grid-cols-4 gap-2 sm:gap-3">
                   {SOURCE_CATEGORIES.map(c => (
-                    <button key={c.id} type="button" aria-pressed={sourceCategory === c.id} onClick={() => { setSourceCategory(prev => prev === c.id ? null : c.id); if (sourceCategory !== c.id) trackFunnel("category_selected"); input.current?.focus(); }} className={`group overflow-hidden rounded-2xl border bg-card text-left transition-all ${sourceCategory === c.id ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/40 hover:shadow-sm"}`}>
-                      <img src={c.image} alt="" loading="lazy" className="h-20 w-full object-cover sm:h-24" />
-                      <span className={`block px-3 py-2 text-xs font-semibold sm:text-sm ${sourceCategory === c.id ? "text-primary" : "text-foreground"}`}>{c.label}</span>
-                    </button>
+                    <Button key={c.id} type="button" variant="outline" aria-pressed={sourceCategory === c.id} onClick={() => { setSourceCategory(prev => prev === c.id ? null : c.id); if (sourceCategory !== c.id) trackFunnel("category_selected"); input.current?.focus(); }} className={`group h-auto flex-col justify-start gap-0 overflow-hidden whitespace-normal rounded-lg p-0 text-left ${sourceCategory === c.id ? "border-primary bg-accent ring-1 ring-primary/30" : "bg-card hover:border-primary/40"}`}>
+                      <img src={c.image} alt="" loading="lazy" className="h-14 w-full object-cover sm:h-20" />
+                      <span className={`flex min-h-11 w-full items-center px-2 py-1.5 text-[11px] font-semibold leading-snug sm:min-h-10 sm:px-3 sm:text-sm ${sourceCategory === c.id ? "text-primary" : "text-foreground"}`}>{c.label}</span>
+                    </Button>
                   ))}
                 </div>
                 {selectedSource && selectedSource.suggestions.length > 0 && (
@@ -331,16 +329,22 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · 0% commission · No exclusivity · Your design stays confidential</p>}
             {<div className="mx-auto mt-3 w-full max-w-[820px] text-center">
               <ol className="mx-auto mt-2 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your requirement", "Describe your needs or upload a reference"], ["We match manufacturers", "Suitable, vetted packaging manufacturers"], ["Compare quotations", "Pricing, MOQ & lead times on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
-              <div className="grid items-start gap-4 sm:grid-cols-2">
+            </div>}
+            </div></section>
+              <div className="mx-auto mt-5 grid max-w-[1120px] items-start gap-6 border-t border-border pt-6 text-left sm:mt-8 sm:grid-cols-2 sm:gap-8 sm:pt-8">
               <ManufacturerNetwork />
-              <figure className="mx-auto mt-4 w-full max-w-[560px] overflow-hidden rounded-lg border border-border bg-card text-left">
+              <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase text-primary">Know what you’re comparing</p>
+              <h2 className="mt-1 text-xl font-semibold text-foreground sm:text-2xl">More than a price per piece.</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">See the order minimum and production time alongside pricing. Choose the fit for your brand.</p>
+              <figure className="mx-auto mt-4 w-full overflow-hidden rounded-lg border border-border bg-card text-left">
                 <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Illustrative example</span></figcaption>
                 <table className="w-full text-xs sm:text-sm"><thead className="text-muted-foreground"><tr><th className="px-4 py-2 text-left font-medium">Manufacturer</th><th className="px-2 py-2 text-right font-medium whitespace-nowrap">Per unit</th><th className="px-2 py-2 text-right font-medium">MOQ</th><th className="px-4 py-2 text-right font-medium whitespace-nowrap"><span className="sm:hidden">Lead</span><span className="hidden sm:inline">Lead time</span></th></tr></thead><tbody>{[["Maker A", "₹—", "1,000", "10 days", true], ["Maker B", "₹—", "2,000", "14 days", false], ["Maker C", "₹—", "500", "12 days", false]].map(([m, pr, moq, lt, best]) => <tr key={m as string} className="border-t border-border"><td className="px-4 py-2.5 font-medium text-foreground">{m}{best && <span className="ml-2 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-semibold text-primary">Best fit</span>}</td><td className="px-2 py-2.5 text-right text-muted-foreground">{pr}</td><td className="px-2 py-2.5 text-right">{moq}</td><td className="px-4 py-2.5 text-right">{lt}</td></tr>)}</tbody></table>
                 <p className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">Illustration only — real prices depend on your size, material, print and quantity.</p>
               </figure>
+              <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground"><Handshake className="h-4 w-4 shrink-0 text-primary" />Free to request · 0% commission · No exclusivity</p>
               </div>
-            </div>}
-            </div></section>
+              </div>
             <TrustStory />
             {designGallery}
             {(
@@ -391,8 +395,8 @@ function CommunityPopup({ hidden }: { hidden: boolean }) {
       <div className="flex items-center gap-3 pr-6">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-4 w-4" /></span>
         <div>
-          <p className="text-sm font-semibold text-foreground">Join 500+ D2C founders</p>
-          <p className="text-xs text-muted-foreground">Real MOQ & price benchmarks, shared on WhatsApp</p>
+          <p className="text-sm font-semibold text-foreground">Brands and Manufacturers Group</p>
+          <p className="text-xs text-muted-foreground">Connect with the packaging community on WhatsApp</p>
         </div>
       </div>
       <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="mt-2.5 flex h-9 w-full items-center justify-center gap-2 rounded-full bg-[hsl(var(--sourcing-success))] text-[13px] font-bold uppercase tracking-wide text-white hover:opacity-90">Join free on WhatsApp <ArrowRight className="h-4 w-4" /></a>
