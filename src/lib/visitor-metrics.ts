@@ -1,4 +1,4 @@
-export const FUNNEL_STEPS = ["page_opened", "first_message", "questions_shown", "questions_answered", "questions_skipped", "design_shown", "design_answered", "brief_shown", "contact_shown", "contact_submitted", "request_saved"] as const;
+export const FUNNEL_STEPS = ["page_opened", "category_selected", "composer_focused", "first_message", "questions_shown", "questions_answered", "questions_skipped", "design_shown", "design_answered", "brief_shown", "contact_shown", "contact_submitted", "request_saved"] as const;
 export type FunnelStep = typeof FUNNEL_STEPS[number];
 export type VisitorSnapshot = {
   device: "mobile" | "tablet" | "desktop";
