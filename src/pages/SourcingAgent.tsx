@@ -308,13 +308,33 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>
             )}
             </div>
+            {!(current || busy) && !landing && (
+              <div className="mx-auto w-full max-w-[820px]">
+                <p className="text-center text-base font-semibold text-foreground sm:text-lg">What are you looking to source?</p>
+                <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+                  {SOURCE_CATEGORIES.map(c => (
+                    <button key={c.id} type="button" aria-pressed={sourceCategory === c.id} onClick={() => { setSourceCategory(prev => prev === c.id ? null : c.id); if (sourceCategory !== c.id) trackFunnel("category_selected"); input.current?.focus(); }} className={`group overflow-hidden rounded-2xl border bg-card text-left transition-all ${sourceCategory === c.id ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/40 hover:shadow-sm"}`}>
+                      <img src={c.image} alt="" loading="lazy" className="h-20 w-full object-cover sm:h-24" />
+                      <span className={`block px-3 py-2 text-xs font-semibold sm:text-sm ${sourceCategory === c.id ? "text-primary" : "text-foreground"}`}>{c.label}</span>
+                    </button>
+                  ))}
+                </div>
+                {selectedSource && selectedSource.suggestions.length > 0 && (
+                  <div className="mt-3 flex flex-wrap justify-center gap-2">
+                    {selectedSource.suggestions.map(s => <button key={s} type="button" onClick={() => { setQuery(prev => prev.trim() ? prev : `I need ${s.toLowerCase()} for my brand — `); input.current?.focus(); }} className="rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary">{s}</button>)}
+                  </div>
+                )}
+                <p className="mt-3 text-center text-xs text-muted-foreground">Or describe what you need in your own words.</p>
+              </div>
+            )}
             <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}</div>
+            {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · 0% commission · No exclusivity · Your design stays confidential</p>}
             {<div className="mx-auto mt-3 w-full max-w-[820px] text-center">
-              <ol className="mx-auto mt-2 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your need", "Text or upload a design"], ["We match makers", "Screened box & pouch factories"], ["Compare quotes", "Price, MOQ & lead time on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
+              <ol className="mx-auto mt-2 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your requirement", "Describe your needs or upload a reference"], ["We match manufacturers", "Suitable, vetted packaging manufacturers"], ["Compare quotations", "Pricing, MOQ & lead times on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
               <div className="grid items-start gap-4 sm:grid-cols-2">
               <ManufacturerNetwork />
               <figure className="mx-auto mt-4 w-full max-w-[560px] overflow-hidden rounded-lg border border-border bg-card text-left">
-                <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Example</span></figcaption>
+                <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Illustrative example</span></figcaption>
                 <table className="w-full text-xs sm:text-sm"><thead className="text-muted-foreground"><tr><th className="px-4 py-2 text-left font-medium">Manufacturer</th><th className="px-2 py-2 text-right font-medium whitespace-nowrap">Per unit</th><th className="px-2 py-2 text-right font-medium">MOQ</th><th className="px-4 py-2 text-right font-medium whitespace-nowrap"><span className="sm:hidden">Lead</span><span className="hidden sm:inline">Lead time</span></th></tr></thead><tbody>{[["Maker A", "₹—", "1,000", "10 days", true], ["Maker B", "₹—", "2,000", "14 days", false], ["Maker C", "₹—", "500", "12 days", false]].map(([m, pr, moq, lt, best]) => <tr key={m as string} className="border-t border-border"><td className="px-4 py-2.5 font-medium text-foreground">{m}{best && <span className="ml-2 rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-semibold text-primary">Best fit</span>}</td><td className="px-2 py-2.5 text-right text-muted-foreground">{pr}</td><td className="px-2 py-2.5 text-right">{moq}</td><td className="px-4 py-2.5 text-right">{lt}</td></tr>)}</tbody></table>
                 <p className="border-t border-border px-4 py-2 text-[11px] text-muted-foreground">Illustration only — real prices depend on your size, material, print and quantity.</p>
               </figure>
