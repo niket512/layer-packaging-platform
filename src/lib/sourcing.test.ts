@@ -123,6 +123,13 @@ describe("sourcing photos", () => {
 });
 
 describe("sourcing response latency", () => {
+  it("preserves typo-containing buyer text and exact numeric details for contextual interpretation", () => {
+    const latest = "need 5000 standup pouhces, 12.5 x 20 cm, 250 g";
+    const context = conversationalIntakeContext(latest, latest, [], [], false, "clarify");
+    expect(context.latest).toBe("need 5000 standup pouhces, 12.5 x 20 cm, 250 g");
+    expect(sourcingRequest([], latest)).toBe(latest);
+    expect(sourcingSubmission([{ query: latest, matches: [] }], "+91 98765 43210")?.requirement).toBe(latest);
+  });
   it("sends requirements once while preserving prior questions, corrections and state", () => {
     const conversation = [{ request: "5000 coffee boxes", questions: [{ topic: "size", question: "Dimensions?" }], stage: "quotation", hasImages: true }];
     const brief = [{ topic: "quantity", value: "5000", source: "buyer" }];
