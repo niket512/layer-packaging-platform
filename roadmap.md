@@ -1,6 +1,6 @@
 # Manufacturer network
-- [ ] Make directory cards scannable with published phone/WhatsApp contacts and honest missing-contact states.
-- [ ] Shade the India map by actual listing density and remove state-number labels.
+- [x] Make directory cards scannable with supplied phone contacts and honest missing-phone/WhatsApp states.
+- [x] Shade the India map by actual listing density and remove state-number labels.
 - [x] Import uploaded named manufacturers with source labels and caveats.
 - [x] Add public search, state/source filters and detail view without changing the existing directory or chat.
 - [x] Verify desktop/mobile browsing and tests.
