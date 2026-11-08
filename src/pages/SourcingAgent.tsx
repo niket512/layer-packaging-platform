@@ -7,7 +7,6 @@ import { designReferenceImage } from "@/components/sourcing/design-reference-ima
 import { DESIGN_PREFILL_KEY } from "@/pages/Designs";
 import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
-import { LiveRequestFeed } from "@/components/sourcing/LiveRequestFeed";
 import { ManufacturerNetwork } from "@/components/sourcing/ManufacturerNetwork";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
@@ -288,29 +287,12 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               <h1 className="sr-only">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
               <p className="mx-auto mt-3 max-w-[680px] text-[30px] font-bold leading-[1.15] tracking-normal text-foreground sm:mt-4 sm:text-[48px]">Custom packaging quotes in <span className="text-primary">4 hours</span>.</p>
               <p className="mx-auto mt-2 mb-3 max-w-[560px] text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:mb-7 sm:text-base">Tell us your box or pouch need. Get comparable quotes on WhatsApp — free, 0% commission.</p>
-              <LiveRequestFeed />
             </div>
             </div>}
             </div>
             <div className={`mx-auto w-full max-w-[820px] text-left ${current || busy ? "sticky bottom-2 z-[5] mt-3" : ""}`}>{composer(!!(current || busy))}</div>
             {!current && !busy && <div className="mx-auto mt-3 w-full max-w-[820px] text-center">
-              <div className="mx-auto max-w-[720px] border-b border-border px-1 pb-3 sm:px-3">
-                <dl className="grid grid-cols-3 divide-x divide-border text-center">{[["1,200+", "Requests handled"], ["₹2 Cr+", "Packaging sourced"], ["18%", "Avg. savings"]].map(([n, l]) => <div key={l} className="flex flex-col-reverse px-1"><dt className="text-[11px] text-muted-foreground sm:text-xs">{l}</dt><dd className="text-lg font-bold text-foreground sm:text-2xl">{n}</dd></div>)}</dl>
-                <div className="mt-3 border-t border-border pt-2 sm:flex sm:items-center sm:gap-3 sm:pt-3"><span className="shrink-0 text-[10px] font-semibold uppercase tracking-normal text-muted-foreground">Trusted by</span><ul className="mt-2 grid min-w-0 grid-cols-3 gap-x-3 gap-y-2 text-sm font-bold text-muted-foreground/80 sm:mt-0 sm:flex sm:flex-1 sm:justify-between">{["Dastaan", "Bloomly", "Kaapi Co.", "Nutriva", "Herbalé", "Snackwise"].map(b => <li key={b}>{b}</li>)}</ul></div>
-              </div>
-              <ol className="mx-auto mt-8 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your need", "Text or upload a design"], ["We match makers", "Screened box & pouch factories"], ["Compare quotes", "Price, MOQ & lead time on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
-              <section className="mx-auto mt-4 max-w-[820px] border-y border-border py-3 text-left" aria-label="Brand experiences">
-                <h2 className="mb-2 text-xs font-semibold">Brand experiences</h2>
-                <div className="grid gap-3 sm:grid-cols-3">{[["Got 3 comparable quotes in a day and saved 18% on our mailer boxes.", "Riya S.", "Bloomly · Mumbai"], ["Found a pouch maker with a 1,000 MOQ when others asked 10,000.", "Arjun M.", "Kaapi Co. · Bengaluru"], ["Sharing our design felt safe, and the sample came before bulk.", "Neha K.", "Nutriva · Delhi"]].map(([q, n, r]) => <figure key={n} className="border-l-2 border-primary/30 pl-3"><blockquote className="text-sm leading-snug text-foreground sm:text-xs sm:leading-relaxed">“{q}”</blockquote><figcaption className="mt-1 text-[11px] text-muted-foreground"><span className="font-semibold text-foreground">{n}</span> · {r}</figcaption></figure>)}</div>
-              </section>
-              <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => window.__lovableEvents?.track?.("project.whatsapp_group_opened", { placement: "card" })} className="group mx-auto mt-4 flex max-w-[820px] items-center gap-3 rounded-2xl border border-[hsl(var(--sourcing-success)/0.25)] bg-[hsl(var(--sourcing-success)/0.06)] px-3.5 py-3 text-left transition-colors hover:bg-[hsl(var(--sourcing-success)/0.1)] sm:px-5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold leading-snug text-foreground sm:text-[15px]">Brands and Manufacturers Group</span>
-                  <span className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--sourcing-success))]" />100+ Brands · 20+ Manufacturers</span>
-                </span>
-                <span className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[hsl(var(--sourcing-success))] px-4 text-xs font-bold uppercase tracking-wide text-white"><span className="sm:hidden">Join</span><span className="hidden sm:inline">Join WhatsApp community</span><ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
-              </a>
+              <ol className="mx-auto mt-2 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your need", "Text or upload a design"], ["We match makers", "Screened box & pouch factories"], ["Compare quotes", "Price, MOQ & lead time on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
               <div className="grid items-start gap-4 sm:grid-cols-2">
               <ManufacturerNetwork />
               <figure className="mx-auto mt-4 w-full max-w-[560px] overflow-hidden rounded-lg border border-border bg-card text-left">
@@ -322,6 +304,16 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             </div>}
             </div></section>
             {designGallery}
+            {!current && !busy && (
+              <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => window.__lovableEvents?.track?.("project.whatsapp_group_opened", { placement: "card" })} className="group mx-auto mt-4 flex max-w-[820px] items-center gap-3 rounded-2xl border border-[hsl(var(--sourcing-success)/0.25)] bg-[hsl(var(--sourcing-success)/0.06)] px-3.5 py-3 text-left transition-colors hover:bg-[hsl(var(--sourcing-success)/0.1)] sm:px-5">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold leading-snug text-foreground sm:text-[15px]">Brands and Manufacturers Group</span>
+                  <span className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--sourcing-success))]" />100+ Brands · 20+ Manufacturers</span>
+                </span>
+                <span className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[hsl(var(--sourcing-success))] px-4 text-xs font-bold uppercase tracking-wide text-white"><span className="sm:hidden">Join</span><span className="hidden sm:inline">Join WhatsApp community</span><ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
+              </a>
+            )}
             <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
               <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
               <div className="mt-4 divide-y divide-border">
