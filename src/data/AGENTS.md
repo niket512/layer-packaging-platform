@@ -1,2 +1,2 @@
 # Manufacturer contact sources
-- Keep manufacturer contacts tied to supplied research or explicit public sources; do not infer verified WhatsApp support from a phone number.
+- Keep manufacturer contacts tied to supplied research or explicit public sources; directory numbers may open WhatsApp, but generated links do not establish account availability.
