@@ -9,14 +9,14 @@ const reviews = [
 
 export default function TrustStory() {
   return (
-    <section aria-label="Brands and reviews" className="mx-auto mt-8 w-full max-w-[820px] text-left">
+    <section aria-label="Brands and reviews" className="mx-auto mt-8 w-full max-w-[820px] rounded-2xl border border-border bg-card p-4 text-left shadow-[0_2px_16px_rgba(0,0,0,0.06)] sm:p-6">
       <div>
-        <p className="text-xs font-medium text-muted-foreground">Trusted by growing D2C brands</p>
-        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5">{brands.map(b => <span key={b} className="text-sm font-semibold text-foreground/70">{b}</span>)}</div>
+        <p className="text-[12px] font-semibold uppercase tracking-[1.5px] text-muted-foreground">Trusted by growing D2C brands</p>
+        <div className="mt-3 flex flex-wrap gap-2">{brands.map(b => <span key={b} className="rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-semibold text-foreground/80">{b}</span>)}</div>
       </div>
-      <div className="-mx-4 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0">
+      <div className="mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto border-t border-border pt-5 pb-1 [scrollbar-width:none] sm:grid sm:grid-cols-3 sm:overflow-visible">
         {reviews.map(([q, n, r]) => (
-          <figure key={n} className="w-[80%] shrink-0 snap-start rounded-2xl border border-border bg-card p-4 sm:w-auto">
+          <figure key={n} className="w-[82%] shrink-0 snap-start rounded-xl bg-muted/40 p-4 sm:w-auto">
             <div className="flex items-center justify-between"><Quote className="h-4 w-4 text-primary" /><span className="flex gap-0.5 text-primary">{[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-current" />)}</span></div>
             <blockquote className="mt-2 text-sm leading-relaxed text-foreground">{q}</blockquote>
             <figcaption className="mt-3 text-xs"><span className="font-semibold text-foreground">{n}</span><span className="text-muted-foreground"> · {r}</span></figcaption>
