@@ -258,7 +258,16 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             <section aria-label="Sourcing chat" className={`mx-auto flex max-w-[820px] flex-col text-left pt-6 pb-4 sm:pt-16 sm:pb-6`}>
             <div className="text-center">
             <div className={`relative mx-auto w-full max-w-[820px] `}>
-            {current || busy ? (
+<div ref={intro}>
+            <div className="relative text-center">
+              <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 -z-10 h-56 w-[min(640px,100%)] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
+              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>
+              <h1 className="sr-only">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
+              <p className="mx-auto mt-3 max-w-[680px] text-[30px] font-bold leading-[1.15] tracking-normal text-foreground sm:mt-4 sm:text-[48px]">Custom packaging quotes in <span className="text-primary">4 hours</span>.</p>
+              <p className="mx-auto mt-2 mb-3 max-w-[560px] text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:mb-7 sm:text-base">Tell us your box or pouch need. Get comparable quotes on WhatsApp — free, 0% commission.</p>
+            </div>
+            </div>
+            {(current || busy) && (
             <div ref={transcript} role="region" aria-label="Conversation" className="mb-3 max-h-[min(60dvh,560px)] overflow-y-auto overscroll-contain rounded-2xl border border-border bg-muted/30 p-3 pb-4 text-left [overflow-anchor:none] sm:p-4">
             
             <div className="space-y-6">{turns.map((turn, index) => <div key={index} className="space-y-6"><div className="flex justify-end gap-2 sm:gap-3"><div className="max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-4 py-3 sm:px-6 sm:py-4 text-[15px] md:text-base text-primary-foreground shadow-sm">{turn.query}{(turn.images?.length ?? 0) > 0 && <div className="mt-2 flex flex-wrap gap-2">{turn.images?.map((src, i) => <img key={i} src={src} alt={`Photo ${i + 1}`} className="h-24 w-24 rounded-lg object-cover" />)}</div>}</div><span className="mt-1 flex h-7 w-7 shrink-0 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-accent text-accent-foreground"><User className="h-4 w-4" /></span></div>{turn.assistantMessage && <div className="flex max-w-full gap-2 sm:max-w-[90%] sm:gap-3"><img src={logo} alt="" className="mt-1 h-7 w-7 shrink-0 rounded-full sm:h-10 sm:w-10 border border-border bg-card p-1.5" /><div className="sourcing-composer whitespace-pre-wrap rounded-2xl rounded-tl-md border border-border bg-card px-4 py-4 sm:px-6 sm:py-5 text-[15px] md:text-base leading-relaxed">{turn.assistantMessage}</div></div>}{(turn.questions?.length ?? 0) > 0 && <div className="flex max-w-full gap-2 sm:max-w-[90%] sm:gap-3"><img src={logo} alt="" className="mt-1 h-7 w-7 shrink-0 rounded-full sm:h-10 sm:w-10 border border-border bg-card p-1.5" /><div className="sourcing-composer rounded-2xl rounded-tl-md border border-border bg-card px-4 py-4 sm:px-6 sm:py-5 text-[15px] md:text-base leading-relaxed"><p className="mb-3 font-semibold text-foreground">A few quick details would help</p><ul className="space-y-3">{turn.questions?.map((q, qi) => <li key={q.topic} className="flex items-start gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">{qi + 1}</span><span className="pt-1">{q.question}</span></li>)}</ul>{turn.questionsSkipped && <p className="mt-2 text-xs text-muted-foreground">Skipped</p>}</div></div>}{turn.followUp && <div className="flex max-w-full gap-2 sm:max-w-[90%] sm:gap-3"><img src={logo} alt="" className="mt-1 h-7 w-7 shrink-0 rounded-full sm:h-10 sm:w-10 border border-border bg-card p-1.5" /><div className="sourcing-composer rounded-2xl rounded-tl-md border border-border bg-card px-4 py-4 sm:px-6 sm:py-5 text-[15px] md:text-base leading-relaxed">{turn.followUp === "design" ? <><p className="font-semibold text-foreground">Do you have any design with you?</p><p className="mt-1 text-muted-foreground">Helps manufacturers quote accurately — totally optional.</p></> : <>{askingPhone && !designStep && index === turns.length - 1 && <SourcingBrief fields={project?.brief ?? []} onSave={fields => setProjects(prev => prev.map(p => p.id === activeId ? { ...p, brief: fields.filter(f => f.value.trim()) } : p))} />}<p className="mt-1">We’ll now take your packaging requirements to our manufacturer network and share quotations from multiple manufacturers within 4 hours. <strong className="font-semibold text-foreground">Kindly share your phone number to keep you updated.</strong></p></>}</div></div>}</div>)}{busy && <div className="ml-auto max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-4 py-3 sm:px-6 sm:py-4 text-[15px] md:text-base text-primary-foreground">{pendingQuery}</div>}</div>
@@ -281,18 +290,10 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               {hasQuestions && <div className="mt-2 flex justify-end"><Button variant="ghost" size="sm" disabled={busy || submitting} className="text-muted-foreground" onClick={() => void search("Skip the optional quotation details for now; use my packaging requirement.")}>Skip for now<ArrowRight /></Button></div>}
             </>}
             </div>
-            ) : <div ref={intro}>
-            <div className="relative text-center">
-              <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 -z-10 h-56 w-[min(640px,100%)] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>
-              <h1 className="sr-only">{landing?.headline ?? "Get Custom Packaging Quotes from Vetted Manufacturers"}</h1>
-              <p className="mx-auto mt-3 max-w-[680px] text-[30px] font-bold leading-[1.15] tracking-normal text-foreground sm:mt-4 sm:text-[48px]">Custom packaging quotes in <span className="text-primary">4 hours</span>.</p>
-              <p className="mx-auto mt-2 mb-3 max-w-[560px] text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:mb-7 sm:text-base">Tell us your box or pouch need. Get comparable quotes on WhatsApp — free, 0% commission.</p>
-            </div>
-            </div>}
+            )}
             </div>
             <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}</div>
-            {!current && !busy && <div className="mx-auto mt-3 w-full max-w-[820px] text-center">
+            {<div className="mx-auto mt-3 w-full max-w-[820px] text-center">
               <ol className="mx-auto mt-2 grid max-w-[720px] grid-cols-3 text-center" aria-label="How it works">{[["Share your need", "Text or upload a design"], ["We match makers", "Screened box & pouch factories"], ["Compare quotes", "Price, MOQ & lead time on WhatsApp"]].map(([t, sub], i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className="absolute left-1/2 top-4 h-px w-full bg-border" />}<span className="relative mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card text-sm font-bold text-primary">{i + 1}</span><p className="mt-2 text-xs font-semibold text-foreground sm:text-sm">{t}</p><p className="mt-0.5 hidden text-xs leading-snug text-muted-foreground sm:block">{sub}</p></li>)}</ol>
               <div className="grid items-start gap-4 sm:grid-cols-2">
               <ManufacturerNetwork />
@@ -304,9 +305,9 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               </div>
             </div>}
             </div></section>
-            {!current && !busy && <TrustStory />}
+            <TrustStory />
             {designGallery}
-            {!current && !busy && (
+            {(
               <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => window.__lovableEvents?.track?.("project.whatsapp_group_opened", { placement: "card" })} className="group mx-auto mt-4 flex max-w-[820px] items-center gap-3 rounded-2xl border border-[hsl(var(--sourcing-success)/0.25)] bg-[hsl(var(--sourcing-success)/0.06)] px-3.5 py-3 text-left transition-colors hover:bg-[hsl(var(--sourcing-success)/0.1)] sm:px-5">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
                 <span className="min-w-0 flex-1">
