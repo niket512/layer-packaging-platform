@@ -1,6 +1,6 @@
 # Manufacturer network
-- [ ] Add uploaded flexible-pouch businesses and preserve supplied contacts, MOQ and product details.
-- [ ] Add packaging/type/contact filters and automatic loading; verify desktop/mobile browsing.
+- [x] Add uploaded flexible-pouch businesses and preserve supplied contacts, MOQ and product details.
+- [x] Add packaging/type/contact filters and automatic loading; verify desktop/mobile browsing.
 - [x] Build isolated /request local mock chat with brief editing, attachments, retry/offline and mobile scrolling.
 - [x] Verify parser rules and complete test-chat flows; leave quote page for feedback.
 - [x] Simplify landing copy and repeated trust explanations; verify mobile/desktop quote entry with simulated replies.
