@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Building2, ExternalLink, MapPin, Search, Message
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { manufacturerMoq } from "@/lib/manufacturer-moq";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { filterNetwork, manufacturerContact, networkManufacturers, networkStates, pouchTypes, type NetworkManufacturer } from "@/lib/manufacturer-network";
 
@@ -11,6 +12,17 @@ function ContactDetails({ entry }: { entry: NetworkManufacturer }) {
   const contact = manufacturerContact(entry.company_name);
   return <div className="min-w-0">
     {contact.whatsapp ? <Button asChild variant="ghost" size="sm" className="h-11 px-0 text-sm text-primary sm:h-8 sm:text-xs"><a href={contact.whatsapp} target="_blank" rel="noopener noreferrer" title="Open this listed number in WhatsApp; account availability is unconfirmed"><MessageCircle className="h-4 w-4" />{contact.phone} <ExternalLink className="h-3 w-3" /></a></Button> : <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><MessageCircle className="h-3.5 w-3.5" />Contact not published</span>}
+  </div>;
+}
+
+function MinimumOrder({ entry }: { entry: NetworkManufacturer }) {
+  const summary = manufacturerMoq(entry.company_name, entry.moq_or_packaging_notes);
+  return <div className="min-w-0">
+    {summary.tiers.length ? <dl className="space-y-2">{summary.tiers.map(tier => <div key={tier.label} className="flex items-baseline justify-between gap-3 lg:block">
+      <dt className="text-xs leading-snug text-muted-foreground">{tier.label}</dt>
+      <dd className="shrink-0 text-sm font-semibold tabular-nums text-foreground lg:mt-0.5">{tier.value}</dd>
+    </div>)}</dl> : <p className="text-sm text-muted-foreground">Confirm with supplier</p>}
+    {summary.note && <p className="mt-1.5 text-xs leading-snug text-muted-foreground">{summary.note}</p>}
   </div>;
 }
 
@@ -83,7 +95,7 @@ export default function ManufacturerNetwork() {
             <dl className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-2 text-sm leading-relaxed lg:block">
               <dt className="font-semibold text-foreground lg:hidden">Makes</dt><dd className="line-clamp-3 break-words text-muted-foreground">{entry.products_and_capabilities || "Product details to be confirmed."}</dd>
             </dl>
-            <dl className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-2 text-sm leading-relaxed lg:block"><dt className="font-semibold text-foreground lg:hidden">MOQ</dt><dd className="break-words font-medium">{entry.moq_or_packaging_notes || "Confirm with manufacturer"}</dd></dl>
+            <div className="grid grid-cols-[3.5rem_minmax(0,1fr)] items-start gap-x-2 border-t border-border pt-3 lg:block lg:border-0 lg:pt-0"><span className="text-xs font-semibold leading-5 text-muted-foreground lg:hidden">MOQ</span><MinimumOrder entry={entry} /></div>
             <div className="flex items-center justify-between gap-2 border-t border-border pt-1 lg:flex-col lg:items-start lg:justify-start lg:border-0 lg:pt-0"><ContactDetails entry={entry} /><Button variant="ghost" size="sm" className="h-10 shrink-0 px-2 text-xs" onClick={() => setSelected(entry)}>Full details <ArrowRight /></Button></div>
           </article>)}
         </div>

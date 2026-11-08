@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Separate supplied numeric MOQ tiers from descriptive notes; verify accurate desktop/mobile presentation.
 - [x] Refine directory scanning on mobile/desktop and verify canonical sitemap inclusion.
 - [x] Add uploaded flexible-pouch businesses and preserve supplied contacts, MOQ and product details.
 - [x] Add packaging/type/contact filters and automatic loading; verify desktop/mobile browsing.
