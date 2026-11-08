@@ -1,4 +1,5 @@
 # Manufacturer network
+- [ ] Make mobile manufacturer listings compact and readable, with visible contacts and verify phone browsing.
 - [x] Make directory cards scannable with supplied phone contacts and honest missing-phone/WhatsApp states.
 - [x] Shade the India map by actual listing density and remove state-number labels.
 - [x] Import uploaded named manufacturers with source labels and caveats.
