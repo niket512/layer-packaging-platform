@@ -23,7 +23,7 @@ export function ManufacturerNetwork() {
           <p className="text-[11px] font-semibold uppercase tracking-[1.5px] text-primary">Our manufacturer network</p>
           <p className="mt-1 text-base font-semibold text-foreground sm:text-lg">{total}+ vetted makers across {HUBS.length} hubs in India</p>
         </div>
-        <Link to="/manufacturers" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline sm:inline-flex">View all <ArrowRight className="h-4 w-4" /></Link>
+        <Link to="/manufacturer-network" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline sm:inline-flex">View all <ArrowRight className="h-4 w-4" /></Link>
       </div>
       <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
         {HUBS.map((h) => (
@@ -36,7 +36,7 @@ export function ManufacturerNetwork() {
           </li>
         ))}
       </ul>
-      <Link to="/manufacturers" className="mt-3 flex h-10 items-center justify-center gap-1 rounded-full border border-border text-xs font-bold uppercase tracking-wide text-foreground hover:bg-muted sm:hidden">View manufacturer list <ArrowRight className="h-3.5 w-3.5" /></Link>
+      <Link to="/manufacturer-network" className="mt-3 flex h-10 items-center justify-center gap-1 rounded-full border border-border text-xs font-bold uppercase tracking-wide text-foreground hover:bg-muted sm:hidden">View manufacturer list <ArrowRight className="h-3.5 w-3.5" /></Link>
     </section>
   );
 }

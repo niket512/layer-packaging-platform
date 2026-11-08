@@ -56,6 +56,10 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
     title: `Directory | ${SITE_TITLE}`,
     description: SITE_DESCRIPTION,
   },
+  "/manufacturer-network": {
+    title: `Manufacturer Network | ${SITE_TITLE}`,
+    description: "Explore packaging businesses across India by company, city and state, with product capabilities and transparent listing sources.",
+  },
   "/app": {
     title: `Catalogues | ${SITE_TITLE}`,
     description: SITE_DESCRIPTION,
