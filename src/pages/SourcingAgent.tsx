@@ -271,7 +271,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               <Link to="/blog" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Guides</Link>
               <Link to="/about" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">About</Link>
             </nav>
-            <div className="flex items-center gap-2"><Link to="/manufacturers" className="hidden rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:text-primary sm:inline-flex md:hidden lg:inline-flex">For manufacturers</Link><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-9 rounded-full px-4 text-sm"><Plus /><span>New Request</span></Button></div>
+            <div className="flex items-center gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-9 rounded-full px-4 text-sm"><Plus /><span>New Request</span></Button></div>
           </div>
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
