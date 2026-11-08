@@ -1,7 +1,13 @@
 import { IndiaNetworkMap } from "./IndiaNetworkMap";
-import { networkManufacturers, networkStates } from "@/lib/manufacturer-network";
+import { networkManufacturers } from "@/lib/manufacturer-network";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function ManufacturerNetwork() {
+  const [state, setState] = useState("");
+  const listUrl = `/manufacturer-network${state ? `?state=${encodeURIComponent(state)}` : ""}`;
   return (
     <section aria-label="Manufacturer directory coverage" className="min-w-0 text-left">
       <div className="flex items-center justify-between gap-3">
@@ -9,15 +15,14 @@ export function ManufacturerNetwork() {
           <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Manufacturers across India.</h2>
         </div>
       </div>
-      <dl className="mt-3 flex divide-x divide-border">
-        {[[`${networkManufacturers.length}`, "listed businesses"], [`${networkStates.length}`, "states represented"]].map(([value, label]) => (
-          <div key={label} className="flex flex-1 items-baseline gap-2 px-3 first:pl-0">
-            <dd className="text-2xl font-bold text-foreground">{value}</dd>
-            <dt className="text-xs text-muted-foreground">{label}</dt>
-          </div>
-        ))}
-      </dl>
-      <IndiaNetworkMap />
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <dl className="flex items-baseline gap-2">
+          <dd className="text-2xl font-bold text-foreground">{networkManufacturers.length}</dd>
+          <dt className="text-xs text-muted-foreground">listed businesses</dt>
+        </dl>
+        <Button asChild size="sm" className="shrink-0 rounded-full text-xs"><Link to={listUrl}>View manufacturers <ArrowRight /></Link></Button>
+      </div>
+      <IndiaNetworkMap state={state} onStateChange={setState} />
     </section>
   );
 }
