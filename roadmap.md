@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Tailor phone cards, tablet grid and desktop comparison rows; verify 393px, 768px, 998px and 1280px.
 - [x] Separate supplied numeric MOQ tiers from descriptive notes; verify accurate desktop/mobile presentation.
 - [x] Refine directory scanning on mobile/desktop and verify canonical sitemap inclusion.
 - [x] Add uploaded flexible-pouch businesses and preserve supplied contacts, MOQ and product details.
