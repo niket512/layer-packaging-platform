@@ -290,7 +290,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
             <div className="text-center">
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
-            <div className="relative text-center">
+            <div className={`relative text-center ${requirementMode === "form" ? "hidden sm:block" : ""}`}>
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />100+ vetted manufacturers across India</span>
               <h1 className="mx-auto mt-3 max-w-[720px] text-[28px] font-bold leading-[32px] tracking-normal text-foreground sm:mt-4 sm:text-[48px] sm:leading-[1.15]">{landing ? landing.headline : <>Find your packaging<br className="hidden sm:block" /> <span className="text-primary">manufacturer within 4 hours.</span></>}</h1>
               {landing && <p className="mx-auto mt-3 max-w-[580px] text-sm leading-relaxed text-muted-foreground sm:text-base">{landing.copy}</p>}
