@@ -316,10 +316,10 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               <div className="mx-auto w-full max-w-[820px]">
                 <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
                   {SOURCE_CATEGORIES.map(c => (
-                    <Button key={c.id} type="button" variant="outline" aria-pressed={sourceCategory === c.id} onClick={() => { setSourceCategory(prev => prev === c.id ? null : c.id); if (sourceCategory !== c.id) trackFunnel("category_selected"); input.current?.focus(); }} className={`group h-auto flex-col justify-start gap-0 overflow-hidden whitespace-normal rounded-lg p-0 text-left ${sourceCategory === c.id ? "border-primary bg-accent ring-1 ring-primary/30" : "bg-card hover:border-primary/40"}`}>
+                    <div key={c.id} className="overflow-hidden rounded-lg border border-border bg-card text-left">
                       <img src={c.image} alt="" loading="lazy" className="h-14 w-full object-cover sm:h-20" />
                       <span className={`flex min-h-11 w-full items-center px-2 py-1.5 text-[11px] font-semibold leading-snug sm:min-h-10 sm:px-3 sm:text-sm ${sourceCategory === c.id ? "text-primary" : "text-foreground"}`}>{c.label}</span>
-                    </Button>
+                    </div>
                   ))}
                 </div>
                 {selectedSource && selectedSource.suggestions.length > 0 && (
