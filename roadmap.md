@@ -1,6 +1,6 @@
 # Manufacturer network
-- [ ] Build isolated /request local mock chat with brief editing, attachments, retry/offline and mobile scrolling.
-- [ ] Verify parser rules and complete test-chat flows; leave quote page for feedback.
+- [x] Build isolated /request local mock chat with brief editing, attachments, retry/offline and mobile scrolling.
+- [x] Verify parser rules and complete test-chat flows; leave quote page for feedback.
 - [x] Simplify landing copy and repeated trust explanations; verify mobile/desktop quote entry with simulated replies.
 - [x] Clarify the landing-page story, distinguish real network evidence from illustrative reviews, and verify mobile/desktop quote entry with a simulated reply.
 - [x] Improve landing-page mobile scanning without changing chat or design browsing; verify phone and desktop layouts.
