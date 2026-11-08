@@ -1,7 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { designFormPrefill, formBrief, formSubmission } from "./sourcing-form";
+import { FORM_STEPS, designFormPrefill, formBrief, formSubmission } from "./sourcing-form";
 import { BOX_DESIGNS } from "@/components/sourcing/packaging-catalogue";
 describe("guided packaging requirements", () => {
+  it("keeps scale after visuals, specifications third and contact only at the final gate", () => {
+    expect(FORM_STEPS.map(step => step.topics)).toEqual([
+      ["format"], ["quantity", "size"], ["printing", "material", "wall", "closure", "finishing"], ["delivery", "phone", "notes"],
+    ]);
+  });
+  it("retains chosen material and finishing preferences in the submitted brief", () => {
+    const brief = formBrief("boxes", { material: "Kraft", finishing: "Matte" });
+    const payload = formSubmission(brief, "+91 98765 43210", "", []);
+    expect(payload?.requirement).toContain("Material / board: Kraft [buyer]");
+    expect(payload?.requirement).toContain("Finish: Matte [buyer]");
+  });
   it("prefills supported reference attributes without inventing quantity, size or budget", () => {
     const result = designFormPrefill([{ ...BOX_DESIGNS[0], family: "pouches", attributes: { style: ["Stand-up"], printing: ["Multicolour"], material: ["Kraft"], features: ["Zipper"] } }]);
     expect(result).toEqual({ family: "pouches", values: { format: "Stand-up pouch", printing: "Multicolour", closure: "Zipper" } });
