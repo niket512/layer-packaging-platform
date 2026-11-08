@@ -325,10 +325,11 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
             <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}</div>
             {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · No commission · Confidential designs</p>}
             </div></section>
+            <TrustStory />
               <div className="mx-auto mt-5 grid max-w-[1120px] items-start gap-6 border-t border-border pt-6 text-left sm:mt-8 sm:grid-cols-2 sm:gap-8 sm:pt-8">
               <ManufacturerNetwork />
               <div className="min-w-0">
-              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Compare your options.</h2>
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Compare manufacturer quotes.</h2>
               <p className="mt-2 text-sm text-muted-foreground">Price. Minimum order. Production time.</p>
               <figure className="mx-auto mt-4 w-full overflow-hidden rounded-lg border border-border bg-card text-left">
                 <figcaption className="flex items-center justify-between border-b border-border px-4 py-2.5 text-xs"><span className="font-semibold text-foreground">What you receive</span><span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Illustrative example</span></figcaption>
@@ -336,8 +337,6 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               </figure>
               </div>
               </div>
-            <TrustStory />
-            {designGallery}
             {(
               <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => window.__lovableEvents?.track?.("project.whatsapp_group_opened", { placement: "card" })} className="group mx-auto mt-4 flex max-w-[820px] items-center gap-3 rounded-2xl border border-[hsl(var(--sourcing-success)/0.25)] bg-[hsl(var(--sourcing-success)/0.06)] px-3.5 py-3 text-left transition-colors hover:bg-[hsl(var(--sourcing-success)/0.1)] sm:px-5">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--sourcing-success))] text-white"><MessageSquare className="h-5 w-5" /></span>
@@ -348,6 +347,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
                 <span className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[hsl(var(--sourcing-success))] px-4 text-xs font-bold uppercase tracking-wide text-white"><span className="sm:hidden">Join</span><span className="hidden sm:inline">Join WhatsApp community</span><ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
               </a>
             )}
+            {designGallery}
             <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
               <h2 id="manufacturer-sourcing-questions" className="text-xl font-semibold">Finding your packaging manufacturer</h2>
               <div className="mt-4 divide-y divide-border">
