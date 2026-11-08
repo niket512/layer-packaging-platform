@@ -27,7 +27,7 @@ export function DesignCard({ design, onDetails, onUse }: { design: PackagingDesi
       </Button>
     </div>
     <div className="flex flex-1 flex-col border-t border-border/60 p-2.5 sm:p-3">
-      <p className="text-[10px] font-medium text-muted-foreground">{design.illustrative ? "Illustrative" : "Catalogue"}</p>
+      {design.illustrative && <p className="text-[10px] font-medium text-muted-foreground">Illustrative</p>}
       <h3 className="mt-1 text-sm font-semibold leading-snug">{design.name}</h3>
       <p className="mb-2 mt-1 line-clamp-1 text-[11px] text-primary sm:mb-0 sm:mt-2 sm:text-xs">{labels.join(" · ")}</p>
       <p className="mb-3 mt-2 hidden text-xs leading-relaxed sm:block text-muted-foreground">{design.description}</p>
