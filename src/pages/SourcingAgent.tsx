@@ -1,3 +1,4 @@
+import TrustStory from "@/components/sourcing/TrustStory";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
@@ -303,6 +304,7 @@ export default function SourcingAgent({ category }: { category?: SourcingCategor
               </div>
             </div>}
             </div></section>
+            {!current && !busy && <TrustStory />}
             {designGallery}
             {!current && !busy && (
               <a href="https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6" target="_blank" rel="noopener noreferrer" onClick={() => window.__lovableEvents?.track?.("project.whatsapp_group_opened", { placement: "card" })} className="group mx-auto mt-4 flex max-w-[820px] items-center gap-3 rounded-2xl border border-[hsl(var(--sourcing-success)/0.25)] bg-[hsl(var(--sourcing-success)/0.06)] px-3.5 py-3 text-left transition-colors hover:bg-[hsl(var(--sourcing-success)/0.1)] sm:px-5">
