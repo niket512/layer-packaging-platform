@@ -17,7 +17,7 @@ export default function PackagingGuides() {
   if (slug && !article) return <NotFound />;
   const sections = article?.body.match(/^## .+$/gm)?.map(line => line.slice(3)) ?? [];
   const schema = article ? [
-    { "@context": "https://schema.org", "@type": "Article", headline: article.heading, description: article.description, mainEntityOfPage: `https://snaplogo.in/blog/${article.slug}`, author: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in/about" }, publisher: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in" } },
+    { "@context": "https://schema.org", "@type": "Article", headline: article.heading, description: article.description, mainEntityOfPage: `https://snaplogo.in/blog/${article.slug}`, image: new URL(BOX_DESIGNS[0].image, "https://snaplogo.in").href, author: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in/about" }, publisher: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in" } },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://snaplogo.in/" },
       { "@type": "ListItem", position: 2, name: "Packaging guides", item: "https://snaplogo.in/blog" },
