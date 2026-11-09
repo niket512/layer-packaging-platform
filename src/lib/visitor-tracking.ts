@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { addDesign, scrollDepth, trafficSource, type FunnelStep, type VisitorSnapshot } from "./visitor-metrics";
+import { addDesign, addJourney, JOURNEY_FIELDS, scrollDepth, trafficSource, type FunnelStep, type JourneyEvent, type VisitorSnapshot } from "./visitor-metrics";
 
 const KEY = "snaplogo.visitor.session";
-const trackedPath = (pathname: string) => pathname === "/" || pathname === "/designs" || pathname === "/designs/flexible-pouches" || (pathname.startsWith("/sourcing") && pathname !== "/sourcing/thank-you");
+const trackedPath = (pathname: string) => ["/", "/request-form", "/sourcing", "/designs", "/designs/flexible-pouches", "/designs/corrugated-boxes"].includes(pathname);
 type Session = { id: string; token: string; last: number; snapshot: VisitorSnapshot };
 let session: Session | undefined;
 let timer: number | undefined;
@@ -17,7 +17,7 @@ function current() {
   } catch { session = undefined; }
   session ??= { id: crypto.randomUUID(), token: crypto.randomUUID(), last: Date.now(), snapshot: {
     device: window.innerWidth < 768 ? "mobile" : window.innerWidth < 1024 ? "tablet" : "desktop",
-    source: trafficSource(location.search, document.referrer, location.origin), steps: {}, scroll_depth: {}, viewed_designs: [], opened_designs: [], selected_designs: [],
+    source: trafficSource(location.search, document.referrer, location.origin), steps: {}, scroll_depth: {}, viewed_designs: [], opened_designs: [], selected_designs: [], journey: [],
   } };
   return session;
 }
@@ -45,13 +45,24 @@ export function trackFunnel(step: FunnelStep) {
   const active = current();
   if (active.snapshot.steps[step] !== undefined) return;
   active.snapshot.steps[step] = Date.now();
+  trackJourney({ kind: "funnel", step });
   changed();
   const target = window as Window & { dataLayer?: unknown[] };
   target.dataLayer ??= [];
   target.dataLayer.push({ event: "sourcing_funnel_step", step });
 }
-export function trackDesign(kind: "viewed" | "opened" | "selected", id: string) {
+export function trackJourney(event: Omit<JourneyEvent, "at" | "path">) {
+  if (!trackedPath(location.pathname)) return;
+  if (addJourney(current().snapshot, { ...event, at: Date.now(), path: location.pathname })) changed();
+}
+export function trackFormField(field: string, filled: boolean, step: number) {
+  const known = JOURNEY_FIELDS.find(value => value === field);
+  if (known) trackJourney({ kind: "field", field: known, filled, step: String(step + 1) });
+}
+export function trackDesign(kind: "viewed" | "opened" | "selected", id: string, context?: { position?: number; family?: "boxes" | "pouches"; category?: string }) {
+  if (!/^[a-zA-Z0-9_-]{1,100}$/.test(id)) return;
   if (addDesign(current().snapshot, kind, id)) changed();
+  trackJourney({ kind, design: id, ...context });
 }
 export function currentVisitorSessionId(): string | null {
   try { return current().id; } catch { return null; }
@@ -60,7 +71,8 @@ export function useVisitorTracking() {
   const { pathname } = useLocation();
   useEffect(() => {
     if (!trackedPath(pathname) || /^(app|manufacturers|makers)\./.test(location.hostname)) return;
-    if (pathname === "/" || pathname.startsWith("/sourcing")) trackFunnel("page_opened");
+    trackJourney({ kind: "page" });
+    if (pathname === "/" || pathname === "/request-form" || pathname.startsWith("/sourcing")) trackFunnel("page_opened");
     else changed();
     const onScroll = () => {
       const active = current();

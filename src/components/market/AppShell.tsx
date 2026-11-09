@@ -77,20 +77,20 @@ export default function AppShell({ children, isAdmin, user }: { children: ReactN
   return (
     <div className="min-h-screen bg-muted">
       <header className="sticky top-0 z-20 border-b border-border bg-background">
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-4 md:px-6">
+        <div className="mx-auto flex min-h-16 max-w-[1200px] flex-wrap items-center justify-between gap-2 px-4 py-3 sm:h-16 sm:flex-nowrap sm:py-0 md:px-6">
           <div className="flex items-center gap-2">
             <img src={logo} alt="Snaplogo" className="h-7 w-7" />
             <span className="font-heading font-bold text-foreground">Snaplogo</span>
           </div>
-          <nav className="flex items-center gap-1">
+          <nav className="flex w-full min-w-0 items-center gap-1 overflow-x-auto sm:w-auto">
             {links.map((l) => (
               <NavLink key={l.to} to={l.to} end
-                className={({ isActive }) => cn("rounded-full px-3 py-1.5 text-sm font-medium", isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted")}>
+                className={({ isActive }) => cn("shrink-0 rounded-full px-3 py-1.5 text-sm font-medium", isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted")}>
                 {l.label}
               </NavLink>
             ))}
             {user && (
-              <button className="ml-2 text-sm text-muted-foreground hover:text-foreground" onClick={() => supabase.auth.signOut().then(() => navigate(appPath("")))}>
+              <button className="ml-2 shrink-0 text-sm text-muted-foreground hover:text-foreground" onClick={() => supabase.auth.signOut().then(() => navigate(appPath("")))}>
                 Sign out
               </button>
             )}

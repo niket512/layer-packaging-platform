@@ -1,7 +1,25 @@
 import { describe, expect, it } from "vitest";
-import { addDesign, funnelOutcome, scrollDepth, trafficSource, type VisitorSnapshot, type VisitorReportRow } from "./visitor-metrics";
+import { addDesign, addJourney, journeyFields, funnelOutcome, scrollDepth, trafficSource, type VisitorSnapshot, type VisitorReportRow } from "./visitor-metrics";
 const snapshot = (): VisitorSnapshot => ({ device: "desktop", source: "direct", steps: {}, scroll_depth: {}, viewed_designs: [], opened_designs: [], selected_designs: [] });
 describe("visitor behaviour rules", () => {
+  it("records catalogue positions in order and preserves repeated detail/use clicks", () => {
+    const value = snapshot();
+    addJourney(value, { kind: "viewed", design: "box-1", position: 12, path: "/", at: 1 });
+    expect(addJourney(value, { kind: "viewed", design: "box-1", position: 12, path: "/", at: 2 })).toBe(false);
+    addJourney(value, { kind: "opened", design: "box-1", position: 12, path: "/", at: 3 });
+    addJourney(value, { kind: "selected", design: "box-1", position: 12, path: "/", at: 4 });
+    addJourney(value, { kind: "selected", design: "box-1", position: 12, path: "/", at: 5 });
+    expect(value.journey?.map(e => [e.kind, e.position])).toEqual([["viewed",12],["opened",12],["selected",12],["selected",12]]);
+  });
+  it("counts filled fields once and subtracts cleared fields without storing values", () => {
+    const value = snapshot();
+    addJourney(value, { kind: "field", field: "quantity", filled: true, step: "2", path: "/", at: 1 });
+    expect(addJourney(value, { kind: "field", field: "quantity", filled: true, step: "2", path: "/", at: 2 })).toBe(false);
+    addJourney(value, { kind: "field", field: "phone", filled: true, step: "4", path: "/", at: 3 });
+    addJourney(value, { kind: "field", field: "quantity", filled: false, step: "2", path: "/", at: 4 });
+    expect(journeyFields(value.journey ?? [])).toEqual(["phone"]);
+    expect(Object.keys(value.journey?.[0] ?? {})).toEqual(["kind","field","filled","step","path","at"]);
+  });
   it("measures how far the scrollable page has been travelled", () => {
     expect(scrollDepth(500, 2000, 1000)).toBe(50);
     expect(scrollDepth(1000, 2000, 1000)).toBe(100);

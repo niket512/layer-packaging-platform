@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RefreshCw } from "lucide-react";
 import { funnelOutcome, type FunnelStep, type VisitorReportRow } from "@/lib/visitor-metrics";
+import { SessionJourney, journeyLabel } from "./SessionJourney";
+import { journeyFields } from "@/lib/visitor-metrics";
 
 const transitions: [string, FunnelStep, FunnelStep][] = [
   ["Start a chat", "page_opened", "first_message"],
@@ -12,7 +14,9 @@ const transitions: [string, FunnelStep, FunnelStep][] = [
   ["Share contact number", "contact_shown", "contact_submitted"],
   ["Save the request", "contact_submitted", "request_saved"],
 ];
-export function VisitorAnalytics() {
+export function VisitorAnalytics({ sessionId }: { sessionId?: string | null }) {
+  const [chosen, setChosen] = useState<string | null>(null);
+  useEffect(() => { if (sessionId) setChosen(sessionId); }, [sessionId]);
   const [rows, setRows] = useState<VisitorReportRow[]>([]);
   const [days, setDays] = useState("7");
   const [device, setDevice] = useState("all");
@@ -50,7 +54,10 @@ export function VisitorAnalytics() {
       return <tr key={from} className="border-b border-border/60"><td className="py-3 font-medium">{label}{skipped > 0 && <span className="block text-xs font-normal text-muted-foreground">{skipped} skipped optional questions</span>}</td><td className="px-3">{result.reached}</td><td className="px-3">{result.continued + skipped}</td><td className="px-3">{result.notYet - skipped}{result.reached > 0 && <span className="ml-2 text-xs text-muted-foreground">({Math.round((result.notYet - skipped) / result.reached * 100)}%)</span>}</td></tr>;
     })}</tbody></table></div>
     <h3 className="mt-5 text-sm font-semibold">Scroll reach</h3><div className="mt-2 overflow-x-auto"><table className="w-full text-left text-xs"><thead className="text-muted-foreground"><tr><th className="py-2">Page</th>{[25,50,75,100].map(depth => <th key={depth} className="px-3">{depth}%</th>)}</tr></thead><tbody>{["/", "/sourcing", "/designs", "/designs/flexible-pouches"].map(path => <tr key={path} className="border-t border-border"><td className="py-2">{path}</td>{[25,50,75,100].map(depth => <td key={depth} className="px-3">{filtered.filter(row => (row.scroll_depth[path] ?? 0) >= depth).length}</td>)}</tr>)}</tbody></table></div>
-    <details className="mt-4"><summary className="cursor-pointer text-sm font-medium">Individual visits ({filtered.length})</summary><div className="mt-3 max-h-72 overflow-auto"><table className="w-full text-left text-xs"><thead className="text-muted-foreground"><tr><th className="py-2">Started</th><th>Device / source</th><th>Latest step</th><th>Scroll</th><th>Viewed / opened / selected</th></tr></thead><tbody>{filtered.map(row => <tr key={row.id} className="border-t border-border"><td className="py-2">{new Date(row.created_at).toLocaleString("en-IN")}</td><td>{row.device} / {row.source.replace(/_/g, " ")}</td><td>{Object.entries(row.steps).sort((a,b) => Number(b[1]) - Number(a[1]))[0]?.[0].replace(/_/g, " ") ?? "Design browsing"}</td><td>{Math.max(0, ...Object.values(row.scroll_depth))}%</td><td>{row.viewed} / {row.opened} / {row.selected}</td></tr>)}</tbody></table></div></details>
+    <h3 className="mt-5 text-sm font-semibold">Individual session journeys ({filtered.length})</h3>
+    <div className="mt-3 max-h-72 overflow-auto"><table className="w-full text-left text-xs"><thead className="text-muted-foreground"><tr><th className="py-2">Session / started (IST)</th><th>Device / source</th><th>Last observed action</th><th>Filled fields</th><th>Viewed / opened / selected</th></tr></thead><tbody>{filtered.map(row => <tr key={row.id} className="border-t border-border"><td className="py-2"><Button variant="link" size="sm" className="h-auto px-0" onClick={() => setChosen(row.id)}>Session {row.id.slice(0, 8)}</Button><span className="block">{new Date(row.created_at).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</span></td><td>{row.device} / {row.source.replace(/_/g, " ")}</td><td>{row.journey?.at(-1) ? journeyLabel(row.journey[row.journey.length - 1]) : Object.entries(row.steps).sort((a,b) => Number(b[1]) - Number(a[1]))[0]?.[0].replace(/_/g, " ") ?? "Design browsing"}</td><td>{row.journey?.length ? journeyFields(row.journey).length : "Not recorded"}</td><td>{row.viewed} / {row.opened} / {row.selected}</td></tr>)}</tbody></table></div>
+    {rows.find(row => row.id === chosen) && <SessionJourney row={rows.find(row => row.id === chosen) as VisitorReportRow} />}
+    {chosen && !rows.some(row => row.id === chosen) && <p className="mt-3 text-sm text-muted-foreground">This chat’s session is not in the selected period. Choose a longer period.</p>}
     <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Measurement starts with this update; past visits cannot be recovered. Visits reset after 30 minutes of inactivity. “Not yet continued” includes active visitors, not confirmed exits. Optional questions and designs may be bypassed. Design views count unique cards at least half visible for one second, not automatically loaded cards. Scroll reach uses each page’s scrollable height and may vary as designs load. Messages, photos and phone numbers are excluded.</p>
   </section>;
 }

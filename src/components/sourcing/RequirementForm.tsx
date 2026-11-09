@@ -10,7 +10,7 @@ import { validSourcingPhone } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 import { supabase } from "@/integrations/supabase/client";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
-import { flushVisitorTracking, trackFunnel } from "@/lib/visitor-tracking";
+import { flushVisitorTracking, trackFunnel, trackFormField, trackJourney } from "@/lib/visitor-tracking";
 import type { SourcingBriefField } from "../../../supabase/functions/_shared/sourcing-intake";
 import boxesImage from "@/assets/design-ship-kraft.jpg";
 import pouchesImage from "@/assets/category-stand-up-pouches.jpg";
@@ -46,6 +46,17 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
   const savedId = useRef(crypto.randomUUID());
   const heading = useRef<HTMLHeadingElement>(null);
   const previousStep = useRef(step);
+  useEffect(() => { trackJourney({ kind: "form_step", step: String(step + 1) }); }, [step]);
+  const recordedFields = useRef(new Set<string>());
+  useEffect(() => {
+    const completed: Record<string, boolean> = { ...Object.fromEntries(Object.entries(values).map(([key, value]) => [key, Boolean(value.trim())])), phone: Boolean(phone.trim()), notes: Boolean(notes.trim()), photos: photos.length + referencePhotos.length > 0 };
+    for (const key of new Set([...recordedFields.current, ...Object.keys(completed)])) {
+      if (completed[key] || recordedFields.current.has(key)) {
+        trackFormField(key, completed[key] ?? false, step);
+        recordedFields.current.add(key);
+      }
+    }
+  }, [values, phone, notes, photos, referencePhotos, step]);
   useEffect(() => {
     if (previousStep.current === step) return;
     previousStep.current = step;
@@ -61,7 +72,7 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
     setStep(0);
     setError("");
   }, [referenceDesigns]);
-  const change = (topic: string, value: string) => { onActive(); setValues(v => ({ ...v, [topic]: value })); };
+  const change = (topic: string, value: string) => { onActive(); trackFormField(topic, Boolean(value.trim()), step); setValues(v => ({ ...v, [topic]: value })); };
   const choices = (topic: string, label: string, options: string[]) => <fieldset className="min-w-0"><legend className="mb-2 text-sm font-semibold">{label}</legend><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{options.map(option => <Button key={option} type="button" size="sm" variant="outline" aria-pressed={values[topic] === option} onClick={() => change(topic, option)} className={`h-auto min-h-12 justify-between gap-2 whitespace-normal rounded-lg px-3 py-2 text-left text-sm normal-case tracking-normal transition-colors ${values[topic] === option ? "border-primary bg-accent text-primary ring-1 ring-primary hover:bg-accent" : "bg-background hover:border-primary/40"}`}><span>{option}</span><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${values[topic] === option ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>{values[topic] === option && <Check className="h-3 w-3" />}</span></Button>)}</div></fieldset>;
   const field = (topic: string, label: string, placeholder: string) => <div className="min-w-0"><label htmlFor={`form-${topic}`} className="mb-1.5 flex flex-wrap items-baseline gap-1.5 text-sm font-semibold">{label.replace(" (optional)", "")}{label.includes("(optional)") && <span className="text-xs font-normal text-muted-foreground">Optional</span>}</label><Input id={`form-${topic}`} className="h-11 rounded-lg bg-card text-base" value={values[topic] ?? ""} maxLength={240} placeholder={placeholder} onChange={e => change(topic, e.target.value)} /></div>;
   const sectionTitle = (title: string, Icon: typeof MapPin) => <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold sm:mb-3"><Icon className="h-4 w-4 text-primary" />{title}</h3>;
@@ -74,14 +85,14 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
     });
   };
   const advance = () => {
-    if (step === 0 && !values.format) { setError("Choose a packaging style, or select Not sure."); return; }
+    if (step === 0 && !values.format) { trackJourney({ kind: "form_error", step: "1", reason: "format_required" }); setError("Choose a packaging style, or select Not sure."); return; }
     setError(""); onActive();
     if (step === 2) { setBrief(formBrief(family, values)); trackFunnel("brief_shown"); trackFunnel("contact_shown"); }
     setStep(s => Math.min(3, s + 1));
   };
   const submit = async () => {
     if (busy) return;
-    if (!validSourcingPhone(phone)) { setError("Please enter a valid contact number, including the country code if outside India."); return; }
+    if (!validSourcingPhone(phone)) { trackJourney({ kind: "form_error", step: "4", reason: "phone_invalid" }); setError("Please enter a valid contact number, including the country code if outside India."); return; }
     const details = [notes, reference].filter(Boolean).join("\n\n");
     const payload = formSubmission(brief, phone, details, allImages);
     if (!payload) return;
@@ -93,11 +104,11 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
       await syncSourcingChat({ id: id.current, title: "Guided packaging request", brief, submitted: true, submissionId: savedId.current, phone, turns: [{ query: payload.requirement, matches: [], images: allImages }] }).catch(() => {});
       try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: id.current, phone, brief })); } catch { /* Saved enquiry remains available. */ }
       navigate("/sourcing/thank-you");
-    } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
+    } catch (e) { trackJourney({ kind: "form_error", step: "4", reason: "save_failed" }); setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setBusy(false); }
   };
   const presets = (topic: string, options: string[]) => <div className="mt-2 flex flex-wrap gap-2" aria-label={topic === "quantity" ? "Suggested quantities" : "Example dimensions"}>{options.map(value => <Button key={value} type="button" variant="outline" size="sm" aria-pressed={values[topic] === value} onClick={() => change(topic, value)} className={`h-11 rounded-full px-3 text-xs normal-case tracking-normal ${values[topic] === value ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>{value}</Button>)}</div>;
-  return <form aria-label="Packaging requirement form" onSubmit={e => { e.preventDefault(); if (step === 3) void submit(); else advance(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
+  return <form aria-label="Packaging requirement form" onChange={e => { const target = e.target; if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) { const fieldName = target.id.replace(/^form-/, ""); trackFormField(fieldName, Boolean(target.value.trim()), step); } }} onSubmit={e => { e.preventDefault(); if (step === 3) void submit(); else advance(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
     <div className="border-b border-border px-4 pb-4 pt-4 sm:px-7 sm:pb-5 sm:pt-5">
       <ol aria-label="Request progress" className="mb-4 grid grid-cols-4 gap-3 sm:mb-5 sm:gap-4">{STEPS.map((label, i) => <li key={label} aria-current={step === i ? "step" : undefined} className={`min-w-0 border-t-2 pt-2 ${i <= step ? "border-primary" : "border-border"}`}><span className={`flex items-center gap-1.5 text-xs font-semibold sm:text-sm ${step === i ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground"}`}><span className="shrink-0">{i < step ? <Check className="h-3.5 w-3.5" /> : `${i + 1}.`}</span>{label}</span></li>)}</ol>
       <div className="flex items-center justify-between gap-2"><h2 ref={heading} tabIndex={-1} className="text-xl font-semibold outline-none sm:text-2xl">{["Choose your packaging", "Quantity & dimensions", "Printing & specifications", "Review & get quotes"][step]}</h2><span className="shrink-0 text-xs text-muted-foreground">{step + 1} / 4</span></div>

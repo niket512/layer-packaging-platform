@@ -25,7 +25,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (p
   const reset = () => { setCategory("all"); setFilters(CLEAR_FILTERS); setLimit(PAGE); };
   const switchFamily = (next: PackagingFamily) => { setFamily(next); reset(); };
   const useDesigns = (designs: PackagingDesign[]) => {
-    designs.forEach(design => trackDesign("selected", design.id));
+    designs.forEach(design => trackDesign("selected", design.id, { position: shown.findIndex(d => d.id === design.id) + 1, family, category }));
     window.__lovableEvents?.track?.("project.design_used", { family: designs[0]?.family ?? family, count: designs.length });
     setSelected(null);
     requestAnimationFrame(() => onUseDesign(selectedDesignRequirement(designs), designs));
@@ -70,7 +70,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (p
     </div>}
     <p aria-live="polite" className="my-3 text-xs text-muted-foreground">{shown.length} {shown.length === 1 ? "design" : "designs"}</p>
     <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
-      {shown.slice(0, limit).map(d => <DesignCard key={d.id} design={d} onDetails={() => { trackDesign("opened", d.id); setSelected(d); }} onUse={() => useDesigns([d])} />)}
+      {shown.slice(0, limit).map((d, index) => <DesignCard key={d.id} design={d} position={index + 1} category={category} onDetails={() => { trackDesign("opened", d.id, { position: index + 1, family, category }); setSelected(d); }} onUse={() => useDesigns([d])} />)}
     </div>
     {shown.length > limit && (
       <div ref={sentinelRef} aria-hidden className="h-4" />

@@ -4,7 +4,7 @@ import type { PackagingDesign } from "./packaging-catalogue";
 import { useEffect, useRef } from "react";
 import { trackDesign } from "@/lib/visitor-tracking";
 
-export function DesignCard({ design, onDetails, onUse }: { design: PackagingDesign; onDetails: () => void; onUse: () => void }) {
+export function DesignCard({ design, position, category, onDetails, onUse }: { design: PackagingDesign; position: number; category: string; onDetails: () => void; onUse: () => void }) {
   const card = useRef<HTMLElement>(null);
   useEffect(() => {
     const node = card.current;
@@ -13,12 +13,12 @@ export function DesignCard({ design, onDetails, onUse }: { design: PackagingDesi
     const observer = new IntersectionObserver(entries => {
       window.clearTimeout(timer);
       if (entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= 0.5) && document.visibilityState === "visible") {
-        timer = window.setTimeout(() => { if (document.visibilityState === "visible") trackDesign("viewed", design.id); }, 1000);
+        timer = window.setTimeout(() => { if (document.visibilityState === "visible") trackDesign("viewed", design.id, { position, category, family: design.family }); }, 1000);
       }
     }, { threshold: [0, 0.5] });
     observer.observe(node);
     return () => { observer.disconnect(); window.clearTimeout(timer); };
-  }, [design.id]);
+  }, [design.id, design.family, position, category]);
   const labels = [design.attributes.style?.[0], design.attributes.features?.[0], design.attributes.printing?.[0]].filter(Boolean);
   return <article ref={card} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md">
     <div className="relative aspect-square bg-muted/40">
