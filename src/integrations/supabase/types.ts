@@ -641,6 +641,7 @@ export type Database = {
           created_at: string
           device: string
           id: string
+          journey: Json
           opened_designs: string[]
           revision: number
           scroll_depth: Json
@@ -655,6 +656,7 @@ export type Database = {
           created_at?: string
           device: string
           id: string
+          journey?: Json
           opened_designs?: string[]
           revision?: number
           scroll_depth?: Json
@@ -669,6 +671,7 @@ export type Database = {
           created_at?: string
           device?: string
           id?: string
+          journey?: Json
           opened_designs?: string[]
           revision?: number
           scroll_depth?: Json
