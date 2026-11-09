@@ -53,6 +53,9 @@ export function trackFunnel(step: FunnelStep) {
 export function trackDesign(kind: "viewed" | "opened" | "selected", id: string) {
   if (addDesign(current().snapshot, kind, id)) changed();
 }
+export function currentVisitorSessionId(): string | null {
+  try { return current().id; } catch { return null; }
+}
 export function useVisitorTracking() {
   const { pathname } = useLocation();
   useEffect(() => {
