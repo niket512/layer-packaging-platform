@@ -21,7 +21,7 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
   },
   "/sourcing": {
     title: `Sourcing Request | ${SITE_TITLE}`,
-    description: SITE_DESCRIPTION,
+    description: "Tell Snaplogo what packaging you need — boxes, pouches or sachets — and receive quotations from vetted Indian manufacturers.",
   },
   "/sourcing/corrugated-boxes": {
     title: "Corrugated Box Manufacturers — Quotes in 4 Hours | Snaplogo",
@@ -50,7 +50,7 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
   },
   "/about": {
     title: `About | ${SITE_TITLE}`,
-    description: SITE_DESCRIPTION,
+    description: "About Snaplogo: a packaging sourcing platform connecting Indian D2C brands with contract packaging manufacturers.",
   },
   "/manufacturer-network": {
     title: `Manufacturer Network | ${SITE_TITLE}`,
@@ -58,15 +58,15 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
   },
   "/app": {
     title: `Catalogues | ${SITE_TITLE}`,
-    description: SITE_DESCRIPTION,
+    description: "Browse packaging manufacturer catalogues on Snaplogo and find products for your brand.",
   },
   "/proposal": {
     title: `Proposal | ${SITE_TITLE}`,
-    description: SITE_DESCRIPTION,
+    description: "Snaplogo proposal: how brands and packaging manufacturers work together through Smart Discovery, Order 360, Lead Engine and Manufacturer OS.",
   },
   "/team": {
     title: `Team | ${SITE_TITLE}`,
-    description: SITE_DESCRIPTION,
+    description: "Meet the team building Snaplogo, the packaging sourcing platform for Indian D2C brands and manufacturers.",
   },
   "/privacy-policy": {
     title: `Privacy Policy | ${SITE_TITLE}`,
