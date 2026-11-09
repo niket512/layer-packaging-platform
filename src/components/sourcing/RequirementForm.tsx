@@ -47,6 +47,16 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
   const heading = useRef<HTMLHeadingElement>(null);
   const previousStep = useRef(step);
   useEffect(() => { trackJourney({ kind: "form_step", step: String(step + 1) }); }, [step]);
+  const recordedFields = useRef(new Set<string>());
+  useEffect(() => {
+    const completed: Record<string, boolean> = { ...Object.fromEntries(Object.entries(values).map(([key, value]) => [key, Boolean(value.trim())])), phone: Boolean(phone.trim()), notes: Boolean(notes.trim()), photos: photos.length + referencePhotos.length > 0 };
+    for (const key of new Set([...recordedFields.current, ...Object.keys(completed)])) {
+      if (completed[key] || recordedFields.current.has(key)) {
+        trackFormField(key, completed[key] ?? false, step);
+        recordedFields.current.add(key);
+      }
+    }
+  }, [values, phone, notes, photos, referencePhotos, step]);
   useEffect(() => {
     if (previousStep.current === step) return;
     previousStep.current = step;
