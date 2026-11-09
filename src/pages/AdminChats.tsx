@@ -47,8 +47,16 @@ export default function AdminChats() {
         if ((result.data?.length ?? 0) < 500) break;
       }
       const linked = new Set(rows.map(row => row.submission_id));
+      // Link each chat to its visitor session so catalogue browsing shows up next to the conversation.
+      const sessionIds = [...new Set(rows.map(row => row.session_id).filter((id): id is string => !!id))];
+      const behaviour = new Map<string, { viewed: number; used: number }>();
+      for (let i = 0; i < sessionIds.length; i += 100) {
+        const result = await supabase.from("visitor_behaviour").select("id,viewed_designs,selected_designs").in("id", sessionIds.slice(i, i + 100));
+        if (result.error) throw result.error;
+        (result.data ?? []).forEach(row => behaviour.set(row.id, { viewed: row.viewed_designs?.length ?? 0, used: row.selected_designs?.length ?? 0 }));
+      }
       const combined: Chat[] = [
-        ...rows.map(row => ({ ...row, transcript: Array.isArray(row.transcript) ? row.transcript as unknown as SourcingTurn[] : [], brief: Array.isArray(row.brief) ? row.brief as unknown as SourcingBriefField[] : [] })),
+        ...rows.map(row => ({ ...row, transcript: Array.isArray(row.transcript) ? row.transcript as unknown as SourcingTurn[] : [], brief: Array.isArray(row.brief) ? row.brief as unknown as SourcingBriefField[] : [], cataloguesViewed: row.session_id ? behaviour.get(row.session_id)?.viewed : undefined, designsUsed: row.session_id ? behaviour.get(row.session_id)?.used : undefined })),
         ...submissions.filter(row => !linked.has(row.id)).map(row => ({ id: row.id, title: row.requirement.split("\n").find(line => line.trim() && !line.startsWith("Sourcing brief"))?.slice(0, 120) ?? "Submitted request", status: "submitted", contact: row.contact, updated_at: row.created_at, created_at: row.created_at, transcript: [], brief: [], requirement: row.requirement, images: row.images })),
       ];
       setChats(combined.sort((a, b) => b.updated_at.localeCompare(a.updated_at)));
