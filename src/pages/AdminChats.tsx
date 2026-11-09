@@ -12,7 +12,7 @@ import { VisitorAnalytics } from "@/components/sourcing/VisitorAnalytics";
 import { ChatAnalytics } from "@/components/sourcing/ChatAnalytics";
 import { chatStats } from "@/lib/chatAnalytics";
 
-type Chat = { id: string; title: string; status: string; contact: string | null; updated_at: string; created_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; requirement?: string; images?: string[] };
+type Chat = { id: string; title: string; status: string; contact: string | null; updated_at: string; created_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; requirement?: string; images?: string[]; session_id?: string | null; cataloguesViewed?: number; designsUsed?: number };
 const date = (value: string) => new Date(value).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 export default function AdminChats() {
@@ -35,7 +35,7 @@ export default function AdminChats() {
       const rows = [];
       const submissions = [];
       for (let offset = 0; ; offset += 500) {
-        const result = await supabase.from("sourcing_chats").select("id,title,status,contact,updated_at,created_at,transcript,brief,submission_id").order("updated_at", { ascending: false }).range(offset, offset + 499);
+        const result = await supabase.from("sourcing_chats").select("id,title,status,contact,updated_at,created_at,transcript,brief,submission_id,session_id").order("updated_at", { ascending: false }).range(offset, offset + 499);
         if (result.error) throw result.error;
         rows.push(...(result.data ?? []));
         if ((result.data?.length ?? 0) < 500) break;
@@ -47,8 +47,16 @@ export default function AdminChats() {
         if ((result.data?.length ?? 0) < 500) break;
       }
       const linked = new Set(rows.map(row => row.submission_id));
+      // Link each chat to its visitor session so catalogue browsing shows up next to the conversation.
+      const sessionIds = [...new Set(rows.map(row => row.session_id).filter((id): id is string => !!id))];
+      const behaviour = new Map<string, { viewed: number; used: number }>();
+      for (let i = 0; i < sessionIds.length; i += 100) {
+        const result = await supabase.from("visitor_behaviour").select("id,viewed_designs,selected_designs").in("id", sessionIds.slice(i, i + 100));
+        if (result.error) throw result.error;
+        (result.data ?? []).forEach(row => behaviour.set(row.id, { viewed: row.viewed_designs?.length ?? 0, used: row.selected_designs?.length ?? 0 }));
+      }
       const combined: Chat[] = [
-        ...rows.map(row => ({ ...row, transcript: Array.isArray(row.transcript) ? row.transcript as unknown as SourcingTurn[] : [], brief: Array.isArray(row.brief) ? row.brief as unknown as SourcingBriefField[] : [] })),
+        ...rows.map(row => ({ ...row, transcript: Array.isArray(row.transcript) ? row.transcript as unknown as SourcingTurn[] : [], brief: Array.isArray(row.brief) ? row.brief as unknown as SourcingBriefField[] : [], cataloguesViewed: row.session_id ? behaviour.get(row.session_id)?.viewed : undefined, designsUsed: row.session_id ? behaviour.get(row.session_id)?.used : undefined })),
         ...submissions.filter(row => !linked.has(row.id)).map(row => ({ id: row.id, title: row.requirement.split("\n").find(line => line.trim() && !line.startsWith("Sourcing brief"))?.slice(0, 120) ?? "Submitted request", status: "submitted", contact: row.contact, updated_at: row.created_at, created_at: row.created_at, transcript: [], brief: [], requirement: row.requirement, images: row.images })),
       ];
       setChats(combined.sort((a, b) => b.updated_at.localeCompare(a.updated_at)));
@@ -83,7 +91,7 @@ export default function AdminChats() {
       </aside>
       <section aria-label="Conversation" className={`min-w-0 ${selected ? "" : "hidden md:flex md:items-center md:justify-center"}`}>
         {!selected ? <div className="p-8 text-center text-muted-foreground"><MessageSquare className="mx-auto mb-3 h-8 w-8" /><p>Select a conversation</p></div> : <>
-          <header className="border-b border-border p-4"><Button variant="ghost" size="sm" className="mb-2 md:hidden" onClick={() => setSelectedId(null)}><ArrowLeft />All chats</Button><h2 className="break-words text-lg font-semibold">{selected.title}</h2><div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><span>Started {date(selected.created_at)}</span>{(() => { const st = chatStats(selected); return <span>{st.messages} messages · {st.photos} photos · {st.questions} questions asked · {st.briefFields} details · {st.minutes} min · stopped at: {st.lastStage}</span>; })()}{selected.contact && <a className="flex items-center gap-1 text-primary" href={`tel:${selected.contact.replace(/[^+\d]/g, "")}`}><Phone className="h-3 w-3" />{selected.contact}</a>}</div></header>
+          <header className="border-b border-border p-4"><Button variant="ghost" size="sm" className="mb-2 md:hidden" onClick={() => setSelectedId(null)}><ArrowLeft />All chats</Button><h2 className="break-words text-lg font-semibold">{selected.title}</h2><div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><span>Started {date(selected.created_at)}</span>{(() => { const st = chatStats(selected); return <span>{st.messages} messages · {st.photos} photos · {st.questions} questions asked · {st.briefFields} details · {st.minutes} min · stopped at: {st.lastStage}</span>; })()}{selected.cataloguesViewed !== undefined && <span>{selected.cataloguesViewed} catalogues viewed · {selected.designsUsed ?? 0} designs used</span>}{selected.contact && <a className="flex items-center gap-1 text-primary" href={`tel:${selected.contact.replace(/[^+\d]/g, "")}`}><Phone className="h-3 w-3" />{selected.contact}</a>}</div></header>
           <div className="max-h-[650px] space-y-5 overflow-y-auto p-4 sm:p-6">
             {selected.brief.length > 0 && <details className="border-b border-border pb-4"><summary className="cursor-pointer text-sm font-semibold">Packaging brief</summary><dl className="mt-3 space-y-2 text-sm">{selected.brief.map(field => <div key={field.topic}><dt className="text-xs text-muted-foreground">{BRIEF_LABELS[field.topic] ?? field.topic}</dt><dd className="break-words">{field.value}</dd></div>)}</dl></details>}
             {selected.requirement && <><p className="text-xs text-muted-foreground">Historical saved request · full assistant replies may not be available.</p><p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{selected.requirement}</p><Photos images={selected.images} /></>}

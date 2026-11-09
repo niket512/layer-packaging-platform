@@ -1,7 +1,7 @@
 import type { SourcingTurn } from "@/lib/sourcing";
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 
-export type AnalysedChat = { status: string; contact: string | null; created_at: string; updated_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; images?: string[] };
+export type AnalysedChat = { status: string; contact: string | null; created_at: string; updated_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; images?: string[]; cataloguesViewed?: number; designsUsed?: number };
 
 export function chatStats(chat: AnalysedChat) {
   const messages = chat.transcript.length;
@@ -26,9 +26,13 @@ export function summariseChats(chats: AnalysedChat[]) {
   chats.forEach(c => { const d = c.created_at.slice(0, 10); if (days.has(d)) days.set(d, days.get(d)! + 1); });
   const hours = Array.from({ length: 24 }, () => 0);
   chats.forEach(c => { hours[new Date(c.created_at).getHours()]++; });
+  const withCatalogue = chats.filter(c => c.cataloguesViewed !== undefined);
   return {
     total, submitted, ongoing: total - submitted, conversion: pct(submitted, total),
     withContact: stats.filter(s => s.hasContact).length, withPhotos: stats.filter(s => s.photos > 0).length,
+    cataloguesViewed: withCatalogue.reduce((n, c) => n + (c.cataloguesViewed ?? 0), 0),
+    designsUsed: withCatalogue.reduce((n, c) => n + (c.designsUsed ?? 0), 0),
+    catalogueLinked: withCatalogue.length,
     avgMessages: avg("messages"), avgMinutes: avg("minutes"), avgBrief: avg("briefFields"),
     stages: tally(stats.map(s => s.lastStage)), formats: tally(stats.map(s => s.format)).slice(0, 8),
     topics: tally(chats.flatMap(c => c.brief.map(f => f.topic))).slice(0, 10),

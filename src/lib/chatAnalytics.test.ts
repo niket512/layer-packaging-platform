@@ -7,4 +7,14 @@ describe("summariseChats", () => {
     expect(s.conversion).toBe(25);
     expect(s.avgMinutes).toBe(10);
   });
+  it("totals catalogue views and design uses only for linked chats", () => {
+    const s = summariseChats([
+      { ...base, status: "submitted", cataloguesViewed: 5, designsUsed: 2 },
+      { ...base, status: "ongoing", cataloguesViewed: 3, designsUsed: 0 },
+      { ...base, status: "ongoing" },
+    ]);
+    expect(s.cataloguesViewed).toBe(8);
+    expect(s.designsUsed).toBe(2);
+    expect(s.catalogueLinked).toBe(2);
+  });
 });

@@ -10,10 +10,11 @@ export function ChatAnalytics({ chats }: { chats: AnalysedChat[] }) {
   const s = summariseChats(chats);
   const maxDay = Math.max(1, ...s.perDay.map(d => d[1]));
   const maxHour = Math.max(1, ...s.perHour);
-  const cards: [string, string][] = [["Chats", `${s.total}`], ["Submitted", `${s.submitted} · ${s.conversion}%`], ["Shared phone", `${s.withContact}`], ["Shared photos", `${s.withPhotos}`], ["Avg messages", `${s.avgMessages}`], ["Avg time (min)", `${s.avgMinutes}`], ["Avg details captured", `${s.avgBrief}`]];
+  const cards: [string, string][] = [["Chats", `${s.total}`], ["Submitted", `${s.submitted} · ${s.conversion}%`], ["Shared phone", `${s.withContact}`], ["Shared photos", `${s.withPhotos}`], ["Catalogues viewed", `${s.cataloguesViewed}`], ["Used a design", `${s.designsUsed}`], ["Avg messages", `${s.avgMessages}`], ["Avg time (min)", `${s.avgMinutes}`], ["Avg details captured", `${s.avgBrief}`]];
   return <section aria-label="Chat analysis" className="mb-6 space-y-4">
     <h2 className="text-lg font-semibold">Chat analysis</h2>
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">{cards.map(([l, v]) => <div key={l} className="rounded-lg border border-border bg-background p-3"><p className="text-xs text-muted-foreground">{l}</p><p className="mt-1 text-xl font-semibold">{v}</p></div>)}</div>
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{cards.map(([l, v]) => <div key={l} className="rounded-lg border border-border bg-background p-3"><p className="text-xs text-muted-foreground">{l}</p><p className="mt-1 text-xl font-semibold">{v}</p></div>)}</div>
+    {s.catalogueLinked < s.total && <p className="text-xs text-muted-foreground">Catalogue view and design-use counts are available for {s.catalogueLinked} of {s.total} chats; older chats saved before this tracking are not linked.</p>}
     <div className="grid gap-3 md:grid-cols-3">
       <div className="rounded-lg border border-border p-4"><h3 className="mb-3 text-sm font-semibold">Where chats stopped</h3><Bars rows={s.stages} /></div>
       <div className="rounded-lg border border-border p-4"><h3 className="mb-3 text-sm font-semibold">Packaging asked for</h3><Bars rows={s.formats} /></div>

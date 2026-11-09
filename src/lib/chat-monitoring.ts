@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { sourcingProjectTitle, type SourcingProject } from "./sourcing";
+import { currentVisitorSessionId } from "./visitor-tracking";
 
 export function chatSnapshot(project: SourcingProject) {
   return {
@@ -9,6 +10,7 @@ export function chatSnapshot(project: SourcingProject) {
     status: project.submitted ? "submitted" : "ongoing",
     contact: project.phone ?? null,
     submission_id: project.submissionId ?? null,
+    session_id: currentVisitorSessionId(),
   };
 }
 
