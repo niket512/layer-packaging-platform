@@ -9,6 +9,8 @@ import { BOX_DESIGNS } from "@/components/sourcing/packaging-catalogue";
 import logo from "@/assets/snaplogo-orange.png";
 import NotFound from "./NotFound";
 
+const PUBLISHED = "2026-11-06";
+
 const sectionId = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 export default function PackagingGuides() {
@@ -17,7 +19,7 @@ export default function PackagingGuides() {
   if (slug && !article) return <NotFound />;
   const sections = article?.body.match(/^## .+$/gm)?.map(line => line.slice(3)) ?? [];
   const schema = article ? [
-    { "@context": "https://schema.org", "@type": "Article", headline: article.heading, description: article.description, mainEntityOfPage: `https://snaplogo.in/blog/${article.slug}`, image: new URL(BOX_DESIGNS[0].image, "https://snaplogo.in").href, author: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in/about" }, publisher: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in" } },
+    { "@context": "https://schema.org", "@type": "Article", headline: article.heading, description: article.description, mainEntityOfPage: `https://snaplogo.in/blog/${article.slug}`, image: new URL(BOX_DESIGNS[0].image, "https://snaplogo.in").href, datePublished: PUBLISHED, author: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in/about" }, publisher: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in" } },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://snaplogo.in/" },
       { "@type": "ListItem", position: 2, name: "Packaging guides", item: "https://snaplogo.in/blog" },
@@ -38,6 +40,7 @@ export default function PackagingGuides() {
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap gap-2 text-xs text-muted-foreground"><Link to="/">Home</Link><span aria-hidden>/</span><Link to="/blog">Packaging guides</Link><span aria-hidden>/</span><span>Buyer guide</span></nav>
         <div className="max-w-3xl">
           <p className="text-xs font-semibold uppercase text-primary">Snaplogo · Packaging buyer guide</p>
+          <p className="mt-1 text-xs text-muted-foreground">Published <time dateTime={PUBLISHED}>6 November 2026</time></p>
           <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">{article.heading}</h1>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">{article.description}</p>
         </div>
