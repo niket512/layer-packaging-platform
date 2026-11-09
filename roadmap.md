@@ -1,4 +1,5 @@
 # Manufacturer network
+- [ ] Add private per-session catalogue positions, click timeline, form field progress and last observed action; verify persistence and admin access.
 - [x] Improve request-form hierarchy, choices and contact layout; check all four steps on phone and desktop.
 - [x] Redesign /request-form into visuals, scale, specifications and final contact steps; verify both packaging families and phone/desktop entry.
 - [x] Remove questions from /request-form and check page order, all form steps and phone/desktop layouts.
