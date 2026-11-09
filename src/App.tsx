@@ -42,12 +42,12 @@ const App = () => (
         <SeoMetadata />
         <VisitorTracking />
         <Routes>
-          <Route path="/" element={isAppHost ? <AppHome /> : <SourcingAgent />} />
+          <Route path="/" element={isAppHost ? <AppHome /> : <SourcingAgent requirementMode="form" />} />
           <Route path="/about" element={<Index />} />
           <Route path="/manufacturer-network" element={<ManufacturerNetworkPage />} />
           <Route path="/sourcing" element={<SourcingAgent />} />
           <Route path="/request" element={<RequestPreview />} />
-          <Route path="/request-form" element={<SourcingAgent requirementMode="form" />} />
+          <Route path="/request-form" element={<SourcingAgent />} />
           <Route path="/sourcing/corrugated-boxes" element={<SourcingAgent category="corrugated-boxes" />} />
           <Route path="/sourcing/flexible-pouches" element={<SourcingAgent category="flexible-pouches" />} />
           <Route path="/sourcing/sachets" element={<SourcingAgent category="sachets" />} />
