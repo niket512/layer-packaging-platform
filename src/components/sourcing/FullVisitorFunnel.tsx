@@ -9,7 +9,7 @@ function FunnelTable({ title, stages, onInspect }: { title: string; stages: Funn
     <div className="overflow-x-auto"><table className="w-full min-w-[470px] text-left text-sm">
       <thead className="border-b border-border text-xs text-muted-foreground"><tr><th className="py-2">Stage</th><th className="px-3">Visits</th><th className="px-3">% of entry</th><th className="px-3">No later step</th></tr></thead>
       <tbody>{stages.map((stage, index) => <tr key={stage.id} className="border-b border-border/60">
-        <td className="py-3"><span className="font-medium">{stage.label}</span><progress aria-label={`${stage.label} share of entry visits`} className="mt-2 block h-1.5 w-full accent-primary" max={Math.max(base, stage.rows.length, 1)} value={stage.rows.length} /></td>
+        <td className="py-3"><span className="font-medium">{stage.label}</span><div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted"><div className="h-full bg-primary" style={{ width: `${stage.rows.length / Math.max(base, stage.rows.length, 1) * 100}%` }} /></div></td>
         <td className="px-3"><Button variant="link" size="sm" className="h-auto px-0 tabular-nums" disabled={!stage.rows.length} onClick={() => onInspect(stage.label, stage.rows)}>{stage.rows.length}</Button></td>
         <td className="px-3 tabular-nums">{base ? `${Math.round(stage.rows.length / base * 100)}%` : "—"}</td>
         <td className="px-3">{index === stages.length - 1 ? "—" : <Button variant="link" size="sm" className="h-auto px-0 tabular-nums" disabled={!stage.remaining.length} onClick={() => onInspect(`No later step · ${stage.label}`, stage.remaining)}>{stage.remaining.length}{stage.rows.length > 0 ? ` (${Math.round(stage.remaining.length / stage.rows.length * 100)}%)` : ""}</Button>}</td>
@@ -32,7 +32,7 @@ export function FullVisitorFunnel({ rows, onInspect }: { rows: VisitorReportRow[
   const errors = ["format_required", "phone_invalid", "save_failed"] as const;
   return <div className="my-6 space-y-7">
     <FunnelTable title="Full visit-to-enquiry funnel" stages={funnel.overall} onInspect={onInspect} />
-    <p className="text-xs leading-relaxed text-muted-foreground">Counts are visits, not people. “No later step” includes active visits and is not a confirmed exit. Optional steps may be bypassed; they are not counted as viewed. Only saved enquiries are conversions.</p>
+    <p className="text-xs leading-relaxed text-muted-foreground">Counts are visits, not people. “Started a request” includes later observed request progress when early interaction was not recorded. “No later step” includes active visits and is not a confirmed exit. Optional steps may be bypassed; they are not counted as viewed. Only saved enquiries are conversions.</p>
     <div className="grid gap-7 xl:grid-cols-2">
       <FunnelTable title={`Guided form · ${funnel.formCount} visits`} stages={funnel.form} onInspect={onInspect} />
       <FunnelTable title={`Sourcing chat · ${funnel.chatCount} visits`} stages={funnel.chat} onInspect={onInspect} />

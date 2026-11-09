@@ -5,7 +5,7 @@ type StageDefinition = { id: string; label: string; matches: (row: VisitorReport
 const has = (row: VisitorReportRow, step: keyof VisitorReportRow["steps"]) => row.steps[step] !== undefined;
 const formStep = (row: VisitorReportRow, step: string) => row.journey?.some(e => e.kind === "form_step" && e.step === step) === true;
 const filled = (row: VisitorReportRow) => row.journey?.some(e => e.kind === "field" && e.filled && e.field !== "family" && e.step) === true;
-export const startedRequest = (row: VisitorReportRow) => has(row, "first_message") || filled(row) || ["2", "3", "4"].some(step => formStep(row, step));
+export const startedRequest = (row: VisitorReportRow) => has(row, "first_message") || filled(row) || ["2", "3", "4"].some(step => formStep(row, step)) || ["questions_shown", "brief_shown", "contact_shown", "contact_submitted", "request_saved"].some(step => has(row, step as keyof VisitorReportRow["steps"]));
 
 // Later stages count as continuing past an optional step, never as having viewed it.
 export function buildStages(rows: VisitorReportRow[], definitions: StageDefinition[]): FunnelStage[] {
@@ -19,7 +19,7 @@ export function buildStages(rows: VisitorReportRow[], definitions: StageDefiniti
 export function visitorFunnels(rows: VisitorReportRow[]) {
   const request = rows.filter(row => has(row, "page_opened"));
   const form = rows.filter(row => row.journey?.some(e => e.kind === "form_step"));
-  const chat = rows.filter(row => has(row, "first_message") || row.journey?.some(e => e.kind === "page" && e.path === "/request-form"));
+  const chat = rows.filter(row => has(row, "first_message") || row.journey?.some(e => e.kind === "page" && e.path === "/request-form") || ["questions_shown", "design_shown"].some(step => has(row, step as keyof VisitorReportRow["steps"])));
   return {
     overall: buildStages(rows, [
       { id: "visits", label: "Tracked visits", matches: () => true },

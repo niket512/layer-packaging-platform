@@ -24,6 +24,7 @@ describe("full visitor funnel", () => {
     const result = visitorFunnels([row({ selected: 3, steps: { page_opened: 1, contact_submitted: 2 } }), row({ steps: { page_opened: 1, contact_submitted: 2, request_saved: 3 } })]);
     expect(result.overall[5].rows).toHaveLength(1);
     expect(result.overall[4].remaining).toHaveLength(1);
+    expect(result.overall[2].rows).toHaveLength(2);
   });
   it("uses India midnight for today's visit filter", () => {
     expect(inIndiaToday(row({ created_at: "2026-11-08T18:30:00Z" }), new Date("2026-11-09T17:10:00Z"))).toBe(true);
