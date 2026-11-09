@@ -491,6 +491,7 @@ export type Database = {
           created_at: string
           id: string
           revision: number
+          session_id: string | null
           status: string
           submission_id: string | null
           title: string
@@ -504,6 +505,7 @@ export type Database = {
           created_at?: string
           id: string
           revision?: number
+          session_id?: string | null
           status?: string
           submission_id?: string | null
           title: string
@@ -517,6 +519,7 @@ export type Database = {
           created_at?: string
           id?: string
           revision?: number
+          session_id?: string | null
           status?: string
           submission_id?: string | null
           title?: string
