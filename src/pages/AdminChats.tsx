@@ -12,7 +12,7 @@ import { VisitorAnalytics } from "@/components/sourcing/VisitorAnalytics";
 import { ChatAnalytics } from "@/components/sourcing/ChatAnalytics";
 import { chatStats } from "@/lib/chatAnalytics";
 
-type Chat = { id: string; title: string; status: string; contact: string | null; updated_at: string; created_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; requirement?: string; images?: string[] };
+type Chat = { id: string; title: string; status: string; contact: string | null; updated_at: string; created_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; requirement?: string; images?: string[]; session_id?: string | null; cataloguesViewed?: number; designsUsed?: number };
 const date = (value: string) => new Date(value).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 export default function AdminChats() {
@@ -35,7 +35,7 @@ export default function AdminChats() {
       const rows = [];
       const submissions = [];
       for (let offset = 0; ; offset += 500) {
-        const result = await supabase.from("sourcing_chats").select("id,title,status,contact,updated_at,created_at,transcript,brief,submission_id").order("updated_at", { ascending: false }).range(offset, offset + 499);
+        const result = await supabase.from("sourcing_chats").select("id,title,status,contact,updated_at,created_at,transcript,brief,submission_id,session_id").order("updated_at", { ascending: false }).range(offset, offset + 499);
         if (result.error) throw result.error;
         rows.push(...(result.data ?? []));
         if ((result.data?.length ?? 0) < 500) break;
