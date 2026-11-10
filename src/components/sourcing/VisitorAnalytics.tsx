@@ -8,8 +8,10 @@ import { inIndiaToday } from "@/lib/visitor-funnel";
 import { FullVisitorFunnel } from "./FullVisitorFunnel";
 import { SessionJourney, journeyLabel } from "./SessionJourney";
 import { journeyFields } from "@/lib/visitor-metrics";
+import { inAdminDateRange, type AdminDateRange } from "@/lib/admin-date-range";
 
-export function VisitorAnalytics({ sessionId }: { sessionId?: string | null }) {
+export function VisitorAnalytics({ sessionId, dateRange = { from: "", to: "" } }: { sessionId?: string | null; dateRange?: AdminDateRange }) {
+  const customDates = Boolean(dateRange.from || dateRange.to);
   const [chosen, setChosen] = useState<string | null>(null);
   const [inspection, setInspection] = useState<{ label: string; ids: string[] } | null>(null);
   useEffect(() => { if (sessionId) setChosen(sessionId); }, [sessionId]);
@@ -21,7 +23,7 @@ export function VisitorAnalytics({ sessionId }: { sessionId?: string | null }) {
   const [busy, setBusy] = useState(false);
   const refresh = async () => {
     setBusy(true);
-    const { data, error: reportError } = await supabase.rpc("visitor_behaviour_report", { _days: days === "today" ? 2 : Number(days) });
+    const { data, error: reportError } = await supabase.rpc("visitor_behaviour_report", { _days: customDates ? 90 : days === "today" ? 2 : Number(days) });
     if (reportError) setError("Couldn’t load visitor activity. Please refresh.");
     else { setRows((data as unknown as { sessions: VisitorReportRow[] })?.sessions ?? []); setError(""); }
     setBusy(false);
@@ -31,13 +33,14 @@ export function VisitorAnalytics({ sessionId }: { sessionId?: string | null }) {
     const timer = window.setInterval(() => void refresh(), 15000);
     return () => window.clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [days]);
-  const filtered = rows.filter(row => (days !== "today" || inIndiaToday(row)) && (device === "all" || row.device === device) && (source === "all" || row.source === source));
+  }, [days, customDates]);
+  useEffect(() => { setInspection(null); setChosen(null); }, [dateRange.from, dateRange.to]);
+  const filtered = rows.filter(row => (customDates ? inAdminDateRange(row.created_at, dateRange) : days !== "today" || inIndiaToday(row)) && (device === "all" || row.device === device) && (source === "all" || row.source === source));
   const sessionRows = inspection ? filtered.filter(row => inspection.ids.includes(row.id)) : filtered;
   const sum = (key: "viewed" | "opened" | "selected") => filtered.reduce((total, row) => total + row[key], 0);
   return <section aria-label="Visitor activity" className="mb-6 border-y border-border py-5">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl font-semibold">Visitor activity</h2><div className="flex flex-wrap gap-2">
-      <Select value={days} onValueChange={value => { setDays(value); setInspection(null); }}><SelectTrigger aria-label="Activity period" className="w-36"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="today">Today (IST)</SelectItem>{[7, 30, 90].map(day => <SelectItem key={day} value={String(day)}>Last {day} days</SelectItem>)}</SelectContent></Select>
+      {customDates ? <span className="self-center text-xs text-muted-foreground">Selected dates · visitor history up to 90 days</span> : <Select value={days} onValueChange={value => { setDays(value); setInspection(null); }}><SelectTrigger aria-label="Activity period" className="w-36"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="today">Today (IST)</SelectItem>{[7, 30, 90].map(day => <SelectItem key={day} value={String(day)}>Last {day} days</SelectItem>)}</SelectContent></Select>}
       <Select value={device} onValueChange={setDevice}><SelectTrigger aria-label="Device filter" className="w-32"><SelectValue /></SelectTrigger><SelectContent>{["all", "mobile", "tablet", "desktop"].map(value => <SelectItem key={value} value={value}>{value === "all" ? "All devices" : value}</SelectItem>)}</SelectContent></Select>
       <Select value={source} onValueChange={setSource}><SelectTrigger aria-label="Traffic filter" className="w-40"><SelectValue /></SelectTrigger><SelectContent>{["all", "direct", "paid_search", "organic_search", "social", "referral", "email", "other_campaign"].map(value => <SelectItem key={value} value={value}>{value === "all" ? "All traffic" : value.replace(/_/g, " ")}</SelectItem>)}</SelectContent></Select>
       <Button variant="outline" size="icon" disabled={busy} aria-label="Refresh visitor activity" onClick={() => void refresh()}><RefreshCw className={busy ? "animate-spin" : ""} /></Button>
