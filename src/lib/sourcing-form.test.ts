@@ -1,7 +1,23 @@
 import { describe, expect, it } from "vitest";
-import { FORM_STEPS, designFormPrefill, formBrief, formSubmission } from "./sourcing-form";
+import { FORM_STEPS, applyDesignToForm, designFormPrefill, formBrief, formSubmission } from "./sourcing-form";
 import { BOX_DESIGNS } from "@/components/sourcing/packaging-catalogue";
 describe("guided packaging requirements", () => {
+  it("keeps review progress and entered details when a design is selected", () => {
+    const result = applyDesignToForm("boxes", { format: "Shipping box", quantity: "2000 pieces", size: "20 × 15 × 10 cm", delivery: "Pune" }, [BOX_DESIGNS[0]], 3);
+    expect(result?.step).toBe(3);
+    expect(result?.values).toMatchObject({ quantity: "2000 pieces", size: "20 × 15 × 10 cm", delivery: "Pune" });
+  });
+  it("moves a known design past packaging selection without inventing scale", () => {
+    const result = applyDesignToForm("boxes", {}, [BOX_DESIGNS[0]], 0);
+    expect(result?.step).toBe(1);
+    expect(result?.values.quantity).toBeUndefined();
+    expect(result?.values.size).toBeUndefined();
+  });
+  it("keeps unknown design styles at packaging selection", () => {
+    const result = applyDesignToForm("boxes", {}, [{ ...BOX_DESIGNS[0], attributes: {} }], 0);
+    expect(result?.step).toBe(0);
+    expect(result?.values.format).toBeUndefined();
+  });
   it("keeps scale after visuals, specifications third and contact only at the final gate", () => {
     expect(FORM_STEPS.map(step => step.topics)).toEqual([
       ["format"], ["quantity", "size"], ["printing", "material", "wall", "closure", "finishing"], ["delivery", "phone", "notes"],
