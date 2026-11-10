@@ -84,6 +84,26 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
   useEffect(() => { setPackagingFamily(landingFamily); }, [landingFamily]);
   const [formKey, setFormKey] = useState(0);
   const [formActive, setFormActive] = useState(false);
+  const [designFormOpen, setDesignFormOpen] = useState(false);
+  useEffect(() => {
+    if (!designFormOpen) return;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const dialog = document.querySelector<HTMLElement>('[aria-label="Request quotes for selected design"]');
+    const before = document.activeElement;
+    dialog?.querySelector<HTMLElement>("button")?.focus({ preventScroll: true });
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setDesignFormOpen(false);
+      if (event.key !== "Tab" || !dialog) return;
+      const controls = Array.from(dialog.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled):not([type="hidden"]), textarea:not(:disabled), summary, [tabindex="0"]')).filter(node => node.getClientRects().length > 0);
+      const first = controls[0];
+      const last = controls.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    window.addEventListener("keydown", dismiss);
+    return () => { document.body.style.overflow = overflow; window.removeEventListener("keydown", dismiss); if (before instanceof HTMLElement) before.focus({ preventScroll: true }); };
+  }, [designFormOpen]);
   const [formDesigns, setFormDesigns] = useState<PackagingDesign[]>([]);
   const landing = category ? LANDINGS[category] : undefined;
   const navigate = useNavigate();
@@ -268,7 +288,12 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     <CorrugatedDesigns selectedFamily={requirementMode === "form" ? packagingFamily : undefined} onFamilyChange={requirementMode === "form" ? setPackagingFamily : undefined} onUseDesign={(prefill, designs) => {
       if (requirementMode === "form") {
         setFormDesigns(designs);
-        requestAnimationFrame(() => document.querySelector('[aria-label="Packaging requirement form"]')?.scrollIntoView({ behavior: "smooth", block: "start" }));
+        setFormActive(true);
+        setDesignFormOpen(true);
+        setQuery(prefill);
+        setError("");
+        void designReferenceImage(designs).then(image => setPhotos([image])).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
+        return;
       }
       setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
       input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -358,7 +383,12 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 )}
               </div>
             )}
-            {requirementMode === "form" ? <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} reference={query} referencePhotos={photos} referenceDesigns={formDesigns} onActive={() => setFormActive(true)} /> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
+            {requirementMode === "form" ? <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} className={designFormOpen ? "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-background/95 p-3 backdrop-blur-sm sm:p-6" : ""}>
+              <div className={designFormOpen ? "w-full max-w-[820px] text-left" : ""}>
+                {designFormOpen && <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-semibold">Request quotes</h2><Button type="button" variant="outline" size="sm" className="h-11 rounded-full" onClick={() => setDesignFormOpen(false)}><X />Back to designs</Button></div>}
+                <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} reference={query} referencePhotos={photos} referenceDesigns={formDesigns} onActive={() => setFormActive(true)} />
+              </div>
+            </div> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
             {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · No commission · Confidential designs</p>}
             </div></section>
             <TrustStory />

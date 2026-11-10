@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Keep design requests over the catalogue without navigation; phone/desktop checks verified contact access and retained details after returning to designs; eight regression tests passed.
 - [x] Inspect five design-selected visits and fix confirmed form progress reset; eight tests and phone/desktop checks verified preserved review, details and contact access. Saving unchanged; no artificial enquiry submitted.
 - [x] Add shared India-time date range to chat list, chat analysis and visitor funnel; verified Today, previous day, clearing, real signed-in reports, phone layout and eight tests.
 - [x] Connect pouch/box search destinations to selected guided form and synchronized catalogue; verified five entry links, family changes, pouch form progress, phone layout and eight tests.
