@@ -2,7 +2,8 @@ import { MessageResponse } from "@/components/ai-elements/message";
 import TrustStory from "@/components/sourcing/TrustStory";
 import { RequirementForm } from "@/components/sourcing/RequirementForm";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { sourcingLandingFamily } from "@/lib/sourcing-landing";
 import { ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
@@ -77,6 +78,10 @@ function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
 }
 
 export default function SourcingAgent({ category, requirementMode = "chat" }: { category?: SourcingCategory; requirementMode?: "chat" | "form" } = {}) {
+  const location = useLocation();
+  const landingFamily = sourcingLandingFamily(category, location.search);
+  const [packagingFamily, setPackagingFamily] = useState(landingFamily);
+  useEffect(() => { setPackagingFamily(landingFamily); }, [landingFamily]);
   const [formKey, setFormKey] = useState(0);
   const [formActive, setFormActive] = useState(false);
   const [formDesigns, setFormDesigns] = useState<PackagingDesign[]>([]);
@@ -260,7 +265,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     </form>
   );
   const designGallery = (
-    <CorrugatedDesigns onUseDesign={(prefill, designs) => {
+    <CorrugatedDesigns selectedFamily={requirementMode === "form" ? packagingFamily : undefined} onFamilyChange={requirementMode === "form" ? setPackagingFamily : undefined} onUseDesign={(prefill, designs) => {
       if (requirementMode === "form") {
         setFormDesigns(designs);
         requestAnimationFrame(() => document.querySelector('[aria-label="Packaging requirement form"]')?.scrollIntoView({ behavior: "smooth", block: "start" }));
@@ -353,7 +358,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 )}
               </div>
             )}
-            {requirementMode === "form" ? <RequirementForm key={formKey} reference={query} referencePhotos={photos} referenceDesigns={formDesigns} onActive={() => setFormActive(true)} /> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
+            {requirementMode === "form" ? <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} reference={query} referencePhotos={photos} referenceDesigns={formDesigns} onActive={() => setFormActive(true)} /> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
             {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · No commission · Confidential designs</p>}
             </div></section>
             <TrustStory />

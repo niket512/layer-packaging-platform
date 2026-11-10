@@ -30,9 +30,8 @@ const STYLE_IMAGES: Record<string, string> = {
 const STEPS = FORM_STEPS.map(step => step.label);
 
 
-export function RequirementForm({ reference, referencePhotos, referenceDesigns, onActive }: { reference: string; referencePhotos: string[]; referenceDesigns: PackagingDesign[]; onActive: () => void }) {
+export function RequirementForm({ family, onFamilyChange: setFamily, reference, referencePhotos, referenceDesigns, onActive }: { family: FormFamily; onFamilyChange: (family: FormFamily) => void; reference: string; referencePhotos: string[]; referenceDesigns: PackagingDesign[]; onActive: () => void }) {
   const navigate = useNavigate();
-  const [family, setFamily] = useState<FormFamily>("boxes");
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Record<string, string>>({});
   const [brief, setBrief] = useState<SourcingBriefField[]>([]);
@@ -46,6 +45,9 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
   const savedId = useRef(crypto.randomUUID());
   const heading = useRef<HTMLHeadingElement>(null);
   const previousStep = useRef(step);
+  useEffect(() => {
+    setValues(previous => previous.format && !FORM_FORMATS[family].includes(previous.format) ? {} : previous);
+  }, [family]);
   useEffect(() => { trackJourney({ kind: "form_step", step: String(step + 1) }); }, [step]);
   const recordedFields = useRef(new Set<string>());
   useEffect(() => {
@@ -71,7 +73,7 @@ export function RequirementForm({ reference, referencePhotos, referenceDesigns, 
     setValues(previous => ({ ...prefill.values, ...Object.fromEntries(Object.entries(previous).filter(([, value]) => value.trim())) }));
     setStep(0);
     setError("");
-  }, [referenceDesigns]);
+  }, [referenceDesigns, setFamily]);
   const change = (topic: string, value: string) => { onActive(); trackFormField(topic, Boolean(value.trim()), step); setValues(v => ({ ...v, [topic]: value })); };
   const choices = (topic: string, label: string, options: string[]) => <fieldset className="min-w-0"><legend className="mb-2 text-sm font-semibold">{label}</legend><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{options.map(option => <Button key={option} type="button" size="sm" variant="outline" aria-pressed={values[topic] === option} onClick={() => change(topic, option)} className={`h-auto min-h-12 justify-between gap-2 whitespace-normal rounded-lg px-3 py-2 text-left text-sm normal-case tracking-normal transition-colors ${values[topic] === option ? "border-primary bg-accent text-primary ring-1 ring-primary hover:bg-accent" : "bg-background hover:border-primary/40"}`}><span>{option}</span><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${values[topic] === option ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>{values[topic] === option && <Check className="h-3 w-3" />}</span></Button>)}</div></fieldset>;
   const field = (topic: string, label: string, placeholder: string) => <div className="min-w-0"><label htmlFor={`form-${topic}`} className="mb-1.5 flex flex-wrap items-baseline gap-1.5 text-sm font-semibold">{label.replace(" (optional)", "")}{label.includes("(optional)") && <span className="text-xs font-normal text-muted-foreground">Optional</span>}</label><Input id={`form-${topic}`} className="h-11 rounded-lg bg-card text-base" value={values[topic] ?? ""} maxLength={240} placeholder={placeholder} onChange={e => change(topic, e.target.value)} /></div>;
