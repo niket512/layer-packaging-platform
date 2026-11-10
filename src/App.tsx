@@ -48,11 +48,11 @@ const App = () => (
           <Route path="/sourcing" element={<SourcingAgent />} />
           <Route path="/request" element={<RequestPreview />} />
           <Route path="/request-form" element={<SourcingAgent />} />
-          <Route path="/sourcing/corrugated-boxes" element={<SourcingAgent category="corrugated-boxes" />} />
-          <Route path="/sourcing/flexible-pouches" element={<SourcingAgent category="flexible-pouches" />} />
-          <Route path="/sourcing/sachets" element={<SourcingAgent category="sachets" />} />
+          <Route path="/sourcing/corrugated-boxes" element={<SourcingAgent category="corrugated-boxes" requirementMode="form" />} />
+          <Route path="/sourcing/flexible-pouches" element={<SourcingAgent category="flexible-pouches" requirementMode="form" />} />
+          <Route path="/sourcing/sachets" element={<SourcingAgent category="sachets" requirementMode="form" />} />
           <Route path="/sourcing/cosmetic-packaging" element={<SourcingAgent category="cosmetic-packaging" />} />
-          <Route path="/sourcing/mailer-boxes" element={<SourcingAgent category="mailer-boxes" />} />
+          <Route path="/sourcing/mailer-boxes" element={<SourcingAgent category="mailer-boxes" requirementMode="form" />} />
           <Route path="/sourcing/thank-you" element={<SourcingThankYou />} />
           <Route path="/app" element={<AppHome />} />
           <Route path="/app/store" element={<AppStore />} />

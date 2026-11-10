@@ -13,8 +13,9 @@ import { trackDesign } from "@/lib/visitor-tracking";
 const DESIGNS = [...SHEET_DESIGNS, ...BOX_DESIGNS, ...POUCH_DESIGNS];
 const PAGE = 24;
 
-export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (prefill: string, designs: PackagingDesign[]) => void; onlyFamily?: PackagingFamily }) {
-  const [family, setFamily] = useState<PackagingFamily>(onlyFamily ?? "boxes");
+export function CorrugatedDesigns({ onUseDesign, onlyFamily, selectedFamily, onFamilyChange }: { onUseDesign: (prefill: string, designs: PackagingDesign[]) => void; onlyFamily?: PackagingFamily; selectedFamily?: PackagingFamily; onFamilyChange?: (family: PackagingFamily) => void }) {
+  const [localFamily, setFamily] = useState<PackagingFamily>(onlyFamily ?? "boxes");
+  const family = onlyFamily ?? selectedFamily ?? localFamily;
   const [category, setCategory] = useState("all");
   const [filters, setFilters] = useState<CatalogueFilters>(CLEAR_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
@@ -23,7 +24,8 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily }: { onUseDesign: (p
   const primary = PRIMARY_FILTERS[family];
   const shown = browseDesigns(DESIGNS, family, category, filters, "", "default");
   const reset = () => { setCategory("all"); setFilters(CLEAR_FILTERS); setLimit(PAGE); };
-  const switchFamily = (next: PackagingFamily) => { setFamily(next); reset(); };
+  const switchFamily = (next: PackagingFamily) => { setFamily(next); onFamilyChange?.(next); reset(); };
+  useEffect(() => { setCategory("all"); setFilters(CLEAR_FILTERS); setLimit(PAGE); setSelected(null); }, [family]);
   const useDesigns = (designs: PackagingDesign[]) => {
     designs.forEach(design => trackDesign("selected", design.id, { position: shown.findIndex(d => d.id === design.id) + 1, family, category }));
     window.__lovableEvents?.track?.("project.design_used", { family: designs[0]?.family ?? family, count: designs.length });
