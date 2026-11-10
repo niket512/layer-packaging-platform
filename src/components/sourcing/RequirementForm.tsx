@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Check, ImagePlus, Loader2, X, MapPin, HelpCircle
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SourcingBrief } from "./SourcingBrief";
-import { FORM_FORMATS, FORM_STEPS, applyDesignToForm, formBrief, formSubmission, type FormFamily } from "@/lib/sourcing-form";
+import { FORM_FORMATS, FORM_STEPS, applyDesignToForm, designFormPrefill, formBrief, formSubmission, type FormFamily } from "@/lib/sourcing-form";
 import type { PackagingDesign } from "./packaging-catalogue";
 import { validSourcingPhone } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -121,6 +121,30 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
     finally { setBusy(false); }
   };
   const presets = (topic: string, options: string[]) => <div className="mt-2 flex flex-wrap gap-2" aria-label={topic === "quantity" ? "Suggested quantities" : "Example dimensions"}>{options.map(value => <Button key={value} type="button" variant="outline" size="sm" aria-pressed={values[topic] === value} onClick={() => change(topic, value)} className={`h-11 rounded-full px-3 text-xs normal-case tracking-normal ${values[topic] === value ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>{value}</Button>)}</div>;
+  if (hasReference && step !== 3) {
+    const prefilled = designFormPrefill(referenceDesigns)?.values ?? {};
+    return <form aria-label="Packaging requirement form" className="mt-3 overflow-hidden rounded-lg border border-border bg-card text-left" onSubmit={event => {
+      event.preventDefault();
+      if (!values.format) { setError("Choose a packaging style, or select Not sure."); trackJourney({ kind: "form_error", step: "1", reason: "format_required" }); return; }
+      setError(""); setBrief(formBrief(family, values)); setStep(3); trackFunnel("brief_shown"); trackFunnel("contact_shown");
+    }}>
+      <div className="border-b border-border px-4 py-5 sm:px-7"><h2 ref={heading} tabIndex={-1} className="text-xl font-semibold outline-none sm:text-2xl">Your selected packaging</h2><div className="mt-4 flex items-center gap-4"><img src={referenceDesigns[0]?.image} alt="Selected packaging reference" className="h-24 w-24 shrink-0 rounded-lg bg-muted object-contain" /><p className="min-w-0 break-words text-base font-semibold">{referenceDesigns.map(design => design.name).join(", ")}</p></div></div>
+      <fieldset disabled={busy} className="grid min-w-0 sm:grid-cols-[0.85fr_1.15fr]">
+        <section aria-label="Already added" className="min-w-0 border-b border-border bg-muted/40 px-4 py-5 sm:border-b-0 sm:border-r sm:px-6"><h3 className="flex items-center gap-2 text-base font-semibold"><Check className="h-5 w-5 text-primary" />Already added</h3><dl className="mt-4 space-y-4"><div><dt className="text-xs text-muted-foreground">Packaging type</dt><dd className="mt-1 text-sm font-medium">{family === "boxes" ? "Boxes" : "Pouches & sachets"}</dd></div>{Object.keys(prefilled).map(key => <div key={key}><dt className="text-xs text-muted-foreground">{detailLabels[key]}</dt><dd className="mt-1 text-sm font-medium">{values[key]}</dd></div>)}<div><dt className="text-xs text-muted-foreground">Design reference</dt><dd className="mt-1 text-sm font-medium">Selected catalogue image</dd></div></dl>
+          <details className="mt-5 border-t border-border pt-3"><summary className="min-h-11 cursor-pointer text-sm font-medium text-primary">Edit added details</summary><div className="space-y-4 pt-3">{choices("format", "Packaging style", FORM_FORMATS[family])}{prefilled.printing && choices("printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"])}{prefilled.closure && choices("closure", "Closure", ["Heat seal", "Zipper", "Spout", "Not sure"])}</div></details>
+        </section>
+        <section aria-label="Details from you" className="min-w-0 space-y-5 px-4 py-5 sm:px-6"><div><h3 className="text-lg font-semibold">A few details from you</h3><p className="mt-1 text-sm text-muted-foreground">{prefilled.format ? "Packaging style is already added." : "Confirm the style for this reference."}</p></div>
+          {!prefilled.format && choices("format", "Packaging style", FORM_FORMATS[family])}
+          <div>{field("quantity", "Initial quantity", "e.g. 2,000 pieces")}{presets("quantity", ["500 pieces", "1,000 pieces", "5,000 pieces"])}</div>
+          {!prefilled.printing && choices("printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"])}
+          {choices("material", "Material preference", family === "boxes" ? ["Kraft", "White-top", "Not sure"] : ["Mono-material", "Multilayer", "Paper-based", "Not sure"])}
+          <details className="border-t border-border pt-3"><summary className="min-h-11 cursor-pointer text-sm font-medium">Dimensions & extra specifications <span className="text-xs text-muted-foreground">Optional</span></summary><div className="space-y-4 pt-3">{field("size", family === "boxes" ? "Box dimensions (optional)" : "Dimensions or fill (optional)", family === "boxes" ? "Length × width × height in cm" : "e.g. 250 g or width × height in cm")}{family === "boxes" ? choices("wall", "Corrugated wall", ["3-ply", "5-ply", "7-ply", "Not sure"]) : !prefilled.closure && choices("closure", "Closure", ["Heat seal", "Zipper", "Spout", "Not sure"])}{choices("finishing", "Finishing preference", ["Matte", "Gloss", "No preference"])}</div></details>
+        </section>
+      </fieldset>
+      {error && <p role="alert" className="px-4 pb-4 text-sm text-destructive">{error}</p>}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-4 sm:px-6"><span className="text-xs text-muted-foreground">Next: review & WhatsApp</span><Button type="submit" className="h-12 rounded-full px-5">Review brief<ArrowRight /></Button></div>
+    </form>;
+  }
   return <form aria-label="Packaging requirement form" onChange={e => { const target = e.target; if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) { const fieldName = target.id.replace(/^form-/, ""); trackFormField(fieldName, Boolean(target.value.trim()), step); } }} onSubmit={e => { e.preventDefault(); if (step === 3) void submit(); else advance(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
     <div className="border-b border-border px-4 pb-4 pt-4 sm:px-7 sm:pb-5 sm:pt-5">
       {hasReference && <div className="mb-4 border-b border-border pb-4"><p className="text-base font-semibold text-primary">{remainingDetails.length ? `Just ${remainingDetails.length} details left` : "Your details are ready"}</p><p className="mt-1 text-sm text-muted-foreground">{remainingDetails.length ? remainingDetails.map(key => detailLabels[key]).join(" · ") : "Review your brief below."}</p><p className="mt-2 text-xs text-muted-foreground">Dimensions and extra specifications are optional.</p></div>}
