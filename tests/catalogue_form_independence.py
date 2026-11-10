@@ -17,7 +17,14 @@ async def main():
    dialog=page.get_by_role('dialog',name='Request quotes for selected design')
    await dialog.wait_for()
    await page.wait_for_timeout(350)
-   await dialog.locator(":scope > div").evaluate("e => e.scrollTop = 0")
+   quantity = dialog.get_by_label('Initial quantity',exact=True)
+   assert await quantity.evaluate('(e) => document.activeElement === e')
+   assert await quantity.input_value() == ''
+   assert await dialog.get_by_role('combobox',name='Packaging style',exact=True).inner_text() == 'Mailer box'
+   assert await dialog.get_by_role('combobox',name='Printing',exact=True).inner_text() == 'Multicolour'
+   image=dialog.get_by_role('img',name='Selected packaging reference')
+   assert await image.evaluate('(e)=>e.complete && e.naturalWidth > 0')
+   assert await dialog.get_by_text('6x4x2 Inch White Corrugated Mailer Box for E-Commerce Sellers',exact=True).count() == 1
    await page.screenshot(path=f'/tmp/browser/mobile-catalogue/{width}-start.png')
    await dialog.get_by_label('Initial quantity',exact=True).fill('2200 pieces')
    await dialog.get_by_label('Delivery city',exact=True).fill('Pune')
@@ -26,6 +33,8 @@ async def main():
    await page.get_by_role('option',name='Gift box',exact=True).click()
    print('style edited',await dialog.get_by_role('combobox',name='Packaging style',exact=True).inner_text())
    await dialog.get_by_label('WhatsApp number',exact=True).scroll_into_view_if_needed()
+   image_bounds=await image.bounding_box()
+   assert image_bounds and image_bounds['y'] >= 60 and image_bounds['y'] + image_bounds['height'] < 220
    await page.screenshot(path=f'/tmp/browser/mobile-catalogue/{width}-contact.png')
    print('overflow',await dialog.evaluate('(e)=>e.scrollWidth>e.clientWidth'))
    await dialog.get_by_role('button',name='Back to designs').click()
@@ -34,6 +43,8 @@ async def main():
    print('main form unchanged',width)
    await buttons.first.click()
    assert await dialog.get_by_label('Initial quantity',exact=True).input_value() == '2200 pieces'
+   await page.wait_for_timeout(350)
+   assert await dialog.get_by_role('combobox',name='Material preference',exact=True).evaluate('(e)=>document.activeElement===e')
    await page.close()
   await browser.close()
 asyncio.run(main())

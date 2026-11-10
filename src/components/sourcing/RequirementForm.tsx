@@ -31,7 +31,7 @@ const STYLE_IMAGES: Record<string, string> = {
 const STEPS = FORM_STEPS.map(step => step.label);
 
 
-export function RequirementForm({ family, onFamilyChange: setFamily, reference, referencePhotos, referenceDesigns, onActive }: { family: FormFamily; onFamilyChange: (family: FormFamily) => void; reference: string; referencePhotos: string[]; referenceDesigns: PackagingDesign[]; onActive: () => void }) {
+export function RequirementForm({ family, onFamilyChange: setFamily, reference, referencePhotos, referenceDesigns, onActive, panelOpen = false }: { family: FormFamily; onFamilyChange: (family: FormFamily) => void; reference: string; referencePhotos: string[]; referenceDesigns: PackagingDesign[]; onActive: () => void; panelOpen?: boolean }) {
   const navigate = useNavigate();
   const formId = useId();
   const [step, setStep] = useState(0);
@@ -83,6 +83,22 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
     // Apply once per reference selection, not after each buyer edit or step change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [referenceDesigns, setFamily]);
+  useEffect(() => {
+    if (!panelOpen || !referenceDesigns.length) return;
+    // Wait for the selected attributes and the panel's entry animation before focusing.
+    const timer = window.setTimeout(() => {
+      const form = heading.current?.closest("form");
+      if (!form) return;
+      const topics = ["format", "quantity", "printing", "material", "delivery", "phone"];
+      for (const topic of topics) {
+        const control = form.querySelector<HTMLElement>(`[id="${formId}-${["format", "printing", "material"].includes(topic) ? "selected" : "form"}-${topic}"]`);
+        if (!control) continue;
+        const unanswered = control instanceof HTMLInputElement ? !control.value.trim() : control.textContent?.trim() === "Not selected";
+        if (unanswered) { control.focus({ preventScroll: true }); control.scrollIntoView({ block: "nearest" }); break; }
+      }
+    }, 320);
+    return () => window.clearTimeout(timer);
+  }, [panelOpen, referenceDesigns, formId]);
   const change = (topic: string, value: string) => { onActive(); trackFormField(topic, Boolean(value.trim()), step); setValues(v => ({ ...v, [topic]: value })); };
   const choices = (topic: string, label: string, options: string[]) => <fieldset className="min-w-0"><legend className="mb-2 text-sm font-semibold">{label}</legend><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{options.map(option => <Button key={option} type="button" size="sm" variant="outline" aria-pressed={values[topic] === option} onClick={() => change(topic, option)} className={`h-auto min-h-12 justify-between gap-2 whitespace-normal rounded-lg px-3 py-2 text-left text-sm normal-case tracking-normal transition-colors ${values[topic] === option ? "border-primary bg-accent text-primary ring-1 ring-primary hover:bg-accent" : "bg-background hover:border-primary/40"}`}><span>{option}</span><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${values[topic] === option ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>{values[topic] === option && <Check className="h-3 w-3" />}</span></Button>)}</div></fieldset>;
   const field = (topic: string, label: string, placeholder: string) => <div className="min-w-0"><label htmlFor={`${formId}-form-${topic}`} className="mb-1.5 flex flex-wrap items-baseline gap-1.5 text-sm font-semibold">{label.replace(" (optional)", "")}{label.includes("(optional)") && <span className="text-xs font-normal text-muted-foreground">Optional</span>}</label><Input id={`${formId}-form-${topic}`} className="h-11 rounded-lg bg-card text-base" value={values[topic] ?? ""} maxLength={240} placeholder={placeholder} onChange={e => change(topic, e.target.value)} /></div>;
@@ -138,7 +154,7 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
       const currentBrief = formBrief(family, values);
       setBrief(currentBrief); void submit(currentBrief);
     }}>
-      <div className="flex items-center gap-3 border-b border-border px-4 py-3 sm:px-6"><img src={referenceDesigns[0]?.image} alt="Selected packaging reference" className="h-14 w-14 shrink-0 rounded-md bg-muted object-contain" /><div className="min-w-0"><h2 ref={heading} tabIndex={-1} className="text-lg font-semibold outline-none">Your packaging request</h2><p className="mt-0.5 break-words text-sm text-muted-foreground">{referenceDesigns.map(design => design.name).join(", ")}</p></div></div>
+      <div className="sticky top-[60px] z-10 flex items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-6"><img src={referenceDesigns[0]?.image} alt="Selected packaging reference" className="h-14 w-14 shrink-0 rounded-md bg-muted object-contain" /><div className="min-w-0"><h2 ref={heading} tabIndex={-1} className="text-base font-semibold outline-none">Your packaging request</h2><p className="mt-0.5 break-words text-sm text-muted-foreground">{referenceDesigns.map(design => design.name).join(", ")}</p></div></div>
       <fieldset disabled={busy} className="min-w-0">
         <section aria-label="Selected specifications" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border px-4 py-3 min-[380px]:grid-cols-2 sm:px-6">
           {([ ["format", "Packaging style", FORM_FORMATS[family]], ...(prefilled.printing ? [["printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"]]] : []), ...(prefilled.closure ? [["closure", "Closure", ["Heat seal", "Zipper", "Spout", "Not sure"]]] : []) ] as [string, string, string[]][]).map(([topic, label, options]) => <div key={topic}>{compactChoice(topic, label, options, true)}</div>)}
