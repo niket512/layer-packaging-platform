@@ -45,6 +45,9 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
   const savedId = useRef(crypto.randomUUID());
   const heading = useRef<HTMLHeadingElement>(null);
   const previousStep = useRef(step);
+  useEffect(() => {
+    setValues(previous => previous.format && !FORM_FORMATS[family].includes(previous.format) ? {} : previous);
+  }, [family]);
   useEffect(() => { trackJourney({ kind: "form_step", step: String(step + 1) }); }, [step]);
   const recordedFields = useRef(new Set<string>());
   useEffect(() => {
