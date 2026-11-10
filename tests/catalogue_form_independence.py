@@ -24,7 +24,7 @@ async def main():
    assert await dialog.get_by_role('combobox',name='Printing',exact=True).inner_text() == 'Multicolour'
    image=dialog.get_by_role('img',name='Selected packaging reference')
    assert await image.evaluate('(e)=>e.complete && e.naturalWidth > 0')
-   assert await dialog.get_by_text('6×4×2 Inch White Corrugated Mailer Box for E-Commerce Sellers',exact=True).count() == 1
+   assert await dialog.get_by_text('6x4x2 Inch White Corrugated Mailer Box for E-Commerce Sellers',exact=True).count() == 1
    await page.screenshot(path=f'/tmp/browser/mobile-catalogue/{width}-start.png')
    await dialog.get_by_label('Initial quantity',exact=True).fill('2200 pieces')
    await dialog.get_by_label('Delivery city',exact=True).fill('Pune')
