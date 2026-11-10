@@ -90,6 +90,9 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
   const detailLabels: Record<string, string> = { format: "Packaging style", quantity: "Quantity", printing: "Printing", material: "Material", closure: "Closure", delivery: "Delivery city", phone: "WhatsApp number" };
   const remainingDetails = ["format", "quantity", "printing", "material", "delivery", "phone"].filter(key => !(key === "phone" ? phone : values[key])?.trim());
   const addedDetails = ["format", "printing", "closure"].filter(key => values[key]?.trim());
+  useEffect(() => {
+    if (hasReference) { trackFunnel("brief_shown"); trackFunnel("contact_shown"); }
+  }, [hasReference]);
   const changeDelivery = (value: string) => {
     change("delivery", value);
     setBrief(b => {
