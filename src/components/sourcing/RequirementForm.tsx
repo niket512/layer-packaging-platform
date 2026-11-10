@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Check, ImagePlus, Loader2, X, MapPin, HelpCircle
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SourcingBrief } from "./SourcingBrief";
-import { FORM_FORMATS, FORM_STEPS, designFormPrefill, formBrief, formSubmission, type FormFamily } from "@/lib/sourcing-form";
+import { FORM_FORMATS, FORM_STEPS, applyDesignToForm, formBrief, formSubmission, type FormFamily } from "@/lib/sourcing-form";
 import type { PackagingDesign } from "./packaging-catalogue";
 import { validSourcingPhone } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -46,7 +46,7 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
   const heading = useRef<HTMLHeadingElement>(null);
   const previousStep = useRef(step);
   useEffect(() => {
-    setValues(previous => previous.format && !FORM_FORMATS[family].includes(previous.format) ? {} : previous);
+    setValues(previous => previous.format && !FORM_FORMATS[family].includes(previous.format) ? Object.fromEntries(Object.entries(previous).filter(([key]) => !["format", "wall", "closure", "material"].includes(key))) : previous);
   }, [family]);
   useEffect(() => { trackJourney({ kind: "form_step", step: String(step + 1) }); }, [step]);
   const recordedFields = useRef(new Set<string>());
@@ -67,12 +67,19 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
     if (form && form.getBoundingClientRect().top < 64) form.scrollIntoView({ block: "start", behavior: "smooth" });
   }, [step]);
   useEffect(() => {
-    const prefill = designFormPrefill(referenceDesigns);
+    const prefill = applyDesignToForm(family, values, referenceDesigns, step);
     if (!prefill) return;
     setFamily(prefill.family);
-    setValues(previous => ({ ...prefill.values, ...Object.fromEntries(Object.entries(previous).filter(([, value]) => value.trim())) }));
-    setStep(0);
+    setValues(prefill.values);
+    setStep(prefill.step);
+    if (prefill.step === 3) setBrief(previous => {
+      const refreshed = formBrief(prefill.family, prefill.values);
+      const updatedTopics = new Set(["format", ...Object.keys(prefill.values).filter(key => prefill.values[key] !== values[key])]);
+      return [...previous.filter(field => !updatedTopics.has(field.topic)), ...refreshed.filter(field => updatedTopics.has(field.topic))];
+    });
     setError("");
+    // Apply once per reference selection, not after each buyer edit or step change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [referenceDesigns, setFamily]);
   const change = (topic: string, value: string) => { onActive(); trackFormField(topic, Boolean(value.trim()), step); setValues(v => ({ ...v, [topic]: value })); };
   const choices = (topic: string, label: string, options: string[]) => <fieldset className="min-w-0"><legend className="mb-2 text-sm font-semibold">{label}</legend><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{options.map(option => <Button key={option} type="button" size="sm" variant="outline" aria-pressed={values[topic] === option} onClick={() => change(topic, option)} className={`h-auto min-h-12 justify-between gap-2 whitespace-normal rounded-lg px-3 py-2 text-left text-sm normal-case tracking-normal transition-colors ${values[topic] === option ? "border-primary bg-accent text-primary ring-1 ring-primary hover:bg-accent" : "bg-background hover:border-primary/40"}`}><span>{option}</span><span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${values[topic] === option ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>{values[topic] === option && <Check className="h-3 w-3" />}</span></Button>)}</div></fieldset>;

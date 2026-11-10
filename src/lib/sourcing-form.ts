@@ -13,6 +13,14 @@ export const FORM_STEPS = [
   { label: "Specs", topics: ["printing", "material", "wall", "closure", "finishing"] },
   { label: "Contact", topics: ["delivery", "phone", "notes"] },
 ] as const;
+export function applyDesignToForm(family: FormFamily, values: Record<string, string>, designs: PackagingDesign[], step: number) {
+  const prefill = designFormPrefill(designs);
+  if (!prefill) return null;
+  const retained = Object.fromEntries(Object.entries(values).filter(([key, value]) => value.trim() && (family === prefill.family || !["format", "wall", "closure", "material"].includes(key))));
+  const nextValues = { ...retained, ...prefill.values };
+  const nextStep = nextValues.format ? (step === 0 ? 1 : step) : 0;
+  return { family: prefill.family, values: nextValues, step: nextStep };
+}
 export function designFormPrefill(designs: PackagingDesign[]): { family: FormFamily; values: Record<string, string> } | null {
   const first = designs[0];
   if (!first) return null;
