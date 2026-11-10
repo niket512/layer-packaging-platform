@@ -1,4 +1,5 @@
 # Manufacturer network
+- [ ] Refine catalogue request on phones with readable editable choices, full-width quote action and accessible return to designs; verify phone and desktop entry.
 - [x] Combine catalogue requirements and contact into one editable view; phone/desktop checks verified prefilled edits, all inputs and no intermediate review; eight tests passed.
 - [x] Add distinct catalogue form separating prefilled attributes from buyer inputs; verified phone/desktop entry, retained quantity and final review/contact; eight tests passed.
 - [x] Keep design requests over the catalogue without navigation; phone/desktop checks verified contact access and retained details after returning to designs; eight regression tests passed.
