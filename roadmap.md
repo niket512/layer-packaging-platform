@@ -1,5 +1,5 @@
 # Manufacturer network
-- [ ] Connect pouch/box search destinations to selected guided form and synchronized catalogue; verify defaults, family changes and design prefill.
+- [x] Connect pouch/box search destinations to selected guided form and synchronized catalogue; verified five entry links, family changes, pouch form progress, phone layout and eight tests.
 - [x] Add full visit-to-enquiry funnel, separate form/chat paths, design browsing and selectable drop-off sessions to Admin Chats; verified real admin data, today's filter, session drill-down, phone layout and 12 counting tests.
 - [x] Add private per-session catalogue positions, click timeline, form field progress and last observed action; verified saved journey in authenticated admin UI and desktop/phone layouts.
 - [x] Improve request-form hierarchy, choices and contact layout; check all four steps on phone and desktop.
