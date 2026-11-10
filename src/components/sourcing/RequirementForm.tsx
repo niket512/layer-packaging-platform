@@ -90,6 +90,9 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
   const detailLabels: Record<string, string> = { format: "Packaging style", quantity: "Quantity", printing: "Printing", material: "Material", closure: "Closure", delivery: "Delivery city", phone: "WhatsApp number" };
   const remainingDetails = ["format", "quantity", "printing", "material", "delivery", "phone"].filter(key => !(key === "phone" ? phone : values[key])?.trim());
   const addedDetails = ["format", "printing", "closure"].filter(key => values[key]?.trim());
+  useEffect(() => {
+    if (hasReference) { trackFunnel("brief_shown"); trackFunnel("contact_shown"); }
+  }, [hasReference]);
   const changeDelivery = (value: string) => {
     change("delivery", value);
     setBrief(b => {
@@ -103,32 +106,33 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
     if (step === 2) { setBrief(formBrief(family, values)); trackFunnel("brief_shown"); trackFunnel("contact_shown"); }
     setStep(s => Math.min(3, s + 1));
   };
-  const submit = async () => {
+  const submit = async (submittedBrief = brief) => {
     if (busy) return;
     if (!validSourcingPhone(phone)) { trackJourney({ kind: "form_error", step: "4", reason: "phone_invalid" }); setError("Please enter a valid contact number, including the country code if outside India."); return; }
     const details = [notes, reference].filter(Boolean).join("\n\n");
-    const payload = formSubmission(brief, phone, details, allImages);
+    const payload = formSubmission(submittedBrief, phone, details, allImages);
     if (!payload) return;
     setBusy(true); setError(""); trackFunnel("contact_submitted");
     try {
       const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: savedId.current });
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
       trackFunnel("request_saved"); window.__lovableEvents?.track?.("project.sourcing_request_submitted", { channel: "form" }); void flushVisitorTracking();
-      await syncSourcingChat({ id: id.current, title: "Guided packaging request", brief, submitted: true, submissionId: savedId.current, phone, turns: [{ query: payload.requirement, matches: [], images: allImages }] }).catch(() => {});
-      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: id.current, phone, brief })); } catch { /* Saved enquiry remains available. */ }
+      await syncSourcingChat({ id: id.current, title: "Guided packaging request", brief: submittedBrief, submitted: true, submissionId: savedId.current, phone, turns: [{ query: payload.requirement, matches: [], images: allImages }] }).catch(() => {});
+      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: id.current, phone, brief: submittedBrief })); } catch { /* Saved enquiry remains available. */ }
       navigate("/sourcing/thank-you");
     } catch (e) { trackJourney({ kind: "form_error", step: "4", reason: "save_failed" }); setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setBusy(false); }
   };
   const presets = (topic: string, options: string[]) => <div className="mt-2 flex flex-wrap gap-2" aria-label={topic === "quantity" ? "Suggested quantities" : "Example dimensions"}>{options.map(value => <Button key={value} type="button" variant="outline" size="sm" aria-pressed={values[topic] === value} onClick={() => change(topic, value)} className={`h-11 rounded-full px-3 text-xs normal-case tracking-normal ${values[topic] === value ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>{value}</Button>)}</div>;
-  if (hasReference && step !== 3) {
+  if (hasReference) {
     const prefilled = designFormPrefill(referenceDesigns)?.values ?? {};
     return <form aria-label="Packaging requirement form" className="mt-3 overflow-hidden rounded-lg border border-border bg-card text-left" onSubmit={event => {
       event.preventDefault();
       if (!values.format) { setError("Choose a packaging style, or select Not sure."); trackJourney({ kind: "form_error", step: "1", reason: "format_required" }); return; }
-      setError(""); setBrief(formBrief(family, values)); setStep(3); trackFunnel("brief_shown"); trackFunnel("contact_shown");
+      const currentBrief = formBrief(family, values);
+      setBrief(currentBrief); void submit(currentBrief);
     }}>
-      <div className="border-b border-border px-4 py-4 sm:px-7 sm:py-5"><div className="flex items-center justify-between gap-3"><h2 ref={heading} tabIndex={-1} className="text-lg font-semibold outline-none sm:text-xl">Your selected packaging</h2><span className="shrink-0 text-xs text-muted-foreground">Details → Review</span></div><div className="mt-3 flex items-center gap-3 sm:gap-4"><img src={referenceDesigns[0]?.image} alt="Selected packaging reference" className="h-16 w-16 shrink-0 rounded-lg bg-muted object-contain sm:h-24 sm:w-24" /><p className="min-w-0 break-words text-sm font-semibold sm:text-base">{referenceDesigns.map(design => design.name).join(", ")}</p></div></div>
+      <div className="border-b border-border px-4 py-4 sm:px-7 sm:py-5"><h2 ref={heading} tabIndex={-1} className="text-lg font-semibold outline-none sm:text-xl">Your packaging request</h2><div className="mt-3 flex items-center gap-3 sm:gap-4"><img src={referenceDesigns[0]?.image} alt="Selected packaging reference" className="h-16 w-16 shrink-0 rounded-lg bg-muted object-contain sm:h-24 sm:w-24" /><p className="min-w-0 break-words text-sm font-semibold sm:text-base">{referenceDesigns.map(design => design.name).join(", ")}</p></div></div>
       <fieldset disabled={busy} className="grid min-w-0 sm:grid-cols-[0.85fr_1.15fr]">
         <section aria-label="Already added" className="min-w-0 border-b border-border bg-muted/40 px-4 py-3 sm:border-b-0 sm:border-r sm:px-6 sm:py-5"><h3 className="flex items-center gap-2 text-sm font-semibold sm:text-base"><Check className="h-4 w-4 text-primary" />Already added</h3><dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 sm:grid-cols-1 sm:gap-y-4"><div><dt className="text-xs text-muted-foreground">Packaging type</dt><dd className="mt-1 text-sm font-medium">{family === "boxes" ? "Boxes" : "Pouches & sachets"}</dd></div>{Object.keys(prefilled).map(key => <div key={key}><dt className="text-xs text-muted-foreground">{detailLabels[key]}</dt><dd className="mt-1 text-sm font-medium">{values[key]}</dd></div>)}<div><dt className="text-xs text-muted-foreground">Design reference</dt><dd className="mt-1 text-sm font-medium">Image attached</dd></div></dl>
           <details className="mt-3 border-t border-border pt-1 sm:mt-5 sm:pt-3"><summary className="flex min-h-11 cursor-pointer items-center text-xs font-medium text-primary sm:text-sm">Edit added details</summary><div className="space-y-4 pt-3">{choices("format", "Packaging style", FORM_FORMATS[family])}{prefilled.printing && choices("printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"])}{prefilled.closure && choices("closure", "Closure", ["Heat seal", "Zipper", "Spout", "Not sure"])}</div></details>
@@ -139,10 +143,14 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
           {!prefilled.printing && choices("printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"])}
           {choices("material", "Material preference", family === "boxes" ? ["Kraft", "White-top", "Not sure"] : ["Mono-material", "Multilayer", "Paper-based", "Not sure"])}
           <details className="border-t border-border pt-3"><summary className="min-h-11 cursor-pointer text-sm font-medium">Dimensions & extra specifications <span className="text-xs text-muted-foreground">Optional</span></summary><div className="space-y-4 pt-3">{field("size", family === "boxes" ? "Box dimensions (optional)" : "Dimensions or fill (optional)", family === "boxes" ? "Length × width × height in cm" : "e.g. 250 g or width × height in cm")}{family === "boxes" ? choices("wall", "Corrugated wall", ["3-ply", "5-ply", "7-ply", "Not sure"]) : !prefilled.closure && choices("closure", "Closure", ["Heat seal", "Zipper", "Spout", "Not sure"])}{choices("finishing", "Finishing preference", ["Matte", "Gloss", "No preference"])}</div></details>
+          <div className="space-y-4 border-t border-border pt-4"><h3 className="text-sm font-semibold">Quote updates</h3>{field("delivery", "Delivery city", "e.g. Pune")}
+            <div><label htmlFor="form-phone" className="mb-1.5 block text-sm font-semibold">WhatsApp number</label><Input id="form-phone" type="tel" autoComplete="tel" inputMode="tel" className="h-12 rounded-lg text-base" placeholder="+91 98765 43210" maxLength={25} value={phone} onChange={event => { setPhone(event.target.value); trackFormField("phone", Boolean(event.target.value.trim()), step); }} required /><p className="mt-2 text-xs text-muted-foreground">Your quotes will be sent on WhatsApp.</p></div>
+            <details><summary className="min-h-11 cursor-pointer text-sm font-medium">Anything else? <span className="text-xs text-muted-foreground">Optional</span></summary><textarea id="form-notes" value={notes} onChange={event => setNotes(event.target.value)} maxLength={1500} rows={2} className="w-full rounded-lg border border-input bg-card px-3 py-2 text-base" placeholder="Any other requirements" /></details>
+          </div>
         </section>
       </fieldset>
       {error && <p role="alert" className="px-4 pb-4 text-sm text-destructive">{error}</p>}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-4 sm:px-6"><span className="text-xs text-muted-foreground">Next: review & WhatsApp</span><Button type="submit" className="h-12 rounded-full px-5">Review brief<ArrowRight /></Button></div>
+      <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-3 border-t border-border bg-card px-4 py-4 sm:px-6"><span className="text-xs text-muted-foreground">Free request · No commission</span><Button type="submit" disabled={busy} className="h-12 rounded-full px-5">{busy ? <Loader2 className="animate-spin" /> : <>Get Free Quotes<ArrowRight /></>}</Button></div>
     </form>;
   }
   return <form aria-label="Packaging requirement form" onChange={e => { const target = e.target; if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) { const fieldName = target.id.replace(/^form-/, ""); trackFormField(fieldName, Boolean(target.value.trim()), step); } }} onSubmit={e => { e.preventDefault(); if (step === 3) void submit(); else advance(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
