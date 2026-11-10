@@ -105,6 +105,9 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     return () => { document.body.style.overflow = overflow; window.removeEventListener("keydown", dismiss); if (before instanceof HTMLElement) before.focus({ preventScroll: true }); };
   }, [designFormOpen]);
   const [formDesigns, setFormDesigns] = useState<PackagingDesign[]>([]);
+  const [designFamily, setDesignFamily] = useState(landingFamily);
+  const [designReference, setDesignReference] = useState("");
+  const [designPhotos, setDesignPhotos] = useState<string[]>([]);
   const landing = category ? LANDINGS[category] : undefined;
   const navigate = useNavigate();
   const [projects, setProjects] = useState<SourcingProject[]>(() => {
@@ -288,11 +291,13 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     <CorrugatedDesigns selectedFamily={requirementMode === "form" ? packagingFamily : undefined} onFamilyChange={requirementMode === "form" ? setPackagingFamily : undefined} onUseDesign={(prefill, designs) => {
       if (requirementMode === "form") {
         setFormDesigns(designs);
+        setDesignFamily(designs[0]?.family ?? packagingFamily);
+        setDesignReference(prefill);
+        setDesignPhotos([]);
         setFormActive(true);
         setDesignFormOpen(true);
-        setQuery(prefill);
         setError("");
-        void designReferenceImage(designs).then(image => setPhotos([image])).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
+        void designReferenceImage(designs).then(image => setDesignPhotos([image])).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
         return;
       }
       setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
@@ -383,12 +388,14 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 )}
               </div>
             )}
-            {requirementMode === "form" ? <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} onClick={event => { if (designFormOpen && event.target === event.currentTarget) setDesignFormOpen(false); }} className={designFormOpen ? "fixed inset-0 z-50 flex justify-end bg-foreground/20 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200" : ""}>
-              <div className={designFormOpen ? "h-dvh w-full min-w-0 overflow-y-auto overscroll-contain bg-card text-left shadow-xl motion-safe:animate-in motion-safe:slide-in-from-right motion-safe:duration-300 sm:max-w-[560px] [&>form]:mt-0 [&>form]:rounded-none [&>form]:border-0" : ""}>
-                {designFormOpen && <div className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-card px-4 py-2"><h2 className="text-base font-semibold sm:text-lg">Request quotes</h2><Button type="button" variant="ghost" size="sm" className="h-11 rounded-full px-3" onClick={() => setDesignFormOpen(false)}><ArrowLeft />Back to designs</Button></div>}
-                <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} reference={query} referencePhotos={photos} referenceDesigns={formDesigns} onActive={() => setFormActive(true)} />
+            {requirementMode === "form" ? <>
+              <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} reference={query} referencePhotos={photos} referenceDesigns={[]} onActive={() => setFormActive(true)} />
+              <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} onClick={event => { if (designFormOpen && event.target === event.currentTarget) setDesignFormOpen(false); }} className={designFormOpen ? "fixed inset-0 z-50 flex justify-end bg-foreground/20 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200" : "hidden"}>
+              <div className="h-dvh w-full min-w-0 overflow-y-auto overscroll-contain bg-card text-left shadow-xl motion-safe:animate-in motion-safe:slide-in-from-right motion-safe:duration-300 sm:max-w-[560px] [&>form]:mt-0 [&>form]:rounded-none [&>form]:border-0">
+                <div className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-card px-4 py-2"><h2 className="text-base font-semibold sm:text-lg">Request quotes</h2><Button type="button" variant="ghost" size="sm" className="h-11 rounded-full px-3" onClick={() => setDesignFormOpen(false)}><ArrowLeft />Back to designs</Button></div>
+                {formDesigns.length > 0 && <RequirementForm family={designFamily} onFamilyChange={setDesignFamily} reference={designReference} referencePhotos={designPhotos} referenceDesigns={formDesigns} onActive={() => setFormActive(true)} />}
               </div>
-            </div> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
+            </div></> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
             {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · No commission · Confidential designs</p>}
             </div></section>
             <TrustStory />
