@@ -27,7 +27,7 @@ export async function sendMessage(_history: RequestMessage[], input: RequestInpu
 export const REQUEST_KEY = "snaplogo.request.preview.v1";
 export type RequestState = { messages: RequestMessage[]; brief: RequestBrief; draft: string; field?: BriefField; unclear: number; step: number };
 export function messageBase(role: BaseMessage["role"]): BaseMessage { return { id: crypto.randomUUID(), role, createdAt: Date.now(), state: "sent" }; }
-export function freshRequest(): RequestState { return { messages: [{ ...messageBase("assistant"), kind: "chips", field: "product", text: "Tell me what you’re packaging. I’ll match you with manufacturers who quote within 4 hours." }], brief: {}, draft: "", field: "product", unclear: 0, step: 0 }; }
+export function freshRequest(): RequestState { return { messages: [{ ...messageBase("assistant"), kind: "chips", field: "product", text: "Tell me what you’re packaging. I’ll match you with manufacturers who quote within 6 hours." }], brief: {}, draft: "", field: "product", unclear: 0, step: 0 }; }
 export function restoreRequest(): RequestState {
   try {
     const value = JSON.parse(localStorage.getItem(REQUEST_KEY) ?? "null") as RequestState | null;
@@ -45,6 +45,6 @@ export function requestReducer(state: RequestState, action: RequestAction): Requ
     case "reply": return { ...state, ...action.reply, messages: [...state.messages, action.reply.complete ? { ...messageBase("assistant"), kind: "text", text: action.reply.text } : { ...messageBase("assistant"), kind: "chips", text: action.reply.text, field: action.reply.field ?? "product", callback: action.reply.callback }, ...(action.reply.complete ? [{ ...messageBase("assistant"), kind: "summary" as const, brief: action.reply.brief }] : [])] };
     case "edit": { const brief = { ...state.brief }; delete brief[action.field]; return { ...state, brief, field: action.field, step: 0, messages: [...state.messages, { ...messageBase("assistant"), kind: "chips", text: questions[action.field], field: action.field }] }; }
     case "step": return { ...state, step: action.step };
-    case "matched": return { ...state, step: 2, messages: state.messages.map(m => m.id === action.id && m.kind === "status" ? { ...m, complete: true, text: "3 manufacturers matched. Quotes arrive within 4 hours." } : m) };
+    case "matched": return { ...state, step: 2, messages: state.messages.map(m => m.id === action.id && m.kind === "status" ? { ...m, complete: true, text: "3 manufacturers matched. Quotes arrive within 6 hours." } : m) };
   }
 }

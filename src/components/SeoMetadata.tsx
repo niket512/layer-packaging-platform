@@ -3,8 +3,8 @@ import { useLocation } from "react-router-dom";
 import articles from "@/data/packaging-articles.json";
 
 const BASE_URL = "https://snaplogo.in";
-const SITE_TITLE = "Snaplogo — Vetted Packaging Manufacturers, Quotes in 4 Hours";
-const SITE_DESCRIPTION = "Get quotes from 40+ vetted Indian manufacturers for corrugated boxes, sachets and stand-up pouches. Share your requirement — quotes from multiple manufacturers within 4 hours.";
+const SITE_TITLE = "Snaplogo — Vetted Packaging Manufacturers, Quotes in 6 Hours";
+const SITE_DESCRIPTION = "Get quotes from 40+ vetted Indian manufacturers for corrugated boxes, sachets and stand-up pouches. Share your requirement — quotes from multiple manufacturers within 6 hours.";
 const pages: Record<string, { title: string; description: string; noindex?: boolean }> = {
   "/request-form": { title: `Chat Request | ${SITE_TITLE}`, description: SITE_DESCRIPTION, noindex: true },
   "/request": { title: "Chat Preview | Snaplogo", description: "Internal packaging chat UI preview with simulated manufacturer matching.", noindex: true },
@@ -24,24 +24,24 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
     description: "Tell Snaplogo what packaging you need — boxes, pouches or sachets — and receive quotations from vetted Indian manufacturers.",
   },
   "/sourcing/corrugated-boxes": {
-    title: "Corrugated Box Manufacturers — Quotes in 4 Hours | Snaplogo",
-    description: "Get matched with vetted corrugated box manufacturers for your required box size, board grade, printing and order quantity. Quotes within 4 hours.",
+    title: "Corrugated Box Manufacturers — Quotes in 6 Hours | Snaplogo",
+    description: "Get matched with vetted corrugated box manufacturers for your required box size, board grade, printing and order quantity. Quotes within 6 hours.",
   },
   "/sourcing/flexible-pouches": {
-    title: "Flexible Pouch Manufacturers — Quotes in 4 Hours | Snaplogo",
-    description: "Source custom printed stand-up pouches, zipper pouches and other flexible packaging formats from vetted manufacturers. Quotes within 4 hours.",
+    title: "Flexible Pouch Manufacturers — Quotes in 6 Hours | Snaplogo",
+    description: "Source custom printed stand-up pouches, zipper pouches and other flexible packaging formats from vetted manufacturers. Quotes within 6 hours.",
   },
   "/sourcing/sachets": {
-    title: "Sachet & Stick Pack Manufacturers — Quotes in 4 Hours | Snaplogo",
-    description: "Source custom printed sachets, stick packs and single-serve flexible packaging from vetted manufacturers. Quotes within 4 hours.",
+    title: "Sachet & Stick Pack Manufacturers — Quotes in 6 Hours | Snaplogo",
+    description: "Source custom printed sachets, stick packs and single-serve flexible packaging from vetted manufacturers. Quotes within 6 hours.",
   },
   "/sourcing/cosmetic-packaging": {
-    title: "Cosmetic Packaging Manufacturers — Quotes in 4 Hours | Snaplogo",
-    description: "Source bottles, jars, tubes and boxes for skincare and beauty products from vetted manufacturers. Quotes within 4 hours.",
+    title: "Cosmetic Packaging Manufacturers — Quotes in 6 Hours | Snaplogo",
+    description: "Source bottles, jars, tubes and boxes for skincare and beauty products from vetted manufacturers. Quotes within 6 hours.",
   },
   "/sourcing/mailer-boxes": {
-    title: "Mailer Box Manufacturers — Quotes in 4 Hours | Snaplogo",
-    description: "Get matched with vetted manufacturers for custom printed mailer and e-commerce shipping boxes. Quotes within 4 hours.",
+    title: "Mailer Box Manufacturers — Quotes in 6 Hours | Snaplogo",
+    description: "Get matched with vetted manufacturers for custom printed mailer and e-commerce shipping boxes. Quotes within 6 hours.",
   },
   "/sourcing/thank-you": {
     title: `Request Received | ${SITE_TITLE}`,
