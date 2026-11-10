@@ -12,8 +12,10 @@ import { VisitorAnalytics } from "@/components/sourcing/VisitorAnalytics";
 import { ChatAnalytics } from "@/components/sourcing/ChatAnalytics";
 import { chatStats } from "@/lib/chatAnalytics";
 import { inAdminDateRange } from "@/lib/admin-date-range";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ADMIN_SOURCES, matchesAdminSource } from "@/lib/admin-source-filter";
 
-type Chat = { id: string; title: string; status: string; contact: string | null; updated_at: string; created_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; requirement?: string; images?: string[]; session_id?: string | null; cataloguesViewed?: number; designsUsed?: number };
+type Chat = { id: string; title: string; status: string; contact: string | null; updated_at: string; created_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; requirement?: string; images?: string[]; session_id?: string | null; cataloguesViewed?: number; designsUsed?: number; source?: string };
 const date = (value: string) => new Date(value).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 export default function AdminChats() {
@@ -28,6 +30,7 @@ export default function AdminChats() {
   const [loaded, setLoaded] = useState(false);
   const [lastUpdated, setLastUpdated] = useState("");
   const [dateRange, setDateRange] = useState({ from: "", to: "" });
+  const [source, setSource] = useState("all");
 
   const refresh = async () => {
     if (!isAdmin) return;
@@ -51,14 +54,14 @@ export default function AdminChats() {
       const linked = new Set(rows.map(row => row.submission_id));
       // Link each chat to its visitor session so catalogue browsing shows up next to the conversation.
       const sessionIds = [...new Set(rows.map(row => row.session_id).filter((id): id is string => !!id))];
-      const behaviour = new Map<string, { viewed: number; used: number }>();
+      const behaviour = new Map<string, { viewed: number; used: number; source: string }>();
       for (let i = 0; i < sessionIds.length; i += 100) {
-        const result = await supabase.from("visitor_behaviour").select("id,viewed_designs,selected_designs").in("id", sessionIds.slice(i, i + 100));
+        const result = await supabase.from("visitor_behaviour").select("id,viewed_designs,selected_designs,source").in("id", sessionIds.slice(i, i + 100));
         if (result.error) throw result.error;
-        (result.data ?? []).forEach(row => behaviour.set(row.id, { viewed: row.viewed_designs?.length ?? 0, used: row.selected_designs?.length ?? 0 }));
+        (result.data ?? []).forEach(row => behaviour.set(row.id, { viewed: row.viewed_designs?.length ?? 0, used: row.selected_designs?.length ?? 0, source: row.source }));
       }
       const combined: Chat[] = [
-        ...rows.map(row => ({ ...row, transcript: Array.isArray(row.transcript) ? row.transcript as unknown as SourcingTurn[] : [], brief: Array.isArray(row.brief) ? row.brief as unknown as SourcingBriefField[] : [], cataloguesViewed: row.session_id ? behaviour.get(row.session_id)?.viewed : undefined, designsUsed: row.session_id ? behaviour.get(row.session_id)?.used : undefined })),
+        ...rows.map(row => ({ ...row, transcript: Array.isArray(row.transcript) ? row.transcript as unknown as SourcingTurn[] : [], brief: Array.isArray(row.brief) ? row.brief as unknown as SourcingBriefField[] : [], source: row.session_id ? behaviour.get(row.session_id)?.source : undefined, cataloguesViewed: row.session_id ? behaviour.get(row.session_id)?.viewed : undefined, designsUsed: row.session_id ? behaviour.get(row.session_id)?.used : undefined })),
         ...submissions.filter(row => !linked.has(row.id)).map(row => ({ id: row.id, title: row.requirement.split("\n").find(line => line.trim() && !line.startsWith("Sourcing brief"))?.slice(0, 120) ?? "Submitted request", status: "submitted", contact: row.contact, updated_at: row.created_at, created_at: row.created_at, transcript: [], brief: [], requirement: row.requirement, images: row.images })),
       ];
       setChats(combined.sort((a, b) => b.updated_at.localeCompare(a.updated_at)));
@@ -78,13 +81,14 @@ export default function AdminChats() {
   if (!user) return <AppShell><SignInBox title="Sign in to view chats" /></AppShell>;
   if (!isAdmin) return <AppShell user={user}><div className="py-12 text-center"><ShieldCheck className="mx-auto mb-4 text-primary" /><h1 className="text-2xl font-semibold">Administrator access required</h1><p className="mt-2 text-muted-foreground">Your account does not have permission to view customer chats.</p></div></AppShell>;
 
-  const datedChats = chats.filter(chat => inAdminDateRange(chat.created_at, dateRange));
+  const datedChats = chats.filter(chat => inAdminDateRange(chat.created_at, dateRange) && matchesAdminSource(chat.source, source));
   const visible = datedChats.filter(chat => (filter === "all" || chat.status === filter) && `${chat.title} ${chat.contact ?? ""} ${chat.requirement ?? ""} ${chat.transcript.map(t => t.query).join(" ")}`.toLowerCase().includes(search.toLowerCase()));
   const selected = visible.find(chat => chat.id === selectedId);
   return <AppShell user={user} isAdmin>
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><p className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase text-primary"><ShieldCheck className="h-3.5 w-3.5" />Private workspace</p><h1 className="text-3xl font-bold">Chats <span className="text-lg font-normal text-muted-foreground">{chats.length}</span></h1></div><div className="flex items-center gap-3"><span className="text-xs text-muted-foreground">{lastUpdated && `Updated ${lastUpdated}`}</span><Button variant="outline" size="icon" onClick={() => void refresh()} disabled={refreshing} aria-label="Refresh chats" title="Refresh chats"><RefreshCw className={refreshing ? "animate-spin" : ""} /></Button></div></div>
     {error && <p role="alert" className="mb-3 text-sm text-destructive">{error}</p>}
     <div aria-label="Report date range" className="mb-5 flex flex-wrap items-end gap-3">
+      <div className="w-full sm:w-52"><label className="mb-1 block text-sm font-medium" htmlFor="admin-source">Visitor source</label><Select value={source} onValueChange={value => { setSource(value); setSelectedId(null); }}><SelectTrigger id="admin-source" aria-label="Visitor source"><SelectValue /></SelectTrigger><SelectContent>{ADMIN_SOURCES.map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent></Select></div>
       <div><label htmlFor="admin-date-from" className="mb-1 block text-sm font-medium">From date (IST)</label><Input id="admin-date-from" type="date" value={dateRange.from} max={dateRange.to || undefined} onChange={e => { setDateRange(range => ({ ...range, from: e.target.value })); setSelectedId(null); }} /></div>
       <div><label htmlFor="admin-date-to" className="mb-1 block text-sm font-medium">To date (IST)</label><Input id="admin-date-to" type="date" value={dateRange.to} min={dateRange.from || undefined} onChange={e => { setDateRange(range => ({ ...range, to: e.target.value })); setSelectedId(null); }} /></div>
       <Button variant="outline" onClick={() => { const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }); setDateRange({ from: today, to: today }); setSelectedId(null); }}>Today</Button>
@@ -93,7 +97,7 @@ export default function AdminChats() {
     </div>
     {dateRange.from && dateRange.to && dateRange.from > dateRange.to && <p role="alert" className="mb-3 text-sm text-destructive">Choose an end date on or after the start date.</p>}
     <ChatAnalytics chats={datedChats} />
-    <VisitorAnalytics dateRange={dateRange} sessionId={chats.find(chat => chat.id === selectedId)?.session_id} />
+    <VisitorAnalytics dateRange={dateRange} sourceFilter={source} onSourceChange={value => { setSource(value); setSelectedId(null); }} sessionId={chats.find(chat => chat.id === selectedId)?.session_id} />
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><Tabs value={filter} onValueChange={setFilter}><TabsList><TabsTrigger value="all">All</TabsTrigger><TabsTrigger value="ongoing">Ongoing</TabsTrigger><TabsTrigger value="submitted">Submitted</TabsTrigger></TabsList></Tabs><div className="relative w-full sm:w-72"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search chats or contact…" aria-label="Search chats" className="pl-9" /></div></div>
     <div className="grid min-h-[600px] overflow-hidden rounded-lg border border-border bg-background md:grid-cols-[320px_minmax(0,1fr)]">
       <aside aria-label="Chat list" className={`max-h-[750px] overflow-y-auto border-border md:border-r ${selected ? "hidden md:block" : ""}`}>
