@@ -4,7 +4,7 @@ import { RequirementForm } from "@/components/sourcing/RequirementForm";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { sourcingLandingFamily } from "@/lib/sourcing-landing";
-import { ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
+import { ArrowLeft, ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
 import { designReferenceImage } from "@/components/sourcing/design-reference-image";
@@ -383,9 +383,9 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 )}
               </div>
             )}
-            {requirementMode === "form" ? <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} className={designFormOpen ? "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-muted/80 p-3 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200 sm:p-6 sm:pt-12" : ""}>
-              <div className={designFormOpen ? "w-full max-w-[820px] text-left" : ""}>
-                {designFormOpen && <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-semibold">Request quotes</h2><Button type="button" variant="outline" size="sm" className="h-11 rounded-full" onClick={() => setDesignFormOpen(false)}><X />Back to designs</Button></div>}
+            {requirementMode === "form" ? <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} className={designFormOpen ? "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-card motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200 sm:bg-muted/80 sm:p-6 sm:pt-12 sm:backdrop-blur-sm" : ""}>
+              <div className={designFormOpen ? "w-full min-w-0 max-w-[820px] text-left" : ""}>
+                {designFormOpen && <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-card px-4 py-2 sm:static sm:border-0 sm:bg-transparent sm:p-0"><h2 className="text-base font-semibold sm:text-lg">Request quotes</h2><Button type="button" variant="ghost" size="sm" className="h-11 rounded-full px-3" onClick={() => setDesignFormOpen(false)}><ArrowLeft />Back to designs</Button></div>}
                 <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} reference={query} referencePhotos={photos} referenceDesigns={formDesigns} onActive={() => setFormActive(true)} />
               </div>
             </div> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
