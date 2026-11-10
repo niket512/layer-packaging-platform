@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Check, ImagePlus, Loader2, X, MapPin, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SourcingBrief } from "./SourcingBrief";
 import { FORM_FORMATS, FORM_STEPS, applyDesignToForm, designFormPrefill, formBrief, formSubmission, type FormFamily } from "@/lib/sourcing-form";
 import type { PackagingDesign } from "./packaging-catalogue";
@@ -133,12 +134,11 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
       setBrief(currentBrief); void submit(currentBrief);
     }}>
       <div className="border-b border-border px-4 py-4 sm:px-7 sm:py-5"><h2 ref={heading} tabIndex={-1} className="text-lg font-semibold outline-none sm:text-xl">Your packaging request</h2><div className="mt-3 flex items-center gap-3 sm:gap-4"><img src={referenceDesigns[0]?.image} alt="Selected packaging reference" className="h-16 w-16 shrink-0 rounded-lg bg-muted object-contain sm:h-24 sm:w-24" /><p className="min-w-0 break-words text-sm font-semibold sm:text-base">{referenceDesigns.map(design => design.name).join(", ")}</p></div></div>
-      <fieldset disabled={busy} className="grid min-w-0 sm:grid-cols-[0.85fr_1.15fr]">
-        <section aria-label="Already added" className="min-w-0 border-b border-border bg-muted/40 px-4 py-3 sm:border-b-0 sm:border-r sm:px-6 sm:py-5"><h3 className="flex items-center gap-2 text-sm font-semibold sm:text-base"><Check className="h-4 w-4 text-primary" />Already added</h3><dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 sm:grid-cols-1 sm:gap-y-4"><div><dt className="text-xs text-muted-foreground">Packaging type</dt><dd className="mt-1 text-sm font-medium">{family === "boxes" ? "Boxes" : "Pouches & sachets"}</dd></div>{Object.keys(prefilled).map(key => <div key={key}><dt className="text-xs text-muted-foreground">{detailLabels[key]}</dt><dd className="mt-1 text-sm font-medium">{values[key]}</dd></div>)}<div><dt className="text-xs text-muted-foreground">Design reference</dt><dd className="mt-1 text-sm font-medium">Image attached</dd></div></dl>
-          <details className="mt-3 border-t border-border pt-1 sm:mt-5 sm:pt-3"><summary className="flex min-h-11 cursor-pointer items-center text-xs font-medium text-primary sm:text-sm">Edit added details</summary><div className="space-y-4 pt-3">{choices("format", "Packaging style", FORM_FORMATS[family])}{prefilled.printing && choices("printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"])}{prefilled.closure && choices("closure", "Closure", ["Heat seal", "Zipper", "Spout", "Not sure"])}</div></details>
+      <fieldset disabled={busy} className="min-w-0">
+        <section aria-label="Selected specifications" className="grid min-w-0 grid-cols-2 gap-3 border-b border-border px-4 py-4 sm:px-6">
+          {([ ["format", "Packaging style", FORM_FORMATS[family]], ...(prefilled.printing ? [["printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"]]] : []), ...(prefilled.closure ? [["closure", "Closure", ["Heat seal", "Zipper", "Spout", "Not sure"]]] : []) ] as [string, string, string[]][]).map(([topic, label, options]) => <div key={topic} className="min-w-0"><label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor={`selected-${topic}`}>{label}</label><Select value={values[topic] ?? ""} onValueChange={value => change(topic, value)}><SelectTrigger id={`selected-${topic}`} aria-label={label} className="h-11 bg-card"><SelectValue placeholder="Select style" /></SelectTrigger><SelectContent>{options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></div>)}
         </section>
-        <section aria-label="Details from you" className="min-w-0 space-y-5 px-4 py-5 sm:px-6"><div><h3 className="text-lg font-semibold">A few details from you</h3><p className="mt-1 text-sm text-muted-foreground">{prefilled.format ? "Packaging style is already added." : "Confirm the style for this reference."}</p></div>
-          {!prefilled.format && choices("format", "Packaging style", FORM_FORMATS[family])}
+        <section aria-label="Details from you" className="min-w-0 space-y-5 px-4 py-5 sm:px-6"><h3 className="text-lg font-semibold">A few details from you</h3>
           <div>{field("quantity", "Initial quantity", "e.g. 2,000 pieces")}{presets("quantity", ["500 pieces", "1,000 pieces", "5,000 pieces"])}</div>
           {!prefilled.printing && choices("printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"])}
           {choices("material", "Material preference", family === "boxes" ? ["Kraft", "White-top", "Not sure"] : ["Mono-material", "Multilayer", "Paper-based", "Not sure"])}
