@@ -7,7 +7,7 @@ const WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("Hi Sna
 
 const principles = [
   { icon: Users, title: "A sourcing team, not a chatbot", desc: "Real people review every brief and match it with the right manufacturers." },
-  { icon: ShieldCheck, title: "100+ vetted manufacturers", desc: "D2C-friendly factories we have checked and keep working with." },
+  { icon: ShieldCheck, title: "40+ vetted manufacturers", desc: "D2C-friendly factories we have checked and keep working with." },
   { icon: Clock, title: "Quotes within 4 hours", desc: "You hear back on WhatsApp with manufacturer details and quotations." },
 ];
 

@@ -4,7 +4,7 @@ import articles from "@/data/packaging-articles.json";
 
 const BASE_URL = "https://snaplogo.in";
 const SITE_TITLE = "Snaplogo — Vetted Packaging Manufacturers, Quotes in 4 Hours";
-const SITE_DESCRIPTION = "Get quotes from 100+ vetted Indian manufacturers for corrugated boxes, sachets and stand-up pouches. Share your requirement — quotes from multiple manufacturers within 4 hours.";
+const SITE_DESCRIPTION = "Get quotes from 40+ vetted Indian manufacturers for corrugated boxes, sachets and stand-up pouches. Share your requirement — quotes from multiple manufacturers within 4 hours.";
 const pages: Record<string, { title: string; description: string; noindex?: boolean }> = {
   "/request-form": { title: `Chat Request | ${SITE_TITLE}`, description: SITE_DESCRIPTION, noindex: true },
   "/request": { title: "Chat Preview | Snaplogo", description: "Internal packaging chat UI preview with simulated manufacturer matching.", noindex: true },
