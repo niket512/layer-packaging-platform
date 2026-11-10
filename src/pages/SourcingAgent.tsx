@@ -89,9 +89,20 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     if (!designFormOpen) return;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const dismiss = (event: KeyboardEvent) => { if (event.key === "Escape") setDesignFormOpen(false); };
+    const dialog = document.querySelector<HTMLElement>('[aria-label="Request quotes for selected design"]');
+    const before = document.activeElement;
+    dialog?.querySelector<HTMLElement>("button")?.focus({ preventScroll: true });
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setDesignFormOpen(false);
+      if (event.key !== "Tab" || !dialog) return;
+      const controls = Array.from(dialog.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled):not([type="hidden"]), textarea:not(:disabled), summary, [tabindex="0"]')).filter(node => node.getClientRects().length > 0);
+      const first = controls[0];
+      const last = controls.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
     window.addEventListener("keydown", dismiss);
-    return () => { document.body.style.overflow = overflow; window.removeEventListener("keydown", dismiss); };
+    return () => { document.body.style.overflow = overflow; window.removeEventListener("keydown", dismiss); if (before instanceof HTMLElement) before.focus({ preventScroll: true }); };
   }, [designFormOpen]);
   const [formDesigns, setFormDesigns] = useState<PackagingDesign[]>([]);
   const landing = category ? LANDINGS[category] : undefined;
