@@ -383,7 +383,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 )}
               </div>
             )}
-            {requirementMode === "form" ? <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} className={designFormOpen ? "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-background/95 p-3 backdrop-blur-sm sm:p-6" : ""}>
+            {requirementMode === "form" ? <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} className={designFormOpen ? "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-muted/80 p-3 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200 sm:p-6 sm:pt-12" : ""}>
               <div className={designFormOpen ? "w-full max-w-[820px] text-left" : ""}>
                 {designFormOpen && <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-semibold">Request quotes</h2><Button type="button" variant="outline" size="sm" className="h-11 rounded-full" onClick={() => setDesignFormOpen(false)}><X />Back to designs</Button></div>}
                 <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} reference={query} referencePhotos={photos} referenceDesigns={formDesigns} onActive={() => setFormActive(true)} />
