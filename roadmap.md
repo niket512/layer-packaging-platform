@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Combine catalogue requirements and contact into one editable view; phone/desktop checks verified prefilled edits, all inputs and no intermediate review; eight tests passed.
 - [x] Add distinct catalogue form separating prefilled attributes from buyer inputs; verified phone/desktop entry, retained quantity and final review/contact; eight tests passed.
 - [x] Keep design requests over the catalogue without navigation; phone/desktop checks verified contact access and retained details after returning to designs; eight regression tests passed.
 - [x] Inspect five design-selected visits and fix confirmed form progress reset; eight tests and phone/desktop checks verified preserved review, details and contact access. Saving unchanged; no artificial enquiry submitted.
