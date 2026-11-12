@@ -43,6 +43,13 @@
       "when": 1794228797617,
       "tag": "0005_visitor_session_journeys",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794496970090,
+      "tag": "0006_tighten_public_policies",
+      "breakpoints": true
     }
   ]
 }
