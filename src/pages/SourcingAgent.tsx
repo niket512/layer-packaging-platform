@@ -399,7 +399,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
             {!(current || busy) && <p className="mx-auto mt-3 max-w-[820px] text-center text-xs text-muted-foreground">Free to request · No commission · Confidential designs</p>}
             </div></section>
             <TrustStory />
-              <div className="mx-auto mt-5 grid max-w-[1120px] items-start gap-6 border-t border-border pt-6 text-left sm:mt-8 sm:grid-cols-2 sm:gap-8 sm:pt-8">
+              <div className="mx-auto mt-5 grid max-w-[1120px] items-start gap-6 pt-6 text-left sm:mt-8 sm:grid-cols-2 sm:gap-8 sm:pt-8">
               <div className={requirementMode === "form" ? "order-2" : ""}><ManufacturerNetwork /></div>
               <div className={`min-w-0 ${requirementMode === "form" ? "order-1" : ""}`}>
               <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Compare manufacturer quotes.</h2>
