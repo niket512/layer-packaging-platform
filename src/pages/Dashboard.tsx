@@ -16,10 +16,8 @@ import {
 } from "@/lib/catalogue";
 import {
   emptyShortlist,
-  fetchShortlist,
   readCache,
   saveItem,
-  syncLocalToAccount,
   type Shortlist,
 } from "@/lib/shortlist";
 import FilterSidebar from "@/components/dashboard/FilterSidebar";
@@ -63,15 +61,6 @@ export default function Dashboard() {
     if (!brand) return;
     const cached = readCache(brand);
     setShortlist(cached);
-    (async () => {
-      await syncLocalToAccount(brand, cached.bottle);
-      setShortlist(await fetchShortlist(brand));
-      try {
-        localStorage.removeItem("snaplogo.shortlist");
-      } catch {
-        /* ignore */
-      }
-    })();
   }, [brand]);
 
   const set = (patch: Partial<Filters>) => {
@@ -404,7 +393,7 @@ export default function Dashboard() {
                   </h1>
                   <p className="mt-1.5 text-[13px] text-muted-foreground">
                     {savedProducts.length + shortlist.sachet.length} saved{" "}
-                    {savedProducts.length + shortlist.sachet.length === 1 ? "item" : "items"} · saved to {brand}
+                    {savedProducts.length + shortlist.sachet.length === 1 ? "item" : "items"} · saved on this device for {brand}
                   </p>
                 </section>
               )}
