@@ -136,7 +136,7 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
       trackFunnel("request_saved"); window.__lovableEvents?.track?.("project.sourcing_request_submitted", { channel: "form" }); void flushVisitorTracking();
       await syncSourcingChat({ id: id.current, title: "Guided packaging request", brief: submittedBrief, submitted: true, submissionId: savedId.current, phone, turns: [{ query: payload.requirement, matches: [], images: allImages }] }).catch(() => {});
-      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: id.current, phone, brief: submittedBrief })); } catch { /* Saved enquiry remains available. */ }
+      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: id.current, submissionId: savedId.current, phone, brief: submittedBrief })); } catch { /* Saved enquiry remains available. */ }
       navigate("/sourcing/thank-you");
     } catch (e) { trackJourney({ kind: "form_error", step: "4", reason: "save_failed" }); setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setBusy(false); }

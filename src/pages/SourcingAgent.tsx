@@ -268,7 +268,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
         setProjects(prev => prev.map(p => p.id === activeId ? submittedProject : p));
       }
       setQuery(""); setPhotos([]);
-      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: activeId ?? crypto.randomUUID(), phone: phone.trim(), brief: project?.brief ?? [] })); } catch { /* Confirmation still works without the saved brief. */ }
+      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: activeId ?? crypto.randomUUID(), submissionId, phone: phone.trim(), brief: project?.brief ?? [] })); } catch { /* Confirmation still works without the saved brief. */ }
       navigate("/sourcing/thank-you");
     } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setSubmitting(false); }

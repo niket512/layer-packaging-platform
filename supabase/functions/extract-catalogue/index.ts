@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
 
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: up } = await admin.from("catalogue_uploads").select("*").eq("id", uploadId).maybeSingle();
-  if (!up || up.owner_id !== user.id) return json({ error: "Upload not found" }, 404);
+  if (!up || up.owner_id !== user.id || !String(up.file_path).startsWith(`${user.id}/`) || String(up.file_path).includes("..")) return json({ error: "Upload not found" }, 404);
 
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   if (!apiKey) return json({ error: "AI is not configured" }, 500);

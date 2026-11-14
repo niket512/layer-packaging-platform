@@ -14,6 +14,7 @@ const THANKYOU_KEY = "snaplogo.sourcing.thankyou";
 
 interface ThankYouPayload {
   leadId: string;
+  submissionId?: string;
   phone: string;
   brief: SourcingBriefField[];
 }
@@ -30,9 +31,9 @@ export default function SourcingThankYou() {
       w.rdt?.("track", "Lead", { conversionId: payload.leadId });
       let clickId: string | undefined;
       try { clickId = readRedditClickId(localStorage); } catch { /* optional */ }
-      if (phone) {
+      if (payload.submissionId) {
         supabase.functions.invoke("reddit-capi", {
-          body: { conversionId: payload.leadId, phone, clickId, screen: { width: screen.width, height: screen.height } },
+          body: { conversionId: payload.leadId, submissionId: payload.submissionId, clickId, screen: { width: screen.width, height: screen.height } },
         }).catch(() => { /* Pixel still records the lead. */ });
       }
     }

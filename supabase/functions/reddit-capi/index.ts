@@ -6,7 +6,7 @@ import { redditClickMatch } from "../_shared/reddit-click-id.ts";
 const PIXEL_ID = "a2_jykx84cbgi9e";
 const Body = z.object({
   conversionId: z.string().min(1).max(100),
-  phone: z.string().min(6).max(40),
+  submissionId: z.string().uuid(),
   clickId: z.string().max(500).optional(),
   screen: z.object({ width: z.number().int().positive(), height: z.number().int().positive() }).optional(),
 });
@@ -23,17 +23,19 @@ Deno.serve(async req => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return json({ error: "invalid request" }, 400);
-  const { conversionId, phone, clickId, screen } = parsed.data;
+  const { conversionId, submissionId, clickId, screen } = parsed.data;
   const token = Deno.env.get("REDDIT_CAPI_TOKEN");
   if (!token) return json({ error: "not configured" }, 500);
 
-  // Only report leads that were actually saved in the last hour.
-  const digits = phone.replace(/\D/g, "").slice(-10);
+  // Only report the caller's own enquiry (identified by its unguessable id) saved in the last hour.
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const { data } = await db.from("requirement_submissions").select("id").gte("created_at", since)
-    .ilike("contact", `%${digits}%`).limit(1);
-  if (!data?.length) return json({ error: "no saved enquiry" }, 404);
+  const { data: row } = await db.from("requirement_submissions").select("contact").eq("id", submissionId)
+    .gte("created_at", since).maybeSingle();
+  if (!row) return json({ ok: false });
+  const phone = String(row.contact ?? "");
+  const digits = phone.replace(/\D/g, "").slice(-10);
+  if (digits.length < 6) return json({ ok: false });
 
   const e164 = digits.length === 10 ? `+91${digits}` : `+${phone.replace(/\D/g, "")}`;
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim();

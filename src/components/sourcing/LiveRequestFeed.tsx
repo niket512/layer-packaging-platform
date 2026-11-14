@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-type Activity = { today: number; week: number; recent: { id: string; at: string }[] };
+type Activity = { today: number; week: number; recent: { at: string }[] };
 
 function timeAgo(iso: string) {
   const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
@@ -31,7 +31,7 @@ export function LiveRequestFeed() {
 
   // Experimental boosted display (user-approved): blends real requests with sample recent activity.
   const sample = SAMPLE.map((x, i) => ({ id: `s${i}`, at: new Date(Date.now() - x * 60000).toISOString() }));
-  const recent = [...sample, ...(activity?.recent.slice(0, 2) ?? [])];
+  const recent = [...sample, ...(activity?.recent.slice(0, 2).map((r, i) => ({ id: `r${i}`, at: r.at })) ?? [])];
   useEffect(() => {
     if (recent.length < 2) return;
     const t = setInterval(() => setIdx((i) => (i + 1) % recent.length), 3500);
