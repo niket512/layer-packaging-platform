@@ -509,7 +509,7 @@ export default function Dashboard() {
 
           <footer className="mt-8 flex flex-wrap justify-between gap-4 border-t border-border pt-4 text-[11px] text-muted-foreground">
             <span>Source-linked catalogue · design classifications are visual interpretations</span>
-            <span>Shortlist saved to your brand account</span>
+            <span>Shortlist saved on this device</span>
           </footer>
         </main>
       </div>
