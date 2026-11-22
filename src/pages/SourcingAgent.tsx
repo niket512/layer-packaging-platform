@@ -79,7 +79,8 @@ function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
 
 export default function SourcingAgent({ category, requirementMode = "chat" }: { category?: SourcingCategory; requirementMode?: "chat" | "form" } = {}) {
   const location = useLocation();
-  const landingFamily = sourcingLandingFamily(category, location.search);
+  const boxesOnly = location.pathname === "/" && requirementMode === "form";
+  const landingFamily = boxesOnly ? "boxes" : sourcingLandingFamily(category, location.search);
   const [packagingFamily, setPackagingFamily] = useState(landingFamily);
   useEffect(() => { setPackagingFamily(landingFamily); }, [landingFamily]);
   const [formKey, setFormKey] = useState(0);
@@ -288,7 +289,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     </form>
   );
   const designGallery = (
-    <CorrugatedDesigns selectedFamily={requirementMode === "form" ? packagingFamily : undefined} onFamilyChange={requirementMode === "form" ? setPackagingFamily : undefined} onUseDesign={(prefill, designs) => {
+    <CorrugatedDesigns onlyFamily={boxesOnly ? "boxes" : undefined} selectedFamily={requirementMode === "form" ? packagingFamily : undefined} onFamilyChange={requirementMode === "form" ? setPackagingFamily : undefined} onUseDesign={(prefill, designs) => {
       if (requirementMode === "form") {
         setFormDesigns(designs);
         setDesignFamily(designs[0]?.family ?? packagingFamily);
@@ -388,7 +389,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
               </div>
             )}
             {requirementMode === "form" ? <>
-              <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} reference={query} referencePhotos={photos} referenceDesigns={[]} onActive={() => setFormActive(true)} />
+              <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} onlyFamily={boxesOnly ? "boxes" : undefined} reference={query} referencePhotos={photos} referenceDesigns={[]} onActive={() => setFormActive(true)} />
               <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} onClick={event => { if (designFormOpen && event.target === event.currentTarget) setDesignFormOpen(false); }} className={designFormOpen ? "fixed inset-0 z-50 flex justify-end bg-foreground/20 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200" : "hidden"}>
               <div className="h-dvh w-full min-w-0 overflow-y-auto overscroll-contain bg-card text-left shadow-xl motion-safe:animate-in motion-safe:slide-in-from-right motion-safe:duration-300 sm:max-w-[560px] [&>form]:mt-0 [&>form]:rounded-none [&>form]:border-0">
                 <div className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-card px-4 py-2"><h2 className="text-base font-semibold sm:text-lg">Request quotes</h2><Button type="button" variant="ghost" size="sm" className="h-11 rounded-full px-3" onClick={() => setDesignFormOpen(false)}><ArrowLeft />Back to designs</Button></div>
