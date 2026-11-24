@@ -351,6 +351,7 @@ export type Database = {
       }
       requirement_submissions: {
         Row: {
+          attribution: Json | null
           contact: string
           created_at: string
           id: string
@@ -359,6 +360,7 @@ export type Database = {
           requirement: string
         }
         Insert: {
+          attribution?: Json | null
           contact: string
           created_at?: string
           id?: string
@@ -367,6 +369,7 @@ export type Database = {
           requirement: string
         }
         Update: {
+          attribution?: Json | null
           contact?: string
           created_at?: string
           id?: string
@@ -638,6 +641,7 @@ export type Database = {
       }
       visitor_behaviour: {
         Row: {
+          attribution: Json | null
           created_at: string
           device: string
           id: string
@@ -653,6 +657,7 @@ export type Database = {
           write_token: string
         }
         Insert: {
+          attribution?: Json | null
           created_at?: string
           device: string
           id: string
@@ -668,6 +673,7 @@ export type Database = {
           write_token: string
         }
         Update: {
+          attribution?: Json | null
           created_at?: string
           device?: string
           id?: string
@@ -709,6 +715,10 @@ export type Database = {
           _snapshot: Json
           _token: string
         }
+        Returns: undefined
+      }
+      save_visitor_attribution: {
+        Args: { _attribution: Json; _id: string; _token: string }
         Returns: undefined
       }
       save_visitor_behaviour: {

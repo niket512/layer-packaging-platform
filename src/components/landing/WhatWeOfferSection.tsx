@@ -1,8 +1,8 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { ArrowRight } from "lucide-react";
-import standUpPouches from "@/assets/category-stand-up-pouches.jpg";
-import flatPouches from "@/assets/category-flat-pouches.jpg";
-import wrappers from "@/assets/category-wrappers.jpg";
+import standUpPouches from "@/assets/category-stand-up-pouches.webp";
+import flatPouches from "@/assets/category-flat-pouches.webp";
+import wrappers from "@/assets/category-wrappers.webp";
 
 const items = [
   { image: standUpPouches, title: "Stand-Up Pouches", desc: "Custom printed, food-grade, flexible MOQs. Perfect for snacks, supplements, and pantry brands." },

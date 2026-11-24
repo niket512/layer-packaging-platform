@@ -1,10 +1,10 @@
 import { DESIGN_SPECS } from "./corrugated-catalogue";
-import kraftShip from "@/assets/design-ship-kraft.jpg";
-import whiteMailer from "@/assets/design-mailer-white.jpg";
-import printedKraft from "@/assets/design-printed-kraft.jpg";
-import tealMailer from "@/assets/design-mailer-teal.jpg";
-import blackMailer from "@/assets/design-mailer-black.jpg";
-import dieCut from "@/assets/design-diecut-open.jpg";
+import kraftShip from "@/assets/design-ship-kraft.webp";
+import whiteMailer from "@/assets/design-mailer-white.webp";
+import printedKraft from "@/assets/design-printed-kraft.webp";
+import tealMailer from "@/assets/design-mailer-teal.webp";
+import blackMailer from "@/assets/design-mailer-black.webp";
+import dieCut from "@/assets/design-diecut-open.webp";
 
 export type PackagingFamily = "boxes" | "pouches";
 export type AttributeKey = "style" | "printing" | "material" | "useCase" | "features" | "finish" | "quantity";

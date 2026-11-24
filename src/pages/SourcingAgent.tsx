@@ -1,4 +1,6 @@
 import { MessageResponse } from "@/components/ai-elements/message";
+import { readAttribution } from "@/lib/attribution";
+import { markConversionPending } from "@/lib/sourcing-conversion";
 import TrustStory from "@/components/sourcing/TrustStory";
 import { RequirementForm } from "@/components/sourcing/RequirementForm";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -18,9 +20,9 @@ import { imageFileToDataUrl } from "@/lib/image-data-url";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { trackFunnel, flushVisitorTracking } from "@/lib/visitor-tracking";
 import logo from "@/assets/snaplogo-orange.png";
-import catBoxes from "@/assets/design-ship-kraft.jpg";
-import catPouches from "@/assets/category-stand-up-pouches.jpg";
-import catLabels from "@/assets/cat-labels.jpg";
+import catBoxes from "@/assets/design-ship-kraft.webp";
+import catPouches from "@/assets/category-stand-up-pouches.webp";
+import catLabels from "@/assets/cat-labels.webp";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
 
 const PROJECTS_KEY = "snaplogo.sourcing.projects";
@@ -257,7 +259,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     setSubmitting(true); setError("");
     try {
       const submissionId = crypto.randomUUID();
-      const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: submissionId });
+      const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: submissionId, attribution: { ...readAttribution(), enquiry_id: submissionId, submitted_at: new Date().toISOString() } });
       if (insertError) throw new Error("Your request couldn’t be sent. Please try again.");
       trackFunnel("request_saved");
       window.__lovableEvents?.track?.("project.sourcing_request_submitted", { channel: "chat" });
@@ -269,7 +271,8 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
         setProjects(prev => prev.map(p => p.id === activeId ? submittedProject : p));
       }
       setQuery(""); setPhotos([]);
-      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: activeId ?? crypto.randomUUID(), submissionId, phone: phone.trim(), brief: project?.brief ?? [] })); } catch { /* Confirmation still works without the saved brief. */ }
+      markConversionPending(activeId ?? submissionId);
+      try { localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: activeId ?? submissionId, submissionId, phone: phone.trim(), brief: project?.brief ?? [] })); } catch { /* Confirmation still works without the saved brief. */ }
       navigate("/sourcing/thank-you");
     } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
     finally { setSubmitting(false); }

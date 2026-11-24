@@ -9,7 +9,8 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'AW-18547475916');
+      // Thank-you page views count as conversions only when a fresh enquiry is pending; the page sends that view itself, once.
+      gtag('config', 'AW-18547475916', location.pathname === '/sourcing/thank-you' ? { send_page_view: false } : {});
     </script>
     <!-- Reddit Pixel -->
     <script>
@@ -24,6 +25,9 @@
       rdt('init','a2_jykx84cbgi9e');
       rdt('track','PageVisit');
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>Snaplogo — Vetted Packaging Manufacturers, Quotes in 6 Hours</title>
     <meta data-rh="true" name="description" content="Get quotes from 40+ vetted Indian manufacturers for corrugated boxes, sachets and stand-up pouches. Share your requirement — quotes from multiple manufacturers within 6 hours.">

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { captureAttribution } from "./attribution";
 import { addDesign, addJourney, JOURNEY_FIELDS, scrollDepth, trafficSource, type FunnelStep, type JourneyEvent, type VisitorSnapshot } from "./visitor-metrics";
 
 const KEY = "snaplogo.visitor.session";
@@ -8,6 +9,8 @@ type Session = { id: string; token: string; last: number; snapshot: VisitorSnaps
 let session: Session | undefined;
 let timer: number | undefined;
 let dirty = false;
+const attributionSent = new Set<string>();
+try { captureAttribution(); } catch { /* storage unavailable */ }
 function current() {
   if (session && Date.now() - session.last < 30 * 60 * 1000) return session;
   try {
@@ -39,6 +42,14 @@ export async function flushVisitorTracking() {
       body: JSON.stringify({ _id: session.id, _token: session.token, _revision: revision, _snapshot: session.snapshot }),
     });
     if (!response.ok) dirty = true;
+    else if (!attributionSent.has(session.id)) {
+      attributionSent.add(session.id);
+      void fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/save_visitor_attribution`, {
+        method: "POST", keepalive: true,
+        headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        body: JSON.stringify({ _id: session.id, _token: session.token, _attribution: captureAttribution() }),
+      }).catch(() => attributionSent.delete(session!.id));
+    }
   } catch { dirty = true; }
 }
 export function trackFunnel(step: FunnelStep) {

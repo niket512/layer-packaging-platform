@@ -31,9 +31,9 @@ export function visitorFunnels(rows: VisitorReportRow[]) {
     ]),
     form: buildStages(form, [
       { id: "form1", label: "1 · Choose packaging", matches: row => formStep(row, "1") },
-      { id: "form2", label: "2 · Quantity & dimensions", matches: row => formStep(row, "2") },
-      { id: "form3", label: "3 · Printing & specifications", matches: row => formStep(row, "3") },
-      { id: "form4", label: "4 · Review & contact", matches: row => formStep(row, "4") },
+      { id: "form2", label: "2 · WhatsApp (older form: quantity)", matches: row => formStep(row, "2") },
+      { id: "form3", label: "3 · Details & submit (older form: specs)", matches: row => formStep(row, "3") },
+      { id: "form4", label: "4 · Review (older 4-step form only)", matches: row => formStep(row, "4") },
       { id: "formContact", label: "Submitted contact", matches: row => has(row, "contact_submitted") },
       { id: "formSaved", label: "Enquiry saved", matches: row => has(row, "request_saved") },
     ]),

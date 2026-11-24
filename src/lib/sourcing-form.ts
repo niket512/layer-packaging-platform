@@ -3,22 +3,34 @@ import type { SourcingBriefField } from "../../supabase/functions/_shared/sourci
 import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
 
 export const FORM_FORMATS = {
-  boxes: ["Shipping box", "Mailer box", "Product box", "Die-cut box", "Gift box", "Not sure"],
-  pouches: ["Stand-up pouch", "Flat pouch", "Flat-bottom pouch", "Spout pouch", "Sachet / stick pack", "Not sure"],
+  boxes: ["Shipping box", "Mailer box", "Product box", "Die-cut box", "Gift box", "Not sure, help me choose"],
+  pouches: ["Stand-up pouch", "Flat pouch", "Flat-bottom pouch", "Spout pouch", "Sachet / stick pack", "Not sure, help me choose"],
 };
 export type FormFamily = keyof typeof FORM_FORMATS;
 export const FORM_STEPS = [
   { label: "Packaging", topics: ["format"] },
-  { label: "Scale", topics: ["quantity", "size"] },
-  { label: "Specs", topics: ["printing", "material", "wall", "closure", "finishing"] },
-  { label: "Contact", topics: ["delivery", "phone", "notes"] },
+  { label: "WhatsApp", topics: ["phone"] },
+  { label: "Details", topics: ["quantity", "size", "printing", "material", "wall", "closure", "finishing", "delivery", "notes"] },
 ] as const;
+export const NOT_SURE_SIZE = "Not sure about dimensions";
+export const SIZE_SUGGESTIONS: Record<FormFamily, string[]> = {
+  boxes: ["Small · 15 × 10 × 5 cm", "Medium · 25 × 20 × 10 cm", "Large · 35 × 25 × 15 cm", NOT_SURE_SIZE],
+  pouches: ["100 g", "250 g", "500 g", "1 kg", NOT_SURE_SIZE],
+};
+/** Indian mobile: 10 digits starting 6–9, optionally prefixed by +91, 91 or 0. */
+export function indianMobile(phone: string): string | null {
+  if (!/^[+\d\s()-]+$/.test(phone.trim())) return null;
+  let digits = phone.replace(/\D/g, "");
+  if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
+  else if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
+  return /^[6-9]\d{9}$/.test(digits) ? `+91 ${digits}` : null;
+}
 export function applyDesignToForm(family: FormFamily, values: Record<string, string>, designs: PackagingDesign[], step: number) {
   const prefill = designFormPrefill(designs);
   if (!prefill) return null;
   const retained = Object.fromEntries(Object.entries(values).filter(([key, value]) => value.trim() && (family === prefill.family || !["format", "wall", "closure", "material"].includes(key))));
   const nextValues = { ...retained, ...prefill.values };
-  const nextStep = nextValues.format ? (step === 0 ? 1 : step) : 0;
+  const nextStep = nextValues.format ? (step === 0 ? 1 : Math.min(step, 2)) : 0;
   return { family: prefill.family, values: nextValues, step: nextStep };
 }
 export function designFormPrefill(designs: PackagingDesign[]): { family: FormFamily; values: Record<string, string> } | null {

@@ -1,7 +1,7 @@
 import sachets from "@/data/sachets.json";
-import standup from "@/assets/reference-standup-pouch.jpg";
-import flatbottom from "@/assets/reference-flatbottom-pouch.jpg";
-import spout from "@/assets/reference-spout-pouch.jpg";
+import standup from "@/assets/reference-standup-pouch.webp";
+import flatbottom from "@/assets/reference-flatbottom-pouch.webp";
+import spout from "@/assets/reference-spout-pouch.webp";
 import type { PackagingDesign } from "./packaging-catalogue";
 
 // Only format and application come from existing catalogue metadata. Technical data are unverified.

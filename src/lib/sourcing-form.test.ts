@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { FORM_STEPS, applyDesignToForm, designFormPrefill, formBrief, formSubmission } from "./sourcing-form";
+import { FORM_FORMATS, FORM_STEPS, NOT_SURE_SIZE, SIZE_SUGGESTIONS, indianMobile, applyDesignToForm, designFormPrefill, formBrief, formSubmission } from "./sourcing-form";
 import { BOX_DESIGNS } from "@/components/sourcing/packaging-catalogue";
 describe("guided packaging requirements", () => {
   it("keeps review progress and entered details when a design is selected", () => {
-    const result = applyDesignToForm("boxes", { format: "Shipping box", quantity: "2000 pieces", size: "20 × 15 × 10 cm", delivery: "Pune" }, [BOX_DESIGNS[0]], 3);
-    expect(result?.step).toBe(3);
+    const result = applyDesignToForm("boxes", { format: "Shipping box", quantity: "2000 pieces", size: "20 × 15 × 10 cm", delivery: "Pune" }, [BOX_DESIGNS[0]], 2);
+    expect(result?.step).toBe(2);
     expect(result?.values).toMatchObject({ quantity: "2000 pieces", size: "20 × 15 × 10 cm", delivery: "Pune" });
   });
   it("moves a known design past packaging selection without inventing scale", () => {
@@ -18,10 +18,20 @@ describe("guided packaging requirements", () => {
     expect(result?.step).toBe(0);
     expect(result?.values.format).toBeUndefined();
   });
-  it("keeps scale after visuals, specifications third and contact only at the final gate", () => {
-    expect(FORM_STEPS.map(step => step.topics)).toEqual([
-      ["format"], ["quantity", "size"], ["printing", "material", "wall", "closure", "finishing"], ["delivery", "phone", "notes"],
-    ]);
+  it("uses three steps with WhatsApp right after packaging", () => {
+    expect(FORM_STEPS.map(step => step.label)).toEqual(["Packaging", "WhatsApp", "Details"]);
+    expect(FORM_STEPS[1].topics).toEqual(["phone"]);
+  });
+  it("offers a not-sure packaging style and optional dimensions", () => {
+    expect(FORM_FORMATS.boxes).toContain("Not sure, help me choose");
+    expect(SIZE_SUGGESTIONS.boxes).toContain(NOT_SURE_SIZE);
+  });
+  it("accepts only Indian mobile numbers", () => {
+    expect(indianMobile("98765 43210")).toBe("+91 9876543210");
+    expect(indianMobile("+91 98765-43210")).toBe("+91 9876543210");
+    expect(indianMobile("09876543210")).toBe("+91 9876543210");
+    expect(indianMobile("12345 67890")).toBeNull();
+    expect(indianMobile("98765")).toBeNull();
   });
   it("retains chosen material and finishing preferences in the submitted brief", () => {
     const brief = formBrief("boxes", { material: "Kraft", finishing: "Matte" });

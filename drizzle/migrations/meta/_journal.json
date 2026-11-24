@@ -57,6 +57,13 @@
       "when": 1794640994272,
       "tag": "0007_limit_recent_request_activity",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795532183904,
+      "tag": "0008_capture_ad_attribution",
+      "breakpoints": true
     }
   ]
 }

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { readSaved } from "@/lib/sourcing";
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
-import { recordSourcingLead } from "@/lib/sourcing-conversion";
+import { consumeConversion, recordSourcingLead } from "@/lib/sourcing-conversion";
 import { readRedditClickId } from "@/lib/reddit-attribution";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/snaplogo-orange.png";
@@ -26,7 +26,8 @@ export default function SourcingThankYou() {
   const phoneDisplay = phone.startsWith("+") ? phone : phone ? `+91 ${phone}` : "";
 
   useEffect(() => {
-    if (payload?.leadId && recordSourcingLead(payload.leadId, true)) {
+    if (payload?.leadId && consumeConversion(payload.leadId) && recordSourcingLead(payload.leadId, true)) {
+      (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", { page_path: "/sourcing/thank-you" });
       const w = window as Window & { rdt?: (...args: unknown[]) => void };
       w.rdt?.("track", "Lead", { conversionId: payload.leadId });
       let clickId: string | undefined;

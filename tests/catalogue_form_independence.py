@@ -10,7 +10,8 @@ async def main():
    main_form=page.get_by_role('form',name='Packaging requirement form').first
    await main_form.get_by_role('button',name='Shipping box',exact=True).click()
    await main_form.get_by_role('button',name='Continue',exact=True).click()
-   await main_form.get_by_label('Initial quantity',exact=True).fill('7300 pieces')
+   await main_form.get_by_role('button',name='Skip for now',exact=True).click()
+   await main_form.get_by_label('Initial quantity').fill('7300 pieces')
    buttons=page.get_by_role('button',name='Select',exact=True)
    print('use buttons',width,await buttons.count())
    await buttons.first.click()
@@ -38,8 +39,8 @@ async def main():
    await page.screenshot(path=f'/tmp/browser/mobile-catalogue/{width}-contact.png')
    print('overflow',await dialog.evaluate('(e)=>e.scrollWidth>e.clientWidth'))
    await dialog.get_by_role('button',name='Back to designs').click()
-   assert await main_form.get_by_label('Initial quantity',exact=True).input_value() == '7300 pieces'
-   assert await main_form.get_by_role('heading',name='Quantity & dimensions').count() == 1
+   assert await main_form.get_by_label('Initial quantity').input_value() == '7300 pieces'
+   assert await main_form.get_by_role('heading',name='A few details & get quotes').count() == 1
    print('main form unchanged',width)
    await buttons.first.click()
    assert await dialog.get_by_label('Initial quantity',exact=True).input_value() == '2200 pieces'
