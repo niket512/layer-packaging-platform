@@ -121,7 +121,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       <ol aria-label="Enquiry progress" className="mb-2.5 grid grid-cols-3 gap-2">{STEPS.map((l, i) => <li key={l} aria-current={step === i ? "step" : undefined} className={`min-w-0 border-t-2 pt-1.5 ${i <= step ? "border-primary" : "border-border"}`}><span className={`flex items-center gap-1.5 text-[11px] font-semibold sm:text-xs ${step === i ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground"}`}>{i < step ? <Check className="h-3.5 w-3.5 shrink-0" /> : <span>{i + 1}.</span>}<span className="truncate">{l}</span></span></li>)}</ol>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
         <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold leading-tight outline-none sm:text-xl">{["What kind of custom box are you looking to create?", "Tell us about your project", "Where should we send your quotes?"][step]}</h2>
-        <p className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold text-primary"><Clock className="h-3 w-3" />Multiple quotes within 6 hours</p>
+        <p className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold text-primary"><Clock className="h-3 w-3" />{"\n"}</p>
       </div>
       {step === 2 && <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{["", "", "We coordinate your quotes on WhatsApp — no spam."][step]}</p>}
     </div>
