@@ -156,17 +156,17 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
               <span className="ml-auto shrink-0 text-xs font-normal text-muted-foreground">Optional</span>
             </Button>
           </div>
-          <div className="min-w-0"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Exact quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><Input id="v2-quantityExact" className="h-11 rounded-lg bg-card text-base" inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" />
+          <div className="order-3 min-w-0 sm:order-2"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Exact quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><Input id="v2-quantityExact" className="h-11 rounded-lg bg-card text-base" inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" />
           </div>
+          {photos.length > 0 && <div aria-label="Attached design images" className="order-2 flex flex-wrap items-center gap-2 sm:order-3 sm:col-start-1">{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-card"><X className="h-3 w-3" /></Button></span>)}</div>}
         </div>
-        {photos.length > 0 && <div className="flex flex-wrap items-center gap-2">{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-card"><X className="h-3 w-3" /></Button></span>)}</div>}
       </>}
       {step === 2 && <>
+        {text("productDetails", "Anything else? (optional)", { placeholder: "e.g. matte lamination, gold foil, window patch", maxLength: 300 })}
         <div className="grid gap-3 sm:grid-cols-2">
           {text("brand", "Brand / company name (optional)", { autoComplete: "organization", maxLength: 120 })}
           {text("pincode", "Delivery city / PIN code", { inputMode: "numeric", maxLength: 6, placeholder: "e.g. 400001", autoComplete: "postal-code" })}
         </div>
-        {text("productDetails", "Anything else? (optional)", { placeholder: "e.g. matte lamination, gold foil, window patch", maxLength: 300 })}
         <div><label htmlFor="v2-phone" className="mb-1.5 flex items-center gap-1 text-sm font-semibold">WhatsApp number<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><div className="flex h-11 items-center overflow-hidden rounded-lg border border-input bg-card focus-within:ring-2 focus-within:ring-ring"><span className="border-r border-border px-3 text-base text-muted-foreground">+91</span><Input id="v2-phone" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={16} value={e.phone} onChange={ev => set("phone", ev.target.value)} placeholder="98765 43210" aria-required="true" className="h-11 rounded-none border-0 bg-transparent text-base focus-visible:ring-0 focus-visible:ring-offset-0" /></div><p className="mt-1 text-xs text-muted-foreground">Quotes sent directly on WhatsApp</p></div>
       </>}
     </fieldset>
