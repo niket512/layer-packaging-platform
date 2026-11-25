@@ -5,7 +5,7 @@ export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "sleeve" |
 export const BOX_TYPES: { id: BoxType; label: string; description: string; use?: string }[] = [
   { id: "corrugated", use: "Shipping", label: "Corrugated shipping box", description: "Strong outer boxes for shipping and storage" },
   { id: "mailer", use: "D2C unboxing", label: "Mailer box", description: "Self-locking e-commerce boxes for unboxing" },
-  { id: "product", use: "Retail shelf", label: "Product / folding carton", description: "Printed retail cartons for shelves" },
+  { id: "product", use: "Retail shelf", label: "Product Box", description: "Printed retail cartons for shelves" },
   { id: "rigid", use: "Luxury & gifting", label: "Rigid box", description: "Premium boxes with a luxury feel, incl. magnetic closure" },
   { id: "sleeve", use: "Soaps, jewellery", label: "Sleeve & drawer box", description: "Sliding boxes for soaps, jewellery and more" },
   { id: "gable", use: "Carry & takeaway", label: "Gable / handle box", description: "Carry boxes with built-in handles" },
