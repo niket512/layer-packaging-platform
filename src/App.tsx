@@ -1,29 +1,30 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import SeoMetadata from "@/components/SeoMetadata";
-import Team from "./pages/Team.tsx";
-import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
-import Designs from "./pages/Designs.tsx";
-import PackagingGuides from "./pages/PackagingGuides";
+const Team = lazy(() => import("./pages/Team.tsx"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
+const Designs = lazy(() => import("./pages/Designs.tsx"));
+const PackagingGuides = lazy(() => import("./pages/PackagingGuides"));
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import Proposal from "./pages/Proposal.tsx";
-import SignIn from "./pages/SignIn.tsx";
-import Dashboard from "./pages/Dashboard.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import Auth from "./pages/Auth.tsx";
-import Procure from "./pages/Procure.tsx";
-import AppHome from "./pages/AppHome.tsx";
-import AppStore from "./pages/AppStore.tsx";
-import AppAdmin from "./pages/AppAdmin.tsx";
-import AdminChats from "./pages/AdminChats";
-import ManufacturerNetworkPage from "./pages/ManufacturerNetwork";
+const Index = lazy(() => import("./pages/Index.tsx"));
+const Proposal = lazy(() => import("./pages/Proposal.tsx"));
+const SignIn = lazy(() => import("./pages/SignIn.tsx"));
+const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const Auth = lazy(() => import("./pages/Auth.tsx"));
+const Procure = lazy(() => import("./pages/Procure.tsx"));
+const AppHome = lazy(() => import("./pages/AppHome.tsx"));
+const AppStore = lazy(() => import("./pages/AppStore.tsx"));
+const AppAdmin = lazy(() => import("./pages/AppAdmin.tsx"));
+const AdminChats = lazy(() => import("./pages/AdminChats"));
+const ManufacturerNetworkPage = lazy(() => import("./pages/ManufacturerNetwork"));
 import SourcingAgent from "./pages/SourcingAgent.tsx";
-import RequestPreview from "./pages/RequestPreview";
-import SourcingThankYou from "./pages/SourcingThankYou.tsx";
+const RequestPreview = lazy(() => import("./pages/RequestPreview"));
+const SourcingThankYou = lazy(() => import("./pages/SourcingThankYou.tsx"));
 import { useVisitorTracking } from "@/lib/visitor-tracking";
 
 function VisitorTracking() { useVisitorTracking(); return null; }
@@ -41,6 +42,7 @@ const App = () => (
       <BrowserRouter>
         <SeoMetadata />
         <VisitorTracking />
+        <Suspense fallback={<div className="min-h-screen bg-background" />}>
         <Routes>
           <Route path="/" element={isAppHost ? <AppHome /> : <SourcingAgent requirementMode="form" />} />
           <Route path="/about" element={<Index />} />
@@ -77,6 +79,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
