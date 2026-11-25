@@ -33,7 +33,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const saved = useRef<{ step?: number; e?: BoxEnquiry; id?: string } | null>(null);
   if (saved.current === null) { try { saved.current = JSON.parse(localStorage.getItem(KEY) ?? "{}"); } catch { saved.current = {}; } }
   const [step, setStep] = useState(() => Math.min(2, Math.max(0, saved.current?.step ?? 0)));
-  const [e, setE] = useState<BoxEnquiry>(() => ({ ...emptyEnquiry(), ...saved.current?.e }));
+  const [e, setE] = useState<BoxEnquiry>(() => ({ ...emptyEnquiry(), ...saved.current?.e, sizeUnknown: false }));
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState("");
@@ -109,7 +109,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold leading-tight outline-none sm:text-xl">{["What kind of box are you looking to create?", "Tell us about your project", "Where should we send your quotes?"][step]}</h2>
         <p className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold text-primary"><Clock className="h-3 w-3" />Multiple quotes within 6 hours</p>
       </div>
-      <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{["Pick one or more — or tap “Not sure” and we’ll guide you.", "A few details help us match the right manufacturers. All optional.", "We coordinate your quotes on WhatsApp — no spam."][step]}</p>
+      {step !== 1 && <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{["Pick one or more — or tap “Not sure” and we’ll guide you.", "", "We coordinate your quotes on WhatsApp — no spam."][step]}</p>}
     </div>
     <fieldset disabled={busy} className="min-w-0 space-y-4 px-4 py-4 sm:px-6 sm:py-5">
       {step === 0 && <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); return <button key={b.id} type="button" aria-pressed={on} title={b.description} onClick={() => set("boxTypes", toggle(e.boxTypes, b.id, "unsure"))} className={`relative flex min-w-0 flex-col items-center gap-1 rounded-xl border p-2 pb-2.5 pt-2 text-center transition-colors ${on ? "border-primary bg-accent/60 ring-1 ring-primary" : b.id === "custom" ? "border-[1.5px] border-dashed border-muted-foreground/40 hover:border-primary/60" : "border-border hover:border-primary/40"}`}>
@@ -127,12 +127,12 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         </>, "Add one or more")}
         <div className="grid gap-4 sm:grid-cols-2 sm:items-start">
           <div className="min-w-0"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center text-sm font-semibold">Exact quantity</label><Input id="v2-quantityExact" className="h-11 rounded-lg bg-card text-base" inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} />
-            <div className="mt-2 flex flex-wrap gap-1.5">{["500", "1,000", "2,500", "5,000", "10,000"].map(v => { const on = e.quantityExact.replace(/[,\s]/g, "") === v.replace(/,/g, ""); return <button key={v} type="button" aria-pressed={on} onClick={() => set("quantityExact", v)} className={`min-h-8 rounded-lg border px-2.5 text-xs font-medium ${on ? "border-primary bg-accent text-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>{v}</button>; })}</div></div>
+            </div>
           <div className="min-w-0"><div className="mb-1.5 flex h-6 items-center justify-between gap-2"><span id="v2-dims" className="text-sm font-semibold">Box dimensions</span><span className="flex items-center gap-2">
             <span role="group" aria-label="Unit" className="inline-flex rounded-md border border-border p-0.5 text-xs">{(["cm", "in"] as const).map(u => <button key={u} type="button" aria-pressed={(e.unit ?? "cm") === u} disabled={e.sizeUnknown} onClick={() => set("unit", u)} className={`rounded px-2 py-0.5 ${(e.unit ?? "cm") === u ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{u}</button>)}</span>
-            <button type="button" aria-pressed={e.sizeUnknown} onClick={() => set("sizeUnknown", !e.sizeUnknown)} className={`text-xs ${e.sizeUnknown ? "font-semibold text-primary" : "text-muted-foreground underline-offset-2 hover:underline"}`}>{e.sizeUnknown && <Check className="mr-0.5 inline h-3 w-3" />}Don’t know yet</button></span></div>
+            </span></div>
             <div aria-labelledby="v2-dims" role="group" className={`grid grid-cols-3 gap-2 transition-opacity ${e.sizeUnknown ? "opacity-40" : ""}`}>{(["length", "width", "height"] as const).map((k, i) => <Input key={k} ref={el => { dims.current[i] = el; }} id={`v2-${k}`} aria-label={`${k} (${e.unit ?? "cm"})`} disabled={e.sizeUnknown} inputMode="decimal" maxLength={7} placeholder={`${k[0].toUpperCase()} (${e.unit ?? "cm"})`} value={e[k]} onChange={ev => onDim(i, k, ev.target.value)} className="h-11 rounded-lg bg-card text-base" />)}</div>
-            {e.sizeUnknown && <p className="mt-1.5 text-xs text-muted-foreground">No problem — we’ll help you size it.</p>}</div>
+            </div>
         </div>
         {group("Material preference", <>{single("material", materials, e.boxTypes.length && !e.boxTypes.includes("unsure") ? materials[0] : undefined)}{e.material === "Other" && <Input autoFocus aria-label="Which material?" placeholder="Which material? e.g. metallic board" maxLength={120} value={e.materialOther} onChange={ev => set("materialOther", ev.target.value)} className="h-10 max-w-sm rounded-lg bg-card text-base" />}</>)}
         {needsWall(e.boxTypes) && group("Board strength (corrugated wall)", single("wall", WALLS, e.products.some(p => /Electronics|Footwear|Food|Chocolates|Dry fruits|Bakery/.test(p)) ? "5-ply" : "3-ply"))}
@@ -143,8 +143,8 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           <div><label htmlFor="v2-phone" className="mb-1.5 block text-sm font-semibold">WhatsApp number</label><div className="flex h-11 items-center overflow-hidden rounded-lg border border-input bg-card focus-within:ring-2 focus-within:ring-ring"><span className="border-r border-border px-3 text-base text-muted-foreground">+91</span><Input id="v2-phone" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={16} value={e.phone} onChange={ev => set("phone", ev.target.value)} placeholder="98765 43210" className="h-11 rounded-none border-0 bg-transparent text-base focus-visible:ring-0 focus-visible:ring-offset-0" /></div><p className="mt-1 text-xs text-muted-foreground">Quotes are shared on WhatsApp. No spam.</p></div>
           {text("pincode", "Delivery city / PIN code (optional)", { inputMode: "numeric", maxLength: 6, placeholder: "e.g. 400001", autoComplete: "postal-code" })}
         </div>
-        {text("productDetails", "Anything else on finishing? (optional)", { placeholder: "e.g. matte lamination, gold foil, window patch", maxLength: 300 })}
-        <div className="rounded-xl border border-border bg-muted/30 p-3"><div className="mb-1.5 flex items-center justify-between"><h3 className="text-sm font-semibold">Your project summary</h3><button type="button" className="text-sm text-primary hover:underline" onClick={() => setStep(1)}>Edit</button></div>
+        {text("productDetails", "Anything else? (optional)", { placeholder: "e.g. matte lamination, gold foil, window patch", maxLength: 300 })}
+        <div className="hidden rounded-xl border border-border bg-muted/30 p-3 sm:block"><div className="mb-1.5 flex items-center justify-between"><h3 className="text-sm font-semibold">Your project summary</h3><button type="button" className="text-sm text-primary hover:underline" onClick={() => setStep(1)}>Edit</button></div>
           <dl className="grid gap-x-4 gap-y-1.5 text-sm sm:grid-cols-2">{enquirySummary(e).map(([k, v]) => <div key={k} className="min-w-0"><dt className="text-xs text-muted-foreground">{k}</dt><dd className="break-words font-medium">{v}</dd></div>)}</dl>
           <p className="mt-2 text-xs text-muted-foreground">Anything left blank, our team will confirm with you.</p></div>
       </>}

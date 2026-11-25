@@ -80,12 +80,12 @@ export function enquirySummary(e: BoxEnquiry): [string, string][] {
     ["Box type", e.boxTypes.map(label).join(", ")], ["Product inside", products.join(", ")],
     ["Quantity", e.quantityExact.trim()],
     ["Dimensions (L × W × H)", size], ["Material", material], ["Corrugated wall", e.wall],
-    ["Delivery PIN code", e.pincode.trim()], ["Anything else on finishing", e.productDetails.trim()],
+    ["Delivery PIN code", e.pincode.trim()], ["Anything else", e.productDetails.trim()],
   ] as [string, string][]).filter(([, v]) => v);
 }
 export function enquiryBrief(e: BoxEnquiry): SourcingBriefField[] {
   const s = Object.fromEntries(enquirySummary(e));
-  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s.Quantity], ["size", s["Dimensions (L × W × H)"]], ["material", s.Material], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`], ["customisation", s["Anything else on finishing"]]];
+  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s.Quantity], ["size", s["Dimensions (L × W × H)"]], ["material", s.Material], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`], ["customisation", s["Anything else"]]];
   return map.filter((m): m is [string, string] => Boolean(m[1])).map(([topic, value]) => ({ topic, value, source: "buyer" as const }));
 }
 export function enquiryDetails(e: BoxEnquiry, variant: string) {

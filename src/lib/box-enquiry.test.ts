@@ -50,7 +50,7 @@ describe("box enquiry", () => {
   it("finishing notes come from the contact step and products stay uncapped", () => {
     const e = { ...emptyEnquiry(), boxTypes: ["rigid" as const], products: ["Haircare", "Other"], productOther: "Candles", productDetails: "gold foil", pincode: "400001" };
     expect(enquiryDetails(e, "v2").pincode).toBe("400001");
-    expect(enquirySummary(e).find(([k]) => k === "Anything else on finishing")?.[1]).toBe("gold foil");
+    expect(enquirySummary(e).find(([k]) => k === "Anything else")?.[1]).toBe("gold foil");
     expect(enquiryBrief(e).find(f => f.topic === "customisation")?.value).toBe("gold foil");
     expect(enquiryBrief(e).find(f => f.topic === "product")?.value).toBe("Haircare, Other: Candles");
   });
