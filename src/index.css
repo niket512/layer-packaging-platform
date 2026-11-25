@@ -212,3 +212,7 @@
   .network-density-swatch-highest { background: hsl(var(--network-density-highest)); }
 
 :root { color-scheme: only light; }
+
+/* Photo frames stay light even when a phone browser forces dark mode:
+   browsers recolour background-color but generally leave background-image alone. */
+.photo-frame { background-image: linear-gradient(hsl(var(--muted) / 0.4), hsl(var(--muted) / 0.4)), linear-gradient(#fff, #fff); }
