@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check, Clock, HelpCircle, Loader2, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, HelpCircle, Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +49,12 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const toggle = <T extends string>(list: T[], value: T, exclusive?: T) => list.includes(value) ? list.filter(v => v !== value) : value === exclusive ? [value] : [...list.filter(v => v !== exclusive), value];
   const materials = useMemo(() => materialOptions(e.boxTypes), [e.boxTypes]);
   const finishes = useMemo(() => finishOptions(e.boxTypes), [e.boxTypes]);
-  const products = PRODUCT_CATEGORIES.filter(p => !search.trim() || p.toLowerCase().includes(search.trim().toLowerCase()) || e.products.includes(p));
+  const q = search.trim().toLowerCase();
+  const suggestions = q ? PRODUCT_CATEGORIES.filter(p => p !== "Other" && !e.products.includes(p) && p.toLowerCase().includes(q)).slice(0, 6) : [];
+  const exact = PRODUCT_CATEGORIES.some(p => p.toLowerCase() === q);
+  const pickProduct = (p: string) => { set("products", [...e.products, p]); setSearch(""); };
+  const addCustom = () => { const v = search.trim().slice(0, 60); if (!v) return; setE(prev => ({ ...prev, products: prev.products.includes("Other") ? prev.products : [...prev.products, "Other"], productOther: [prev.productOther.trim(), v].filter(Boolean).join(", ").slice(0, 120) })); onActive(); setSearch(""); };
+  const removeProduct = (p: string) => setE(prev => ({ ...prev, products: prev.products.filter(x => x !== p), productOther: p === "Other" ? "" : prev.productOther }));
 
   const next = () => {
     const problem = stepErrors(e, step);
@@ -101,11 +106,12 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       </button>; })}<p className="col-span-full text-xs text-muted-foreground">You can pick more than one.</p></div>}
       {step === 1 && <>
         {group("What product will go inside the box?", <>
-          <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input aria-label="Search product categories" value={search} onChange={ev => setSearch(ev.target.value)} placeholder="Search, e.g. skincare" className="h-11 rounded-lg pl-9 text-base" /></div>
-          <div className="flex flex-wrap gap-2">{products.map(p => { const on = e.products.includes(p); return <button key={p} type="button" aria-pressed={on} onClick={() => set("products", toggle(e.products, p))} className={chip(on)}>{on && <Check className="h-3.5 w-3.5" />}{p}</button>; })}</div>
-          {e.products.includes("Other") && text("productOther", "Which product?", { placeholder: "e.g. Candles", maxLength: 120 })}
+          {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}
+          <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input role="combobox" aria-expanded={Boolean(q)} aria-controls="v2-product-list" aria-label="Type your product" value={search} onChange={ev => setSearch(ev.target.value)} onKeyDown={ev => { if (ev.key === "Enter") { ev.preventDefault(); if (suggestions[0]) pickProduct(suggestions[0]); else if (!exact) addCustom(); } if (ev.key === "Escape") setSearch(""); }} placeholder={e.products.length ? "Add another product" : "Start typing, e.g. skincare, candles"} className="h-11 rounded-lg pl-9 text-base" />
+            {q && <ul id="v2-product-list" role="listbox" className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-lg">{suggestions.map(p => <li key={p} role="option" aria-selected={false}><button type="button" onClick={() => pickProduct(p)} className="flex min-h-11 w-full items-center px-3 text-left text-sm hover:bg-accent">{p}</button></li>)}{!exact && <li role="option" aria-selected={false}><button type="button" onClick={addCustom} className="flex min-h-11 w-full items-center gap-1 px-3 text-left text-sm text-primary hover:bg-accent">Add “{search.trim()}”</button></li>}</ul>}
+          </div>
           {text("productDetails", "Product details (optional)", { placeholder: "e.g. 50 ml glass jar, 3-piece gift set", maxLength: 300 })}
-        </>, "Select all that apply")}
+        </>, "Add one or more")}
         {group("How many boxes do you need?", <>{single("quantityBand", QUANTITY_BANDS)}{text("quantityExact", "Exact quantity (optional)", { inputMode: "numeric", placeholder: "e.g. 12,000", maxLength: 12 })}</>)}
         {group("Box dimensions (cm)", <><div className={`grid grid-cols-3 gap-2 ${e.sizeUnknown ? "opacity-50" : ""}`}>{(["length", "width", "height"] as const).map(k => <div key={k}><label htmlFor={`v2-${k}`} className="mb-1 block text-xs capitalize text-muted-foreground">{k}</label><Input id={`v2-${k}`} disabled={e.sizeUnknown} inputMode="decimal" maxLength={7} placeholder="cm" value={e[k]} onChange={ev => set(k, ev.target.value)} className="h-11 rounded-lg text-base" /></div>)}</div>
           <button type="button" aria-pressed={e.sizeUnknown} onClick={() => set("sizeUnknown", !e.sizeUnknown)} className={chip(e.sizeUnknown)}>{e.sizeUnknown && <Check className="h-3.5 w-3.5" />}I don’t know yet</button></>)}
