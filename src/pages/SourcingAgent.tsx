@@ -404,7 +404,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 {formDesigns.length > 0 && <RequirementForm family={designFamily} onFamilyChange={setDesignFamily} reference={designReference} referencePhotos={designPhotos} referenceDesigns={formDesigns} panelOpen={designFormOpen} onActive={() => setFormActive(true)} />}
               </div>
             </div></> : <div className={`mx-auto w-full max-w-[820px] text-left `}>{composer(!!(current || busy))}{error && <div role="alert" className="mt-2 flex items-center gap-2 rounded-lg border border-destructive/30 bg-card px-3 py-2 text-sm text-destructive"><span className="min-w-0 flex-1">{error}</span><Button variant="ghost" size="icon" className="h-11 w-11 shrink-0" aria-label="Dismiss error" onClick={() => setError("")}><X /></Button></div>}</div>}
-            {!(current || busy) && <p className="mx-auto mt-4 max-w-[820px] text-center text-xs font-medium text-muted-foreground sm:text-sm">Free to request · No commission · Confidential designs</p>}
+            {!(current || busy) && !newBoxForm && <p className="mx-auto mt-4 max-w-[820px] text-center text-xs font-medium text-muted-foreground sm:text-sm">Free to request · No commission · Confidential designs</p>}
             </div></section>
             <TrustStory />
               <div className="mx-auto mt-5 grid max-w-[1120px] items-start gap-6 pt-6 text-left sm:mt-8 sm:grid-cols-2 sm:gap-8 sm:pt-8">
