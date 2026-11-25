@@ -9,7 +9,7 @@ import { markConversionPending } from "@/lib/sourcing-conversion";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
-import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, materialOptions, needsWall, pruneForTypes, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
+import { BOX_TYPES, PRODUCT_CATEGORIES, QUANTITY_BANDS, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, materialOptions, needsWall, pruneForTypes, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
 
 // Photos taken from the designs catalogue.
 const IMAGES: Partial<Record<BoxType, string>> = {
@@ -60,7 +60,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: String(step + 1), reason: step === 0 ? "format_required" : "phone_invalid" }); return; }
     if (step === 0) { trackFormField("format", true, 0); trackFunnel("brief_shown"); }
     if (step === 1) {
-      (["size", "material", "wall", "delivery"] as const).forEach((f, i) => trackFormField(f, Boolean([e.sizeUnknown || e.length, e.material, e.wall, e.pincode][i]), 1));
+      (["quantity", "size", "material", "wall"] as const).forEach((f, i) => trackFormField(f, Boolean([e.quantityBand || e.quantityExact, e.sizeUnknown || e.length, e.material, e.wall][i]), 1));
       trackFunnel("contact_shown");
     }
     setStep(s => s + 1);
@@ -87,7 +87,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   };
 
   const group = (title: string, children: React.ReactNode, hint?: string) => <fieldset className="min-w-0 space-y-2.5"><legend className="mb-2.5 flex flex-wrap items-baseline gap-1.5 text-sm font-semibold">{title}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</legend>{children}</fieldset>;
-  const single = (key: "material" | "wall", options: string[]) => <div className="flex flex-wrap gap-2">{options.map(o => <button key={o} type="button" aria-pressed={e[key] === o} onClick={() => set(key, e[key] === o ? "" : o)} className={chip(e[key] === o)}>{e[key] === o && <Check className="h-3.5 w-3.5" />}{o}</button>)}</div>;
+  const single = (key: "material" | "wall" | "quantityBand", options: string[]) => <div className="flex flex-wrap gap-2">{options.map(o => <button key={o} type="button" aria-pressed={e[key] === o} onClick={() => set(key, e[key] === o ? "" : o)} className={chip(e[key] === o)}>{e[key] === o && <Check className="h-3.5 w-3.5" />}{o}</button>)}</div>;
   const text = (key: keyof BoxEnquiry, labelText: string, props: React.ComponentProps<typeof Input> = {}) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className="mb-1.5 block text-sm font-semibold">{labelText}</label><Input id={`v2-${key}`} className="h-11 rounded-lg bg-card text-base" value={String(e[key] ?? "")} onChange={ev => set(key, ev.target.value as never)} {...props} /></div>;
 
   return <form aria-label="Box enquiry form" noValidate onSubmit={ev => { ev.preventDefault(); if (step === 2) void submit(); else next(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
@@ -109,21 +109,20 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input role="combobox" aria-expanded={Boolean(q)} aria-controls="v2-product-list" aria-label="Type your product" value={search} onChange={ev => setSearch(ev.target.value)} onKeyDown={ev => { if (ev.key === "Enter") { ev.preventDefault(); if (suggestions[0]) pickProduct(suggestions[0]); else if (!exact) addCustom(); } if (ev.key === "Escape") setSearch(""); }} placeholder={e.products.length ? "Add another product" : "Start typing, e.g. skincare, candles"} className="h-11 rounded-lg pl-9 text-base" />
             {q && <ul id="v2-product-list" role="listbox" className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-lg">{suggestions.map(p => <li key={p} role="option" aria-selected={false}><button type="button" onClick={() => pickProduct(p)} className="flex min-h-11 w-full items-center px-3 text-left text-sm hover:bg-accent">{p}</button></li>)}{!exact && <li role="option" aria-selected={false}><button type="button" onClick={addCustom} className="flex min-h-11 w-full items-center gap-1 px-3 text-left text-sm text-primary hover:bg-accent">Add “{search.trim()}”</button></li>}</ul>}
           </div>
-          {text("productDetails", "Product details (optional)", { placeholder: "e.g. 50 ml glass jar, 3-piece gift set", maxLength: 300 })}
         </>, "Add one or more")}
+        {group("How many boxes do you need?", <>{single("quantityBand", QUANTITY_BANDS)}{text("quantityExact", "Exact quantity (optional)", { inputMode: "numeric", placeholder: "e.g. 12,000", maxLength: 12 })}</>)}
         {group("Box dimensions (cm)", <><div className={`grid grid-cols-3 gap-2 ${e.sizeUnknown ? "opacity-50" : ""}`}>{(["length", "width", "height"] as const).map(k => <div key={k}><label htmlFor={`v2-${k}`} className="mb-1 block text-xs capitalize text-muted-foreground">{k}</label><Input id={`v2-${k}`} disabled={e.sizeUnknown} inputMode="decimal" maxLength={7} placeholder="cm" value={e[k]} onChange={ev => set(k, ev.target.value)} className="h-11 rounded-lg text-base" /></div>)}</div>
           <button type="button" aria-pressed={e.sizeUnknown} onClick={() => set("sizeUnknown", !e.sizeUnknown)} className={chip(e.sizeUnknown)}>{e.sizeUnknown && <Check className="h-3.5 w-3.5" />}I don’t know yet</button></>)}
         {group("Material preference", <>{single("material", materials)}{e.material === "Other" && text("materialOther", "Which material?", { maxLength: 120 })}</>)}
         {needsWall(e.boxTypes) && group("Board strength (corrugated wall)", single("wall", WALLS))}
-        <div className="grid gap-5 sm:grid-cols-2">{text("pincode", "Delivery PIN code", { inputMode: "numeric", maxLength: 6, placeholder: "e.g. 400001", autoComplete: "postal-code" })}</div>
       </>}
       {step === 2 && <>
         <div className="grid gap-4 sm:grid-cols-2">
-          {text("name", "Full name", { autoComplete: "name", maxLength: 120, placeholder: "Your name" })}
           {text("brand", "Brand / company name (optional)", { autoComplete: "organization", maxLength: 120 })}
           <div><label htmlFor="v2-phone" className="mb-1.5 block text-sm font-semibold">WhatsApp number</label><div className="flex h-11 items-center overflow-hidden rounded-lg border border-input bg-card focus-within:ring-2 focus-within:ring-ring"><span className="border-r border-border px-3 text-base text-muted-foreground">+91</span><Input id="v2-phone" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={16} value={e.phone} onChange={ev => set("phone", ev.target.value)} placeholder="98765 43210" className="h-11 rounded-none border-0 bg-transparent text-base focus-visible:ring-0 focus-visible:ring-offset-0" /></div><p className="mt-1 text-xs text-muted-foreground">Quotes are shared on WhatsApp. No spam.</p></div>
-          {text("email", "Email (optional)", { type: "email", autoComplete: "email", maxLength: 255, placeholder: "you@brand.com" })}
+          {text("pincode", "Delivery city / PIN code (optional)", { inputMode: "numeric", maxLength: 6, placeholder: "e.g. 400001", autoComplete: "postal-code" })}
         </div>
+        {text("productDetails", "Anything else on finishing? (optional)", { placeholder: "e.g. matte lamination, gold foil, window patch", maxLength: 300 })}
         <div className="rounded-xl border border-border bg-muted/30 p-4"><div className="mb-2 flex items-center justify-between"><h3 className="text-sm font-semibold">Your project summary</h3><button type="button" className="text-sm text-primary hover:underline" onClick={() => setStep(1)}>Edit</button></div>
           <dl className="grid gap-x-4 gap-y-2 text-sm sm:grid-cols-2">{enquirySummary(e).map(([k, v]) => <div key={k} className="min-w-0"><dt className="text-xs text-muted-foreground">{k}</dt><dd className="break-words font-medium">{v}</dd></div>)}</dl>
           <p className="mt-3 text-xs text-muted-foreground">Anything left blank, our team will confirm with you.</p></div>

@@ -13,6 +13,7 @@ export const BOX_TYPES: { id: BoxType; label: string; description: string }[] = 
 ];
 export const PRODUCT_CATEGORIES = ["Beauty & skincare", "Cosmetics & makeup", "Haircare", "Perfumes & fragrances", "Food & snacks", "Chocolates & confectionery", "Dry fruits & nuts", "Bakery & sweets", "Health & wellness", "Pharmaceuticals", "Apparel & fashion", "Footwear", "Jewellery & accessories", "Electronics & gadgets", "Home & lifestyle", "Gifts & hampers", "Subscription boxes", "Other"];
 export const WALLS = ["3-ply", "5-ply", "7-ply", "Not sure"];
+export const QUANTITY_BANDS = ["Under 1,000", "1,000 – 5,000", "5,000 – 20,000", "20,000+"];
 
 const MATERIALS: Record<BoxType, string[]> = {
   corrugated: ["Corrugated board", "Kraft / recycled board"],
@@ -33,11 +34,12 @@ export const needsWall = (types: BoxType[]) => types.some(t => t === "corrugated
 
 export type BoxEnquiry = {
   boxTypes: BoxType[]; products: string[]; productOther: string; productDetails: string;
+  quantityBand: string; quantityExact: string;
   length: string; width: string; height: string; sizeUnknown: boolean;
   material: string; materialOther: string; wall: string;
-  pincode: string; name: string; brand: string; phone: string; email: string;
+  pincode: string; brand: string; phone: string;
 };
-export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], productOther: "", productDetails: "", length: "", width: "", height: "", sizeUnknown: false, material: "", materialOther: "", wall: "", pincode: "", name: "", brand: "", phone: "", email: "" });
+export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], productOther: "", productDetails: "", quantityBand: "", quantityExact: "", length: "", width: "", height: "", sizeUnknown: false, material: "", materialOther: "", wall: "", pincode: "", brand: "", phone: "" });
 
 /** Drops material choices that no longer apply after box types change. */
 export function pruneForTypes(e: BoxEnquiry): BoxEnquiry {
@@ -45,19 +47,17 @@ export function pruneForTypes(e: BoxEnquiry): BoxEnquiry {
   return { ...e, material: materials.includes(e.material) ? e.material : "", wall: needsWall(e.boxTypes) ? e.wall : "" };
 }
 export const validPincode = (pin: string) => /^[1-9]\d{5}$/.test(pin.trim());
-export const validEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()) && email.trim().length <= 255;
 const dim = (v: string) => /^\d{1,4}(\.\d{1,2})?$/.test(v.trim()) && Number(v) > 0;
 
 export function stepErrors(e: BoxEnquiry, step: number): string | null {
   if (step === 0 && !e.boxTypes.length) return "Choose at least one box type, or pick “Not sure? Help me choose”.";
   if (step === 1) {
+    if (!e.quantityBand && !e.quantityExact.trim()) return "Choose a quantity band, or type the exact quantity.";
     if (!e.sizeUnknown && [e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)) return "Enter length, width and height in cm, or choose “I don’t know yet”.";
-    if (e.pincode.trim() && !validPincode(e.pincode)) return "Enter a 6-digit Indian PIN code, e.g. 400001.";
   }
   if (step === 2) {
-    if (!e.name.trim()) return "Please add your name.";
     if (!indianMobile(e.phone)) return "Enter a 10-digit Indian WhatsApp number, e.g. 98765 43210.";
-    if (e.email.trim() && !validEmail(e.email)) return "Check your email address, or leave it blank.";
+    if (e.pincode.trim() && !validPincode(e.pincode)) return "Enter a 6-digit Indian PIN code, e.g. 400001.";
   }
   return null;
 }
@@ -67,21 +67,22 @@ export function enquirySummary(e: BoxEnquiry): [string, string][] {
   const size = e.sizeUnknown ? "Not decided yet" : [e.length, e.width, e.height].every(dim) ? `${e.length} × ${e.width} × ${e.height} cm` : "";
   const material = e.material === "Other" && e.materialOther.trim() ? `Other: ${e.materialOther.trim()}` : e.material;
   return ([
-    ["Box type", e.boxTypes.map(label).join(", ")], ["Product inside", products.join(", ")], ["Product details", e.productDetails.trim()],
+    ["Box type", e.boxTypes.map(label).join(", ")], ["Product inside", products.join(", ")],
+    ["Quantity", [e.quantityBand, e.quantityExact.trim()].filter(Boolean).join(" — ")],
     ["Dimensions (L × W × H)", size], ["Material", material], ["Corrugated wall", e.wall],
-    ["Delivery PIN code", e.pincode.trim()],
+    ["Delivery PIN code", e.pincode.trim()], ["Anything else on finishing", e.productDetails.trim()],
   ] as [string, string][]).filter(([, v]) => v);
 }
 export function enquiryBrief(e: BoxEnquiry): SourcingBriefField[] {
   const s = Object.fromEntries(enquirySummary(e));
-  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", [s["Product inside"], s["Product details"]].filter(Boolean).join(" — ")], ["size", s["Dimensions (L × W × H)"]], ["material", s.Material], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`]];
+  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s.Quantity], ["size", s["Dimensions (L × W × H)"]], ["material", s.Material], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`], ["customisation", s["Anything else on finishing"]]];
   return map.filter((m): m is [string, string] => Boolean(m[1])).map(([topic, value]) => ({ topic, value, source: "buyer" as const }));
 }
 export function enquiryDetails(e: BoxEnquiry, variant: string) {
-  return { form_variant: variant, box_types: e.boxTypes, products: e.products, product_other: e.productOther.trim() || null, product_details: e.productDetails.trim() || null, dimensions_cm: !e.sizeUnknown && [e.length, e.width, e.height].every(dim) ? [e.length, e.width, e.height].map(Number) : null, size_unknown: e.sizeUnknown, material: e.material || null, wall: e.wall || null, pincode: e.pincode.trim() || null, name: e.name.trim().slice(0, 120), brand: e.brand.trim().slice(0, 120) || null, email: e.email.trim().slice(0, 255) || null };
+  return { form_variant: variant, box_types: e.boxTypes, products: e.products, product_other: e.productOther.trim() || null, product_details: e.productDetails.trim() || null, quantity_band: e.quantityBand || null, quantity_exact: e.quantityExact.trim() || null, dimensions_cm: !e.sizeUnknown && [e.length, e.width, e.height].every(dim) ? [e.length, e.width, e.height].map(Number) : null, size_unknown: e.sizeUnknown, material: e.material || null, wall: e.wall || null, pincode: e.pincode.trim() || null, brand: e.brand.trim().slice(0, 120) || null };
 }
 export function enquiryText(e: BoxEnquiry) {
-  return ["Premium box enquiry (new form)", ...enquirySummary(e).map(([k, v]) => `${k}: ${v}`), `Name: ${e.name.trim()}`, e.brand.trim() && `Brand: ${e.brand.trim()}`, e.email.trim() && `Email: ${e.email.trim()}`].filter(Boolean).join("\n");
+  return ["Premium box enquiry (new form)", ...enquirySummary(e).map(([k, v]) => `${k}: ${v}`), e.brand.trim() && `Brand: ${e.brand.trim()}`].filter(Boolean).join("\n");
 }
 
 export type FormVariant = "classic" | "v2";
