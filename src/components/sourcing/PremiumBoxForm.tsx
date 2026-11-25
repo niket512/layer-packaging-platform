@@ -154,10 +154,10 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         <div className="grid min-w-0 items-end gap-3 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           <div className="min-w-0">
             <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
-            <Button type="button" variant="outline" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Upload your design or reference image, optional, up to 3" className="h-14 w-full justify-start gap-2 rounded-lg border-dashed border-primary/40 bg-accent text-primary hover:bg-accent hover:text-primary">
+            <Button type="button" variant="outline" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Upload your design or reference image, optional, up to 3" className="h-auto min-h-14 w-full justify-start gap-2 whitespace-normal rounded-lg border-dashed py-2 border-primary/40 bg-accent text-primary hover:bg-accent hover:text-primary">
               {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-              <span className="min-w-0 flex-1 whitespace-normal text-left leading-4"><span className="block">{adding ? "Uploading…" : photos.length >= 3 ? "3 images attached" : photos.length ? "Upload another image" : "Upload your design / image"}</span><span className="mt-0.5 block text-xs font-normal text-muted-foreground">Logo, dieline, or reference photo</span></span>
-              <span className="ml-auto shrink-0 text-xs font-normal text-muted-foreground">Optional</span>
+              <span className="min-w-0 flex-1 whitespace-normal break-words text-left leading-5"><span className="block">{adding ? "Uploading…" : photos.length >= 3 ? "3 images attached" : photos.length ? "Upload another image" : "Upload your design / image"}</span><span className="mt-0.5 block text-xs font-normal leading-4 text-muted-foreground">Logo, dieline or reference photo</span></span>
+              <span className="ml-auto hidden shrink-0 text-xs font-normal text-muted-foreground sm:inline">Optional</span>
             </Button>
           </div>
           <div className="order-3 min-w-0 sm:order-2"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Exact quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><Input id="v2-quantityExact" className="h-11 rounded-lg bg-card text-base" inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" />
