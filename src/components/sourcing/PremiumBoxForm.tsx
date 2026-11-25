@@ -111,7 +111,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   };
 
   const group = (title: string, children: React.ReactNode, hint?: string, required?: boolean) => <fieldset aria-required={required || undefined} className="min-w-0 space-y-1.5"><legend className="mb-1.5 flex flex-wrap items-baseline gap-1.5 text-sm font-semibold">{title}{required && <span aria-hidden="true" className="text-primary">*</span>}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</legend>{children}</fieldset>;
-  const single = (key: "material" | "wall", label: string, options: string[]) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className="mb-1.5 block text-sm font-semibold">{label}</label><Select value={e[key]} onValueChange={value => set(key, value === "clear" ? "" : value)}><SelectTrigger id={`v2-${key}`} className="h-11 rounded-lg bg-card text-base"><SelectValue placeholder="Choose" /></SelectTrigger><SelectContent><SelectItem value="clear" className="min-h-11">No preference</SelectItem>{options.map(o => <SelectItem key={o} value={o} className="min-h-11">{o}</SelectItem>)}</SelectContent></Select></div>;
+  const single = (key: "material" | "wall", label: string, options: string[]) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className="mb-1.5 block text-sm font-semibold">{label}</label><Select value={e[key]} onValueChange={value => set(key, value === "clear" ? "" : value)}><SelectTrigger id={`v2-${key}`} className="h-11 rounded-lg bg-card text-base"><SelectValue placeholder="Choose" /></SelectTrigger><SelectContent>{options.map(o => <SelectItem key={o} value={o} className="min-h-11">{o}</SelectItem>)}</SelectContent></Select></div>;
   const text = (key: keyof BoxEnquiry, labelText: string, props: React.ComponentProps<typeof Input> = {}) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className="mb-1.5 block text-sm font-semibold">{labelText}</label><Input id={`v2-${key}`} className="h-11 rounded-lg bg-card text-base" value={String(e[key] ?? "")} onChange={ev => set(key, ev.target.value as never)} {...props} /></div>;
 
   return <form aria-label="Box enquiry form" noValidate onSubmit={ev => { ev.preventDefault(); if (step === 2) void submit(); else next(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
@@ -147,7 +147,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         </div>
         </div>
         {e.material === "Other" && <Input autoFocus aria-label="Which material?" placeholder="Which material? e.g. metallic board" maxLength={120} value={e.materialOther} onChange={ev => set("materialOther", ev.target.value)} className="h-11 rounded-lg bg-card text-base" />}
-        <div className="grid min-w-0 items-start gap-3 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+        <div className="grid min-w-0 items-end gap-3 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           <div className="min-w-0">
             <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
             <Button type="button" variant="outline" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Upload your design or reference image, optional, up to 3" className="h-14 w-full justify-start gap-2 rounded-lg border-dashed border-primary/40 bg-accent text-primary hover:bg-accent hover:text-primary">
@@ -155,11 +155,11 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
               <span className="min-w-0 flex-1 whitespace-normal text-left leading-4"><span className="block">{adding ? "Uploading…" : photos.length >= 3 ? "3 images attached" : photos.length ? "Upload another image" : "Upload your design / image"}</span><span className="mt-0.5 block text-xs font-normal text-muted-foreground">Logo, dieline, or reference photo</span></span>
               <span className="ml-auto shrink-0 text-xs font-normal text-muted-foreground">Optional</span>
             </Button>
-            {photos.length > 0 && <div className="mt-2 flex flex-wrap items-center gap-2">{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-card"><X className="h-3 w-3" /></Button></span>)}</div>}
           </div>
           <div className="min-w-0"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Exact quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><Input id="v2-quantityExact" className="h-11 rounded-lg bg-card text-base" inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" />
           </div>
         </div>
+        {photos.length > 0 && <div className="flex flex-wrap items-center gap-2">{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-card"><X className="h-3 w-3" /></Button></span>)}</div>}
       </>}
       {step === 2 && <>
         <div className="grid gap-3 sm:grid-cols-2">
