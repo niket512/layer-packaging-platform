@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Clarify box-form upload and contact notes, remove empty speed badge, and reduce mobile styles to nine; verified steps and visible Continue at 320px/393px and desktop, with ten existing form tests passing.
 - [x] Refine catalogue request on phones with readable editable choices, full-width quote action and accessible return to designs; verified 320px/393px phones and desktop, retained inputs and eight regression tests.
 - [x] Combine catalogue requirements and contact into one editable view; phone/desktop checks verified prefilled edits, all inputs and no intermediate review; eight tests passed.
 - [x] Add distinct catalogue form separating prefilled attributes from buyer inputs; verified phone/desktop entry, retained quantity and final review/contact; eight tests passed.
