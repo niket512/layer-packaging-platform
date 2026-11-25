@@ -14,7 +14,7 @@ export const FORM_STEPS = [
 ] as const;
 export const NOT_SURE_SIZE = "Not sure about dimensions";
 export const SIZE_SUGGESTIONS: Record<FormFamily, string[]> = {
-  boxes: ["Small · 15 × 10 × 5 cm", "Medium · 25 × 20 × 10 cm", "Large · 35 × 25 × 15 cm", NOT_SURE_SIZE],
+  boxes: ["Small · 6 × 4 × 2 in", "Medium · 10 × 8 × 4 in", "Large · 14 × 10 × 6 in", NOT_SURE_SIZE],
   pouches: ["100 g", "250 g", "500 g", "1 kg", NOT_SURE_SIZE],
 };
 /** Indian mobile: 10 digits starting 6–9, optionally prefixed by +91, 91 or 0. */

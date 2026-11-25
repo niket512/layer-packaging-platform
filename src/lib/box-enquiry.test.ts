@@ -54,6 +54,20 @@ describe("box enquiry", () => {
     expect(enquiryBrief(e).find(f => f.topic === "customisation")?.value).toBe("gold foil");
     expect(enquiryBrief(e).find(f => f.topic === "product")?.value).toBe("Haircare, Other: Candles");
   });
+  it("inches are the default dimension unit and convert to cm on save", () => {
+    expect(emptyEnquiry().unit).toBe("in");
+    const e = { ...emptyEnquiry(), boxTypes: ["mailer" as const], length: "12", width: "8", height: "6" };
+    expect(enquirySummary(e).find(([k]) => k === "Dimensions (L × W × H)")?.[1]).toBe("12 × 8 × 6 in");
+    const details = enquiryDetails(e, "v2") as Record<string, unknown>;
+    expect(details.dimensions_unit_entered).toBe("in");
+    expect(details.dimensions_cm).toEqual([30.5, 20.3, 15.2]);
+    const cm = { ...e, unit: "cm" as const };
+    expect(enquiryDetails(cm, "v2").dimensions_cm).toEqual([12, 8, 6]);
+    expect(enquiryDetails(cm, "v2").dimensions_unit_entered).toBe("cm");
+    const legacy = { ...e, unit: undefined };
+    expect(enquirySummary(legacy).find(([k]) => k === "Dimensions (L × W × H)")?.[1]).toBe("12 × 8 × 6 in");
+    expect(enquiryDetails(legacy, "v2").dimensions_unit_entered).toBe("in");
+  });
   it("variant is sticky and can be forced", () => {
     const s = mem();
     expect(formVariant("", s, () => 0.1)).toBe("v2");
