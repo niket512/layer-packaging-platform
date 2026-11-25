@@ -2,7 +2,7 @@ export const FUNNEL_STEPS = ["page_opened", "category_selected", "composer_focus
 export type FunnelStep = typeof FUNNEL_STEPS[number];
 export const JOURNEY_FIELDS = ["family", "format", "quantity", "size", "printing", "material", "wall", "closure", "finishing", "delivery", "notes", "phone", "photos"] as const;
 export type JourneyField = typeof JOURNEY_FIELDS[number];
-export type JourneyEvent = { kind: "page" | "funnel" | "viewed" | "opened" | "selected" | "form_step" | "field" | "form_error"; at: number; path: string; design?: string; position?: number; family?: "boxes" | "pouches"; category?: string; step?: string; field?: JourneyField; filled?: boolean; reason?: "format_required" | "phone_invalid" | "save_failed" };
+export type JourneyEvent = { kind: "page" | "funnel" | "viewed" | "opened" | "selected" | "form_step" | "field" | "form_error"; at: number; path: string; design?: string; position?: number; family?: "boxes" | "pouches"; category?: string; step?: string; field?: JourneyField; filled?: boolean; reason?: "format_required" | "phone_invalid" | "details_invalid" | "save_failed" };
 export function addJourney(snapshot: VisitorSnapshot, event: JourneyEvent) {
   const events = snapshot.journey ??= [];
   if (events.length >= 1000) return false;

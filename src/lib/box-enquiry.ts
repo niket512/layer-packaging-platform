@@ -74,12 +74,12 @@ export function parseBoxSize(raw: string): Pick<BoxEnquiry, "length" | "width" |
 export function stepErrors(e: BoxEnquiry, step: number): string | null {
   if (step === 0 && e.boxTypes.length !== 1) return "Choose one box type, or pick “Not sure — help me choose”.";
   if (step === 1) {
-    if (!qty(e.quantityExact)) return "Enter the number of boxes you need, e.g. 12000.";
-    if (!e.sizeUnknown && ((e.sizeInput?.trim() && !parseBoxSize(e.sizeInput)) || ([e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)))) return "Enter length × breadth × height, e.g. 12 × 8 × 6, or leave box size blank.";
-  }
-  if (step === 2) {
     if (!indianMobile(e.phone)) return "Enter a 10-digit Indian WhatsApp number, e.g. 98765 43210.";
     if (e.pincode.trim() && !validPincode(e.pincode)) return "Enter a 6-digit Indian PIN code, e.g. 400001.";
+  }
+  if (step === 2) {
+    if (!qty(e.quantityExact)) return "Enter the number of boxes you need, e.g. 12000.";
+    if (!e.sizeUnknown && ((e.sizeInput?.trim() && !parseBoxSize(e.sizeInput)) || ([e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)))) return "Enter length × breadth × height, e.g. 12 × 8 × 6, or leave box size blank.";
   }
   return null;
 }

@@ -12,7 +12,7 @@ export function journeyLabel(event: JourneyEvent) {
   if (event.kind === "page") return `Opened ${pages[event.path] ?? "sourcing page"}`;
   if (event.kind === "form_step") return `Form step ${event.step}: ${stages[Number(event.step) - 1] ?? "Packaging"}`;
   if (event.kind === "field") return `${event.filled ? "Filled" : "Cleared"} ${fields[event.field ?? ""] ?? "field"}`;
-  if (event.kind === "form_error") return event.reason === "format_required" ? "Continue blocked: packaging style missing" : event.reason === "phone_invalid" ? "Submit blocked: contact number invalid" : "Request could not be saved";
+  if (event.kind === "form_error") return event.reason === "format_required" ? "Continue blocked: packaging style missing" : event.reason === "phone_invalid" ? "Submit blocked: contact number invalid" : event.reason === "details_invalid" ? "Submit blocked: project details incomplete" : "Request could not be saved";
   if (event.kind === "funnel") return (event.step ?? "").replace(/_/g, " ");
   return `${event.kind === "viewed" ? "Viewed" : event.kind === "opened" ? "Clicked details" : "Used design"}: ${designs.find(d => d.id === event.design)?.name ?? event.design}`;
 }

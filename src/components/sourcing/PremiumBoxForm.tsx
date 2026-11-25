@@ -27,7 +27,7 @@ const IMAGES: Partial<Record<BoxType, string>> = {
   diecut: "https://www.china-paperbox.com/images/products/hexagonal-geometric-foldable-gift-carton.jpg",
   gift: "https://res.cloudinary.com/daxralyfk/image/upload/v1784444272/uploads/12x10x4-boxwaale-thumbnail.webp",
 };
-const STEPS = ["Box type", "Project details", "Contact"];
+const STEPS = ["Box type", "Contact", "Project details"];
 const KEY = "snaplogo.form.v2.draft";
 
 export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
@@ -80,24 +80,28 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const next = () => {
     const problem = stepErrors(e, step);
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: String(step + 1), reason: step === 0 ? "format_required" : "phone_invalid" }); return; }
-    if (step === 0) { trackFormField("format", true, 0); trackFunnel("brief_shown"); }
+    if (step === 0) { trackFormField("format", true, 0); trackFunnel("contact_shown"); }
     if (step === 1) {
-      (["quantity", "size", "material", "wall"] as const).forEach((f, i) => trackFormField(f, Boolean([e.quantityExact, e.sizeUnknown || e.length, e.material, e.wall][i]), 1));
-      trackFormField("photos", photos.length > 0, 1);
-      trackFunnel("contact_shown");
+      trackFormField("phone", true, 1);
+      trackFormField("delivery", Boolean(e.pincode.trim()), 1);
+      trackFunnel("brief_shown");
     }
     setStep(s => s + 1);
   };
   const submit = async () => {
     if (busy) return;
+    const contactProblem = stepErrors(e, 1);
+    if (contactProblem) { setStep(1); setError(contactProblem); trackJourney({ kind: "form_error", step: "2", reason: "phone_invalid" }); return; }
     const problem = stepErrors(e, 2);
-    if (problem) { setError(problem); trackJourney({ kind: "form_error", step: "3", reason: "phone_invalid" }); return; }
+    if (problem) { setError(problem); trackJourney({ kind: "form_error", step: "3", reason: "details_invalid" }); return; }
     const number = indianMobile(e.phone);
     if (!number) return;
+    (["quantity", "size", "material", "wall"] as const).forEach((f, i) => trackFormField(f, Boolean([e.quantityExact, e.sizeUnknown || e.length, e.material, e.wall][i]), 2));
+    trackFormField("photos", photos.length > 0, 2);
     const brief = enquiryBrief(e);
     const payload = formSubmission(brief, number, enquiryText(e, photos.length), photos);
     if (!payload) return;
-    setBusy(true); setError(""); trackFormField("phone", true, 2); trackFunnel("contact_submitted");
+    setBusy(true); setError(""); trackFunnel("contact_submitted");
     try {
       const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: savedId.current, details: enquiryDetails(e, "v2", photos.length), attribution: { ...readAttribution(), enquiry_id: savedId.current, submitted_at: new Date().toISOString(), form_variant: "v2" } });
       if (insertError) throw new Error("Your enquiry couldn’t be sent. Please try again.");
@@ -118,17 +122,18 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     <div className="border-b border-border px-4 pb-3 pt-3.5 sm:px-6 sm:pt-4">
       <ol aria-label="Enquiry progress" className="mb-2.5 grid grid-cols-3 gap-2">{STEPS.map((l, i) => <li key={l} aria-current={step === i ? "step" : undefined} className={`min-w-0 border-t-2 pt-1.5 ${i <= step ? "border-primary" : "border-border"}`}><span className={`flex items-center gap-1.5 text-[11px] font-semibold sm:text-xs ${step === i ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground"}`}>{i < step ? <Check className="h-3.5 w-3.5 shrink-0" /> : <span>{i + 1}.</span>}<span className="truncate">{l}</span></span></li>)}</ol>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
-        <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold leading-tight outline-none sm:text-xl">{["What kind of custom box are you looking to create?", "Tell us about your project", "Where should we send your quotes?"][step]}</h2>
+        <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold leading-tight outline-none sm:text-xl">{["What kind of custom box are you looking to create?", "Where should we send your quotes?", "Tell us about your project"][step]}</h2>
       </div>
-      {step === 2 && <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{["", "", "We coordinate your quotes on WhatsApp — no spam."][step]}</p>}
+      {step === 1 && <p className="mt-1 text-[13px] leading-5 text-muted-foreground">We coordinate your quotes on WhatsApp — no spam.</p>}
     </div>
-    <fieldset disabled={busy} className={`min-w-0 px-4 sm:px-6 ${step === 1 ? "space-y-3 py-3" : "space-y-4 py-4 sm:py-5"}`}>
+    <fieldset disabled={busy} className={`min-w-0 px-4 sm:px-6 ${step === 2 ? "space-y-3 py-3" : "space-y-4 py-4 sm:py-5"}`}>
       {step === 0 && group("Box type", <div className="grid grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["gable", "display", "pillow"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => set("boxTypes", [b.id])} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : b.id === "custom" ? "border-[1.5px] border-dashed border-muted-foreground/40 hover:border-primary/60" : "border-border hover:border-primary/40"}`}>
         <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg bg-muted/40 sm:h-20">{IMAGES[b.id] ? <img src={catalogueImage(IMAGES[b.id])} alt="" loading="lazy" decoding="async" width={200} height={200} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : b.id === "custom" ? <Ruler className="h-7 w-7 text-primary" /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
         <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>{b.use && <span className="-mt-0.5 hidden text-[10px] leading-3 text-muted-foreground sm:block">{b.use}</span>}
         <span className={`absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
       </Button>; })}</div>, "Select one", true)}
-      {step === 1 && <>
+      {step === 2 && <>
+        {text("productDetails", "Anything else? (optional)", { placeholder: "e.g. matte lamination, gold foil, window patch", maxLength: 300 })}
         {group("What product will go inside the box?", <>
           {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}
           {e.products.length === 0 && <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input role="combobox" aria-expanded={Boolean(q)} aria-controls="v2-product-list" aria-label="Type your product" value={search} onChange={ev => setSearch(ev.target.value)} onKeyDown={ev => { if (ev.key === "Enter") { ev.preventDefault(); if (suggestions[0]) pickProduct(suggestions[0]); else if (!exact) addCustom(); } if (ev.key === "Escape") setSearch(""); }} placeholder={e.products.length ? "Add another product" : "Start typing, e.g. skincare, candles"} className="h-11 rounded-lg bg-card pl-9 text-base" />
@@ -161,8 +166,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           {photos.length > 0 && <div aria-label="Attached design images" className="order-2 flex flex-wrap items-center gap-2 sm:order-3 sm:col-start-1">{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-card"><X className="h-3 w-3" /></Button></span>)}</div>}
         </div>
       </>}
-      {step === 2 && <>
-        {text("productDetails", "Anything else? (optional)", { placeholder: "e.g. matte lamination, gold foil, window patch", maxLength: 300 })}
+      {step === 1 && <>
         <div className="grid gap-3 sm:grid-cols-2">
           {text("brand", "Brand / company name (optional)", { autoComplete: "organization", maxLength: 120 })}
           {text("pincode", "Delivery city / PIN code", { inputMode: "numeric", maxLength: 6, placeholder: "e.g. 400001", autoComplete: "postal-code" })}
@@ -171,6 +175,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       </>}
     </fieldset>
     {error && <p role="alert" className="px-4 pb-4 text-sm text-destructive sm:px-7">{error}</p>}
-    <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-7">{step > 0 ? <Button type="button" variant="ghost" disabled={busy} className="h-12 rounded-full px-3" onClick={() => { setStep(s => s - 1); setError(""); }}><ArrowLeft />Back</Button> : <span className="text-xs text-muted-foreground">Free · No commission · <span aria-hidden="true" className="text-primary">*</span> Required</span>}<Button type="submit" disabled={busy} className="h-12 rounded-full px-5 text-sm font-semibold">{busy ? <Loader2 className="animate-spin" /> : <><span className="sm:hidden">{step === 2 ? "Submit my enquiry" : "Continue"}</span><span className="hidden sm:inline">{["Continue to project details", "Continue", "Submit my enquiry"][step]}</span><ArrowRight /></>}</Button></div>
+    <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-7">{step > 0 ? <Button type="button" variant="ghost" disabled={busy} className="h-12 rounded-full px-3" onClick={() => { setStep(s => s - 1); setError(""); }}><ArrowLeft />Back</Button> : <span className="text-xs text-muted-foreground">Free · No commission · <span aria-hidden="true" className="text-primary">*</span> Required</span>}<Button type="submit" disabled={busy} className="h-12 rounded-full px-5 text-sm font-semibold">{busy ? <Loader2 className="animate-spin" /> : <><span className="sm:hidden">{step === 2 ? "Submit my enquiry" : "Continue"}</span><span className="hidden sm:inline">{["Continue to contact", "Continue to project details", "Submit my enquiry"][step]}</span><ArrowRight /></>}</Button></div>
   </form>;
 }

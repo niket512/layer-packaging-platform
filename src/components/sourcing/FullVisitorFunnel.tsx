@@ -29,7 +29,7 @@ export function FullVisitorFunnel({ rows, onInspect }: { rows: VisitorReportRow[
   ] as [string, VisitorReportRow[]][];
   const detailed = rows.filter(row => row.journey?.length);
   const completed = detailed.filter(row => journeyFields(row.journey ?? []).length > 0);
-  const errors = ["format_required", "phone_invalid", "save_failed"] as const;
+  const errors = ["format_required", "phone_invalid", "details_invalid", "save_failed"] as const;
   return <div className="my-6 space-y-7">
     <FunnelTable title="Full visit-to-enquiry funnel" stages={funnel.overall} onInspect={onInspect} />
     <p className="text-xs leading-relaxed text-muted-foreground">Counts are visits, not people. “Started a request” includes later observed request progress when early interaction was not recorded. “No later step” includes active visits and is not a confirmed exit. Optional steps may be bypassed; they are not counted as viewed. Only saved enquiries are conversions.</p>
