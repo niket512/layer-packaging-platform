@@ -210,3 +210,5 @@
   .network-density-swatch-medium { background: hsl(var(--network-density-medium)); }
   .network-density-swatch-high { background: hsl(var(--network-density-high)); }
   .network-density-swatch-highest { background: hsl(var(--network-density-highest)); }
+
+:root { color-scheme: only light; }
