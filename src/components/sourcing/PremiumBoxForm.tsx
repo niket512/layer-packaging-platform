@@ -26,7 +26,7 @@ const IMAGES: Partial<Record<BoxType, string>> = {
 };
 const STEPS = ["Box type", "Project details", "Contact"];
 const KEY = "snaplogo.form.v2.draft";
-const chip = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition-colors ${on ? "border-primary bg-accent font-medium text-primary" : "border-border bg-card text-foreground hover:border-primary/40"}`;
+const chip = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm transition-colors ${on ? "border-primary bg-accent font-medium text-primary" : "border-border bg-card text-foreground hover:border-primary/40"}`;
 
 export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const navigate = useNavigate();
@@ -57,6 +57,14 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const exact = PRODUCT_CATEGORIES.some(p => p.toLowerCase() === q);
   const pickProduct = (p: string) => { set("products", [...e.products, p]); setSearch(""); };
   const addCustom = () => { const v = search.trim().slice(0, 60); if (!v) return; setE(prev => ({ ...prev, products: prev.products.includes("Other") ? prev.products : [...prev.products, "Other"], productOther: [prev.productOther.trim(), v].filter(Boolean).join(", ").slice(0, 120) })); onActive(); setSearch(""); };
+  const QUICK = ["Beauty & skincare", "Apparel & fashion", "Food & snacks", "Electronics & gadgets"];
+  const dims = useRef<(HTMLInputElement | null)[]>([]);
+  const onDim = (i: number, k: "length" | "width" | "height", raw: string) => {
+    const jump = /[x*\s]$/i.test(raw);
+    const v = raw.replace(/[^0-9.]/g, "");
+    set(k, v);
+    if (i < 2 && (jump || v.replace(".", "").length >= 3)) dims.current[i + 1]?.focus();
+  };
   const removeProduct = (p: string) => setE(prev => ({ ...prev, products: prev.products.filter(x => x !== p), productOther: p === "Other" ? "" : prev.productOther }));
 
   const next = () => {
@@ -91,7 +99,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   };
 
   const group = (title: string, children: React.ReactNode, hint?: string) => <fieldset className="min-w-0 space-y-2"><legend className="mb-2 flex flex-wrap items-baseline gap-1.5 text-sm font-semibold">{title}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</legend>{children}</fieldset>;
-  const single = (key: "material" | "wall", options: string[]) => <div className="flex flex-wrap gap-2">{options.map(o => <button key={o} type="button" aria-pressed={e[key] === o} onClick={() => set(key, e[key] === o ? "" : o)} className={chip(e[key] === o)}>{e[key] === o && <Check className="h-3.5 w-3.5" />}{o}</button>)}</div>;
+  const single = (key: "material" | "wall", options: string[], rec?: string) => <div className="flex flex-wrap items-center gap-2">{options.map(o => <button key={o} type="button" aria-pressed={e[key] === o} onClick={() => set(key, e[key] === o ? "" : o)} className={chip(e[key] === o)}>{e[key] === o && <Check className="h-3.5 w-3.5" />}{o}{o === rec && <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-primary"><span className="h-1.5 w-1.5 rounded-full bg-primary" />Common</span>}</button>)}</div>;
   const text = (key: keyof BoxEnquiry, labelText: string, props: React.ComponentProps<typeof Input> = {}) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className="mb-1.5 block text-sm font-semibold">{labelText}</label><Input id={`v2-${key}`} className="h-11 rounded-lg bg-card text-base" value={String(e[key] ?? "")} onChange={ev => set(key, ev.target.value as never)} {...props} /></div>;
 
   return <form aria-label="Box enquiry form" noValidate onSubmit={ev => { ev.preventDefault(); if (step === 2) void submit(); else next(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
@@ -112,17 +120,22 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       {step === 1 && <>
         {group("What product will go inside the box?", <>
           {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}
-          <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input role="combobox" aria-expanded={Boolean(q)} aria-controls="v2-product-list" aria-label="Type your product" value={search} onChange={ev => setSearch(ev.target.value)} onKeyDown={ev => { if (ev.key === "Enter") { ev.preventDefault(); if (suggestions[0]) pickProduct(suggestions[0]); else if (!exact) addCustom(); } if (ev.key === "Escape") setSearch(""); }} placeholder={e.products.length ? "Add another product" : "Start typing, e.g. skincare, candles"} className="h-11 rounded-lg pl-9 text-base" />
+          <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input role="combobox" aria-expanded={Boolean(q)} aria-controls="v2-product-list" aria-label="Type your product" value={search} onChange={ev => setSearch(ev.target.value)} onKeyDown={ev => { if (ev.key === "Enter") { ev.preventDefault(); if (suggestions[0]) pickProduct(suggestions[0]); else if (!exact) addCustom(); } if (ev.key === "Escape") setSearch(""); }} placeholder={e.products.length ? "Add another product" : "Start typing, e.g. skincare, candles"} className="h-11 rounded-lg bg-card pl-9 text-base" />
             {q && <ul id="v2-product-list" role="listbox" className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-lg">{suggestions.map(p => <li key={p} role="option" aria-selected={false}><button type="button" onClick={() => pickProduct(p)} className="flex min-h-11 w-full items-center px-3 text-left text-sm hover:bg-accent">{p}</button></li>)}{!exact && <li role="option" aria-selected={false}><button type="button" onClick={addCustom} className="flex min-h-11 w-full items-center gap-1 px-3 text-left text-sm text-primary hover:bg-accent">Add “{search.trim()}”</button></li>}</ul>}
           </div>
+          {!q && <div className="flex flex-wrap gap-1.5">{QUICK.filter(p => !e.products.includes(p)).map(p => <button key={p} type="button" onClick={() => pickProduct(p)} className="inline-flex min-h-8 items-center rounded-lg border border-dashed border-border px-2.5 text-xs text-muted-foreground hover:border-primary/50 hover:text-primary">+ {p}</button>)}</div>}
         </>, "Add one or more")}
         <div className="grid gap-4 sm:grid-cols-2 sm:items-start">
-          {text("quantityExact", "Exact quantity", { inputMode: "numeric", placeholder: "e.g. 12000", maxLength: 12 })}
-          {group("Box dimensions (cm)", <><div className={`grid grid-cols-3 gap-2 ${e.sizeUnknown ? "opacity-50" : ""}`}>{(["length", "width", "height"] as const).map(k => <div key={k}><label htmlFor={`v2-${k}`} className="mb-1 block text-xs capitalize text-muted-foreground">{k}</label><Input id={`v2-${k}`} disabled={e.sizeUnknown} inputMode="decimal" maxLength={7} placeholder="cm" value={e[k]} onChange={ev => set(k, ev.target.value)} className="h-11 rounded-lg text-base" /></div>)}</div>
-            <button type="button" aria-pressed={e.sizeUnknown} onClick={() => set("sizeUnknown", !e.sizeUnknown)} className={chip(e.sizeUnknown)}>{e.sizeUnknown && <Check className="h-3.5 w-3.5" />}I don’t know yet</button></>)}
+          <div className="min-w-0"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center text-sm font-semibold">Exact quantity</label><Input id="v2-quantityExact" className="h-11 rounded-lg bg-card text-base" inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} />
+            <div className="mt-2 flex flex-wrap gap-1.5">{["250", "500", "1,000", "2,500"].map(v => { const on = e.quantityExact.replace(/[,\s]/g, "") === v.replace(",", ""); return <button key={v} type="button" aria-pressed={on} onClick={() => set("quantityExact", v)} className={`min-h-8 rounded-lg border px-2.5 text-xs font-medium ${on ? "border-primary bg-accent text-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>{v}</button>; })}</div></div>
+          <div className="min-w-0"><div className="mb-1.5 flex h-6 items-center justify-between gap-2"><span id="v2-dims" className="text-sm font-semibold">Box dimensions</span><span className="flex items-center gap-2">
+            <span role="group" aria-label="Unit" className="inline-flex rounded-md border border-border p-0.5 text-xs">{(["cm", "in"] as const).map(u => <button key={u} type="button" aria-pressed={(e.unit ?? "cm") === u} disabled={e.sizeUnknown} onClick={() => set("unit", u)} className={`rounded px-2 py-0.5 ${(e.unit ?? "cm") === u ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{u}</button>)}</span>
+            <button type="button" aria-pressed={e.sizeUnknown} onClick={() => set("sizeUnknown", !e.sizeUnknown)} className={`text-xs ${e.sizeUnknown ? "font-semibold text-primary" : "text-muted-foreground underline-offset-2 hover:underline"}`}>{e.sizeUnknown && <Check className="mr-0.5 inline h-3 w-3" />}Don’t know yet</button></span></div>
+            <div aria-labelledby="v2-dims" role="group" className={`grid grid-cols-3 gap-2 transition-opacity ${e.sizeUnknown ? "opacity-40" : ""}`}>{(["length", "width", "height"] as const).map((k, i) => <Input key={k} ref={el => { dims.current[i] = el; }} id={`v2-${k}`} aria-label={`${k} (${e.unit ?? "cm"})`} disabled={e.sizeUnknown} inputMode="decimal" maxLength={7} placeholder={`${k[0].toUpperCase()} (${e.unit ?? "cm"})`} value={e[k]} onChange={ev => onDim(i, k, ev.target.value)} className="h-11 rounded-lg bg-card text-base" />)}</div>
+            {e.sizeUnknown && <p className="mt-1.5 text-xs text-muted-foreground">No problem — we’ll help you size it.</p>}</div>
         </div>
-        {group("Material preference", <>{single("material", materials)}{e.material === "Other" && text("materialOther", "Which material?", { maxLength: 120 })}</>)}
-        {needsWall(e.boxTypes) && group("Board strength (corrugated wall)", single("wall", WALLS))}
+        {group("Material preference", <>{single("material", materials, e.boxTypes.length && !e.boxTypes.includes("unsure") ? materials[0] : undefined)}{e.material === "Other" && <Input autoFocus aria-label="Which material?" placeholder="Which material? e.g. metallic board" maxLength={120} value={e.materialOther} onChange={ev => set("materialOther", ev.target.value)} className="h-10 max-w-sm rounded-lg bg-card text-base" />}</>)}
+        {needsWall(e.boxTypes) && group("Board strength (corrugated wall)", single("wall", WALLS, e.products.some(p => /Electronics|Footwear|Food|Chocolates|Dry fruits|Bakery/.test(p)) ? "5-ply" : "3-ply"))}
       </>}
       {step === 2 && <>
         <div className="grid gap-3 sm:grid-cols-2">
