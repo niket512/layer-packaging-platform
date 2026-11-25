@@ -1,8 +1,23 @@
 import { describe, expect, it } from "vitest";
-import { emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, formVariant, materialOptions, pruneForTypes, singleChoiceEnquiry, stepErrors } from "./box-enquiry";
+import { emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, formVariant, materialOptions, needsWall, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepErrors } from "./box-enquiry";
 
 const mem = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) }; };
 describe("box enquiry", () => {
+  it("parses length, breadth and height from one input without changing saved units", () => {
+    for (const raw of ["12 x 8 x 6", "12 × 8 × 6", "12 8 6", "12,8,6"]) {
+      expect(parseBoxSize(raw)).toEqual({ length: "12", width: "8", height: "6" });
+    }
+    const size = parseBoxSize("12.5 x 8 x 6");
+    expect(size?.length).toBe("12.5");
+    expect(enquiryDetails({ ...emptyEnquiry(), ...size }, "v2").dimensions_cm).toEqual([31.8, 20.3, 15.2]);
+  });
+  it("rejects incomplete size input but lets users leave it blank", () => {
+    expect(parseBoxSize("12 x 8")).toBeNull();
+    expect(parseBoxSize("12 x 0 x 6")).toBeNull();
+    expect(parseBoxSize("12 x 8 x 6 x 4")).toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", sizeInput: "12 x 8" }, 1)).not.toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", sizeInput: "" }, 1)).toBeNull();
+  });
   it("allows exactly one box type", () => {
     expect(stepErrors({ ...emptyEnquiry(), boxTypes: ["mailer"] }, 0)).toBeNull();
     expect(stepErrors({ ...emptyEnquiry(), boxTypes: ["mailer", "rigid"] }, 0)).not.toBeNull();

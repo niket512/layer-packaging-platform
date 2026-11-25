@@ -44,7 +44,7 @@ export const needsWall = (types: BoxType[]) => types.some(t => t === "corrugated
 export type BoxEnquiry = {
   boxTypes: BoxType[]; products: string[]; productOther: string; productDetails: string;
   quantityExact: string;
-  length: string; width: string; height: string; sizeUnknown: boolean; unit?: "cm" | "in";
+  length: string; width: string; height: string; sizeInput?: string; sizeUnknown: boolean; unit?: "cm" | "in";
   material: string; materialOther: string; wall: string;
   pincode: string; brand: string; phone: string;
 };
@@ -64,11 +64,18 @@ export const validPincode = (pin: string) => /^[1-9]\d{5}$/.test(pin.trim());
 const dim = (v: string) => /^\d{1,4}(\.\d{1,2})?$/.test(v.trim()) && Number(v) > 0;
 const qty = (v: string) => /^\d{1,7}$/.test(v.replace(/[,\s]/g, ""));
 
+export function parseBoxSize(raw: string): Pick<BoxEnquiry, "length" | "width" | "height"> | null {
+  const parts = raw.trim().split(/\s*[x×*,]\s*|\s+/i);
+  if (parts.length !== 3 || !parts.every(dim)) return null;
+  const [length, width, height] = parts;
+  return { length, width, height };
+}
+
 export function stepErrors(e: BoxEnquiry, step: number): string | null {
   if (step === 0 && e.boxTypes.length !== 1) return "Choose one box type, or pick “Not sure — help me choose”.";
   if (step === 1) {
     if (!qty(e.quantityExact)) return "Enter the number of boxes you need, e.g. 12000.";
-    if (!e.sizeUnknown && [e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)) return "Enter length, width and height, or tap “Don’t know yet”.";
+    if (!e.sizeUnknown && ((e.sizeInput?.trim() && !parseBoxSize(e.sizeInput)) || ([e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)))) return "Enter length × breadth × height, e.g. 12 × 8 × 6, or leave box size blank.";
   }
   if (step === 2) {
     if (!indianMobile(e.phone)) return "Enter a 10-digit Indian WhatsApp number, e.g. 98765 43210.";

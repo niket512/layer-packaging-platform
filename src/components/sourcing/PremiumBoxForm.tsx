@@ -12,7 +12,7 @@ import { markConversionPending } from "@/lib/sourcing-conversion";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
-import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, materialOptions, needsWall, pruneForTypes, singleChoiceEnquiry, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
+import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, materialOptions, needsWall, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
 
 // Photos taken from the designs catalogue.
 const IMAGES: Partial<Record<BoxType, string>> = {
@@ -62,12 +62,9 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const pickProduct = (p: string) => { set("products", [p]); setSearch(""); };
   const addCustom = () => { const v = search.trim().slice(0, 60); if (!v) return; setE(prev => ({ ...prev, products: ["Other"], productOther: v })); onActive(); setSearch(""); };
   const QUICK = ["Beauty & skincare", "Apparel & fashion", "Food & snacks", "Electronics & gadgets"];
-  const dims = useRef<(HTMLInputElement | null)[]>([]);
-  const onDim = (i: number, k: "length" | "width" | "height", raw: string) => {
-    const jump = /[x*\s]$/i.test(raw);
-    const v = raw.replace(/[^0-9.]/g, "");
-    set(k, v);
-    if (i < 2 && (jump || v.replace(".", "").length >= 3)) dims.current[i + 1]?.focus();
+  const onSize = (raw: string) => {
+    onActive(); setError("");
+    setE(prev => ({ ...prev, sizeInput: raw, ...(parseBoxSize(raw) ?? { length: "", width: "", height: "" }) }));
   };
   const removeProduct = (p: string) => setE(prev => ({ ...prev, products: prev.products.filter(x => x !== p), productOther: p === "Other" ? "" : prev.productOther }));
   const addPhotos = async (files: File[]) => {
@@ -138,10 +135,10 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
             {q && <ul id="v2-product-list" role="listbox" className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-lg">{suggestions.map(p => <li key={p} role="option" aria-selected={false}><button type="button" onClick={() => pickProduct(p)} className="flex min-h-11 w-full items-center px-3 text-left text-sm hover:bg-accent">{p}</button></li>)}{!exact && <li role="option" aria-selected={false}><button type="button" onClick={addCustom} className="flex min-h-11 w-full items-center gap-1 px-3 text-left text-sm text-primary hover:bg-accent">Add “{search.trim()}”</button></li>}</ul>}
           </div>}
         </>)}
-        <div className="min-w-0"><div className="mb-1 flex items-center justify-between gap-2"><span id="v2-dims" className="text-sm font-semibold">Box size <span className="font-normal text-muted-foreground">(L × W × H)</span></span><span className="flex items-center gap-2">
+        <div className="min-w-0 max-w-xs"><div className="mb-1 flex items-center justify-between gap-2"><label htmlFor="v2-size" className="text-sm font-semibold">Box size <span className="font-normal text-muted-foreground">(L × B × H)</span></label><span className="flex items-center gap-2">
             <span role="group" aria-label="Unit" className="inline-flex rounded-md border border-border p-0.5 text-xs">{(["in", "cm"] as const).map(u => <button key={u} type="button" aria-pressed={(e.unit ?? "in") === u} disabled={e.sizeUnknown} onClick={() => set("unit", u)} className={`rounded px-2 py-0.5 ${(e.unit ?? "in") === u ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{u}</button>)}</span>
             </span></div>
-            <div aria-labelledby="v2-dims" role="group" className={`grid grid-cols-3 gap-1.5 transition-opacity ${e.sizeUnknown ? "opacity-40" : ""}`}>{(["length", "width", "height"] as const).map((k, i) => <Input key={k} ref={el => { dims.current[i] = el; }} id={`v2-${k}`} aria-label={`${k} (${e.unit ?? "in"})`} disabled={e.sizeUnknown} inputMode="decimal" maxLength={7} placeholder={k[0].toUpperCase()} value={e[k]} onChange={ev => onDim(i, k, ev.target.value)} className="h-10 rounded-lg bg-card px-2 text-center text-base" />)}</div>
+            <Input id="v2-size" aria-label={`Box size: length × breadth × height (${e.unit ?? "in"})`} disabled={e.sizeUnknown} maxLength={30} placeholder="e.g. 12 × 8 × 6" value={e.sizeInput ?? ([e.length, e.width, e.height].some(Boolean) ? [e.length, e.width, e.height].join(" × ") : "")} onChange={ev => onSize(ev.target.value)} className="h-10 rounded-lg bg-card px-3 text-base" />
             </div>
         <div className={`grid min-w-0 gap-3 ${needsWall(e.boxTypes) ? "grid-cols-2" : "grid-cols-1"}`}>
           {single("material", "Material", materials)}
