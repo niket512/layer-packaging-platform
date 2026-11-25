@@ -10,14 +10,16 @@ import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
 import { BOX_TYPES, PRINTING, PRODUCT_CATEGORIES, QUANTITY_BANDS, TIMELINES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, finishOptions, materialOptions, needsWall, pruneForTypes, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
-import corrugated from "@/assets/design-ship-kraft.webp";
-import mailer from "@/assets/design-mailer-white.webp";
-import product from "@/assets/box-folding-carton.webp";
-import rigid from "@/assets/box-rigid.webp";
-import diecut from "@/assets/design-diecut-open.webp";
-import gift from "@/assets/box-gift.webp";
 
-const IMAGES: Partial<Record<BoxType, string>> = { corrugated, mailer, product, rigid, diecut, gift };
+// Photos taken from the designs catalogue.
+const IMAGES: Partial<Record<BoxType, string>> = {
+  corrugated: "https://res.cloudinary.com/daxralyfk/image/upload/v1787976525/uploads/10x13_5x7_75-brown-taped-carton-box-thumbnail-boxwaale.webp",
+  mailer: "https://www.china-paperbox.com/images/products/blush-pink-beauty-unboxing-mailer-box.jpg",
+  product: "https://www.china-paperbox.com/images/products/business-dress-shirt-folding-carton.jpg",
+  rigid: "https://www.china-paperbox.com/images/products/champagne-sparkling-wine-rigid-box.jpg",
+  diecut: "https://www.china-paperbox.com/images/products/hexagonal-geometric-foldable-gift-carton.jpg",
+  gift: "https://res.cloudinary.com/daxralyfk/image/upload/v1784444272/uploads/12x10x4-boxwaale-thumbnail.webp",
+};
 const STEPS = ["Box type", "Project details", "Contact"];
 const KEY = "snaplogo.form.v2.draft";
 const chip = (on: boolean) => `inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition-colors ${on ? "border-primary bg-accent font-medium text-primary" : "border-border bg-card text-foreground hover:border-primary/40"}`;
@@ -93,7 +95,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     </div>
     <fieldset disabled={busy} className="min-w-0 space-y-6 px-4 py-5 sm:px-7 sm:py-6">
       {step === 0 && <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); return <button key={b.id} type="button" aria-pressed={on} onClick={() => set("boxTypes", toggle(e.boxTypes, b.id, "unsure"))} className={`relative flex min-w-0 flex-col overflow-hidden rounded-xl border text-left transition-all motion-safe:hover:-translate-y-0.5 hover:shadow-sm ${on ? "border-primary ring-2 ring-primary" : "border-border hover:border-primary/40"}`}>
-        <div className="flex aspect-[4/3] w-full items-center justify-center bg-muted/40">{IMAGES[b.id] ? <img src={IMAGES[b.id]} alt="" loading="lazy" width={480} height={480} className="h-full w-full object-contain p-2 mix-blend-multiply" /> : <HelpCircle className="h-10 w-10 text-muted-foreground" />}</div>
+        <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-muted/40">{IMAGES[b.id] ? <img src={IMAGES[b.id]} alt="" loading="lazy" width={480} height={480} className="absolute inset-0 h-full w-full object-contain p-2 mix-blend-multiply" /> : <HelpCircle className="h-10 w-10 text-muted-foreground" />}</div>
         <span className="block px-3 pb-3 pt-2"><span className={`block text-sm font-semibold leading-5 ${on ? "text-primary" : ""}`}>{b.label}</span><span className="mt-0.5 block text-xs leading-4 text-muted-foreground">{b.description}</span></span>
         <span className={`absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-3 w-3" />}</span>
       </button>; })}<p className="col-span-full text-xs text-muted-foreground">You can pick more than one.</p></div>}
