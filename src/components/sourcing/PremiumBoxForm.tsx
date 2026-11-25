@@ -135,7 +135,8 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
             {q && <ul id="v2-product-list" role="listbox" className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-lg">{suggestions.map(p => <li key={p} role="option" aria-selected={false}><button type="button" onClick={() => pickProduct(p)} className="flex min-h-11 w-full items-center px-3 text-left text-sm hover:bg-accent">{p}</button></li>)}{!exact && <li role="option" aria-selected={false}><button type="button" onClick={addCustom} className="flex min-h-11 w-full items-center gap-1 px-3 text-left text-sm text-primary hover:bg-accent">Add “{search.trim()}”</button></li>}</ul>}
           </div>}
         </>)}
-        <div className="min-w-0 max-w-xs"><div className="mb-1 flex items-center justify-between gap-2"><label htmlFor="v2-size" className="text-sm font-semibold">Box size <span className="font-normal text-muted-foreground">(L × B × H)</span></label><span className="flex items-center gap-2">
+        <div className="grid min-w-0 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <div className="w-full min-w-0 max-w-xs"><div className="mb-1 flex items-center justify-between gap-2"><label htmlFor="v2-size" className="text-sm font-semibold">Box size <span className="font-normal text-muted-foreground">(L × B × H)</span></label><span className="flex items-center gap-2">
             <span role="group" aria-label="Unit" className="inline-flex rounded-md border border-border p-0.5 text-xs">{(["in", "cm"] as const).map(u => <button key={u} type="button" aria-pressed={(e.unit ?? "in") === u} disabled={e.sizeUnknown} onClick={() => set("unit", u)} className={`rounded px-2 py-0.5 ${(e.unit ?? "in") === u ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{u}</button>)}</span>
             </span></div>
             <Input id="v2-size" aria-label={`Box size: length × breadth × height (${e.unit ?? "in"})`} disabled={e.sizeUnknown} maxLength={30} placeholder="e.g. 12 × 8 × 6" value={e.sizeInput ?? ([e.length, e.width, e.height].some(Boolean) ? [e.length, e.width, e.height].join(" × ") : "")} onChange={ev => onSize(ev.target.value)} className="h-10 rounded-lg bg-card px-3 text-base" />
@@ -143,6 +144,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         <div className={`grid min-w-0 gap-3 ${needsWall(e.boxTypes) ? "grid-cols-2" : "grid-cols-1"}`}>
           {single("material", "Material", materials)}
           {needsWall(e.boxTypes) && single("wall", "Board strength", WALLS)}
+        </div>
         </div>
         {e.material === "Other" && <Input autoFocus aria-label="Which material?" placeholder="Which material? e.g. metallic board" maxLength={120} value={e.materialOther} onChange={ev => set("materialOther", ev.target.value)} className="h-11 rounded-lg bg-card text-base" />}
         <div className="flex flex-wrap items-center gap-2">
