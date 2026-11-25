@@ -9,7 +9,7 @@ import { markConversionPending } from "@/lib/sourcing-conversion";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
-import { BOX_TYPES, PRINTING, PRODUCT_CATEGORIES, QUANTITY_BANDS, TIMELINES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, finishOptions, materialOptions, needsWall, pruneForTypes, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
+import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, materialOptions, needsWall, pruneForTypes, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
 
 // Photos taken from the designs catalogue.
 const IMAGES: Partial<Record<BoxType, string>> = {
@@ -48,7 +48,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const set = <K extends keyof BoxEnquiry>(key: K, value: BoxEnquiry[K]) => { onActive(); setError(""); setE(prev => key === "boxTypes" ? pruneForTypes({ ...prev, [key]: value }) : { ...prev, [key]: value }); };
   const toggle = <T extends string>(list: T[], value: T, exclusive?: T) => list.includes(value) ? list.filter(v => v !== value) : value === exclusive ? [value] : [...list.filter(v => v !== exclusive), value];
   const materials = useMemo(() => materialOptions(e.boxTypes), [e.boxTypes]);
-  const finishes = useMemo(() => finishOptions(e.boxTypes), [e.boxTypes]);
   const q = search.trim().toLowerCase();
   const suggestions = q ? PRODUCT_CATEGORIES.filter(p => p !== "Other" && !e.products.includes(p) && p.toLowerCase().includes(q)).slice(0, 6) : [];
   const exact = PRODUCT_CATEGORIES.some(p => p.toLowerCase() === q);
@@ -61,7 +60,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: String(step + 1), reason: step === 0 ? "format_required" : "phone_invalid" }); return; }
     if (step === 0) { trackFormField("format", true, 0); trackFunnel("brief_shown"); }
     if (step === 1) {
-      (["quantity", "size", "material", "printing", "finishing", "delivery"] as const).forEach((f, i) => trackFormField(f, Boolean([e.quantityBand || e.quantityExact, e.sizeUnknown || e.length, e.material, e.printing, e.finishes.length, e.pincode][i]), 1));
+      (["size", "material", "wall", "delivery"] as const).forEach((f, i) => trackFormField(f, Boolean([e.sizeUnknown || e.length, e.material, e.wall, e.pincode][i]), 1));
       trackFunnel("contact_shown");
     }
     setStep(s => s + 1);
@@ -88,7 +87,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   };
 
   const group = (title: string, children: React.ReactNode, hint?: string) => <fieldset className="min-w-0 space-y-2.5"><legend className="mb-2.5 flex flex-wrap items-baseline gap-1.5 text-sm font-semibold">{title}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</legend>{children}</fieldset>;
-  const single = (key: "quantityBand" | "material" | "printing" | "timeline" | "wall", options: string[]) => <div className="flex flex-wrap gap-2">{options.map(o => <button key={o} type="button" aria-pressed={e[key] === o} onClick={() => set(key, e[key] === o ? "" : o)} className={chip(e[key] === o)}>{e[key] === o && <Check className="h-3.5 w-3.5" />}{o}</button>)}</div>;
+  const single = (key: "material" | "wall", options: string[]) => <div className="flex flex-wrap gap-2">{options.map(o => <button key={o} type="button" aria-pressed={e[key] === o} onClick={() => set(key, e[key] === o ? "" : o)} className={chip(e[key] === o)}>{e[key] === o && <Check className="h-3.5 w-3.5" />}{o}</button>)}</div>;
   const text = (key: keyof BoxEnquiry, labelText: string, props: React.ComponentProps<typeof Input> = {}) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className="mb-1.5 block text-sm font-semibold">{labelText}</label><Input id={`v2-${key}`} className="h-11 rounded-lg bg-card text-base" value={String(e[key] ?? "")} onChange={ev => set(key, ev.target.value as never)} {...props} /></div>;
 
   return <form aria-label="Box enquiry form" noValidate onSubmit={ev => { ev.preventDefault(); if (step === 2) void submit(); else next(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
@@ -112,15 +111,11 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           </div>
           {text("productDetails", "Product details (optional)", { placeholder: "e.g. 50 ml glass jar, 3-piece gift set", maxLength: 300 })}
         </>, "Add one or more")}
-        {group("How many boxes do you need?", <>{single("quantityBand", QUANTITY_BANDS)}{text("quantityExact", "Exact quantity (optional)", { inputMode: "numeric", placeholder: "e.g. 12,000", maxLength: 12 })}</>)}
         {group("Box dimensions (cm)", <><div className={`grid grid-cols-3 gap-2 ${e.sizeUnknown ? "opacity-50" : ""}`}>{(["length", "width", "height"] as const).map(k => <div key={k}><label htmlFor={`v2-${k}`} className="mb-1 block text-xs capitalize text-muted-foreground">{k}</label><Input id={`v2-${k}`} disabled={e.sizeUnknown} inputMode="decimal" maxLength={7} placeholder="cm" value={e[k]} onChange={ev => set(k, ev.target.value)} className="h-11 rounded-lg text-base" /></div>)}</div>
           <button type="button" aria-pressed={e.sizeUnknown} onClick={() => set("sizeUnknown", !e.sizeUnknown)} className={chip(e.sizeUnknown)}>{e.sizeUnknown && <Check className="h-3.5 w-3.5" />}I don’t know yet</button></>)}
         {group("Material preference", <>{single("material", materials)}{e.material === "Other" && text("materialOther", "Which material?", { maxLength: 120 })}</>)}
         {needsWall(e.boxTypes) && group("Board strength (corrugated wall)", single("wall", WALLS))}
-        {group("Printing", single("printing", PRINTING))}
-        {group("Special finishes & customisation", <><div className="flex flex-wrap gap-2">{finishes.map(f => { const on = e.finishes.includes(f); return <button key={f} type="button" aria-pressed={on} onClick={() => set("finishes", toggle(e.finishes, f, "Not sure"))} className={chip(on)}>{on && <Check className="h-3.5 w-3.5" />}{f}</button>; })}</div>{e.finishes.includes("Other") && text("finishOther", "Which finish?", { maxLength: 120 })}</>, "Select all that apply")}
         <div className="grid gap-5 sm:grid-cols-2">{text("pincode", "Delivery PIN code", { inputMode: "numeric", maxLength: 6, placeholder: "e.g. 400001", autoComplete: "postal-code" })}</div>
-        {group("Expected timeline", single("timeline", TIMELINES))}
       </>}
       {step === 2 && <>
         <div className="grid gap-4 sm:grid-cols-2">
