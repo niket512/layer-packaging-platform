@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Compress 632 catalogue photos by 87.3% and shared logos by 99%; verified phone/desktop forms, catalogue handoff, designs/chat/dashboard photo loading and 32 tests, without changing fields or saved records.
 - [x] Clarify box-form upload and contact notes, remove empty speed badge, and reduce mobile styles to nine; verified steps and visible Continue at 320px/393px and desktop, with ten existing form tests passing.
 - [x] Refine catalogue request on phones with readable editable choices, full-width quote action and accessible return to designs; verified 320px/393px phones and desktop, retained inputs and eight regression tests.
 - [x] Combine catalogue requirements and contact into one editable view; phone/desktop checks verified prefilled edits, all inputs and no intermediate review; eight tests passed.

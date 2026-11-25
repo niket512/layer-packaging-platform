@@ -1,4 +1,5 @@
 # Manufacturer network map
+- Catalogue photos resolve through `catalogueImage` to compressed CDN WebP assets; keep source records unchanged and reuse the resolved photo in details and attachments so browsing and enquiry handoffs avoid original downloads.
 - Use local state outlines with density tiers derived only from uploaded listing counts; colors indicate reference coverage, not verified partners.
 - Keep the selected map state in ManufacturerNetwork so the list link above the map preserves the selected state filter.
 - Guided form is three steps (packaging, optional WhatsApp, details) defined in sourcing-form; an early valid number is saved as an unsubmitted chat record and drafts persist per page, while only the final submit creates an enquiry — captures contact earlier without counting partial leads as conversions.

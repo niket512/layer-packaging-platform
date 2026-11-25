@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import type { PackagingDesign } from "./packaging-catalogue";
 import { useEffect, useRef } from "react";
 import { trackDesign } from "@/lib/visitor-tracking";
+import { catalogueImage } from "@/lib/catalogue-image";
 
 export function DesignCard({ design, position, category, onDetails, onUse }: { design: PackagingDesign; position: number; category: string; onDetails: () => void; onUse: () => void }) {
   const card = useRef<HTMLElement>(null);
@@ -23,7 +24,7 @@ export function DesignCard({ design, position, category, onDetails, onUse }: { d
   return <article ref={card} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md">
     <div className="relative aspect-square bg-muted/40">
       <Button variant="ghost" aria-label={`View ${design.name}`} onClick={onDetails} className="h-full w-full rounded-none p-2 sm:p-3">
-        <img src={design.image} alt={design.name} loading="lazy" width={640} height={640} className="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover:scale-[1.02]" />
+        <img src={catalogueImage(design.image, true)} alt={design.name} loading="lazy" decoding="async" width={640} height={640} className="h-full w-full object-contain transition-transform duration-300 motion-safe:group-hover:scale-[1.02]" />
       </Button>
     </div>
     <div className="flex flex-1 flex-col border-t border-border/60 p-2.5 sm:p-3">

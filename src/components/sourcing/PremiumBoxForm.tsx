@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
+import { catalogueImage } from "@/lib/catalogue-image";
 import { supabase } from "@/integrations/supabase/client";
 import { readAttribution } from "@/lib/attribution";
 import { markConversionPending } from "@/lib/sourcing-conversion";
@@ -126,7 +127,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     </div>
     <fieldset disabled={busy} className={`min-w-0 px-4 sm:px-6 ${step === 1 ? "space-y-3 py-3" : "space-y-4 py-4 sm:py-5"}`}>
       {step === 0 && group("Box type", <div className="grid grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["gable", "display", "pillow"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => set("boxTypes", toggle(e.boxTypes, b.id, "unsure"))} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : b.id === "custom" ? "border-[1.5px] border-dashed border-muted-foreground/40 hover:border-primary/60" : "border-border hover:border-primary/40"}`}>
-        <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg bg-muted/40 sm:h-20">{IMAGES[b.id] ? <img src={IMAGES[b.id]} alt="" loading="lazy" width={200} height={200} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : b.id === "custom" ? <Ruler className="h-7 w-7 text-primary" /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
+        <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg bg-muted/40 sm:h-20">{IMAGES[b.id] ? <img src={catalogueImage(IMAGES[b.id])} alt="" loading="lazy" decoding="async" width={200} height={200} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : b.id === "custom" ? <Ruler className="h-7 w-7 text-primary" /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
         <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>{b.use && <span className="-mt-0.5 hidden text-[10px] leading-3 text-muted-foreground sm:block">{b.use}</span>}
         <span className={`absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
       </Button>; })}</div>, "Select one or more", true)}

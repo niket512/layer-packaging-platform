@@ -1,4 +1,5 @@
 import rows from "@/data/catalogue-sheet.json";
+import { catalogueImage } from "@/lib/catalogue-image";
 import type { PackagingDesign } from "./packaging-catalogue";
 
 export type SheetRow = { id: string; f: "boxes" | "pouches"; c: string; l2: string; l3: string; n: string; d?: string; t?: string[]; dim?: string; ply?: string; img: string;
@@ -53,7 +54,7 @@ export function sheetDesign(r: SheetRow): PackagingDesign {
   const app = isBox ? undefined : ai.useCase ?? application(tags);
   const features = ai.features?.length ? ai.features : tags.includes("zipper") ? ["Zipper"] : [];
   return {
-    id: r.id, name: r.n, family: r.f, categories, image: r.img, illustrative: false,
+    id: r.id, name: r.n, family: r.f, categories, image: catalogueImage(r.img), illustrative: false,
     description: ai.description || r.d || `${r.l3} — ${r.l2.toLowerCase()}.`,
     attributes: isBox
       ? { style: [style], ...(print ? { printing: [print] } : {}) }

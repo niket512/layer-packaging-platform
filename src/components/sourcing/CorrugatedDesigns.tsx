@@ -9,6 +9,7 @@ import { POUCH_DESIGNS } from "./pouch-designs";
 import { DesignCard } from "./DesignCard";
 import { SHEET_DESIGNS } from "./sheet-catalogue";
 import { trackDesign } from "@/lib/visitor-tracking";
+import { catalogueImage } from "@/lib/catalogue-image";
 
 const DESIGNS = [...SHEET_DESIGNS, ...BOX_DESIGNS, ...POUCH_DESIGNS];
 const PAGE = 24;
@@ -52,7 +53,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily, selectedFamily, onF
       {CATEGORIES[family].map(item => {
         const representative = DESIGNS.find(d => d.family === family && (item.id === "all" || d.categories.includes(item.id)));
         return <Button key={item.id} variant="outline" role="tab" aria-selected={category === item.id} onClick={() => { setCategory(item.id); setLimit(PAGE); }} className={`h-20 w-24 shrink-0 flex-col gap-1 rounded-xl p-2 md:h-24 md:w-28 hover:bg-muted text-[11px] ${category === item.id ? "border-primary bg-accent text-primary" : "bg-card text-muted-foreground"}`}>
-          {representative ? <img src={representative.image} alt="" width={64} height={52} loading="lazy" className="h-12 w-16 object-contain" /> : <Boxes className="!h-10 !w-10" />}
+          {representative ? <img src={catalogueImage(representative.image, true)} alt="" width={64} height={52} loading="lazy" decoding="async" className="h-12 w-16 object-contain" /> : <Boxes className="!h-10 !w-10" />}
           <span className="whitespace-normal text-center leading-tight">{item.label}</span>
         </Button>;
       })}
@@ -81,7 +82,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily, selectedFamily, onF
     <Sheet open={selected !== null} onOpenChange={open => { if (!open) setSelected(null); }}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg" onCloseAutoFocus={e => e.preventDefault()}>
         {selected && <><SheetHeader className="pr-6 text-left"><SheetTitle>{selected.name}</SheetTitle><SheetDescription>{selected.description}</SheetDescription></SheetHeader>
-          <img src={selected.image} alt={selected.name} width={640} height={640} className="mt-5 aspect-square w-full rounded-lg bg-card object-contain" />
+          <img src={selected.image} alt={selected.name} decoding="async" width={640} height={640} className="mt-5 aspect-square w-full rounded-lg bg-card object-contain" />
           <p className="mt-2 text-xs text-muted-foreground">Reference image — specs to be confirmed with the manufacturer.</p>
           <dl className="mt-4 divide-y divide-border text-sm">{PRIMARY_FILTERS[selected.family].map(f => <div key={f.key} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{f.label}</dt><dd className="font-medium">{selected.attributes[f.key]?.join(", ") || "Unspecified"}</dd></div>)}{selected.details?.map(([k, v]) => <div key={k} className="grid grid-cols-2 gap-3 py-2"><dt className="text-muted-foreground">{k}</dt><dd className="font-medium">{v}</dd></div>)}</dl>
           <Button className="mt-6 w-full rounded-full" onClick={() => useDesigns([selected])}>Get a quote for this design <ArrowRight /></Button>
