@@ -132,15 +132,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         <span className={`absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
       </button>; })}</div>, "Select one or more", true)}
       {step === 1 && <>
-        <div className="flex flex-wrap items-center gap-2">
-          <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
-          <Button type="button" variant="outline" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Upload your design or reference image, optional, up to 3" className="h-11 w-full justify-start gap-2 rounded-lg border-dashed border-primary/40 bg-accent text-primary hover:bg-accent hover:text-primary">
-            {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-            <span className="min-w-0 flex-1 whitespace-normal text-left leading-4">{adding ? "Uploading…" : photos.length >= 3 ? "3 images attached" : photos.length ? "Upload another image" : "Upload your design / image"}</span>
-            <span className="ml-auto shrink-0 text-xs font-normal text-muted-foreground">Optional</span>
-          </Button>
-          {photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-card"><X className="h-3 w-3" /></Button></span>)}
-        </div>
         {group("What product will go inside the box?", <>
           {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}
           {e.products.length === 0 && <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input role="combobox" aria-expanded={Boolean(q)} aria-controls="v2-product-list" aria-label="Type your product" value={search} onChange={ev => setSearch(ev.target.value)} onKeyDown={ev => { if (ev.key === "Enter") { ev.preventDefault(); if (suggestions[0]) pickProduct(suggestions[0]); else if (!exact) addCustom(); } if (ev.key === "Escape") setSearch(""); }} placeholder={e.products.length ? "Add another product" : "Start typing, e.g. skincare, candles"} className="h-11 rounded-lg bg-card pl-9 text-base" />
@@ -157,6 +148,15 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           {needsWall(e.boxTypes) && single("wall", "Board strength", WALLS)}
         </div>
         {e.material === "Other" && <Input autoFocus aria-label="Which material?" placeholder="Which material? e.g. metallic board" maxLength={120} value={e.materialOther} onChange={ev => set("materialOther", ev.target.value)} className="h-11 rounded-lg bg-card text-base" />}
+        <div className="flex flex-wrap items-center gap-2">
+          <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
+          <Button type="button" variant="outline" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Upload your design or reference image, optional, up to 3" className="h-11 w-full justify-start gap-2 rounded-lg border-dashed border-primary/40 bg-accent text-primary hover:bg-accent hover:text-primary">
+            {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+            <span className="min-w-0 flex-1 whitespace-normal text-left leading-4">{adding ? "Uploading…" : photos.length >= 3 ? "3 images attached" : photos.length ? "Upload another image" : "Upload your design / image"}</span>
+            <span className="ml-auto shrink-0 text-xs font-normal text-muted-foreground">Optional</span>
+          </Button>
+          {photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-card"><X className="h-3 w-3" /></Button></span>)}
+        </div>
         <div className="min-w-0"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Exact quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><Input id="v2-quantityExact" className="h-11 rounded-lg bg-card text-base sm:max-w-xs" inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" />
         </div>
       </>}
