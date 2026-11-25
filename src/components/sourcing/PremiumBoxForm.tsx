@@ -9,7 +9,7 @@ import { markConversionPending } from "@/lib/sourcing-conversion";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
-import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, materialOptions, needsWall, pruneForTypes, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
+import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, materialOptions, needsWall, pruneForTypes, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
 
 // Photos taken from the designs catalogue.
 const IMAGES: Partial<Record<BoxType, string>> = {
@@ -143,9 +143,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           {text("pincode", "Delivery city / PIN code", { inputMode: "numeric", maxLength: 6, placeholder: "e.g. 400001", autoComplete: "postal-code" })}
         </div>
         {text("productDetails", "Anything else? (optional)", { placeholder: "e.g. matte lamination, gold foil, window patch", maxLength: 300 })}
-        <div className="hidden rounded-xl border border-border bg-muted/30 p-3 sm:block"><div className="mb-1.5 flex items-center justify-between"><h3 className="text-sm font-semibold">Your project summary</h3><button type="button" className="text-sm text-primary hover:underline" onClick={() => setStep(1)}>Edit</button></div>
-          <dl className="grid gap-x-4 gap-y-1.5 text-sm sm:grid-cols-2">{enquirySummary(e).map(([k, v]) => <div key={k} className="min-w-0"><dt className="text-xs text-muted-foreground">{k}</dt><dd className="break-words font-medium">{v}</dd></div>)}</dl>
-          <p className="mt-2 text-xs text-muted-foreground">Anything left blank, our team will confirm with you.</p></div>
       </>}
     </fieldset>
     {error && <p role="alert" className="px-4 pb-4 text-sm text-destructive sm:px-7">{error}</p>}
