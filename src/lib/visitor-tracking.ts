@@ -4,7 +4,7 @@ import { captureAttribution } from "./attribution";
 import { addDesign, addJourney, JOURNEY_FIELDS, scrollDepth, trafficSource, type FunnelStep, type JourneyEvent, type VisitorSnapshot } from "./visitor-metrics";
 
 const KEY = "snaplogo.visitor.session";
-const trackedPath = (pathname: string) => ["/", "/request-form", "/sourcing", "/designs", "/designs/flexible-pouches", "/designs/corrugated-boxes"].includes(pathname);
+const trackedPath = (pathname: string) => ["/", "/request-form", "/sourcing", "/designs", "/designs/flexible-pouches", "/designs/corrugated-boxes", "/sourcing/corrugated-boxes", "/sourcing/flexible-pouches", "/sourcing/sachets", "/sourcing/mailer-boxes", "/sourcing/cosmetic-packaging"].includes(pathname);
 type Session = { id: string; token: string; last: number; snapshot: VisitorSnapshot };
 let session: Session | undefined;
 let timer: number | undefined;
@@ -43,12 +43,14 @@ export async function flushVisitorTracking() {
     });
     if (!response.ok) dirty = true;
     else if (!attributionSent.has(session.id)) {
-      attributionSent.add(session.id);
-      void fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/save_visitor_attribution`, {
+      const attributionSession = session;
+      attributionSent.add(attributionSession.id);
+      const attributionResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/save_visitor_attribution`, {
         method: "POST", keepalive: true,
         headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
-        body: JSON.stringify({ _id: session.id, _token: session.token, _attribution: captureAttribution() }),
-      }).catch(() => attributionSent.delete(session!.id));
+        body: JSON.stringify({ _id: attributionSession.id, _token: attributionSession.token, _attribution: captureAttribution() }),
+      }).catch(() => null);
+      if (!attributionResponse?.ok) { attributionSent.delete(attributionSession.id); dirty = true; }
     }
   } catch { dirty = true; }
 }

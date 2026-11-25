@@ -1,8 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, formVariant, materialOptions, pruneForTypes, stepErrors } from "./box-enquiry";
+import { emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, formVariant, materialOptions, pruneForTypes, singleChoiceEnquiry, stepErrors } from "./box-enquiry";
 
 const mem = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) }; };
 describe("box enquiry", () => {
+  it("allows exactly one box type", () => {
+    expect(stepErrors({ ...emptyEnquiry(), boxTypes: ["mailer"] }, 0)).toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), boxTypes: ["mailer", "rigid"] }, 0)).not.toBeNull();
+  });
+  it("restores unsent drafts with one box type and one product", () => {
+    const draft = { ...emptyEnquiry(), boxTypes: ["rigid", "mailer"] as const, products: ["Haircare", "Food & snacks"], quantityExact: "1000", wall: "5-ply" };
+    const restored = singleChoiceEnquiry({ ...draft, boxTypes: [...draft.boxTypes] });
+    expect(restored.boxTypes).toEqual(["rigid"]);
+    expect(restored.products).toEqual(["Haircare"]);
+    expect(restored.quantityExact).toBe("1000");
+    expect(restored.wall).toBe("");
+    expect(draft.products).toHaveLength(2);
+  });
   it("material choices follow the box type", () => {
     expect(materialOptions(["rigid"])).toContain("Rigid board");
     expect(materialOptions(["corrugated"])).not.toContain("Rigid board");

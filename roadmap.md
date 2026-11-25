@@ -1,4 +1,9 @@
 # Manufacturer network
+- [x] Clear shown thank-you payload; unit and phone-browser checks confirmed one fresh Google view/Reddit Lead/server call and none on reload, using isolated test collectors.
+- [x] Save matched keywords on visits/enquiries, retry failed attribution writes and include family landing pages; supplied the Google Ads Final URL suffix.
+- [ ] Apply keyword suffix inside Google Ads; blocked because no Google Ads connection is available.
+- [x] Skip A9 search title/description changes at the user's request.
+- [x] Enforce a single box/product choice and normalise unsent drafts; verified phone selection and regression tests.
 - [x] Compress 632 catalogue photos by 87.3% and shared logos by 99%; verified phone/desktop forms, catalogue handoff, designs/chat/dashboard photo loading and 32 tests, without changing fields or saved records.
 - [x] Clarify box-form upload and contact notes, remove empty speed badge, and reduce mobile styles to nine; verified steps and visible Continue at 320px/393px and desktop, with ten existing form tests passing.
 - [x] Refine catalogue request on phones with readable editable choices, full-width quote action and accessible return to designs; verified 320px/393px phones and desktop, retained inputs and eight regression tests.

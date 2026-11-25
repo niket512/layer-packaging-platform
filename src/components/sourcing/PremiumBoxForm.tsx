@@ -12,7 +12,7 @@ import { markConversionPending } from "@/lib/sourcing-conversion";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
-import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, materialOptions, needsWall, pruneForTypes, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
+import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, materialOptions, needsWall, pruneForTypes, singleChoiceEnquiry, stepErrors, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
 
 // Photos taken from the designs catalogue.
 const IMAGES: Partial<Record<BoxType, string>> = {
@@ -35,7 +35,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const saved = useRef<{ step?: number; e?: BoxEnquiry; id?: string } | null>(null);
   if (saved.current === null) { try { saved.current = JSON.parse(localStorage.getItem(KEY) ?? "{}"); } catch { saved.current = {}; } }
   const [step, setStep] = useState(() => Math.min(2, Math.max(0, saved.current?.step ?? 0)));
-  const [e, setE] = useState<BoxEnquiry>(() => ({ ...emptyEnquiry(), ...saved.current?.e, sizeUnknown: false }));
+  const [e, setE] = useState<BoxEnquiry>(() => singleChoiceEnquiry({ ...emptyEnquiry(), ...saved.current?.e, sizeUnknown: false }));
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
@@ -55,13 +55,12 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (form && form.getBoundingClientRect().top < 64) form.scrollIntoView({ block: "start", behavior: "smooth" });
   }, [step]);
   const set = <K extends keyof BoxEnquiry>(key: K, value: BoxEnquiry[K]) => { onActive(); setError(""); setE(prev => key === "boxTypes" ? pruneForTypes({ ...prev, [key]: value }) : { ...prev, [key]: value }); };
-  const toggle = <T extends string>(list: T[], value: T, exclusive?: T) => list.includes(value) ? list.filter(v => v !== value) : value === exclusive ? [value] : [...list.filter(v => v !== exclusive), value];
   const materials = useMemo(() => materialOptions(e.boxTypes), [e.boxTypes]);
   const q = search.trim().toLowerCase();
   const suggestions = q ? PRODUCT_CATEGORIES.filter(p => p !== "Other" && !e.products.includes(p) && p.toLowerCase().includes(q)).slice(0, 6) : [];
   const exact = PRODUCT_CATEGORIES.some(p => p.toLowerCase() === q);
-  const pickProduct = (p: string) => { set("products", [...e.products, p]); setSearch(""); };
-  const addCustom = () => { const v = search.trim().slice(0, 60); if (!v) return; setE(prev => ({ ...prev, products: prev.products.includes("Other") ? prev.products : [...prev.products, "Other"], productOther: [prev.productOther.trim(), v].filter(Boolean).join(", ").slice(0, 120) })); onActive(); setSearch(""); };
+  const pickProduct = (p: string) => { set("products", [p]); setSearch(""); };
+  const addCustom = () => { const v = search.trim().slice(0, 60); if (!v) return; setE(prev => ({ ...prev, products: ["Other"], productOther: v })); onActive(); setSearch(""); };
   const QUICK = ["Beauty & skincare", "Apparel & fashion", "Food & snacks", "Electronics & gadgets"];
   const dims = useRef<(HTMLInputElement | null)[]>([]);
   const onDim = (i: number, k: "length" | "width" | "height", raw: string) => {
@@ -96,7 +95,8 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (busy) return;
     const problem = stepErrors(e, 2);
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: "3", reason: "phone_invalid" }); return; }
-    const number = indianMobile(e.phone)!;
+    const number = indianMobile(e.phone);
+    if (!number) return;
     const brief = enquiryBrief(e);
     const payload = formSubmission(brief, number, enquiryText(e, photos.length), photos);
     if (!payload) return;
@@ -126,11 +126,11 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       {step === 2 && <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{["", "", "We coordinate your quotes on WhatsApp — no spam."][step]}</p>}
     </div>
     <fieldset disabled={busy} className={`min-w-0 px-4 sm:px-6 ${step === 1 ? "space-y-3 py-3" : "space-y-4 py-4 sm:py-5"}`}>
-      {step === 0 && group("Box type", <div className="grid grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["gable", "display", "pillow"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => set("boxTypes", toggle(e.boxTypes, b.id, "unsure"))} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : b.id === "custom" ? "border-[1.5px] border-dashed border-muted-foreground/40 hover:border-primary/60" : "border-border hover:border-primary/40"}`}>
+      {step === 0 && group("Box type", <div className="grid grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["gable", "display", "pillow"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => set("boxTypes", [b.id])} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : b.id === "custom" ? "border-[1.5px] border-dashed border-muted-foreground/40 hover:border-primary/60" : "border-border hover:border-primary/40"}`}>
         <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg bg-muted/40 sm:h-20">{IMAGES[b.id] ? <img src={catalogueImage(IMAGES[b.id])} alt="" loading="lazy" decoding="async" width={200} height={200} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : b.id === "custom" ? <Ruler className="h-7 w-7 text-primary" /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
         <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>{b.use && <span className="-mt-0.5 hidden text-[10px] leading-3 text-muted-foreground sm:block">{b.use}</span>}
         <span className={`absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
-      </Button>; })}</div>, "Select one or more", true)}
+      </Button>; })}</div>, "Select one", true)}
       {step === 1 && <>
         {group("What product will go inside the box?", <>
           {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}

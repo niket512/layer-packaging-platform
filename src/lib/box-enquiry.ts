@@ -50,6 +50,11 @@ export type BoxEnquiry = {
 };
 export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], productOther: "", productDetails: "", quantityExact: "", length: "", width: "", height: "", sizeUnknown: false, unit: "in", material: "", materialOther: "", wall: "", pincode: "", brand: "", phone: "" });
 
+/** Normalise unsent drafts only; historical saved briefs remain unchanged. */
+export function singleChoiceEnquiry(e: BoxEnquiry): BoxEnquiry {
+  return pruneForTypes({ ...e, boxTypes: e.boxTypes.slice(0, 1), products: e.products.slice(0, 1) });
+}
+
 /** Drops material choices that no longer apply after box types change. */
 export function pruneForTypes(e: BoxEnquiry): BoxEnquiry {
   const materials = materialOptions(e.boxTypes);
@@ -60,7 +65,7 @@ const dim = (v: string) => /^\d{1,4}(\.\d{1,2})?$/.test(v.trim()) && Number(v) >
 const qty = (v: string) => /^\d{1,7}$/.test(v.replace(/[,\s]/g, ""));
 
 export function stepErrors(e: BoxEnquiry, step: number): string | null {
-  if (step === 0 && !e.boxTypes.length) return "Choose at least one box type, or pick “Not sure — help me choose”.";
+  if (step === 0 && e.boxTypes.length !== 1) return "Choose one box type, or pick “Not sure — help me choose”.";
   if (step === 1) {
     if (!qty(e.quantityExact)) return "Enter the number of boxes you need, e.g. 12000.";
     if (!e.sizeUnknown && [e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)) return "Enter length, width and height, or tap “Don’t know yet”.";

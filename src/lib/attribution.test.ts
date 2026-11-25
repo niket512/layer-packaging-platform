@@ -2,6 +2,15 @@ import { describe, expect, it } from "vitest";
 import { attributionFromUrl, nextAttribution } from "./attribution";
 const ctx = { landing: "/?gclid=abc", referrer: "https://www.google.com/", device: "mobile", now: "2026-11-24T10:00:00Z" };
 describe("ad attribution", () => {
+  it("saves the matched keyword from utm_term without inventing a search query", () => {
+    const a = attributionFromUrl("?utm_source=google&utm_medium=cpc&utm_term=custom%20boxes", ctx);
+    expect(a?.keyword).toBe("custom boxes");
+    expect(a?.search_term).toBeUndefined();
+  });
+  it("ignores unexpanded ad macros and prefers an explicit keyword", () => {
+    expect(attributionFromUrl("?keyword={keyword}", ctx)).toBeNull();
+    expect(attributionFromUrl("?keyword=mailer%20box&utm_term=other", ctx)?.keyword).toBe("mailer box");
+  });
   it("captures Google Ads parameters", () => {
     const a = attributionFromUrl("?gclid=abc&campaignid=11&adgroupid=22&keyword=mailer%20box&matchtype=p&utm_source=google&utm_medium=cpc", ctx)!;
     expect(a).toMatchObject({ gclid: "abc", campaign_id: "11", ad_group_id: "22", keyword: "mailer box", match_type: "p", utm_source: "google", utm_medium: "cpc", device: "mobile" });

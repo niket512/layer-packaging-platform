@@ -10,7 +10,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       // Thank-you page views count as conversions only when a fresh enquiry is pending; the page sends that view itself, once.
-      gtag('config', 'AW-18547475916', location.pathname === '/sourcing/thank-you' ? { send_page_view: false } : {});
+      gtag('config', 'AW-18547475916', location.pathname.replace(/\/+$/, '') === '/sourcing/thank-you' ? { send_page_view: false } : {});
     </script>
     <!-- Reddit Pixel -->
     <script>
@@ -23,7 +23,8 @@
       } catch(e) {}
       !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);
       rdt('init','a2_jykx84cbgi9e');
-      rdt('track','PageVisit');
+      // A thank-you view is sent by the page only when consuming a fresh saved enquiry.
+      if (location.pathname.replace(/\/+$/, '') !== '/sourcing/thank-you') rdt('track','PageVisit');
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

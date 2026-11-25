@@ -13,9 +13,10 @@ export function attributionFromUrl(search: string, context: { landing: string; r
   const found: Attribution = {};
   for (const [param, key] of Object.entries(PARAMS)) {
     const value = params.get(param)?.trim();
-    if (value && !found[key]) found[key] = value.slice(0, 200);
+    if (value && !/[{}]/.test(value) && !found[key]) found[key] = value.slice(0, 200);
   }
-  if (!found.search_term && found.utm_term) found.search_term = found.utm_term;
+  // ValueTrack supplies the matched advertising keyword, not the user's actual search query.
+  if (!found.keyword && found.utm_term) found.keyword = found.utm_term;
   if (!Object.keys(found).some(key => AD_KEYS.includes(key) || key === "keyword")) return null;
   return { ...found, landing_page: context.landing.slice(0, 300), referrer: context.referrer.slice(0, 300), device: context.device, first_seen: context.now };
 }
