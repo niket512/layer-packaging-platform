@@ -64,6 +64,13 @@
       "when": 1795532183904,
       "tag": "0008_capture_ad_attribution",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795606162760,
+      "tag": "0009_enquiry_structured_details",
+      "breakpoints": true
     }
   ]
 }

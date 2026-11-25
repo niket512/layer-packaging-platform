@@ -3,6 +3,8 @@ import { readAttribution } from "@/lib/attribution";
 import { markConversionPending } from "@/lib/sourcing-conversion";
 import TrustStory from "@/components/sourcing/TrustStory";
 import { RequirementForm } from "@/components/sourcing/RequirementForm";
+import { PremiumBoxForm } from "@/components/sourcing/PremiumBoxForm";
+import { formVariant } from "@/lib/box-enquiry";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { sourcingLandingFamily } from "@/lib/sourcing-landing";
@@ -18,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
-import { trackFunnel, flushVisitorTracking } from "@/lib/visitor-tracking";
+import { trackFunnel, flushVisitorTracking, trackJourney } from "@/lib/visitor-tracking";
 import logo from "@/assets/snaplogo-orange.png";
 import catBoxes from "@/assets/design-ship-kraft.webp";
 import catPouches from "@/assets/category-stand-up-pouches.webp";
@@ -82,6 +84,9 @@ function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
 export default function SourcingAgent({ category, requirementMode = "chat" }: { category?: SourcingCategory; requirementMode?: "chat" | "form" } = {}) {
   const location = useLocation();
   const boxesOnly = location.pathname === "/" && requirementMode === "form";
+  const [variant] = useState(() => { try { return formVariant(location.search, localStorage); } catch { return "classic" as const; } });
+  const newBoxForm = boxesOnly && variant === "v2";
+  useEffect(() => { if (boxesOnly) trackJourney({ kind: "form_step", step: "1", category: `form-${variant}` }); }, [boxesOnly, variant]);
   const landingFamily = boxesOnly ? "boxes" : sourcingLandingFamily(category, location.search);
   const [packagingFamily, setPackagingFamily] = useState(landingFamily);
   useEffect(() => { setPackagingFamily(landingFamily); }, [landingFamily]);
@@ -392,7 +397,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
               </div>
             )}
             {requirementMode === "form" ? <>
-              <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} onlyFamily={boxesOnly ? "boxes" : undefined} reference={query} referencePhotos={photos} referenceDesigns={[]} onActive={() => setFormActive(true)} />
+              {newBoxForm ? <PremiumBoxForm key={formKey} onActive={() => setFormActive(true)} /> : <RequirementForm key={`${formKey}-${landingFamily}`} family={packagingFamily} onFamilyChange={setPackagingFamily} onlyFamily={boxesOnly ? "boxes" : undefined} reference={query} referencePhotos={photos} referenceDesigns={[]} onActive={() => setFormActive(true)} />}
               <div role={designFormOpen ? "dialog" : undefined} aria-modal={designFormOpen || undefined} aria-label={designFormOpen ? "Request quotes for selected design" : undefined} onClick={event => { if (designFormOpen && event.target === event.currentTarget) setDesignFormOpen(false); }} className={designFormOpen ? "fixed inset-0 z-50 flex justify-end bg-foreground/20 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200" : "hidden"}>
               <div className="h-dvh w-full min-w-0 overflow-y-auto overscroll-contain bg-card text-left shadow-xl motion-safe:animate-in motion-safe:slide-in-from-right motion-safe:duration-300 sm:max-w-[560px] [&>form]:mt-0 [&>form]:rounded-none [&>form]:border-0">
                 <div className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-card px-4 py-2"><h2 className="text-base font-semibold sm:text-lg">Request quotes</h2><Button type="button" variant="ghost" size="sm" className="h-11 rounded-full px-3" onClick={() => setDesignFormOpen(false)}><ArrowLeft />Back to designs</Button></div>

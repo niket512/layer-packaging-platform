@@ -354,6 +354,7 @@ export type Database = {
           attribution: Json | null
           contact: string
           created_at: string
+          details: Json | null
           id: string
           images: string[]
           manufacturers: Json
@@ -363,6 +364,7 @@ export type Database = {
           attribution?: Json | null
           contact: string
           created_at?: string
+          details?: Json | null
           id?: string
           images?: string[]
           manufacturers?: Json
@@ -372,6 +374,7 @@ export type Database = {
           attribution?: Json | null
           contact?: string
           created_at?: string
+          details?: Json | null
           id?: string
           images?: string[]
           manufacturers?: Json
