@@ -5,17 +5,14 @@ import TrustStory from "@/components/sourcing/TrustStory";
 import { RequirementForm } from "@/components/sourcing/RequirementForm";
 import { PremiumBoxForm } from "@/components/sourcing/PremiumBoxForm";
 import { formVariant } from "@/lib/box-enquiry";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { sourcingLandingFamily } from "@/lib/sourcing-landing";
 import { ArrowLeft, ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";
 import { designReferenceImage } from "@/components/sourcing/design-reference-image";
-import { DESIGN_PREFILL_KEY } from "@/pages/Designs";
 import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
-import { ManufacturerNetwork } from "@/components/sourcing/ManufacturerNetwork";
 import { supabase } from "@/integrations/supabase/client";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, recordSourcingFollowUp, readSourcingStream, readSaved, sourcingRequest, sourcingSubmission, validSourcingPhone, validatedQuestions, type SourcingProject, type SourcingQuestion } from "@/lib/sourcing";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -26,6 +23,10 @@ import catBoxes from "@/assets/design-ship-kraft.webp";
 import catPouches from "@/assets/category-stand-up-pouches.webp";
 import catLabels from "@/assets/cat-labels.webp";
 import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
+// The design gallery (large catalogue data) loads after the form so the form appears sooner on phones.
+const DESIGN_PREFILL_KEY = "snaplogo.design-prefill"; // must match Designs page
+const ManufacturerNetwork = lazy(() => import("@/components/sourcing/ManufacturerNetwork").then(m => ({ default: m.ManufacturerNetwork })));
+const CorrugatedDesigns = lazy(() => import("@/components/sourcing/CorrugatedDesigns").then(m => ({ default: m.CorrugatedDesigns })));
 
 const PROJECTS_KEY = "snaplogo.sourcing.projects";
 const TEAM_WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("Hi Snaplogo! I'd like to talk to a sourcing expert about my packaging requirement.");
@@ -297,7 +298,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     </form>
   );
   const designGallery = (
-    <CorrugatedDesigns onlyFamily={boxesOnly ? "boxes" : undefined} selectedFamily={requirementMode === "form" ? packagingFamily : undefined} onFamilyChange={requirementMode === "form" ? setPackagingFamily : undefined} onUseDesign={(prefill, designs) => {
+    <Suspense fallback={<div className="min-h-[60vh]" aria-hidden />}><CorrugatedDesigns onlyFamily={boxesOnly ? "boxes" : undefined} selectedFamily={requirementMode === "form" ? packagingFamily : undefined} onFamilyChange={requirementMode === "form" ? setPackagingFamily : undefined} onUseDesign={(prefill, designs) => {
       if (requirementMode === "form") {
         setFormDesigns(designs);
         setDesignFamily(designs[0]?.family ?? packagingFamily);
@@ -312,7 +313,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
       setQuery(previous => previous.trim() ? `${previous}\n\n${prefill}` : prefill); setError("");
       input.current?.focus(); input.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       void designReferenceImage(designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
-    }} />
+    }} /></Suspense>
   );
   const sourcingQuestions = (
     <section aria-labelledby="manufacturer-sourcing-questions" className="mx-auto mt-10 max-w-[860px] border-t border-border pt-6 text-left">
@@ -408,7 +409,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
             </div></section>
             <TrustStory />
               <div className="mx-auto mt-5 grid max-w-[1120px] items-start gap-6 pt-6 text-left sm:mt-8 sm:grid-cols-2 sm:gap-8 sm:pt-8">
-              <div className={requirementMode === "form" ? "order-2" : ""}><ManufacturerNetwork /></div>
+              <div className={requirementMode === "form" ? "order-2" : ""}><Suspense fallback={null}><ManufacturerNetwork /></Suspense></div>
               <div className={`min-w-0 ${requirementMode === "form" ? "order-1" : ""}`}>
               <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Compare manufacturer quotes.</h2>
               <figure className="mx-auto mt-4 w-full overflow-hidden rounded-lg border border-border bg-card text-left">
