@@ -82,11 +82,12 @@ describe("box enquiry", () => {
     expect(enquiryBrief(e).find(f => f.topic === "quantity")?.value).toBe("2,500");
     expect(enquiryBrief(e).map(f => f.topic)).not.toContain("printing");
   });
-  it("finishing notes come from the contact step and products stay uncapped", () => {
-    const e = { ...emptyEnquiry(), boxTypes: ["rigid" as const], products: ["Haircare", "Other"], productOther: "Candles", productDetails: "gold foil", pincode: "400001" };
+  it("products stay uncapped and the finishing-notes field is gone", () => {
+    const e = { ...emptyEnquiry(), boxTypes: ["rigid" as const], products: ["Haircare", "Other"], productOther: "Candles", pincode: "400001" };
     expect(enquiryDetails(e, "v2").pincode).toBe("400001");
-    expect(enquirySummary(e).find(([k]) => k === "Anything else")?.[1]).toBe("gold foil");
-    expect(enquiryBrief(e).find(f => f.topic === "customisation")?.value).toBe("gold foil");
+    expect(enquiryDetails(e, "v2")).not.toHaveProperty("product_details");
+    expect(enquirySummary(e).some(([k]) => k === "Anything else")).toBe(false);
+    expect(enquiryBrief(e).map(f => f.topic)).not.toContain("customisation");
     expect(enquiryBrief(e).find(f => f.topic === "product")?.value).toBe("Haircare, Other: Candles");
   });
   it("inches are the default dimension unit and convert to cm on save", () => {

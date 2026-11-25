@@ -42,13 +42,13 @@ export const materialOptions = (types: BoxType[]) => [...relevant(types, MATERIA
 export const needsWall = (types: BoxType[]) => types.some(t => t === "corrugated" || t === "mailer" || t === "gable" || t === "display");
 
 export type BoxEnquiry = {
-  boxTypes: BoxType[]; products: string[]; productOther: string; productDetails: string;
+  boxTypes: BoxType[]; products: string[]; productOther: string;
   quantityExact: string;
   length: string; width: string; height: string; sizeInput?: string; sizeUnknown: boolean; unit?: "cm" | "in";
   material: string; materialOther: string; wall: string;
   pincode: string; brand: string; phone: string;
 };
-export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], productOther: "", productDetails: "", quantityExact: "", length: "", width: "", height: "", sizeUnknown: false, unit: "in", material: "", materialOther: "", wall: "", pincode: "", brand: "", phone: "" });
+export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], productOther: "", quantityExact: "", length: "", width: "", height: "", sizeUnknown: false, unit: "in", material: "", materialOther: "", wall: "", pincode: "", brand: "", phone: "" });
 
 /** Normalise unsent drafts only; historical saved briefs remain unchanged. */
 export function singleChoiceEnquiry(e: BoxEnquiry): BoxEnquiry {
@@ -92,16 +92,16 @@ export function enquirySummary(e: BoxEnquiry): [string, string][] {
     ["Box type", e.boxTypes.map(label).join(", ")], ["Product inside", products.join(", ")],
     ["Quantity", e.quantityExact.trim()],
     ["Dimensions (L × W × H)", size], ["Material", material], ["Corrugated wall", e.wall],
-    ["Delivery PIN code", e.pincode.trim()], ["Anything else", e.productDetails.trim()],
+    ["Delivery PIN code", e.pincode.trim()],
   ] as [string, string][]).filter(([, v]) => v);
 }
 export function enquiryBrief(e: BoxEnquiry): SourcingBriefField[] {
   const s = Object.fromEntries(enquirySummary(e));
-  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s.Quantity], ["size", s["Dimensions (L × W × H)"]], ["material", s.Material], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`], ["customisation", s["Anything else"]]];
+  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s.Quantity], ["size", s["Dimensions (L × W × H)"]], ["material", s.Material], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`]];
   return map.filter((m): m is [string, string] => Boolean(m[1])).map(([topic, value]) => ({ topic, value, source: "buyer" as const }));
 }
 export function enquiryDetails(e: BoxEnquiry, variant: string, designPhotos = 0) {
-  return { form_variant: variant, box_types: e.boxTypes, products: e.products, product_other: e.productOther.trim() || null, product_details: e.productDetails.trim() || null, quantity_exact: e.quantityExact.trim() || null, design_photos: designPhotos > 0 ? designPhotos : null, dimensions_cm: !e.sizeUnknown && [e.length, e.width, e.height].every(dim) ? [e.length, e.width, e.height].map(v => e.unit === "cm" ? Number(v) : Math.round(Number(v) * 2.54 * 10) / 10) : null, dimensions_unit_entered: e.unit === "cm" ? "cm" : "in", size_unknown: e.sizeUnknown, material: e.material || null, wall: e.wall || null, pincode: e.pincode.trim() || null, brand: e.brand.trim().slice(0, 120) || null };
+  return { form_variant: variant, box_types: e.boxTypes, products: e.products, product_other: e.productOther.trim() || null, quantity_exact: e.quantityExact.trim() || null, design_photos: designPhotos > 0 ? designPhotos : null, dimensions_cm: !e.sizeUnknown && [e.length, e.width, e.height].every(dim) ? [e.length, e.width, e.height].map(v => e.unit === "cm" ? Number(v) : Math.round(Number(v) * 2.54 * 10) / 10) : null, dimensions_unit_entered: e.unit === "cm" ? "cm" : "in", size_unknown: e.sizeUnknown, material: e.material || null, wall: e.wall || null, pincode: e.pincode.trim() || null, brand: e.brand.trim().slice(0, 120) || null };
 }
 export function enquiryText(e: BoxEnquiry, designPhotos = 0) {
   return ["Premium box enquiry (new form)", ...enquirySummary(e).map(([k, v]) => `${k}: ${v}`), designPhotos > 0 && `Design reference: ${designPhotos} photo${designPhotos > 1 ? "s" : ""} attached`, e.brand.trim() && `Brand: ${e.brand.trim()}`].filter(Boolean).join("\n");
