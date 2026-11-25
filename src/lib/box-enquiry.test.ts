@@ -17,8 +17,8 @@ describe("box enquiry", () => {
   it("step 1 needs a box type; step 2 needs a quantity", () => {
     expect(stepErrors(emptyEnquiry(), 0)).not.toBeNull();
     expect(stepErrors(emptyEnquiry(), 1)).not.toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), quantityBand: "1,000 – 5,000" }, 1)).toBeNull();
     expect(stepErrors({ ...emptyEnquiry(), quantityExact: "12000" }, 1)).toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "abc" }, 1)).not.toBeNull();
   });
   it("PIN code is asked on the contact step and must be six digits", () => {
     expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210", pincode: "4000" }, 2)).not.toBeNull();
@@ -32,19 +32,19 @@ describe("box enquiry", () => {
     expect(details).not.toHaveProperty("email");
   });
   it("quantity is collected; printing, finishes and timeline are not", () => {
-    const e = { ...emptyEnquiry(), boxTypes: ["rigid" as const], products: ["Haircare", "Other"], productOther: "Candles", quantityBand: "1,000 – 5,000", quantityExact: "2,500", pincode: "400001" };
+    const e = { ...emptyEnquiry(), boxTypes: ["rigid" as const], products: ["Haircare", "Other"], productOther: "Candles", quantityExact: "2,500", pincode: "400001" };
     const summary = enquirySummary(e);
-    expect(summary.find(([k]) => k === "Quantity")?.[1]).toBe("1,000 – 5,000 — 2,500");
+    expect(summary.find(([k]) => k === "Quantity")?.[1]).toBe("2,500");
     expect(summary.map(([k]) => k)).not.toContain("Printing");
     expect(summary.map(([k]) => k)).not.toContain("Finishes & customisation");
     expect(summary.map(([k]) => k)).not.toContain("Timeline");
     const details = enquiryDetails(e, "v2") as Record<string, unknown>;
-    expect(details.quantity_band).toBe("1,000 – 5,000");
     expect(details.quantity_exact).toBe("2,500");
+    expect(details).not.toHaveProperty("quantity_band");
     expect(details).not.toHaveProperty("printing");
     expect(details).not.toHaveProperty("finishes");
     expect(details).not.toHaveProperty("timeline");
-    expect(enquiryBrief(e).find(f => f.topic === "quantity")?.value).toBe("1,000 – 5,000 — 2,500");
+    expect(enquiryBrief(e).find(f => f.topic === "quantity")?.value).toBe("2,500");
     expect(enquiryBrief(e).map(f => f.topic)).not.toContain("printing");
   });
   it("finishing notes come from the contact step and products stay uncapped", () => {
