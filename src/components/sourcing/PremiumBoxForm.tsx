@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check, Clock, HelpCircle, Loader2, Search, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, HelpCircle, Ruler, Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,14 +109,14 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold leading-tight outline-none sm:text-xl">{["What kind of box are you looking to create?", "Tell us about your project", "Where should we send your quotes?"][step]}</h2>
         <p className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold text-primary"><Clock className="h-3 w-3" />Multiple quotes within 6 hours</p>
       </div>
-      <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{["Pick one or more — or choose “Not sure” and we’ll guide you.", "A few details help us match the right manufacturers. All optional.", "We coordinate your quotes on WhatsApp — no spam."][step]}</p>
+      <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{["Pick one or more — or tap “Not sure” and we’ll guide you.", "A few details help us match the right manufacturers. All optional.", "We coordinate your quotes on WhatsApp — no spam."][step]}</p>
     </div>
     <fieldset disabled={busy} className="min-w-0 space-y-4 px-4 py-4 sm:px-6 sm:py-5">
-      {step === 0 && <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); return <button key={b.id} type="button" aria-pressed={on} title={b.description} onClick={() => set("boxTypes", toggle(e.boxTypes, b.id, "unsure"))} className={`relative flex min-w-0 flex-col items-center gap-1 rounded-xl border p-2 pb-2.5 pt-2 text-center transition-colors ${on ? "border-primary bg-accent/60 ring-1 ring-primary" : "border-border hover:border-primary/40"}`}>
-        <span className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-muted/40 sm:h-20">{IMAGES[b.id] ? <img src={IMAGES[b.id]} alt="" loading="lazy" width={200} height={200} className="h-full w-full object-contain mix-blend-multiply" /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
-        <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>
+      {step === 0 && <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); return <button key={b.id} type="button" aria-pressed={on} title={b.description} onClick={() => set("boxTypes", toggle(e.boxTypes, b.id, "unsure"))} className={`relative flex min-w-0 flex-col items-center gap-1 rounded-xl border p-2 pb-2.5 pt-2 text-center transition-colors ${on ? "border-primary bg-accent/60 ring-1 ring-primary" : b.id === "custom" ? "border-[1.5px] border-dashed border-muted-foreground/40 hover:border-primary/60" : "border-border hover:border-primary/40"}`}>
+        <span className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-muted/40 sm:h-20">{IMAGES[b.id] ? <img src={IMAGES[b.id]} alt="" loading="lazy" width={200} height={200} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : b.id === "custom" ? <Ruler className="h-7 w-7 text-primary" /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
+        <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>{b.use && <span className="-mt-0.5 text-[10px] leading-3 text-muted-foreground">{b.use}</span>}
         <span className={`absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
-      </button>; })}<p className="col-span-full text-xs text-muted-foreground">You can pick more than one.</p></div>}
+      </button>; })}</div>}
       {step === 1 && <>
         {group("What product will go inside the box?", <>
           {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}

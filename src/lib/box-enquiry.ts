@@ -1,19 +1,20 @@
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 import { indianMobile } from "./sourcing-form";
 
-export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "sleeve" | "gable" | "display" | "pillow" | "diecut" | "gift" | "unsure";
-export const BOX_TYPES: { id: BoxType; label: string; description: string }[] = [
-  { id: "corrugated", label: "Corrugated shipping box", description: "Strong outer boxes for shipping and storage" },
-  { id: "mailer", label: "Mailer box", description: "Self-locking e-commerce boxes for unboxing" },
-  { id: "product", label: "Product / folding carton", description: "Printed retail cartons for shelves" },
-  { id: "rigid", label: "Rigid box", description: "Premium boxes with a luxury feel, incl. magnetic closure" },
-  { id: "sleeve", label: "Sleeve & drawer box", description: "Sliding boxes for soaps, jewellery and more" },
-  { id: "gable", label: "Gable / handle box", description: "Carry boxes with built-in handles" },
-  { id: "display", label: "Display / counter box", description: "Retail counter and shelf-ready displays" },
-  { id: "pillow", label: "Pillow box", description: "Curved fold boxes for small gifts and favours" },
-  { id: "diecut", label: "Die-cut box", description: "Custom shapes, windows and structures" },
-  { id: "gift", label: "Gift box", description: "Hampers and gifting with inserts" },
-  { id: "unsure", label: "Not sure? Help me choose", description: "We’ll suggest the right box" },
+export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "sleeve" | "gable" | "display" | "pillow" | "diecut" | "gift" | "custom" | "unsure";
+export const BOX_TYPES: { id: BoxType; label: string; description: string; use?: string }[] = [
+  { id: "corrugated", use: "Shipping", label: "Corrugated shipping box", description: "Strong outer boxes for shipping and storage" },
+  { id: "mailer", use: "D2C unboxing", label: "Mailer box", description: "Self-locking e-commerce boxes for unboxing" },
+  { id: "product", use: "Retail shelf", label: "Product / folding carton", description: "Printed retail cartons for shelves" },
+  { id: "rigid", use: "Luxury & gifting", label: "Rigid box", description: "Premium boxes with a luxury feel, incl. magnetic closure" },
+  { id: "sleeve", use: "Soaps, jewellery", label: "Sleeve & drawer box", description: "Sliding boxes for soaps, jewellery and more" },
+  { id: "gable", use: "Carry & takeaway", label: "Gable / handle box", description: "Carry boxes with built-in handles" },
+  { id: "display", use: "Counter retail", label: "Display / counter box", description: "Retail counter and shelf-ready displays" },
+  { id: "pillow", use: "Small favours", label: "Pillow box", description: "Curved fold boxes for small gifts and favours" },
+  { id: "diecut", use: "Shapes & windows", label: "Die-cut box", description: "Custom shapes, windows and structures" },
+  { id: "gift", use: "Hampers", label: "Gift box", description: "Hampers and gifting with inserts" },
+  { id: "custom", use: "Made to your spec", label: "Custom size & structure", description: "Your own dimensions, shape or construction" },
+  { id: "unsure", label: "Not sure — help me choose", description: "We’ll suggest the right box" },
 ];
 export const PRODUCT_CATEGORIES = ["Beauty & skincare", "Cosmetics & makeup", "Haircare", "Perfumes & fragrances", "Food & snacks", "Chocolates & confectionery", "Dry fruits & nuts", "Bakery & sweets", "Health & wellness", "Pharmaceuticals", "Apparel & fashion", "Footwear", "Jewellery & accessories", "Electronics & gadgets", "Home & lifestyle", "Gifts & hampers", "Subscription boxes", "Other"];
 export const WALLS = ["3-ply", "5-ply", "7-ply", "Not sure"];
@@ -29,6 +30,7 @@ const MATERIALS: Record<BoxType, string[]> = {
   pillow: ["Duplex / folding carton board", "Kraft / recycled board"],
   gift: ["Rigid board", "Duplex / folding carton board"],
   diecut: ["Duplex / folding carton board", "Kraft / recycled board", "Corrugated board"],
+  custom: ["Kraft / recycled board", "Duplex / folding carton board", "Rigid board", "Corrugated board"],
   unsure: ["Kraft / recycled board", "Duplex / folding carton board", "Rigid board", "Corrugated board"],
 };
 const ALL_MATERIALS = ["Kraft / recycled board", "Duplex / folding carton board", "Rigid board", "Corrugated board"];
@@ -58,7 +60,7 @@ const dim = (v: string) => /^\d{1,4}(\.\d{1,2})?$/.test(v.trim()) && Number(v) >
 const qty = (v: string) => /^\d{1,7}$/.test(v.replace(/[,\s]/g, ""));
 
 export function stepErrors(e: BoxEnquiry, step: number): string | null {
-  if (step === 0 && !e.boxTypes.length) return "Choose at least one box type, or pick “Not sure? Help me choose”.";
+  if (step === 0 && !e.boxTypes.length) return "Choose at least one box type, or pick “Not sure — help me choose”.";
   if (step === 1) {
     if (!qty(e.quantityExact)) return "Enter the number of boxes you need, e.g. 12000.";
     if (!e.sizeUnknown && [e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)) return "Enter length, width and height, or tap “Don’t know yet”.";
