@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, formVariant, materialOptions, pruneForTypes, stepErrors } from "./box-enquiry";
+import { emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, formVariant, materialOptions, pruneForTypes, stepErrors } from "./box-enquiry";
 
 const mem = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) }; };
 describe("box enquiry", () => {
@@ -67,6 +67,14 @@ describe("box enquiry", () => {
     const legacy = { ...e, unit: undefined };
     expect(enquirySummary(legacy).find(([k]) => k === "Dimensions (L × W × H)")?.[1]).toBe("12 × 8 × 6 in");
     expect(enquiryDetails(legacy, "v2").dimensions_unit_entered).toBe("in");
+  });
+  it("records how many design photos were attached", () => {
+    const e = { ...emptyEnquiry(), boxTypes: ["mailer" as const], quantityExact: "500" };
+    expect(enquiryDetails(e, "v2").design_photos).toBeNull();
+    expect(enquiryDetails(e, "v2", 2).design_photos).toBe(2);
+    expect(enquiryText(e, 1)).toContain("Design reference: 1 photo attached");
+    expect(enquiryText(e, 2)).toContain("Design reference: 2 photos attached");
+    expect(enquiryText(e)).not.toContain("Design reference");
   });
   it("variant is sticky and can be forced", () => {
     const s = mem();

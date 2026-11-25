@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check, Clock, HelpCircle, Ruler, Loader2, Search, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, HelpCircle, Ruler, Loader2, Search, X, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { imageFileToDataUrl } from "@/lib/image-data-url";
 import { supabase } from "@/integrations/supabase/client";
 import { readAttribution } from "@/lib/attribution";
 import { markConversionPending } from "@/lib/sourcing-conversion";
@@ -36,6 +37,9 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const [e, setE] = useState<BoxEnquiry>(() => ({ ...emptyEnquiry(), ...saved.current?.e, sizeUnknown: false }));
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [adding, setAdding] = useState(false);
+  const file = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState("");
   const id = useRef(saved.current?.id ?? crypto.randomUUID());
   const savedId = useRef(crypto.randomUUID());
@@ -66,6 +70,15 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (i < 2 && (jump || v.replace(".", "").length >= 3)) dims.current[i + 1]?.focus();
   };
   const removeProduct = (p: string) => setE(prev => ({ ...prev, products: prev.products.filter(x => x !== p), productOther: p === "Other" ? "" : prev.productOther }));
+  const addPhotos = async (files: File[]) => {
+    if (!files.length || photos.length >= 3) return;
+    setAdding(true); setError("");
+    try {
+      const added = await Promise.all(files.slice(0, 3 - photos.length).map(f => imageFileToDataUrl(f)));
+      setPhotos(p => [...p, ...added].slice(0, 3));
+    } catch (err) { setError(err instanceof Error ? err.message : "Couldn’t add that photo."); }
+    finally { setAdding(false); if (file.current) file.current.value = ""; }
+  };
 
   const next = () => {
     const problem = stepErrors(e, step);
@@ -73,6 +86,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (step === 0) { trackFormField("format", true, 0); trackFunnel("brief_shown"); }
     if (step === 1) {
       (["quantity", "size", "material", "wall"] as const).forEach((f, i) => trackFormField(f, Boolean([e.quantityExact, e.sizeUnknown || e.length, e.material, e.wall][i]), 1));
+      trackFormField("photos", photos.length > 0, 1);
       trackFunnel("contact_shown");
     }
     setStep(s => s + 1);
@@ -83,14 +97,14 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: "3", reason: "phone_invalid" }); return; }
     const number = indianMobile(e.phone)!;
     const brief = enquiryBrief(e);
-    const payload = formSubmission(brief, number, enquiryText(e), []);
+    const payload = formSubmission(brief, number, enquiryText(e, photos.length), photos);
     if (!payload) return;
     setBusy(true); setError(""); trackFormField("phone", true, 2); trackFunnel("contact_submitted");
     try {
-      const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: savedId.current, details: enquiryDetails(e, "v2"), attribution: { ...readAttribution(), enquiry_id: savedId.current, submitted_at: new Date().toISOString(), form_variant: "v2" } });
+      const { error: insertError } = await supabase.from("requirement_submissions").insert({ ...payload, id: savedId.current, details: enquiryDetails(e, "v2", photos.length), attribution: { ...readAttribution(), enquiry_id: savedId.current, submitted_at: new Date().toISOString(), form_variant: "v2" } });
       if (insertError) throw new Error("Your enquiry couldn’t be sent. Please try again.");
       trackFunnel("request_saved"); window.__lovableEvents?.track?.("project.sourcing_request_submitted", { channel: "form" }); void flushVisitorTracking();
-      await syncSourcingChat({ id: id.current, title: "Premium box enquiry", brief, submitted: true, submissionId: savedId.current, phone: number, turns: [{ query: payload.requirement, matches: [], images: [] }] }).catch(() => {});
+      await syncSourcingChat({ id: id.current, title: "Premium box enquiry", brief, submitted: true, submissionId: savedId.current, phone: number, turns: [{ query: payload.requirement, matches: [], images: photos }] }).catch(() => {});
       markConversionPending(id.current);
       try { localStorage.removeItem(KEY); localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: id.current, submissionId: savedId.current, phone: number, brief })); } catch { /* saved anyway */ }
       navigate("/sourcing/thank-you");
@@ -135,6 +149,15 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         </div>
         {group("Material preference", <>{single("material", materials)}{e.material === "Other" && <Input autoFocus aria-label="Which material?" placeholder="Which material? e.g. metallic board" maxLength={120} value={e.materialOther} onChange={ev => set("materialOther", ev.target.value)} className="h-10 max-w-sm rounded-lg bg-card text-base" />}</>)}
         {needsWall(e.boxTypes) && group("Board strength (corrugated wall)", single("wall", WALLS, e.products.some(p => /Electronics|Footwear|Food|Chocolates|Dry fruits|Bakery/.test(p)) ? "5-ply" : "3-ply"))}
+        <div className="flex flex-wrap items-center gap-2">
+          <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
+          <button type="button" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Add a design or reference photo, optional, up to 3" className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-dashed border-border bg-accent/30 px-3 text-sm hover:bg-accent/60 disabled:opacity-60">
+            {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4 text-primary" />}
+            <span>{photos.length ? "Add another photo" : "Design / reference photo"}</span>
+            <span className="text-xs font-normal text-muted-foreground">Optional</span>
+          </button>
+          {photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><button type="button" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-destructive"><X className="h-3 w-3" /></button></span>)}
+        </div>
       </>}
       {step === 2 && <>
         <div className="grid gap-3 sm:grid-cols-2">
