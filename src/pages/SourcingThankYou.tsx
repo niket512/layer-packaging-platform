@@ -66,7 +66,7 @@ export default function SourcingThankYou() {
           <ol aria-label="What happens next" className="mt-8 grid gap-4 rounded-xl border border-border/70 bg-background/60 p-4 sm:grid-cols-3 md:p-5">{[[true, "Brief received", "With our sourcing team"], [false, "Manufacturer matching", "From 40+ vetted makers"], [false, "Quote on WhatsApp", "Details & pricing in 6 hrs"]].map(([done, label, sub], i) => <li key={label as string} className="flex items-start gap-3"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${done ? "border-transparent bg-[hsl(var(--sourcing-success))] text-white" : "border-border bg-card text-muted-foreground"}`}>{done ? <Check className="h-4 w-4" /> : i + 1}</span><span className="min-w-0"><span className="block text-sm font-semibold">{label}</span><span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{sub}</span></span></li>)}</ol>
           {payload && payload.brief.length > 0 && <SourcingBrief fields={payload.brief} submitted />}
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button asChild className="rounded-full sm:flex-none"><Link to="/sourcing"><Plus />New sourcing request</Link></Button>
+            <Button asChild className="rounded-full sm:flex-none"><Link to="/"><Plus />New sourcing request</Link></Button>
           </div>
         </section>
       </main>

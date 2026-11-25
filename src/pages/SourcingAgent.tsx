@@ -224,7 +224,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     };
   }, [!!(current || busy)]);
 
-  const startNew = () => { if (busy || submitting) return; setFormKey(k => k + 1); setFormActive(false); setActiveId(null); setQuery(""); setPhotos([]); setError(""); input.current?.focus(); };
+  const startNew = () => { if (busy || submitting) return; setFormKey(k => k + 1); setFormActive(false); setActiveId(null); setQuery(""); setPhotos([]); setError(""); navigate("/"); };
   const search = async (text = query) => {
     const trimmed = text.trim() || (photos.length ? "Photos attached" : "");
     if (askingPhone && !designStep && validSourcingPhone(trimmed)) { void submitPhone(trimmed); return; }

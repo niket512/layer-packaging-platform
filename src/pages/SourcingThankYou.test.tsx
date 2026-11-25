@@ -29,6 +29,10 @@ describe("thank-you conversion lifecycle", () => {
     expect(rdt).toHaveBeenCalledTimes(2);
     expect(invoke).toHaveBeenCalledTimes(1);
   });
+  it("sends a new sourcing request back to the homepage", () => {
+    render(<MemoryRouter><SourcingThankYou /></MemoryRouter>);
+    expect(screen.getByRole("link", { name: /new sourcing request/i }).getAttribute("href")).toBe("/");
+  });
   it("does not count a direct thank-you visit", () => {
     const gtag = vi.fn(); const rdt = vi.fn(); Object.assign(window, { gtag, rdt });
     render(<MemoryRouter><SourcingThankYou /></MemoryRouter>);
