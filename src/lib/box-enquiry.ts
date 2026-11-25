@@ -1,12 +1,16 @@
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 import { indianMobile } from "./sourcing-form";
 
-export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "diecut" | "gift" | "unsure";
+export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "sleeve" | "gable" | "display" | "pillow" | "diecut" | "gift" | "unsure";
 export const BOX_TYPES: { id: BoxType; label: string; description: string }[] = [
   { id: "corrugated", label: "Corrugated shipping box", description: "Strong outer boxes for shipping and storage" },
   { id: "mailer", label: "Mailer box", description: "Self-locking e-commerce boxes for unboxing" },
-  { id: "product", label: "Product box / Folding carton", description: "Printed retail cartons for shelves" },
-  { id: "rigid", label: "Rigid box", description: "Premium boxes with a luxury feel" },
+  { id: "product", label: "Product / folding carton", description: "Printed retail cartons for shelves" },
+  { id: "rigid", label: "Rigid box", description: "Premium boxes with a luxury feel, incl. magnetic closure" },
+  { id: "sleeve", label: "Sleeve & drawer box", description: "Sliding boxes for soaps, jewellery and more" },
+  { id: "gable", label: "Gable / handle box", description: "Carry boxes with built-in handles" },
+  { id: "display", label: "Display / counter box", description: "Retail counter and shelf-ready displays" },
+  { id: "pillow", label: "Pillow box", description: "Curved fold boxes for small gifts and favours" },
   { id: "diecut", label: "Die-cut box", description: "Custom shapes, windows and structures" },
   { id: "gift", label: "Gift box", description: "Hampers and gifting with inserts" },
   { id: "unsure", label: "Not sure? Help me choose", description: "We’ll suggest the right box" },
@@ -19,6 +23,10 @@ const MATERIALS: Record<BoxType, string[]> = {
   mailer: ["Corrugated board", "Kraft / recycled board"],
   product: ["Duplex / folding carton board", "Kraft / recycled board"],
   rigid: ["Rigid board"],
+  sleeve: ["Duplex / folding carton board", "Kraft / recycled board", "Rigid board"],
+  gable: ["Corrugated board", "Kraft / recycled board", "Duplex / folding carton board"],
+  display: ["Corrugated board", "Duplex / folding carton board"],
+  pillow: ["Duplex / folding carton board", "Kraft / recycled board"],
   gift: ["Rigid board", "Duplex / folding carton board"],
   diecut: ["Duplex / folding carton board", "Kraft / recycled board", "Corrugated board"],
   unsure: ["Kraft / recycled board", "Duplex / folding carton board", "Rigid board", "Corrugated board"],
@@ -29,7 +37,7 @@ const relevant = (types: BoxType[], map: Record<BoxType, string[]>, order: strin
   return order.filter(o => picked.has(o));
 };
 export const materialOptions = (types: BoxType[]) => [...relevant(types, MATERIALS, ALL_MATERIALS), "Not sure — recommend for me", "Other"];
-export const needsWall = (types: BoxType[]) => types.some(t => t === "corrugated" || t === "mailer");
+export const needsWall = (types: BoxType[]) => types.some(t => t === "corrugated" || t === "mailer" || t === "gable" || t === "display");
 
 export type BoxEnquiry = {
   boxTypes: BoxType[]; products: string[]; productOther: string; productDetails: string;

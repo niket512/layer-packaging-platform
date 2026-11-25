@@ -17,6 +17,10 @@ const IMAGES: Partial<Record<BoxType, string>> = {
   mailer: "https://www.china-paperbox.com/images/products/blush-pink-beauty-unboxing-mailer-box.jpg",
   product: "https://www.china-paperbox.com/images/products/business-dress-shirt-folding-carton.jpg",
   rigid: "https://www.china-paperbox.com/images/products/champagne-sparkling-wine-rigid-box.jpg",
+  sleeve: "https://www.china-paperbox.com/images/products/artisan-soap-sleeve-drawer-box.jpg",
+  gable: "https://www.china-paperbox.com/images/products/everyday-kraft-gable-carry-box.jpg",
+  display: "https://www.china-paperbox.com/images/products/corrugated-hinged-lid-display-box.jpg",
+  pillow: "https://www.china-paperbox.com/images/products/curved-pillow-fold-gift-carton.jpg",
   diecut: "https://www.china-paperbox.com/images/products/hexagonal-geometric-foldable-gift-carton.jpg",
   gift: "https://res.cloudinary.com/daxralyfk/image/upload/v1784444272/uploads/12x10x4-boxwaale-thumbnail.webp",
 };
@@ -100,11 +104,11 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       <p className="mt-1 text-[13px] leading-5 text-muted-foreground">{["Pick one or more — or choose “Not sure” and we’ll guide you.", "A few details help us match the right manufacturers. All optional.", "We coordinate your quotes on WhatsApp — no spam."][step]}</p>
     </div>
     <fieldset disabled={busy} className="min-w-0 space-y-4 px-4 py-4 sm:px-6 sm:py-5">
-      {step === 0 && <div className="grid gap-2 sm:grid-cols-2">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); return <button key={b.id} type="button" aria-pressed={on} onClick={() => set("boxTypes", toggle(e.boxTypes, b.id, "unsure"))} className={`relative flex min-h-[68px] min-w-0 items-center gap-3 rounded-xl border p-2.5 pr-9 text-left transition-colors ${on ? "border-primary bg-accent/60 ring-1 ring-primary" : "border-border hover:border-primary/40"}`}>
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted/40">{IMAGES[b.id] ? <img src={IMAGES[b.id]} alt="" loading="lazy" width={112} height={112} className="h-full w-full object-contain p-1 mix-blend-multiply" /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
-        <span className="min-w-0"><span className={`block text-sm font-semibold leading-5 ${on ? "text-primary" : ""}`}>{b.label}</span><span className="block truncate text-xs leading-4 text-muted-foreground">{b.description}</span></span>
-        <span className={`absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-3 w-3" />}</span>
-      </button>; })}</div>}
+      {step === 0 && <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); return <button key={b.id} type="button" aria-pressed={on} title={b.description} onClick={() => set("boxTypes", toggle(e.boxTypes, b.id, "unsure"))} className={`relative flex min-w-0 flex-col items-center gap-1.5 rounded-xl border p-2 pb-2.5 pt-3 text-center transition-colors ${on ? "border-primary bg-accent/60 ring-1 ring-primary" : "border-border hover:border-primary/40"}`}>
+        <span className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-lg bg-muted/40 sm:h-16 sm:w-16">{IMAGES[b.id] ? <img src={IMAGES[b.id]} alt="" loading="lazy" width={128} height={128} className="h-full w-full object-contain p-1 mix-blend-multiply" /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
+        <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>
+        <span className={`absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
+      </button>; })}<p className="col-span-full text-xs text-muted-foreground">You can pick more than one.</p></div>}
       {step === 1 && <>
         {group("What product will go inside the box?", <>
           {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}
