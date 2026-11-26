@@ -3,7 +3,7 @@ import { Check, Pencil, TriangleAlert, X, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BRIEF_LABELS, sortSourcingBrief, unclearBriefNotes } from "@/lib/sourcing";
-import type { SourcingBriefField } from "../../../supabase/functions/_shared/sourcing-intake";
+import type { SourcingBriefField } from "@/lib/sourcing-intake";
 
 export function SourcingBrief({ fields, submitted, disabled, onSave }: { fields: SourcingBriefField[]; submitted?: boolean; disabled?: boolean; onSave?: (fields: SourcingBriefField[]) => void }) {
   const [editing, setEditing] = useState(false);

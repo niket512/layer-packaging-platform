@@ -1,5 +1,5 @@
 import { sourcingSubmission } from "./sourcing";
-import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import type { SourcingBriefField } from "@/lib/sourcing-intake";
 import type { PackagingDesign } from "@/components/sourcing/packaging-catalogue";
 
 export const FORM_FORMATS = {

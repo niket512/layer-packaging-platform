@@ -13,7 +13,7 @@ import { imageFileToDataUrl } from "@/lib/image-data-url";
 import { supabase } from "@/integrations/supabase/client";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFunnel, trackFormField, trackJourney } from "@/lib/visitor-tracking";
-import type { SourcingBriefField } from "../../../supabase/functions/_shared/sourcing-intake";
+import type { SourcingBriefField } from "@/lib/sourcing-intake";
 import boxesImage from "@/assets/design-ship-kraft.webp";
 import pouchesImage from "@/assets/category-stand-up-pouches.webp";
 import mailerImage from "@/assets/design-mailer-white.webp";

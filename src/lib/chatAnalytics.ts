@@ -1,5 +1,5 @@
 import type { SourcingTurn } from "@/lib/sourcing";
-import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import type { SourcingBriefField } from "@/lib/sourcing-intake";
 
 export type AnalysedChat = { status: string; contact: string | null; created_at: string; updated_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; images?: string[]; cataloguesViewed?: number; designsUsed?: number };
 

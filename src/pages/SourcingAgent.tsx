@@ -26,7 +26,7 @@ import logo from "@/assets/snaplogo-orange.png";
 import catBoxes from "@/assets/design-ship-kraft.webp";
 import catPouches from "@/assets/category-stand-up-pouches.webp";
 import catLabels from "@/assets/cat-labels.webp";
-import type { IntakeReply } from "../../supabase/functions/_shared/sourcing-intake";
+import type { IntakeReply } from "@/lib/sourcing-intake";
 // The design gallery (large catalogue data) loads after the form so the form appears sooner on phones.
 const DESIGN_PREFILL_KEY = "snaplogo.design-prefill"; // must match Designs page
 const ManufacturerNetwork = lazy(() => import("@/components/sourcing/ManufacturerNetwork").then(m => ({ default: m.ManufacturerNetwork })));
@@ -252,9 +252,9 @@ export default function SourcingAgent({ category, requirementMode = "chat", init
       let questions: unknown = [];
       let reply: IntakeReply | undefined;
       {
-        const response = await fetch(`${import.meta.env["VITE_SUPABASE_URL"]}/functions/v1/directory-search`, {
+        const response = await fetch("/api/directory-search", {
           method: "POST",
-          headers: { "Content-Type": "application/json", apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"], Authorization: `Bearer ${import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"]}` },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ query: sourcingRequest(turns, outgoing), latest: outgoing, images: photos, brief: project?.brief ?? [], mode: "intake", stream: true, conversational: true, quotationAsked: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0), currentStage: current?.stage ?? (hasQuestions ? "quotation" : designStep ? "design" : askingPhone ? "phone" : "clarify"), conversation: turns.map(t => ({ request: t.query, response: t.assistantMessage, stage: t.stage, questions: t.questions ?? [], followUp: t.followUp, hasImages: (t.images?.length ?? 0) > 0, skipped: t.questionsSkipped ?? false })) }),
         });
         questions = await readSourcingStream(response, value => setLiveQuestions(turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(value, turns)), value => { reply = value; }, setLiveMessage);

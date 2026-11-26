@@ -1,4 +1,4 @@
-import { usableRedditClickId } from "../../supabase/functions/_shared/reddit-click-id";
+import { usableRedditClickId } from "@/lib/reddit-click-id";
 
 export function readRedditClickId(storage: Pick<Storage, "getItem" | "removeItem">): string | undefined {
   try {

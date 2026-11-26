@@ -5,10 +5,10 @@ import { ArrowRight, Check, MessageSquare, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";
 import { readSaved } from "@/lib/sourcing";
-import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import type { SourcingBriefField } from "@/lib/sourcing-intake";
 import { consumeConversion, recordSourcingLead } from "@/lib/sourcing-conversion";
 import { readRedditClickId } from "@/lib/reddit-attribution";
-import { supabase } from "@/integrations/supabase/client";
+import { reportRedditLead } from "@/lib/reddit-capi.functions";
 
 const THANKYOU_KEY = "snaplogo.sourcing.thankyou";
 
@@ -36,8 +36,8 @@ export default function SourcingThankYou() {
       let clickId: string | undefined;
       try { clickId = readRedditClickId(localStorage); } catch { /* optional */ }
       if (payload.submissionId) {
-        supabase.functions.invoke("reddit-capi", {
-          body: { conversionId: payload.leadId, submissionId: payload.submissionId, clickId, screen: { width: screen.width, height: screen.height } },
+        void reportRedditLead({
+          data: { conversionId: payload.leadId, submissionId: payload.submissionId, clickId, screen: { width: screen.width, height: screen.height } },
         }).catch(() => { /* Pixel still records the lead. */ });
       }
     }

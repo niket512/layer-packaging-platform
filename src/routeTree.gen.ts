@@ -23,6 +23,7 @@ import { Route as StoreRouteImport } from './routes/store'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminChatsRouteImport } from './routes/admin.chats'
+import { Route as ApiDirectorySearchRouteImport } from './routes/api/directory-search'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppStoreRouteImport } from './routes/app.store'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -110,6 +111,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminChatsRoute = AdminChatsRouteImport.update({
   id: '/admin/chats',
   path: '/admin/chats',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDirectorySearchRoute = ApiDirectorySearchRouteImport.update({
+  id: '/api/directory-search',
+  path: '/api/directory-search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -218,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/store': typeof StoreRoute
   '/team': typeof TeamRoute
   '/admin/chats': typeof AdminChatsRoute
+  '/api/directory-search': typeof ApiDirectorySearchRoute
   '/app/store': typeof AppStoreRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/gramiyaa': typeof DashboardGramiyaaRoute
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   '/store': typeof StoreRoute
   '/team': typeof TeamRoute
   '/admin/chats': typeof AdminChatsRoute
+  '/api/directory-search': typeof ApiDirectorySearchRoute
   '/app/store': typeof AppStoreRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/gramiyaa': typeof DashboardGramiyaaRoute
@@ -287,6 +295,7 @@ export interface FileRoutesById {
   '/store': typeof StoreRoute
   '/team': typeof TeamRoute
   '/admin/chats': typeof AdminChatsRoute
+  '/api/directory-search': typeof ApiDirectorySearchRoute
   '/app/store': typeof AppStoreRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/gramiyaa': typeof DashboardGramiyaaRoute
@@ -323,6 +332,7 @@ export interface FileRouteTypes {
     | '/store'
     | '/team'
     | '/admin/chats'
+    | '/api/directory-search'
     | '/app/store'
     | '/blog/$slug'
     | '/dashboard/gramiyaa'
@@ -357,6 +367,7 @@ export interface FileRouteTypes {
     | '/store'
     | '/team'
     | '/admin/chats'
+    | '/api/directory-search'
     | '/app/store'
     | '/blog/$slug'
     | '/dashboard/gramiyaa'
@@ -391,6 +402,7 @@ export interface FileRouteTypes {
     | '/store'
     | '/team'
     | '/admin/chats'
+    | '/api/directory-search'
     | '/app/store'
     | '/blog/$slug'
     | '/dashboard/gramiyaa'
@@ -426,6 +438,7 @@ export interface RootRouteChildren {
   StoreRoute: typeof StoreRoute
   TeamRoute: typeof TeamRoute
   AdminChatsRoute: typeof AdminChatsRoute
+  ApiDirectorySearchRoute: typeof ApiDirectorySearchRoute
   AppStoreRoute: typeof AppStoreRoute
   BlogSlugRoute: typeof BlogSlugRoute
   DashboardGramiyaaRoute: typeof DashboardGramiyaaRoute
@@ -545,6 +558,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/chats'
       fullPath: '/admin/chats'
       preLoaderRoute: typeof AdminChatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/directory-search': {
+      id: '/api/directory-search'
+      path: '/api/directory-search'
+      fullPath: '/api/directory-search'
+      preLoaderRoute: typeof ApiDirectorySearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -690,6 +710,7 @@ const rootRouteChildren: RootRouteChildren = {
   StoreRoute: StoreRoute,
   TeamRoute: TeamRoute,
   AdminChatsRoute: AdminChatsRoute,
+  ApiDirectorySearchRoute: ApiDirectorySearchRoute,
   AppStoreRoute: AppStoreRoute,
   BlogSlugRoute: BlogSlugRoute,
   DashboardGramiyaaRoute: DashboardGramiyaaRoute,

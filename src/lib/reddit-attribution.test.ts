@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { readRedditClickId } from "./reddit-attribution";
-import { redditClickMatch, usableRedditClickId } from "../../supabase/functions/_shared/reddit-click-id";
+import { redditClickMatch, usableRedditClickId } from "@/lib/reddit-click-id";
 
 describe("Reddit click attribution", () => {
   it("omits the reported fabricated match key without removing the Lead", () => {

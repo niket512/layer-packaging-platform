@@ -1,5 +1,5 @@
-import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS, validatedBrief } from "../../supabase/functions/_shared/sourcing-intake";
-import type { IntakeReply, IntakeStage, SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import { INTAKE_QUESTION_LIMIT, INTAKE_TOPICS, validatedBrief } from "@/lib/sourcing-intake";
+import type { IntakeReply, IntakeStage, SourcingBriefField } from "@/lib/sourcing-intake";
 
 export interface SourcingMatch { id: string; reason: string }
 export interface SourcingQuestion { topic: string; question: string }

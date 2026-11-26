@@ -10,6 +10,7 @@ import AppShell, { SignInBox, useSession } from "@/components/market/AppShell";
 import type { Database } from "@/integrations/supabase/types";
 import { cropProductImages, pdfPageImages, pdfPageText } from "@/lib/pdf-crops";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
+import { extractCatalogue } from "@/lib/extract-catalogue.functions";
 
 type Store = Database["public"]["Tables"]["stores"]["Row"];
 type Product = Database["public"]["Tables"]["market_products"]["Row"];
@@ -110,13 +111,16 @@ export default function AppStore() {
     let fnErr: unknown = null;
     for (let i = 0; i < chunks.length; i++) {
       if (chunks.length > 1) toast.info(`Reading part ${i + 1} of ${chunks.length}…`);
-      const res = await supabase.functions.invoke("extract-catalogue", { body: { uploadId: row.id, ...chunks[i] } });
-      if (res.error) { fnErr = res.error; break; }
-      total += res.data?.count ?? 0;
+      try {
+        const res = await extractCatalogue({ data: { uploadId: row.id, ...chunks[i] } });
+        total += res.count;
+      } catch (error) {
+        fnErr = error;
+        break;
+      }
     }
     if (fnErr && !total) {
-      let msg = "Could not read this catalogue";
-      try { msg = (await (fnErr as { context?: Response }).context?.json())?.error ?? msg; } catch { /* ignore */ }
+      const msg = fnErr instanceof Error ? fnErr.message : "Could not read this catalogue";
       toast.error(msg);
     } else {
       toast.success(`Found ${total} products — cutting out their photos…`);

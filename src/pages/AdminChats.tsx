@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { SourcingTurn } from "@/lib/sourcing";
 import { BRIEF_LABELS } from "@/lib/sourcing";
-import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import type { SourcingBriefField } from "@/lib/sourcing-intake";
 import { VisitorAnalytics } from "@/components/sourcing/VisitorAnalytics";
 import { ChatAnalytics } from "@/components/sourcing/ChatAnalytics";
 import { chatStats } from "@/lib/chatAnalytics";

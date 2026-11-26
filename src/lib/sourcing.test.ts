@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { looksLikeSourcingPhone, mergeSourcingBrief, sourcingProjectTitle, needsSourcingDesign, needsSourcingQuestions, recordSourcingFollowUp, readSourcingStream, sortSourcingBrief, sourcingRequest, sourcingSubmission, unclearBriefNotes, validSourcingPhone, validatedMatches, validatedQuestions } from "./sourcing";
-import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, conversationalIntakeContext, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply, type SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import { CORRUGATED_REQUIREMENTS, FLEXIBLE_REQUIREMENTS, conversationalIntakeContext, intakeImageParts, INTAKE_QUESTION_LIMIT, normalizeIntakeReply, validatedBrief, type IntakeReply, type SourcingBriefField } from "@/lib/sourcing-intake";
 
 describe("sourcing brief", () => {
   it("keeps explicit capa-board values and does not invent unknown printing", () => {

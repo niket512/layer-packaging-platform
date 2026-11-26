@@ -1,4 +1,4 @@
-import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
+import type { SourcingBriefField } from "@/lib/sourcing-intake";
 import { indianMobile } from "./sourcing-form";
 
 export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "display" | "diecut" | "gift" | "unsure";

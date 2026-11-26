@@ -1,5 +1,5 @@
-import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { procureAi, type ProcureAiInput } from "@/lib/procure-ai.functions";
 
 type T = Database["public"]["Tables"];
 export type Supplier = T["suppliers"]["Row"];
@@ -28,20 +28,13 @@ export const inr = (n: number | null | undefined) =>
 export const fmtDate = (d: string | null | undefined) =>
   d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
-export async function callProcureAi<R>(body: Record<string, unknown>): Promise<R> {
-  const { data, error } = await supabase.functions.invoke("procure-ai", { body });
-  if (error) {
-    let msg = "AI request failed, please try again";
-    try {
-      const ctx = (error as { context?: Response }).context;
-      if (ctx) msg = (await ctx.json()).error ?? msg;
-    } catch {
-      /* ignore */
-    }
-    throw new Error(msg);
+export async function callProcureAi<R>(body: ProcureAiInput): Promise<R> {
+  try {
+    return await procureAi({ data: body }) as R;
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("Unauthorized")) throw new Error("Please sign in to use AI features");
+    throw error;
   }
-  if (data?.error) throw new Error(data.error);
-  return data as R;
 }
 
 export const nextPoNumber = () => `PO-${new Date().toISOString().slice(2, 10).replace(/-/g, "")}-${Math.floor(Math.random() * 9000 + 1000)}`;
