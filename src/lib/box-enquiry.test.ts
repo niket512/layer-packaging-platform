@@ -34,9 +34,13 @@ describe("box enquiry", () => {
   it("retired styles are not offered and drop out of unsent drafts", () => {
     expect(BOX_TYPES.map(b => b.id)).not.toContain("sleeve");
     expect(BOX_TYPES.map(b => b.id)).not.toContain("gable");
+    expect(BOX_TYPES.map(b => b.id)).not.toContain("custom");
     const restored = singleChoiceEnquiry({ ...emptyEnquiry(), boxTypes: ["sleeve" as unknown as BoxType], quantityExact: "500" });
     expect(restored.boxTypes).toEqual([]);
     expect(restored.quantityExact).toBe("500");
+    const bespoke = singleChoiceEnquiry({ ...emptyEnquiry(), boxTypes: ["custom" as unknown as BoxType], quantityExact: "750" });
+    expect(bespoke.boxTypes).toEqual([]);
+    expect(bespoke.quantityExact).toBe("750");
   });
   it("material choices follow the box type", () => {
     expect(materialOptions(["rigid"])).toContain("Rigid board");

@@ -1,7 +1,7 @@
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 import { indianMobile } from "./sourcing-form";
 
-export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "display" | "pillow" | "diecut" | "gift" | "custom" | "unsure";
+export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "display" | "pillow" | "diecut" | "gift" | "unsure";
 export const BOX_TYPES: { id: BoxType; label: string; description: string; use?: string }[] = [
   { id: "corrugated", use: "Shipping", label: "Corrugated shipping box", description: "Strong outer boxes for shipping and storage" },
   { id: "mailer", use: "D2C unboxing", label: "Mailer box", description: "Self-locking e-commerce boxes for unboxing" },
@@ -11,7 +11,6 @@ export const BOX_TYPES: { id: BoxType; label: string; description: string; use?:
   { id: "pillow", use: "Small favours", label: "Pillow box", description: "Curved fold boxes for small gifts and favours" },
   { id: "diecut", use: "Shapes & windows", label: "Die-cut box", description: "Custom shapes, windows and structures" },
   { id: "gift", use: "Hampers", label: "Gift box", description: "Hampers and gifting with inserts" },
-  { id: "custom", use: "Bespoke shape or insert", label: "Custom", description: "Your own dimensions, shape or construction" },
   { id: "unsure", label: "Not sure — help me choose", description: "We’ll suggest the right box" },
 ];
 export const PRODUCT_CATEGORIES = ["Beauty & skincare", "Cosmetics & makeup", "Haircare", "Perfumes & fragrances", "Food & snacks", "Chocolates & confectionery", "Dry fruits & nuts", "Bakery & sweets", "Health & wellness", "Pharmaceuticals", "Apparel & fashion", "Footwear", "Jewellery & accessories", "Electronics & gadgets", "Home & lifestyle", "Gifts & hampers", "Subscription boxes", "Other"];
@@ -26,7 +25,6 @@ const MATERIALS: Record<BoxType, string[]> = {
   pillow: ["Duplex / folding carton board", "Kraft / recycled board"],
   gift: ["Rigid board", "Duplex / folding carton board"],
   diecut: ["Duplex / folding carton board", "Kraft / recycled board", "Corrugated board"],
-  custom: ["Kraft / recycled board", "Duplex / folding carton board", "Rigid board", "Corrugated board"],
   unsure: ["Kraft / recycled board", "Duplex / folding carton board", "Rigid board", "Corrugated board"],
 };
 const ALL_MATERIALS = ["Kraft / recycled board", "Duplex / folding carton board", "Rigid board", "Corrugated board"];
