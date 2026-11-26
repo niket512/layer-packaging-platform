@@ -78,16 +78,20 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     finally { setAdding(false); if (file.current) file.current.value = ""; }
   };
 
+  const saveEarlyContact = () => {
+    const number = indianMobile(e.phone);
+    if (!number || earlySaved.current === number) return;
+    earlySaved.current = number;
+    void syncSourcingChat({ id: id.current, title: "Premium box enquiry", brief: enquiryBrief(e), submitted: false, phone: number, turns: [{ query: "Premium box enquiry (in progress)", matches: [], images: [] }] }).catch(() => { earlySaved.current = ""; });
+  };
+  // Save a valid number as soon as it is typed, even if the visitor never taps Continue.
+  useEffect(() => { if (indianMobile(e.phone)) saveEarlyContact(); }, [e.phone]); // eslint-disable-line react-hooks/exhaustive-deps
   const next = () => {
     const problem = stepFieldError(e, step);
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: String(step + 1), reason: step === 0 ? "format_required" : "phone_invalid" }); return; }
     if (step === 0) { trackFormField("format", true, 0); trackFunnel("contact_shown"); }
     if (step === 1) {
-      const number = indianMobile(e.phone);
-      if (number && earlySaved.current !== number) {
-        earlySaved.current = number;
-        void syncSourcingChat({ id: id.current, title: "Premium box enquiry", brief: enquiryBrief(e), submitted: false, phone: number, turns: [{ query: "Premium box enquiry (in progress)", matches: [], images: [] }] }).catch(() => { earlySaved.current = ""; });
-      }
+      saveEarlyContact();
       trackFormField("phone", true, 1);
       trackFormField("delivery", Boolean(e.pincode.trim()), 1);
       trackFunnel("brief_shown");
