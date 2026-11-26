@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, formVariant, materialOptions, needsWall, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepErrors } from "./box-enquiry";
+import { BOX_TYPES, emptyEnquiry, enquiryBrief, enquiryDetails, enquirySummary, enquiryText, formVariant, materialOptions, needsWall, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepErrors, type BoxType } from "./box-enquiry";
 
 const mem = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) }; };
 describe("box enquiry", () => {
@@ -30,6 +30,13 @@ describe("box enquiry", () => {
     expect(restored.quantityExact).toBe("1000");
     expect(restored.wall).toBe("");
     expect(draft.products).toHaveLength(2);
+  });
+  it("retired styles are not offered and drop out of unsent drafts", () => {
+    expect(BOX_TYPES.map(b => b.id)).not.toContain("sleeve");
+    expect(BOX_TYPES.map(b => b.id)).not.toContain("gable");
+    const restored = singleChoiceEnquiry({ ...emptyEnquiry(), boxTypes: ["sleeve" as unknown as BoxType], quantityExact: "500" });
+    expect(restored.boxTypes).toEqual([]);
+    expect(restored.quantityExact).toBe("500");
   });
   it("material choices follow the box type", () => {
     expect(materialOptions(["rigid"])).toContain("Rigid board");

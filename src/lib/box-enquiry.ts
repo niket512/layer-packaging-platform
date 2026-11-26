@@ -1,14 +1,12 @@
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 import { indianMobile } from "./sourcing-form";
 
-export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "sleeve" | "gable" | "display" | "pillow" | "diecut" | "gift" | "custom" | "unsure";
+export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "display" | "pillow" | "diecut" | "gift" | "custom" | "unsure";
 export const BOX_TYPES: { id: BoxType; label: string; description: string; use?: string }[] = [
   { id: "corrugated", use: "Shipping", label: "Corrugated shipping box", description: "Strong outer boxes for shipping and storage" },
   { id: "mailer", use: "D2C unboxing", label: "Mailer box", description: "Self-locking e-commerce boxes for unboxing" },
   { id: "product", use: "Retail shelf", label: "Product Box", description: "Printed retail cartons for shelves" },
   { id: "rigid", use: "Luxury & gifting", label: "Rigid box", description: "Premium boxes with a luxury feel, incl. magnetic closure" },
-  { id: "sleeve", use: "Soaps, jewellery", label: "Sleeve & drawer box", description: "Sliding boxes for soaps, jewellery and more" },
-  { id: "gable", use: "Carry & takeaway", label: "Gable / handle box", description: "Carry boxes with built-in handles" },
   { id: "display", use: "Counter retail", label: "Display / counter box", description: "Retail counter and shelf-ready displays" },
   { id: "pillow", use: "Small favours", label: "Pillow box", description: "Curved fold boxes for small gifts and favours" },
   { id: "diecut", use: "Shapes & windows", label: "Die-cut box", description: "Custom shapes, windows and structures" },
@@ -24,8 +22,6 @@ const MATERIALS: Record<BoxType, string[]> = {
   mailer: ["Corrugated board", "Kraft / recycled board"],
   product: ["Duplex / folding carton board", "Kraft / recycled board"],
   rigid: ["Rigid board"],
-  sleeve: ["Duplex / folding carton board", "Kraft / recycled board", "Rigid board"],
-  gable: ["Corrugated board", "Kraft / recycled board", "Duplex / folding carton board"],
   display: ["Corrugated board", "Duplex / folding carton board"],
   pillow: ["Duplex / folding carton board", "Kraft / recycled board"],
   gift: ["Rigid board", "Duplex / folding carton board"],
@@ -39,7 +35,7 @@ const relevant = (types: BoxType[], map: Record<BoxType, string[]>, order: strin
   return order.filter(o => picked.has(o));
 };
 export const materialOptions = (types: BoxType[]) => [...relevant(types, MATERIALS, ALL_MATERIALS), "Not sure — recommend for me", "Other"];
-export const needsWall = (types: BoxType[]) => types.some(t => t === "corrugated" || t === "mailer" || t === "gable" || t === "display");
+export const needsWall = (types: BoxType[]) => types.some(t => t === "corrugated" || t === "mailer" || t === "display");
 
 export type BoxEnquiry = {
   boxTypes: BoxType[]; products: string[]; productOther: string;
@@ -52,7 +48,9 @@ export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], pro
 
 /** Normalise unsent drafts only; historical saved briefs remain unchanged. */
 export function singleChoiceEnquiry(e: BoxEnquiry): BoxEnquiry {
-  return pruneForTypes({ ...e, boxTypes: e.boxTypes.slice(0, 1), products: e.products.slice(0, 1) });
+  // Drafts saved before a style was retired must not submit a style the form no longer offers.
+  const known = e.boxTypes.filter(t => BOX_TYPES.some(b => b.id === t));
+  return pruneForTypes({ ...e, boxTypes: known.slice(0, 1), products: e.products.slice(0, 1) });
 }
 
 /** Drops material choices that no longer apply after box types change. */
