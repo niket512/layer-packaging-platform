@@ -44,6 +44,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const [search, setSearch] = useState("");
   const id = useRef(saved.current?.id ?? crypto.randomUUID());
   const savedId = useRef(crypto.randomUUID());
+  const earlySaved = useRef("");
   const heading = useRef<HTMLHeadingElement>(null);
   const first = useRef(true);
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify({ step, e, id: id.current })); } catch { /* memory only */ } }, [step, e]);
@@ -82,6 +83,11 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: String(step + 1), reason: step === 0 ? "format_required" : "phone_invalid" }); return; }
     if (step === 0) { trackFormField("format", true, 0); trackFunnel("contact_shown"); }
     if (step === 1) {
+      const number = indianMobile(e.phone);
+      if (number && earlySaved.current !== number) {
+        earlySaved.current = number;
+        void syncSourcingChat({ id: id.current, title: "Premium box enquiry", brief: enquiryBrief(e), submitted: false, phone: number, turns: [{ query: "Premium box enquiry (in progress)", matches: [], images: [] }] }).catch(() => { earlySaved.current = ""; });
+      }
       trackFormField("phone", true, 1);
       trackFormField("delivery", Boolean(e.pincode.trim()), 1);
       trackFunnel("brief_shown");
