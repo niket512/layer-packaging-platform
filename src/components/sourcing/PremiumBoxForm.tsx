@@ -1,29 +1,21 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, Search, X, ImagePlus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, X, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
-import { catalogueImage } from "@/lib/catalogue-image";
+import { BOX_STYLE_IMAGES } from "./box-style-images";
 import { supabase } from "@/integrations/supabase/client";
 import { readAttribution } from "@/lib/attribution";
 import { markConversionPending } from "@/lib/sourcing-conversion";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
-import { BOX_TYPES, PRODUCT_CATEGORIES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, materialOptions, needsWall, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepFieldError, type BoxEnquiry, type BoxType } from "@/lib/box-enquiry";
+import { BOX_TYPES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, materialOptions, needsWall, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepFieldError, type BoxEnquiry } from "@/lib/box-enquiry";
 
-// Photos taken from the designs catalogue.
-const IMAGES: Partial<Record<BoxType, string>> = {
-  corrugated: "https://res.cloudinary.com/daxralyfk/image/upload/v1787976525/uploads/10x13_5x7_75-brown-taped-carton-box-thumbnail-boxwaale.webp",
-  mailer: "https://www.china-paperbox.com/images/products/blush-pink-beauty-unboxing-mailer-box.jpg",
-  product: "https://www.china-paperbox.com/images/products/business-dress-shirt-folding-carton.jpg",
-  rigid: "https://www.china-paperbox.com/images/products/champagne-sparkling-wine-rigid-box.jpg",
-  display: "https://www.china-paperbox.com/images/products/corrugated-hinged-lid-display-box.jpg",
-  diecut: "https://www.china-paperbox.com/images/products/hexagonal-geometric-foldable-gift-carton.jpg",
-  gift: "https://res.cloudinary.com/daxralyfk/image/upload/v1784444272/uploads/12x10x4-boxwaale-thumbnail.webp",
-};
+const ProductPicker = lazy(() => import("./ProductPicker"));
+
 const STEPS = ["Box type", "Project details", "Contact"];
 const KEY = "snaplogo.form.v2.draft";
 
@@ -38,7 +30,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const [photos, setPhotos] = useState<string[]>([]);
   const [adding, setAdding] = useState(false);
   const file = useRef<HTMLInputElement>(null);
-  const [search, setSearch] = useState("");
   const id = useRef(saved.current?.id ?? crypto.randomUUID());
   const savedId = useRef(crypto.randomUUID());
   const earlySaved = useRef("");
@@ -54,12 +45,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   }, [step]);
   const set = <K extends keyof BoxEnquiry>(key: K, value: BoxEnquiry[K]) => { onActive(); setError(null); setE(prev => key === "boxTypes" ? pruneForTypes({ ...prev, [key]: value }) : { ...prev, [key]: value }); };
   const materials = useMemo(() => materialOptions(e.boxTypes), [e.boxTypes]);
-  const q = search.trim().toLowerCase();
-  const suggestions = q ? PRODUCT_CATEGORIES.filter(p => p !== "Other" && !e.products.includes(p) && p.toLowerCase().includes(q)).slice(0, 6) : [];
-  const exact = PRODUCT_CATEGORIES.some(p => p.toLowerCase() === q);
-  const pickProduct = (p: string) => { set("products", [p]); setSearch(""); };
-  const addCustom = () => { const v = search.trim().slice(0, 60); if (!v) return; setE(prev => ({ ...prev, products: ["Other"], productOther: v })); onActive(); setSearch(""); };
-  const QUICK = ["Beauty & skincare", "Apparel & fashion", "Food & snacks", "Electronics & gadgets"];
   const onSize = (raw: string) => {
     onActive(); setError(null);
     setE(prev => ({ ...prev, sizeInput: raw, ...(parseBoxSize(raw) ?? { length: "", width: "", height: "" }) }));
@@ -121,7 +106,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   };
 
   const fieldError = (field: string) => error?.field === field ? <p role="alert" className="mt-1 text-xs font-medium text-destructive">{error.message}</p> : null;
-  const group = (title: string, children: React.ReactNode, hint?: string, required?: boolean) => <fieldset aria-required={required || undefined} className="min-w-0 space-y-1.5"><legend className={`mb-1.5 flex flex-wrap items-baseline gap-1.5 ${required ? "text-sm font-semibold" : "text-[13px] font-medium text-muted-foreground"}`}>{title}{required && <span aria-hidden="true" className="text-primary">*</span>}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</legend>{children}</fieldset>;
+  const group = (title: string, children: React.ReactNode, hint?: string, required?: boolean) => <fieldset className="min-w-0 space-y-1.5"><legend className={`mb-1.5 flex flex-wrap items-baseline gap-1.5 ${required ? "text-sm font-semibold" : "text-[13px] font-medium text-muted-foreground"}`}>{title}{required && <><span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></>}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</legend>{children}</fieldset>;
   const single = (key: "material" | "wall", label: string, options: string[]) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className="mb-1.5 block text-[13px] font-medium text-muted-foreground">{label}</label><Select value={e[key]} onValueChange={value => set(key, value === "clear" ? "" : value)}><SelectTrigger id={`v2-${key}`} className="h-11 rounded-lg border-border/60 bg-card text-base"><SelectValue placeholder="Choose" /></SelectTrigger><SelectContent>{options.map(o => <SelectItem key={o} value={o} className="min-h-11">{o}</SelectItem>)}</SelectContent></Select></div>;
   const text = (key: keyof BoxEnquiry, labelText: string, props: React.ComponentProps<typeof Input> = {}, optional?: boolean) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className={`mb-1.5 block ${optional ? "text-[13px] font-medium text-muted-foreground" : "text-sm font-semibold"}`}>{labelText}</label><Input id={`v2-${key}`} className={`h-11 rounded-lg bg-card text-base ${optional ? "border-border/60" : ""} ${error?.field === String(key) ? "border-destructive" : ""}`} value={String(e[key] ?? "")} onChange={ev => set(key, ev.target.value as never)} {...props} />{fieldError(String(key))}</div>;
 
@@ -135,7 +120,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     </div>
     <fieldset disabled={busy} className={`min-w-0 px-4 sm:px-6 ${step === 1 ? "space-y-2.5 py-3" : "space-y-4 py-4 sm:py-5"}`}>
       {step === 0 && group("Box type", <><div className="grid grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["display"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => set("boxTypes", [b.id])} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : "border-border hover:border-primary/40"}`}>
-        <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg photo-frame isolate sm:h-20">{IMAGES[b.id] ? <img src={catalogueImage(IMAGES[b.id])} alt="" loading="lazy" decoding="async" width={200} height={200} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
+        <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg photo-frame isolate sm:h-20">{BOX_STYLE_IMAGES[b.id] ? <img src={BOX_STYLE_IMAGES[b.id]?.src} srcSet={BOX_STYLE_IMAGES[b.id]?.srcSet} sizes="(max-width: 639px) 80px, 160px" alt="" loading={desktopOnly ? "lazy" : "eager"} decoding="async" width={160} height={160} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
         <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>{b.use && <span className="-mt-0.5 hidden text-[10px] leading-3 text-muted-foreground sm:block">{b.use}</span>}
         <span className={`absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
       </Button>; })}</div>{fieldError("boxTypes")}</>, "Select one", true)}
@@ -144,9 +129,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
         <div className="hidden sm:block">
         {group("What product will go inside the box?", <>
           {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}
-          {e.products.length === 0 && <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input role="combobox" aria-expanded={Boolean(q)} aria-controls="v2-product-list" aria-label="Type your product" value={search} onChange={ev => setSearch(ev.target.value)} onKeyDown={ev => { if (ev.key === "Enter") { ev.preventDefault(); if (suggestions[0]) pickProduct(suggestions[0]); else if (!exact) addCustom(); } if (ev.key === "Escape") setSearch(""); }} placeholder={e.products.length ? "Add another product" : "Start typing, e.g. skincare, candles"} className="h-11 rounded-lg border-border/60 bg-card pl-9 text-base" />
-            {q && <ul id="v2-product-list" role="listbox" className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-lg">{suggestions.map(p => <li key={p} role="option" aria-selected={false}><button type="button" onClick={() => pickProduct(p)} className="flex min-h-11 w-full items-center px-3 text-left text-sm hover:bg-accent">{p}</button></li>)}{!exact && <li role="option" aria-selected={false}><button type="button" onClick={addCustom} className="flex min-h-11 w-full items-center gap-1 px-3 text-left text-sm text-primary hover:bg-accent">Add “{search.trim()}”</button></li>}</ul>}
-          </div>}
+          {e.products.length === 0 && <Suspense fallback={<Input aria-label="Loading product choices" disabled className="h-11 text-base" />}><ProductPicker onChoose={(value, custom) => { onActive(); setError(null); setE(prev => ({ ...prev, products: [custom ? "Other" : value], productOther: custom ? value : "" })); }} /></Suspense>}
         </>)}
         </div>
         <div className="grid min-w-0 items-end gap-2.5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">

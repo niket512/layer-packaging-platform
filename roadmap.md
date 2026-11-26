@@ -1,4 +1,6 @@
 # Manufacturer network
+- [x] Optimise mobile homepage loading without redesign; smaller responsive style photos, deferred gallery/map/reply code, accessible controls, 208 passing tests and intercepted form/tracking checks.
+- [ ] Verify production mobile Lighthouse 90+ and new field vitals; blocked until the latest frontend changes are published (live Lighthouse also returned ERR_ABORTED in this sandbox).
 - [x] Clear shown thank-you payload; unit and phone-browser checks confirmed one fresh Google view/Reddit Lead/server call and none on reload, using isolated test collectors.
 - [x] Save matched keywords on visits/enquiries, retry failed attribution writes and include family landing pages; supplied the Google Ads Final URL suffix.
 - [ ] Apply keyword suffix inside Google Ads; blocked because no Google Ads connection is available.

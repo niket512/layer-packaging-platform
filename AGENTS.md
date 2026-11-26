@@ -1,4 +1,5 @@
 # Architecture rules
+- Keep first-screen box style photos in a small responsive asset module; mount the homepage gallery/map near the viewport and load the reply renderer only for actual chat replies, so catalogue and markdown code do not delay form entry.
 <!-- LOVABLE:BEGIN -->
 - Preserve opaque Reddit URL click IDs; omit unusable or known test IDs through shared browser/CAPI validation, because fabricated values cannot attribute ad clicks.
 <!-- LOVABLE:END -->

@@ -1,5 +1,6 @@
 import { Logo } from "@/components/brand/Logo";
-import { MessageResponse } from "@/components/ai-elements/message";
+import { LazyMessageResponse as MessageResponse } from "@/components/sourcing/LazyMessageResponse";
+import { DeferredSection } from "@/components/sourcing/DeferredSection";
 import { readAttribution } from "@/lib/attribution";
 import { markConversionPending } from "@/lib/sourcing-conversion";
 import TrustStory from "@/components/sourcing/TrustStory";
@@ -340,7 +341,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
               <Link to="/blog" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Guides</Link>
               <Link to="/about" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">About</Link>
             </nav>
-            <div className="flex items-center gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New sourcing request" className="h-9 rounded-full px-4 text-sm"><Plus /><span>New Request</span></Button></div>
+            <div className="flex items-center gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New Request — new sourcing request" className="h-9 rounded-full px-4 text-sm"><Plus /><span>New Request</span></Button></div>
           </div>
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
@@ -410,7 +411,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
             </div></section>
             <TrustStory />
               <div className="mx-auto mt-5 grid max-w-[1120px] items-start gap-6 pt-6 text-left sm:mt-8 sm:grid-cols-2 sm:gap-8 sm:pt-8">
-              <div className={requirementMode === "form" ? "order-2" : ""}><Suspense fallback={null}><ManufacturerNetwork /></Suspense></div>
+              <div className={requirementMode === "form" ? "order-2" : ""}><DeferredSection className="min-h-80"><Suspense fallback={<div className="min-h-80" aria-hidden />}><ManufacturerNetwork /></Suspense></DeferredSection></div>
               <div className={`min-w-0 ${requirementMode === "form" ? "order-1" : ""}`}>
               <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Compare manufacturer quotes.</h2>
               <figure className="mx-auto mt-4 w-full overflow-hidden rounded-lg border border-border bg-card text-left">
@@ -429,7 +430,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                 <span className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[hsl(var(--sourcing-success))] px-4 text-xs font-bold uppercase tracking-wide text-white"><span className="sm:hidden">Join</span><span className="hidden sm:inline">Join WhatsApp community</span><ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" /></span>
               </a>
             )}
-            {designGallery}
+            <DeferredSection className="min-h-[60vh]">{designGallery}</DeferredSection>
             {requirementMode === "chat" && sourcingQuestions}
           </div>
 

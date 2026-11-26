@@ -65,19 +65,23 @@
     --primary: 24 95% 53%;                /* orange #F97316 */
     --primary-foreground: 0 0% 100%;
     --accent: 24 100% 96%;                /* pale orange #FFF7ED */
-    --accent-foreground: 24 95% 40%;
+    --accent-foreground: 20 90% 40%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
     --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215 19% 40%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 24 95% 40%;
     --sourcing-shadow: 0 10px 40px -12px hsl(222 47% 11% / 0.12), 0 2px 6px hsl(222 47% 11% / 0.04);
-    --sourcing-success: 152 60% 36%;
+    --sourcing-success: 152 60% 30%;
     --sourcing-warning: 35 92% 40%;
     --sourcing-warning-soft: 44 96% 94%;
+    --primary-strong: 20 90% 40%;
   }
+  /* Preserve the orange brand while giving small text and white-on-orange controls AA contrast. */
+  .theme-sourcing .text-primary { color: hsl(var(--primary-strong)); }
+  .theme-sourcing .bg-primary.text-primary-foreground { background-color: hsl(var(--primary-strong)); }
   .sourcing-composer { box-shadow: var(--sourcing-shadow); }
 
   .theme-directory {

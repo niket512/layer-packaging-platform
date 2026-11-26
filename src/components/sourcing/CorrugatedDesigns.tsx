@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight, Boxes, X } from "lucide-react";
@@ -23,7 +23,7 @@ export function CorrugatedDesigns({ onUseDesign, onlyFamily, selectedFamily, onF
   const [limit, setLimit] = useState(PAGE);
   const [selected, setSelected] = useState<PackagingDesign | null>(null);
   const primary = PRIMARY_FILTERS[family];
-  const shown = browseDesigns(DESIGNS, family, category, filters, "", "default");
+  const shown = useMemo(() => browseDesigns(DESIGNS, family, category, filters, "", "default"), [family, category, filters]);
   const reset = () => { setCategory("all"); setFilters(CLEAR_FILTERS); setLimit(PAGE); };
   const switchFamily = (next: PackagingFamily) => { setFamily(next); onFamilyChange?.(next); reset(); };
   useEffect(() => { setCategory("all"); setFilters(CLEAR_FILTERS); setLimit(PAGE); setSelected(null); }, [family]);
