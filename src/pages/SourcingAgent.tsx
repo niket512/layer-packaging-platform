@@ -92,7 +92,7 @@ function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
 
 export default function SourcingAgent({ category, requirementMode = "chat", initialFormVariant }: { category?: SourcingCategory; requirementMode?: "chat" | "form"; initialFormVariant?: FormVariant } = {}) {
   const location = useLocation();
-  const boxesOnly = location.pathname === "/" && requirementMode === "form";
+  const boxesOnly = (location.pathname === "/" || category === "mailer-boxes" || category === "corrugated-boxes") && requirementMode === "form";
   const [variant] = useState<FormVariant>(() => { if (initialFormVariant) return initialFormVariant; try { return formVariant(location.search, localStorage); } catch { return "v2"; } });
   useEffect(() => { if (boxesOnly) rememberFormVariant(variant); }, [boxesOnly, variant]);
   const newBoxForm = boxesOnly && variant === "v2";
