@@ -1,11 +1,10 @@
 import type * as Pdfjs from "pdfjs-dist";
-import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
-// pdf.js touches browser-only APIs when it loads, so it is imported on first use rather than with the page.
+// pdf.js and its worker touch browser-only APIs, so both load only when a supplier chooses a PDF.
 let pdfjsPromise: Promise<typeof Pdfjs> | undefined;
 function loadPdfjs() {
-  pdfjsPromise ??= import("pdfjs-dist").then((lib) => {
-    lib.GlobalWorkerOptions.workerSrc = workerUrl;
+  pdfjsPromise ??= Promise.all([import("pdfjs-dist"), import("pdfjs-dist/build/pdf.worker.min.mjs?url")]).then(([lib, worker]) => {
+    lib.GlobalWorkerOptions.workerSrc = worker.default;
     return lib;
   });
   return pdfjsPromise;

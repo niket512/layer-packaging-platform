@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export default function CTASection() {
   const { ref, isVisible } = useScrollReveal();
@@ -42,7 +42,7 @@ export default function CTASection() {
     });
     setSubmitting(false);
     if (error) {
-      toast({ title: "Submission failed", description: error.message, variant: "destructive" });
+      toast.error("Submission failed", { description: error.message });
       return;
     }
     setSubmitted(true);

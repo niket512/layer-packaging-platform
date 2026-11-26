@@ -4,8 +4,8 @@ import { renderWithRouter } from "@/test/render-with-router";
 import SourcingThankYou from "./SourcingThankYou";
 import { markConversionPending } from "@/lib/sourcing-conversion";
 
-const { invoke } = vi.hoisted(() => ({ invoke: vi.fn().mockResolvedValue({ data: { ok: true } }) }));
-vi.mock("@/integrations/supabase/client", () => ({ supabase: { functions: { invoke } } }));
+const { reportRedditLead } = vi.hoisted(() => ({ reportRedditLead: vi.fn().mockResolvedValue({ ok: true }) }));
+vi.mock("@/lib/reddit-capi.functions", () => ({ reportRedditLead }));
 vi.mock("@/components/sourcing/SourcingBrief", () => ({ SourcingBrief: () => null }));
 
 afterEach(() => { cleanup(); localStorage.clear(); vi.clearAllMocks(); });
@@ -22,12 +22,12 @@ describe("thank-you conversion lifecycle", () => {
     expect(gtag).toHaveBeenCalledWith("event", "page_view", { page_path: "/sourcing/thank-you" });
     expect(rdt).toHaveBeenCalledWith("track", "Lead", { conversionId: "saved-enquiry-test" });
     expect(rdt).toHaveBeenCalledWith("track", "PageVisit");
-    expect(invoke).toHaveBeenCalledTimes(1);
+    expect(reportRedditLead).toHaveBeenCalledTimes(1);
     view.unmount();
     await renderWithRouter(<SourcingThankYou />, "/sourcing/thank-you");
     expect(gtag).toHaveBeenCalledTimes(1);
     expect(rdt).toHaveBeenCalledTimes(2);
-    expect(invoke).toHaveBeenCalledTimes(1);
+    expect(reportRedditLead).toHaveBeenCalledTimes(1);
   });
   it("sends a new sourcing request back to the homepage", async () => {
     await renderWithRouter(<SourcingThankYou />, "/sourcing/thank-you");
@@ -44,6 +44,6 @@ describe("thank-you conversion lifecycle", () => {
     await renderWithRouter(<SourcingThankYou />, "/sourcing/thank-you");
     expect(gtag).not.toHaveBeenCalled();
     expect(rdt).not.toHaveBeenCalled();
-    expect(invoke).not.toHaveBeenCalled();
+    expect(reportRedditLead).not.toHaveBeenCalled();
   });
 });

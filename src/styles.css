@@ -157,9 +157,6 @@
     --sourcing-warning-soft: 44 96% 94%;
     --primary-strong: 20 90% 40%;
   }
-  /* Preserve the orange brand while giving small text and white-on-orange controls AA contrast. */
-  .theme-sourcing .text-primary { color: hsl(var(--primary-strong)); }
-  .theme-sourcing .bg-primary.text-primary-foreground { background-color: hsl(var(--primary-strong)); }
   .sourcing-composer { box-shadow: var(--sourcing-shadow); }
 
   .theme-directory {
@@ -227,6 +224,9 @@
 }
 
 @layer utilities {
+  /* Keep brand orange decorative; accessible dark orange carries text and white-on-orange controls. */
+  .theme-sourcing .text-primary { color: hsl(var(--primary-strong)); }
+  .theme-sourcing .bg-primary.text-primary-foreground { background-color: hsl(var(--primary-strong)); }
   .text-balance { text-wrap: balance; }
   .text-pretty { text-wrap: pretty; }
   /* WhatsApp brand green for enquiry CTAs */

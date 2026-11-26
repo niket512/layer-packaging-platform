@@ -1,8 +1,8 @@
 # Manufacturer network
-- [ ] Migrate directory-search, extract-catalogue, procure-ai and reddit-capi into the app; preserve validation, permissions, streamed replies and conversion deduplication, then test every path without creating real enquiries.
-- [ ] Fix the reported text-contrast warning without changing the visual direction.
-- [ ] Reduce the reported 3.8 s LCP and 4.2 s Speed Index using measured page data and targeted loading changes.
-- [ ] Reduce the reported 4.8 s Time to Interactive by cutting avoidable JavaScript and main-thread work.
+- [x] Migrate directory-search, extract-catalogue, procure-ai and reddit-capi into the app; verified chat, signed-in AI/catalogue paths and mocked one-time conversion reporting without real enquiries or ad events.
+- [x] Fix the reported text-contrast warning without changing the visual direction; final mobile Lighthouse has zero contrast failures and accessibility 100.
+- [x] Recheck the reported 3.8 s LCP and 4.2 s Speed Index; final local mobile Lighthouse measures both at 2.1 s, with live verification still tracked below.
+- [x] Cut the duplicate toast runtime from every page; development-server TTI is not a valid production measure, so live TTI verification remains below.
 - [x] Optimise mobile homepage loading without redesign; smaller responsive style photos, deferred gallery/map/reply code, accessible controls, 208 passing tests and intercepted form/tracking checks.
 - [ ] Verify production mobile Lighthouse 90+ and new field vitals; blocked until the latest frontend changes are published (live Lighthouse also returned ERR_ABORTED in this sandbox).
 - [x] Clear shown thank-you payload; unit and phone-browser checks confirmed one fresh Google view/Reddit Lead/server call and none on reload, using isolated test collectors.

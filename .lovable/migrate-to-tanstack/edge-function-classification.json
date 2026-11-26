@@ -1,6 +1,6 @@
 {"functions": [
-  {"name": "directory-search", "classification": "internal-only (custom streamed response)", "signal": "raw fetch to /functions/v1/directory-search from src/pages/SourcingAgent.tsx; streams AI replies", "outcome": "left"},
-  {"name": "extract-catalogue", "classification": "internal-only", "signal": "supabase.functions.invoke from src/pages/AppStore.tsx; uses service-role storage access", "outcome": "left"},
-  {"name": "procure-ai", "classification": "internal-only", "signal": "supabase.functions.invoke from src/lib/procure.ts", "outcome": "left"},
-  {"name": "reddit-capi", "classification": "internal-only", "signal": "supabase.functions.invoke from src/pages/SourcingThankYou.tsx; sends Reddit conversions with REDDIT_CAPI_TOKEN", "outcome": "left"}
+  {"name": "directory-search", "classification": "internal-only (custom streamed response)", "signal": "raw fetch to /functions/v1/directory-search from src/pages/SourcingAgent.tsx; streams AI replies", "outcome": "migrated"},
+  {"name": "extract-catalogue", "classification": "internal-only", "signal": "supabase.functions.invoke from src/pages/AppStore.tsx; uses service-role storage access", "outcome": "migrated"},
+  {"name": "procure-ai", "classification": "internal-only", "signal": "supabase.functions.invoke from src/lib/procure.ts", "outcome": "migrated"},
+  {"name": "reddit-capi", "classification": "internal-only", "signal": "supabase.functions.invoke from src/pages/SourcingThankYou.tsx; sends Reddit conversions with REDDIT_CAPI_TOKEN", "outcome": "migrated"}
 ]}
