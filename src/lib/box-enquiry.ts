@@ -77,12 +77,12 @@ export type StepError = { field: "boxTypes" | "phone" | "pincode" | "quantityExa
 export function stepFieldError(e: BoxEnquiry, step: number): StepError | null {
   if (step === 0 && e.boxTypes.length !== 1) return { field: "boxTypes", message: "Choose one box type, or pick “Not sure — help me choose”." };
   if (step === 1) {
-    if (!indianMobile(e.phone)) return { field: "phone", message: "Enter a 10-digit Indian WhatsApp number, e.g. 98765 43210." };
-    if (e.pincode.trim() && !validPincode(e.pincode)) return { field: "pincode", message: "Enter a 6-digit Indian PIN code, e.g. 400001." };
-  }
-  if (step === 2) {
     if (!qty(e.quantityExact)) return { field: "quantityExact", message: "Enter the number of boxes you need, e.g. 12000." };
     if (!e.sizeUnknown && ((e.sizeInput?.trim() && !parseBoxSize(e.sizeInput)) || ([e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)))) return { field: "size", message: "Enter length × breadth × height, e.g. 12 × 8 × 6, or leave box size blank." };
+  }
+  if (step === 2) {
+    if (!indianMobile(e.phone)) return { field: "phone", message: "Enter a 10-digit Indian WhatsApp number, e.g. 98765 43210." };
+    if (e.pincode.trim() && !validPincode(e.pincode)) return { field: "pincode", message: "Enter a 6-digit Indian PIN code, e.g. 400001." };
   }
   return null;
 }

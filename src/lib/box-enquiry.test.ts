@@ -15,8 +15,8 @@ describe("box enquiry", () => {
     expect(parseBoxSize("12 x 8")).toBeNull();
     expect(parseBoxSize("12 x 0 x 6")).toBeNull();
     expect(parseBoxSize("12 x 8 x 6 x 4")).toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", sizeInput: "12 x 8" }, 2)).not.toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", sizeInput: "" }, 2)).toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", sizeInput: "12 x 8" }, 1)).not.toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", sizeInput: "" }, 1)).toBeNull();
   });
   it("allows exactly one box type", () => {
     expect(stepErrors({ ...emptyEnquiry(), boxTypes: ["mailer"] }, 0)).toBeNull();
@@ -42,24 +42,23 @@ describe("box enquiry", () => {
     const p = pruneForTypes({ ...e, boxTypes: ["rigid"] });
     expect(p.wall).toBe("");
   });
-  it("step 1 needs a box type; the final project-details step needs a quantity", () => {
+  it("step 1 needs a box type; the project-details step needs a quantity", () => {
     expect(stepErrors(emptyEnquiry(), 0)).not.toBeNull();
-    expect(stepErrors(emptyEnquiry(), 2)).not.toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "12000" }, 2)).toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "abc" }, 2)).not.toBeNull();
+    expect(stepErrors(emptyEnquiry(), 1)).not.toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "12000" }, 1)).toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "abc" }, 1)).not.toBeNull();
   });
-  it("contact is the second step and needs only an Indian WhatsApp number", () => {
-    expect(stepErrors({ ...emptyEnquiry(), phone: "12345" }, 1)).not.toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210" }, 1)).toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210" }, 1)).toBeNull();
+  it("contact is the final step and needs only an Indian WhatsApp number", () => {
+    expect(stepErrors({ ...emptyEnquiry(), phone: "12345" }, 2)).not.toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210" }, 2)).toBeNull();
   });
-  it("project details are the final step and never re-ask for contact", () => {
-    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "500" }, 2)).toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210" }, 2)).not.toBeNull();
+  it("project details are the second step and never re-ask for contact", () => {
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "500" }, 1)).toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "500", phone: "", pincode: "4000" }, 1)).toBeNull();
   });
   it("PIN code is asked on the contact step and must be six digits", () => {
-    expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210", pincode: "4000" }, 1)).not.toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210", pincode: "400001" }, 1)).toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210", pincode: "4000" }, 2)).not.toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), phone: "98765 43210", pincode: "400001" }, 2)).toBeNull();
   });
   it("contact step needs only an Indian WhatsApp number; no name or email", () => {
     const details = enquiryDetails({ ...emptyEnquiry(), phone: "98765 43210" }, "v2") as Record<string, unknown>;
