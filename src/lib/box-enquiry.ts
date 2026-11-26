@@ -1,14 +1,13 @@
 import type { SourcingBriefField } from "../../supabase/functions/_shared/sourcing-intake";
 import { indianMobile } from "./sourcing-form";
 
-export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "display" | "pillow" | "diecut" | "gift" | "unsure";
+export type BoxType = "corrugated" | "mailer" | "product" | "rigid" | "display" | "diecut" | "gift" | "unsure";
 export const BOX_TYPES: { id: BoxType; label: string; description: string; use?: string }[] = [
   { id: "corrugated", use: "Shipping", label: "Corrugated shipping box", description: "Strong outer boxes for shipping and storage" },
   { id: "mailer", use: "D2C unboxing", label: "Mailer box", description: "Self-locking e-commerce boxes for unboxing" },
   { id: "product", use: "Retail shelf", label: "Product Box", description: "Printed retail cartons for shelves" },
   { id: "rigid", use: "Luxury & gifting", label: "Rigid box", description: "Premium boxes with a luxury feel, incl. magnetic closure" },
   { id: "display", use: "Counter retail", label: "Display / counter box", description: "Retail counter and shelf-ready displays" },
-  { id: "pillow", use: "Small favours", label: "Pillow box", description: "Curved fold boxes for small gifts and favours" },
   { id: "diecut", use: "Shapes & windows", label: "Die-cut box", description: "Custom shapes, windows and structures" },
   { id: "gift", use: "Hampers", label: "Gift box", description: "Hampers and gifting with inserts" },
   { id: "unsure", label: "Not sure — help me choose", description: "We’ll suggest the right box" },
@@ -22,7 +21,6 @@ const MATERIALS: Record<BoxType, string[]> = {
   product: ["Duplex / folding carton board", "Kraft / recycled board"],
   rigid: ["Rigid board"],
   display: ["Corrugated board", "Duplex / folding carton board"],
-  pillow: ["Duplex / folding carton board", "Kraft / recycled board"],
   gift: ["Rigid board", "Duplex / folding carton board"],
   diecut: ["Duplex / folding carton board", "Kraft / recycled board", "Corrugated board"],
   unsure: ["Kraft / recycled board", "Duplex / folding carton board", "Rigid board", "Corrugated board"],

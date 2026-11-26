@@ -35,6 +35,7 @@ describe("box enquiry", () => {
     expect(BOX_TYPES.map(b => b.id)).not.toContain("sleeve");
     expect(BOX_TYPES.map(b => b.id)).not.toContain("gable");
     expect(BOX_TYPES.map(b => b.id)).not.toContain("custom");
+    expect(BOX_TYPES.map(b => b.id)).not.toContain("pillow");
     const restored = singleChoiceEnquiry({ ...emptyEnquiry(), boxTypes: ["sleeve" as unknown as BoxType], quantityExact: "500" });
     expect(restored.boxTypes).toEqual([]);
     expect(restored.quantityExact).toBe("500");
