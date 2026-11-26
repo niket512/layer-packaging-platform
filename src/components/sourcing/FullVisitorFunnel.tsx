@@ -24,7 +24,7 @@ export function FullVisitorFunnel({ rows, onInspect }: { rows: VisitorReportRow[
     ["Viewed catalogue cards", rows.filter(row => row.viewed > 0)],
     ["Opened design details", rows.filter(row => row.opened > 0)],
     ["Clicked Use design", rows.filter(row => row.selected > 0)],
-    ["Used design → started request", rows.filter(row => row.selected > 0 && funnel.overall[2].rows.includes(row))],
+    ["Used design → started request", rows.filter(row => row.selected > 0 && funnel.overall[2]?.rows.includes(row))],
     ["Used design → saved enquiry", rows.filter(row => row.selected > 0 && row.steps.request_saved !== undefined)],
   ] as [string, VisitorReportRow[]][];
   const detailed = rows.filter(row => row.journey?.length);

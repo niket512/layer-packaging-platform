@@ -65,7 +65,7 @@ export default function LeadCaptureModal() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm text-heading outline-none transition-shadow focus:ring-2 focus:ring-ring/40 placeholder:text-body-muted"
+                  className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm text-heading outline-hidden transition-shadow focus:ring-2 focus:ring-ring/40 placeholder:text-body-muted"
                   placeholder="you@brand.com"
                 />
               </div>
@@ -78,7 +78,7 @@ export default function LeadCaptureModal() {
                   type="text"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm text-heading outline-none transition-shadow focus:ring-2 focus:ring-ring/40 placeholder:text-body-muted"
+                  className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm text-heading outline-hidden transition-shadow focus:ring-2 focus:ring-ring/40 placeholder:text-body-muted"
                   placeholder="Your brand"
                 />
               </div>

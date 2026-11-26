@@ -1,7 +1,7 @@
 import { IndiaNetworkMap } from "./IndiaNetworkMap";
 import { networkManufacturers } from "@/lib/manufacturer-network";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

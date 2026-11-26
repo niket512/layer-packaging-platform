@@ -9,7 +9,7 @@ type Props = {
 };
 
 const selectClass =
-  "h-8 rounded-lg border border-border bg-background px-2 text-[12.5px] text-foreground outline-none transition-colors focus:border-primary";
+  "h-8 rounded-lg border border-border bg-background px-2 text-[12.5px] text-foreground outline-hidden transition-colors focus:border-primary";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

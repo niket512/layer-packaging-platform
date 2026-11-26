@@ -6,9 +6,10 @@ import { markConversionPending } from "@/lib/sourcing-conversion";
 import TrustStory from "@/components/sourcing/TrustStory";
 import { RequirementForm } from "@/components/sourcing/RequirementForm";
 import { PremiumBoxForm } from "@/components/sourcing/PremiumBoxForm";
-import { formVariant } from "@/lib/box-enquiry";
+import { formVariant, type FormVariant } from "@/lib/box-enquiry";
+import { rememberFormVariant } from "@/lib/form-variant";
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "@/lib/router-compat";
 import { sourcingLandingFamily } from "@/lib/sourcing-landing";
 import { ArrowLeft, ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,10 @@ const ManufacturerNetwork = lazy(() => import("@/components/sourcing/Manufacture
 const CorrugatedDesigns = lazy(() => import("@/components/sourcing/CorrugatedDesigns").then(m => ({ default: m.CorrugatedDesigns })));
 
 const PROJECTS_KEY = "snaplogo.sourcing.projects";
+function readProjects(): SourcingProject[] {
+  const saved = readSaved<unknown>(PROJECTS_KEY, []);
+  return Array.isArray(saved) ? saved.filter(p => p && typeof p.id === "string" && typeof p.title === "string" && Array.isArray(p.turns)) : [];
+}
 const TEAM_WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("Hi Snaplogo! I'd like to talk to a sourcing expert about my packaging requirement.");
 
 const TEMPLATE = "I need [quantity] custom [box / pouch type] for my [product] brand — size [L×W×H cm], [material, e.g. 3-ply kraft], [printing, e.g. multicolour logo], budget ₹[price] per piece";
@@ -79,15 +84,16 @@ function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
   return (
     <div className="mx-auto mt-4 max-w-[860px] text-left">
       <div role="tablist" aria-label="Example requests" className="flex gap-1 overflow-x-auto pb-1 [scrollbar-width:none]">{PROMPT_TABS.map((t, i) => <button key={t.label} role="tab" type="button" aria-selected={tab === i} onClick={() => setTab(i)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${tab === i ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground"}`}>{t.label}</button>)}</div>
-      <ul role="tabpanel" className="mt-1 divide-y divide-border">{PROMPT_TABS[tab].prompts.map(p => <li key={p}><button type="button" onClick={() => onPick(p)} className="group flex w-full items-center gap-3 px-2 py-3 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"><span className="min-w-0 flex-1 truncate">{p}</span><ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground/60 group-hover:text-primary" /></button></li>)}</ul>
+      <ul role="tabpanel" className="mt-1 divide-y divide-border">{(PROMPT_TABS[tab]?.prompts ?? []).map(p => <li key={p}><button type="button" onClick={() => onPick(p)} className="group flex w-full items-center gap-3 px-2 py-3 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"><span className="min-w-0 flex-1 truncate">{p}</span><ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground/60 group-hover:text-primary" /></button></li>)}</ul>
     </div>
   );
 }
 
-export default function SourcingAgent({ category, requirementMode = "chat" }: { category?: SourcingCategory; requirementMode?: "chat" | "form" } = {}) {
+export default function SourcingAgent({ category, requirementMode = "chat", initialFormVariant }: { category?: SourcingCategory; requirementMode?: "chat" | "form"; initialFormVariant?: FormVariant } = {}) {
   const location = useLocation();
   const boxesOnly = location.pathname === "/" && requirementMode === "form";
-  const [variant] = useState(() => { try { return formVariant(location.search, localStorage); } catch { return "classic" as const; } });
+  const [variant] = useState<FormVariant>(() => { if (initialFormVariant) return initialFormVariant; try { return formVariant(location.search, localStorage); } catch { return "classic"; } });
+  useEffect(() => { if (boxesOnly) rememberFormVariant(variant); }, [boxesOnly, variant]);
   const newBoxForm = boxesOnly && variant === "v2";
   useEffect(() => { if (boxesOnly) trackJourney({ kind: "form_step", step: "1", category: `form-${variant}` }); }, [boxesOnly, variant]);
   const landingFamily = boxesOnly ? "boxes" : sourcingLandingFamily(category, location.search);
@@ -121,10 +127,11 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
   const [designPhotos, setDesignPhotos] = useState<string[]>([]);
   const landing = category ? LANDINGS[category] : undefined;
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<SourcingProject[]>(() => {
-    const saved = readSaved<unknown>(PROJECTS_KEY, []);
-    return Array.isArray(saved) ? saved.filter(p => p && typeof p.id === "string" && typeof p.title === "string" && Array.isArray(p.turns)) : [];
-  });
+  // Chat history lives in this browser only, so it is restored after the server-rendered page hydrates.
+  const hydrated = useHydrated();
+  const projectsLoaded = useRef(hydrated);
+  const [projects, setProjects] = useState<SourcingProject[]>(() => (hydrated ? readProjects() : []));
+  useEffect(() => { if (hydrated && !projectsLoaded.current) { projectsLoaded.current = true; setProjects(readProjects()); } }, [hydrated]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
@@ -165,7 +172,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     if (fileInput.current) fileInput.current.value = "";
   };
 
-  useEffect(() => { try { localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects)); } catch { /* Keep session usable. */ } }, [projects]);
+  useEffect(() => { if (!projectsLoaded.current) return; try { localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects)); } catch { /* Keep session usable. */ } }, [projects]);
   useEffect(() => {
     let raw: string | null = null;
     try { raw = sessionStorage.getItem(DESIGN_PREFILL_KEY); sessionStorage.removeItem(DESIGN_PREFILL_KEY); } catch { /* Ignore. */ }
@@ -173,7 +180,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
     try {
       const saved = JSON.parse(raw) as { prefill?: string; designs?: PackagingDesign[] };
       if (saved.designs?.length) setFormDesigns(saved.designs);
-      if (saved.prefill) { setQuery(previous => previous.trim() ? `${previous}\n\n${saved.prefill}` : saved.prefill); setError(""); }
+      if (saved.prefill) { setQuery(previous => previous.trim() ? `${previous}\n\n${saved.prefill}` : saved.prefill ?? ""); setError(""); }
       if (saved.designs?.length) void designReferenceImage(saved.designs).then(image => setPhotos(previous => [...previous, image].slice(0, 4))).catch(e => setError(e instanceof Error ? e.message : "Couldn’t attach the design reference."));
       input.current?.focus();
     } catch { /* Ignore malformed saved prefill. */ }
@@ -244,9 +251,9 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
       let questions: unknown = [];
       let reply: IntakeReply | undefined;
       {
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/directory-search`, {
+        const response = await fetch(`${import.meta.env["VITE_SUPABASE_URL"]}/functions/v1/directory-search`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+          headers: { "Content-Type": "application/json", apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"], Authorization: `Bearer ${import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"]}` },
           body: JSON.stringify({ query: sourcingRequest(turns, outgoing), latest: outgoing, images: photos, brief: project?.brief ?? [], mode: "intake", stream: true, conversational: true, quotationAsked: turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0), currentStage: current?.stage ?? (hasQuestions ? "quotation" : designStep ? "design" : askingPhone ? "phone" : "clarify"), conversation: turns.map(t => ({ request: t.query, response: t.assistantMessage, stage: t.stage, questions: t.questions ?? [], followUp: t.followUp, hasImages: (t.images?.length ?? 0) > 0, skipped: t.questionsSkipped ?? false })) }),
         });
         questions = await readSourcingStream(response, value => setLiveQuestions(turns.some(t => t.stage === "quotation" || (t.questions?.length ?? 0) > 0) ? [] : validatedQuestions(value, turns)), value => { reply = value; }, setLiveMessage);
@@ -294,7 +301,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
   const composer = (compact = false) => (
     <form onSubmit={e => { e.preventDefault(); void search(); }} className={`sourcing-composer border border-border bg-card shadow-sm p-2 sm:p-3 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10 ${compact ? "rounded-b-2xl rounded-t-none" : "rounded-2xl mt-3 md:mt-5"}`}>
       <label htmlFor="sourcing-query" className="sr-only">{compact ? "Your answer" : "Packaging requirement"}</label>
-      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} onFocus={() => trackFunnel("composer_focused")} maxLength={500} disabled={busy || submitting} rows={1} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Message Snaplogo…" : selectedSource?.placeholder ?? "I need 5,000 printed stand-up pouches for my snack brand…"} className="block min-h-32 max-h-48 w-full resize-none bg-transparent px-2 py-2.5 text-base leading-6 text-foreground outline-none placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && !window.matchMedia("(pointer: coarse)").matches) { e.preventDefault(); void search(); } }} />
+      <textarea ref={input} id="sourcing-query" value={query} onChange={e => setQuery(e.target.value)} onFocus={() => trackFunnel("composer_focused")} maxLength={500} disabled={busy || submitting} rows={1} placeholder={designStep ? "Share a design or photo, or say you don’t have one…" : askingPhone ? "Your WhatsApp number, e.g. 98765 43210" : compact ? "Message Snaplogo…" : selectedSource?.placeholder ?? "I need 5,000 printed stand-up pouches for my snack brand…"} className="block min-h-32 max-h-48 w-full resize-none bg-transparent px-2 py-2.5 text-base leading-6 text-foreground outline-hidden placeholder:text-muted-foreground" onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && !window.matchMedia("(pointer: coarse)").matches) { e.preventDefault(); void search(); } }} />
       {photos.length > 0 && <div className="flex flex-wrap gap-2 px-2 pt-2">{photos.map((src, i) => <div key={i} className="relative"><img src={src} alt={`Attached photo ${i + 1}`} className="h-16 w-16 rounded-lg border border-border object-cover" /><button type="button" aria-label="Remove photo" onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))} className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background"><X className="h-3 w-3" /></button></div>)}</div>}
       <div className="mt-1 flex items-center justify-between gap-2"><div className="flex items-center gap-1"><input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={e => void addPhotos(e.target.files)} /><Button type="button" variant="ghost" size="sm" disabled={busy || submitting || photos.length >= 4} onClick={() => fileInput.current?.click()} className="h-11 rounded-full px-2 text-xs text-muted-foreground sm:text-sm"><ImagePlus /><span className="sm:hidden">Upload design</span><span className="hidden sm:inline">Add design / photos <span className="font-normal text-muted-foreground/70">(optional)</span></span></Button></div>{compact ? <Button type="submit" size="icon" disabled={busy || submitting || (!query.trim() && !photos.length)} aria-label="Send answer" className="h-11 w-11 shrink-0 rounded-full shadow-sm disabled:opacity-100 disabled:bg-primary/70">{busy || submitting ? <Loader2 className="animate-spin" /> : <ArrowUp />}</Button> : <Button type="submit" disabled={busy || submitting || (!query.trim() && !photos.length)} className="h-11 shrink-0 rounded-full px-3 text-[11px] font-bold uppercase tracking-wide shadow-sm disabled:opacity-100 disabled:bg-primary/70 sm:px-5 sm:text-[13px]">{busy || submitting ? <Loader2 className="animate-spin" /> : <><span className="sm:hidden">Free quotes</span><span className="hidden sm:inline">{landing?.cta ?? "Get Free Quotes"}</span><ArrowRight /></>}</Button>}</div>
     </form>
@@ -326,7 +333,7 @@ export default function SourcingAgent({ category, requirementMode = "chat" }: { 
                   ["How do I find stand-up pouch or sachet manufacturers?", "Describe the product you will pack, pouch or sachet format, size, quantity and printing. Include any known material, barrier or closure requirements and attach a design if you have one. Leave uncertain specifications open for confirmation rather than guessing."],
                   ["What is the minimum order quantity and price?", "MOQ and price need to be confirmed for your specific design and manufacturer. Share your target quantity and budget so the sourcing team can look for a suitable fit. Catalogue photos are references, not fixed-price offers."],
                   ["Can I request a manufacturer in Ahmedabad or another city?", "Yes—include your preferred city in your brief. The team will review location preferences alongside your packaging needs; availability in a particular city must be confirmed. Snaplogo connects brands with manufacturers and does not manufacture packaging itself."],
-                ].map(([question, answer]) => <details key={question} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-details-marker]:hidden">{question}<ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" /></summary><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{answer}</p></details>)}
+                ].map(([question, answer]) => <details key={question} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-details-marker]:hidden">{question}<ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" /></summary><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{answer}</p></details>)}
               </div>
             </section>
   );

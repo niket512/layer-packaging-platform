@@ -197,7 +197,7 @@ export default function SachetCatalogue({ savedIds = [], onToggleSave, savedOnly
             type="search"
             aria-label="Search sachets"
             placeholder="Search pack formats, seals or sizes..."
-            className="h-10 w-full rounded-[10px] border border-border bg-card pl-10 pr-4 text-[13.5px] outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+            className="h-10 w-full rounded-[10px] border border-border bg-card pl-10 pr-4 text-[13.5px] outline-hidden transition-colors placeholder:text-muted-foreground focus:border-primary"
           />
         </div>
 

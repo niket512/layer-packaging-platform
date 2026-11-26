@@ -1,0 +1,15 @@
+{
+  "customizations": [
+    { "token": "Snaplogo light palette (--background..--sidebar-ring, --surface*, --text-*, --network-density-*)", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".theme-sourcing", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".theme-directory", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".theme-dashboard", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "utilities (.whatsapp-cta, .hero-bloom, .card-soft, .label-eyebrow, .image-plate, .text-balance, .text-pretty, .photo-frame)", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "keyframes (reveal-up, marquee, cursor-blink, shine, accordion)", "source": "src/index.css + tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "font-heading / font-body / font-display", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "max-w-content", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "color utilities (surface, amber, heading, body, body-muted, sidebar)", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "radius scale (lg/md/sm from --radius)", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "container (centred, 2rem padding, 1400px)", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" }
+  ]
+}

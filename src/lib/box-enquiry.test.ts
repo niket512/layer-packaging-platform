@@ -85,7 +85,7 @@ describe("box enquiry", () => {
     expect(summary.map(([k]) => k)).not.toContain("Finishes & customisation");
     expect(summary.map(([k]) => k)).not.toContain("Timeline");
     const details = enquiryDetails(e, "v2") as Record<string, unknown>;
-    expect(details.quantity_exact).toBe("2,500");
+    expect(details["quantity_exact"]).toBe("2,500");
     expect(details).not.toHaveProperty("quantity_band");
     expect(details).not.toHaveProperty("printing");
     expect(details).not.toHaveProperty("finishes");
@@ -106,8 +106,8 @@ describe("box enquiry", () => {
     const e = { ...emptyEnquiry(), boxTypes: ["mailer" as const], length: "12", width: "8", height: "6" };
     expect(enquirySummary(e).find(([k]) => k === "Dimensions (L × W × H)")?.[1]).toBe("12 × 8 × 6 in");
     const details = enquiryDetails(e, "v2") as Record<string, unknown>;
-    expect(details.dimensions_unit_entered).toBe("in");
-    expect(details.dimensions_cm).toEqual([30.5, 20.3, 15.2]);
+    expect(details["dimensions_unit_entered"]).toBe("in");
+    expect(details["dimensions_cm"]).toEqual([30.5, 20.3, 15.2]);
     const cm = { ...e, unit: "cm" as const };
     expect(enquiryDetails(cm, "v2").dimensions_cm).toEqual([12, 8, 6]);
     expect(enquiryDetails(cm, "v2").dimensions_unit_entered).toBe("cm");

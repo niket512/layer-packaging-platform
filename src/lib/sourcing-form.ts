@@ -30,7 +30,7 @@ export function applyDesignToForm(family: FormFamily, values: Record<string, str
   if (!prefill) return null;
   const retained = Object.fromEntries(Object.entries(values).filter(([key, value]) => value.trim() && (family === prefill.family || !["format", "wall", "closure", "material"].includes(key))));
   const nextValues = { ...retained, ...prefill.values };
-  const nextStep = nextValues.format ? (step === 0 ? 1 : Math.min(step, 2)) : 0;
+  const nextStep = nextValues["format"] ? (step === 0 ? 1 : Math.min(step, 2)) : 0;
   return { family: prefill.family, values: nextValues, step: nextStep };
 }
 export function designFormPrefill(designs: PackagingDesign[]): { family: FormFamily; values: Record<string, string> } | null {
@@ -41,16 +41,18 @@ export function designFormPrefill(designs: PackagingDesign[]): { family: FormFam
   const styles: Record<string, string> = { "Regular Slotted Carton (RSC)": "Shipping box", Mailer: "Mailer box", "Die-cut": "Die-cut box", "Stand-up": "Stand-up pouch", Flat: "Flat pouch", "Flat-bottom": "Flat-bottom pouch", Spout: "Spout pouch", Sachet: "Sachet / stick pack", "Stick Pack": "Sachet / stick pack" };
   const values: Record<string, string> = {};
   const style = unique("style");
-  if (style.length === 1 && styles[style[0]]) values.format = styles[style[0]];
+  const styleLabel = style.length === 1 && style[0] ? styles[style[0]] : undefined;
+  if (styleLabel) values["format"] = styleLabel;
   const printing = unique("printing");
   const printOptions: Record<string, string> = { Plain: "Plain", "Logo printed": "Logo only", Multicolour: "Multicolour" };
-  if (printing.length === 1 && printOptions[printing[0]]) values.printing = printOptions[printing[0]];
+  const printLabel = printing.length === 1 && printing[0] ? printOptions[printing[0]] : undefined;
+  if (printLabel) values["printing"] = printLabel;
   const closures = unique("features").filter(feature => ["Zipper", "Spout", "Heat seal"].includes(feature));
-  if (first.family === "pouches" && closures.length === 1) values.closure = closures[0];
+  if (first.family === "pouches" && closures.length === 1 && closures[0]) values["closure"] = closures[0];
   return { family: first.family, values };
 }
 export function formBrief(family: FormFamily, values: Record<string, string>): SourcingBriefField[] {
-  return Object.entries({ ...values, format: `${family === "boxes" ? "Boxes" : "Flexible pouches"}${values.format ? ` — ${values.format}` : ""}` })
+  return Object.entries({ ...values, format: `${family === "boxes" ? "Boxes" : "Flexible pouches"}${values["format"] ? ` — ${values["format"]}` : ""}` })
     .filter(([, value]) => value.trim())
     .map(([topic, value]) => ({ topic, value: value.trim(), source: "buyer" as const }));
 }

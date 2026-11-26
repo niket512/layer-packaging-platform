@@ -1,6 +1,6 @@
 import { Logo } from "@/components/brand/Logo";
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "@/lib/router-compat";
 import { ArrowRight } from "lucide-react";
 import { setBrand } from "@/lib/brand-session";
 
@@ -48,7 +48,7 @@ export default function SignIn() {
                 setError("");
               }}
               placeholder="gramiyaa"
-              className="mt-2 h-12 w-full rounded-xl border border-border bg-background px-4 text-[15px] text-foreground outline-none transition-colors focus:border-primary"
+              className="mt-2 h-12 w-full rounded-xl border border-border bg-background px-4 text-[15px] text-foreground outline-hidden transition-colors focus:border-primary"
             />
             {error && <p className="mt-2 text-[13px] text-destructive">{error}</p>}
           </div>

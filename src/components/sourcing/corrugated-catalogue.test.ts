@@ -13,7 +13,7 @@ describe("corrugated catalogue discovery", () => {
     expect(filterDesigns("mailer", { ...EMPTY_FILTERS, style: "RSC" })).toEqual([]);
   });
   it("prefills a design without inventing buyer quantity or dimensions", () => {
-    const draft = designRequirement(DESIGN_SPECS[0]);
+    const draft = designRequirement(DESIGN_SPECS[0]!);
     expect(draft).toContain("regular slotted carton (rsc)");
     expect(draft).toContain("Quantity, dimensions and budget are not decided yet.");
     expect(draft).not.toMatch(/\d/);

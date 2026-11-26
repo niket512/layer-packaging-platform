@@ -37,7 +37,7 @@ export const PRIMARY_FILTERS: Record<"boxes" | "pouches", FilterDefinition[]> = 
 const BOX_IMAGES: Record<string, string> = { "kraft-ship": kraftShip, "die-cut": dieCut, "logo-mailer": whiteMailer, "pattern-mailer": tealMailer, "brand-shipper": printedKraft, "premium-mailer": blackMailer };
 export const BOX_DESIGNS: PackagingDesign[] = DESIGN_SPECS.map(d => ({
   id: d.id, name: d.name, family: "boxes", categories: [...d.categories, ...(d.style === "Mailer" ? ["subscription"] : []), ...(d.useCase === "Gifting" ? ["gift"] : [])],
-  image: BOX_IMAGES[d.id], description: d.description, illustrative: true,
+  image: BOX_IMAGES[d.id] ?? "", description: d.description, illustrative: true,
   // Visual reference attributes are not manufacturer specifications. Board and finish remain unknown.
   attributes: { style: [d.style === "RSC" ? "Regular Slotted Carton (RSC)" : d.style], printing: [d.printing === "1-colour" ? "One-colour" : d.printing === "Foil logo" ? "One-colour" : d.printing], useCase: d.style === "Mailer" ? ["E-commerce", "Subscription", ...(d.useCase === "Gifting" ? ["Gifting"] : ["Retail"])] : d.style === "RSC" ? ["Shipping", "E-commerce"] : ["Retail"] },
 }));

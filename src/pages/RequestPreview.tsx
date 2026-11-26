@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { ArrowUp, FileText, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -14,7 +13,7 @@ export default function RequestPreview() {
   const stateRef = useRef(state); stateRef.current = state;
   const [busy, setBusy] = useState(false);
   const [typing, setTyping] = useState(false);
-  const [online, setOnline] = useState(navigator.onLine);
+  const [online, setOnline] = useState(true);
   const [error, setError] = useState("");
   const [attachment, setAttachment] = useState<RequestFile>();
   const [confirm, setConfirm] = useState(false);
@@ -45,6 +44,7 @@ export default function RequestPreview() {
     const viewport = window.visualViewport;
     const resize = () => { shell.current?.style.setProperty("--request-height", `${viewport?.height ?? window.innerHeight}px`); if (bottom.current) scrollDown(); };
     resize(); viewport?.addEventListener("resize", resize);
+    setOnline(navigator.onLine);
     const onOnline = () => setOnline(true); const onOffline = () => setOnline(false);
     window.addEventListener("online", onOnline); window.addEventListener("offline", onOffline);
     return () => { viewport?.removeEventListener("resize", resize); window.removeEventListener("online", onOnline); window.removeEventListener("offline", onOffline); timers.current.forEach(clearTimeout); };
@@ -97,7 +97,7 @@ export default function RequestPreview() {
   const reset = () => { timers.current.forEach(clearTimeout); queue.current = []; dispatch({ type: "reset" }); setConfirm(false); setAttachment(undefined); setError(""); setTyping(false); failUsed.current = false; focus(); };
 
   return <div ref={shell} className="request-preview bg-background text-foreground">
-    <Helmet><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=Figtree:wght@400;500;600&display=swap" /></Helmet>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=Figtree:wght@400;500;600&display=swap" precedence="default" />
     <div className="mx-auto flex h-full max-w-[480px] flex-col border-x border-border">
       <header className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3"><span className="request-wordmark text-xl font-bold">snaplogo<span className="text-primary">.</span></span><Button variant="outline" disabled={busy} onClick={() => count ? setConfirm(true) : reset()} className="h-11 rounded-full text-sm">New request</Button></header>
       <div className="shrink-0 px-4 py-3" aria-label="Request progress"><ol className="grid grid-cols-3 gap-2">{["Tell us your needs", "We match makers", "Compare quotes"].map((label, i) => <li key={label} aria-current={state.step === i ? "step" : undefined}><div className={`mb-1.5 h-1 rounded-full ${i < state.step ? "progress-done" : i === state.step ? "bg-primary" : "bg-border"}`} /><span className={`text-[11px] font-medium ${i === state.step ? "text-foreground" : "text-muted-foreground"}`}>{label}</span></li>)}</ol></div>

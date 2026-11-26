@@ -1,6 +1,6 @@
 import { Logo } from "@/components/brand/Logo";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { ArrowRight, Check, MessageSquare, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SourcingBrief } from "@/components/sourcing/SourcingBrief";

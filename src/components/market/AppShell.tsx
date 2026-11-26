@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "@/lib/router-compat";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
@@ -9,8 +9,9 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import logo from "@/assets/snaplogo-orange.png";
 import { cn } from "@/lib/utils";
+import { currentHost, isAppHostname } from "@/lib/request-host";
 
-export const isAppHost = () => window.location.hostname.startsWith("app.");
+export const isAppHost = () => isAppHostname(currentHost());
 export const appPath = (p: string) => (isAppHost() ? p || "/" : `/app${p}`);
 
 export function useSession() {
@@ -69,6 +70,7 @@ export function SignInBox({ title }: { title: string }) {
 
 export default function AppShell({ children, isAdmin, user }: { children: ReactNode; isAdmin?: boolean; user?: User | null }) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const links = [
     { to: appPath(""), label: "Search" },
     { to: appPath("/store"), label: "My store" },
@@ -84,10 +86,10 @@ export default function AppShell({ children, isAdmin, user }: { children: ReactN
           </div>
           <nav className="flex w-full min-w-0 items-center gap-1 overflow-x-auto sm:w-auto">
             {links.map((l) => (
-              <NavLink key={l.to} to={l.to} end
-                className={({ isActive }) => cn("shrink-0 rounded-full px-3 py-1.5 text-sm font-medium", isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted")}>
+              <Link key={l.to} to={l.to}
+                className={cn("shrink-0 rounded-full px-3 py-1.5 text-sm font-medium", pathname === l.to ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted")}>
                 {l.label}
-              </NavLink>
+              </Link>
             ))}
             {user && (
               <button className="ml-2 shrink-0 text-sm text-muted-foreground hover:text-foreground" onClick={() => supabase.auth.signOut().then(() => navigate(appPath("")))}>

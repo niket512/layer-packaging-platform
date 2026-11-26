@@ -1,8 +1,7 @@
-import { Helmet } from "react-helmet-async";
-import { useLocation } from "react-router-dom";
 import articles from "@/data/packaging-articles.json";
 
-const BASE_URL = "https://snaplogo.in";
+/** Central public-route metadata, rendered into the server HTML head by the root route. */
+export const BASE_URL = "https://snaplogo.in";
 const SITE_TITLE = "Snaplogo — Vetted Packaging Manufacturers, Quotes in 6 Hours";
 const SITE_DESCRIPTION = "Get quotes from 40+ vetted Indian manufacturers for corrugated boxes, sachets and stand-up pouches. Share your requirement — quotes from multiple manufacturers within 6 hours.";
 const pages: Record<string, { title: string; description: string; noindex?: boolean }> = {
@@ -82,28 +81,38 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
   },
 };
 
-export default function SeoMetadata() {
-  const { pathname } = useLocation();
-  const host = window.location.hostname;
-  const route = pathname === "/" && host.startsWith("app.") ? "/app" : pathname;
-  const page = pages[route];
-  const title = page?.title ?? `Account and Workspace | ${SITE_TITLE}`;
-  const description = page?.description ?? SITE_DESCRIPTION;
-  const canonical = `${BASE_URL}${route}`;
+export type SeoEntry = { route: string; title: string; description: string; canonical: string; indexable: boolean };
 
-  return (
-    <Helmet>
-      <title>{title}</title>
-      <meta name="description" content={description} />
-      <link rel="canonical" href={canonical} />
-      <meta name="robots" content={page && !page.noindex ? "index, follow" : "noindex, follow"} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:url" content={canonical} />
-      <meta property="og:type" content="website" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:card" content="summary_large_image" />
-    </Helmet>
-  );
+export function seoFor(pathname: string, appHost = false): SeoEntry {
+  const clean = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
+  const route = clean === "/" && appHost ? "/app" : clean;
+  const page = pages[route];
+  return {
+    route,
+    title: page?.title ?? `Account and Workspace | ${SITE_TITLE}`,
+    description: page?.description ?? SITE_DESCRIPTION,
+    canonical: `${BASE_URL}${route}`,
+    indexable: Boolean(page && !page.noindex),
+  };
+}
+
+export function seoHead(pathname: string, appHost = false) {
+  const seo = seoFor(pathname, appHost);
+  return {
+    meta: [
+      { title: seo.title },
+      { name: "description", content: seo.description },
+      { name: "robots", content: seo.indexable ? "index, follow" : "noindex, follow" },
+      { property: "og:title", content: seo.title },
+      { property: "og:description", content: seo.description },
+      { property: "og:url", content: seo.canonical },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: `${BASE_URL}/og-image.png` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: seo.title },
+      { name: "twitter:description", content: seo.description },
+      { name: "twitter:image", content: `${BASE_URL}/og-image.png` },
+    ],
+    links: [{ rel: "canonical", href: seo.canonical }],
+  };
 }

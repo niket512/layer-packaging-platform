@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@/lib/router-compat";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CorrugatedDesigns } from "@/components/sourcing/CorrugatedDesigns";

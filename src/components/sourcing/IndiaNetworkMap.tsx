@@ -11,7 +11,7 @@ export function IndiaNetworkMap({ state, onStateChange }: { state: string; onSta
           return <path key={region.name} d={region.path} fillRule="evenodd" role={listings ? "button" : undefined} tabIndex={listings ? 0 : undefined} aria-label={`${region.name}: ${listings} listings`} aria-pressed={listings ? state === region.name : undefined}
             onClick={() => { if (listings) onStateChange(region.name); }}
             onKeyDown={event => { if (listings && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onStateChange(region.name); } }}
-            className={`network-density-${listingDensity(listings)} transition-opacity ${state === region.name ? "stroke-foreground stroke-[2]" : "stroke-background stroke-[1.2]"} ${listings ? "cursor-pointer hover:opacity-80 focus:stroke-foreground focus:stroke-[2] focus:outline-none" : ""}`}>
+            className={`network-density-${listingDensity(listings)} transition-opacity ${state === region.name ? "stroke-foreground stroke-[2]" : "stroke-background stroke-[1.2]"} ${listings ? "cursor-pointer hover:opacity-80 focus:stroke-foreground focus:stroke-[2] focus:outline-hidden" : ""}`}>
             <title>{region.name} · {listings ? "Manufacturer references available" : "No listed references"}</title>
           </path>;
         })}

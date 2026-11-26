@@ -86,7 +86,7 @@ export default function CTASection() {
                     value={quickEmail}
                     onChange={(e) => setQuickEmail(e.target.value)}
                     placeholder="your@brand.com"
-                    className="h-10 flex-1 bg-transparent px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                    className="h-10 flex-1 bg-transparent px-4 text-sm text-foreground outline-hidden placeholder:text-muted-foreground"
                   />
                   <button
                     type="submit"
@@ -113,7 +113,7 @@ export default function CTASection() {
                     maxLength={100}
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-hidden focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                     placeholder="Your brand name"
                   />
                 </div>
@@ -128,7 +128,7 @@ export default function CTASection() {
                     maxLength={255}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-hidden focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                     placeholder="you@brand.com"
                   />
                 </div>
@@ -143,7 +143,7 @@ export default function CTASection() {
                     rows={3}
                     value={requirement}
                     onChange={(e) => setRequirement(e.target.value)}
-                    className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-hidden focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
                     placeholder="e.g. 5,000 stand-up pouches for a snacks launch..."
                   />
                 </div>

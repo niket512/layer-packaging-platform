@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "@/lib/router-compat";
 import { ArrowLeft, ArrowRight, Building2, ExternalLink, MapPin, Search, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,7 +82,7 @@ export default function ManufacturerNetwork() {
       <section aria-label="Manufacturer directory" className="mt-2">
         <div className="sticky top-0 z-10 border-b border-border bg-background py-3">
         <div className="mb-3 flex gap-2" aria-label="Packaging categories">
-          {[["", "All packaging"], ["boxes", "Boxes"], ["pouches", "Pouches"]].map(([value, label]) => <Button key={value} size="sm" variant={family === value ? "default" : "outline"} aria-pressed={family === value} onClick={() => update("family", value)}>{label}</Button>)}
+          {([["", "All packaging"], ["boxes", "Boxes"], ["pouches", "Pouches"]] as const).map(([value, label]) => <Button key={value} size="sm" variant={family === value ? "default" : "outline"} aria-pressed={family === value} onClick={() => update("family", value)}>{label}</Button>)}
         </div>
         <div className={`grid grid-cols-2 gap-2 ${family === "pouches" ? "min-[960px]:grid-cols-[minmax(0,1fr)_180px_180px]" : "min-[960px]:grid-cols-[minmax(0,1fr)_220px]"}`}>
           <div className="relative col-span-2 min-[960px]:col-span-1"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Search manufacturers" value={query} onChange={event => update("q", event.target.value)} placeholder="Company, city or packaging type" className="h-11 pl-9 min-[960px]:h-10" /></div>

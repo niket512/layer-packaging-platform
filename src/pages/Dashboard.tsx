@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "@/lib/router-compat";
 import { Search, LayoutGrid, Heart, Menu, X, Package } from "lucide-react";
 import { getBrand, setBrand, clearBrand } from "@/lib/brand-session";
 import {
@@ -364,7 +364,7 @@ export default function Dashboard() {
                       type="search"
                       aria-label="Search products"
                       placeholder="Search bottle names, product codes or features..."
-                      className="h-[50px] w-full rounded-[10px] border border-border bg-card pl-11 pr-4 text-[14px] outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                      className="h-[50px] w-full rounded-[10px] border border-border bg-card pl-11 pr-4 text-[14px] outline-hidden transition-colors placeholder:text-muted-foreground focus:border-primary"
                     />
                   </div>
 
@@ -439,7 +439,7 @@ export default function Dashboard() {
                     <select
                       value={filters.sort}
                       onChange={(e) => set({ sort: e.target.value as Filters["sort"] })}
-                      className="h-9 rounded-lg border border-border bg-card px-2.5 text-[12px] text-foreground outline-none focus:border-primary"
+                      className="h-9 rounded-lg border border-border bg-card px-2.5 text-[12px] text-foreground outline-hidden focus:border-primary"
                     >
                       <option value="featured">Catalogue order</option>
                       <option value="name">Name A–Z</option>

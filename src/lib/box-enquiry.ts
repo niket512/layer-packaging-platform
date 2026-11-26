@@ -61,7 +61,7 @@ const qty = (v: string) => /^\d{1,7}$/.test(v.replace(/[,\s]/g, ""));
 export function parseBoxSize(raw: string): Pick<BoxEnquiry, "length" | "width" | "height"> | null {
   const parts = raw.trim().split(/\s*[x×*,]\s*|\s+/i);
   if (parts.length !== 3 || !parts.every(dim)) return null;
-  const [length, width, height] = parts;
+  const [length = "", width = "", height = ""] = parts;
   return { length, width, height };
 }
 
@@ -98,7 +98,7 @@ export function enquirySummary(e: BoxEnquiry): [string, string][] {
 }
 export function enquiryBrief(e: BoxEnquiry): SourcingBriefField[] {
   const s = Object.fromEntries(enquirySummary(e));
-  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s.Quantity], ["size", s["Dimensions (L × W × H)"]], ["material", s.Material], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`]];
+  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s["Quantity"]], ["size", s["Dimensions (L × W × H)"]], ["material", s["Material"]], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`]];
   return map.filter((m): m is [string, string] => Boolean(m[1])).map(([topic, value]) => ({ topic, value, source: "buyer" as const }));
 }
 export function enquiryDetails(e: BoxEnquiry, variant: string, designPhotos = 0) {

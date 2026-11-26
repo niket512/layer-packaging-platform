@@ -9,7 +9,7 @@ const examples: PackagingDesign[] = sachets.filter(d => !d.id.startsWith("mockup
   const style = d.format === "Flat sachet" ? "Sachet" : d.format === "Pillow pouch" ? "Pillow" : "Stick Pack";
   const application = d.use === "Snack" || d.use === "Edible oil" ? "Food & Snacks" : d.use === "Cosmetics" ? "Cosmetics" : d.use === "Personal care" || d.use === "Hair oil" ? "Personal Care" : "Other";
   return {
-    id: d.id, name: d.name.split(" · ")[0], family: "pouches", image: `/sachets/${d.id}.jpg`, illustrative: false,
+    id: d.id, name: d.name.split(" · ")[0] ?? d.name, family: "pouches", image: `/sachets/${d.id}.jpg`, illustrative: false,
     categories: style === "Sachet" ? ["flat", "sachet-stick"] : style === "Pillow" ? ["pillow"] : ["sachet-stick"],
     description: `An existing ${style.toLowerCase()} reference for ${d.use.toLowerCase()} packaging.`,
     attributes: { style: [style], useCase: [application] },

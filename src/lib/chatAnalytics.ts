@@ -25,7 +25,7 @@ export function summariseChats(chats: AnalysedChat[]) {
   for (let i = 13; i >= 0; i--) days.set(new Date(Date.now() - i * 864e5).toISOString().slice(0, 10), 0);
   chats.forEach(c => { const d = c.created_at.slice(0, 10); if (days.has(d)) days.set(d, days.get(d)! + 1); });
   const hours = Array.from({ length: 24 }, () => 0);
-  chats.forEach(c => { hours[new Date(c.created_at).getHours()]++; });
+  chats.forEach(c => { const h = new Date(c.created_at).getHours(); hours[h] = (hours[h] ?? 0) + 1; });
   const withCatalogue = chats.filter(c => c.cataloguesViewed !== undefined);
   return {
     total, submitted, ongoing: total - submitted, conversion: pct(submitted, total),

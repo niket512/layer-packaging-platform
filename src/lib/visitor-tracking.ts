@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "@/lib/router-compat";
 import { captureAttribution } from "./attribution";
 import { addDesign, addJourney, JOURNEY_FIELDS, scrollDepth, trafficSource, type FunnelStep, type JourneyEvent, type VisitorSnapshot } from "./visitor-metrics";
 
@@ -36,18 +36,18 @@ export async function flushVisitorTracking() {
   dirty = false;
   const revision = Date.now();
   try {
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/save_visitor_behaviour`, {
+    const response = await fetch(`${import.meta.env["VITE_SUPABASE_URL"]}/rest/v1/rpc/save_visitor_behaviour`, {
       method: "POST", keepalive: true,
-      headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+      headers: { "Content-Type": "application/json", apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"], Authorization: `Bearer ${import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"]}` },
       body: JSON.stringify({ _id: session.id, _token: session.token, _revision: revision, _snapshot: session.snapshot }),
     });
     if (!response.ok) dirty = true;
     else if (!attributionSent.has(session.id)) {
       const attributionSession = session;
       attributionSent.add(attributionSession.id);
-      const attributionResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/save_visitor_attribution`, {
+      const attributionResponse = await fetch(`${import.meta.env["VITE_SUPABASE_URL"]}/rest/v1/rpc/save_visitor_attribution`, {
         method: "POST", keepalive: true,
-        headers: { "Content-Type": "application/json", apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        headers: { "Content-Type": "application/json", apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"], Authorization: `Bearer ${import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"]}` },
         body: JSON.stringify({ _id: attributionSession.id, _token: attributionSession.token, _attribution: captureAttribution() }),
       }).catch(() => null);
       if (!attributionResponse?.ok) { attributionSent.delete(attributionSession.id); dirty = true; }

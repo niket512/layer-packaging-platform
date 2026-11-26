@@ -20,7 +20,7 @@ describe("sourcing brief", () => {
     const reply: IntakeReply = { message: "Understood", stage: "quotation", hasRequirement: true, questions: [{ topic: "printing", question: "What printing?" }, { topic: "finishing", question: "What finish?" }], brief: [{ topic: "format", value: "Capa-board boxes", source: "text" }] };
     const replies: IntakeReply[] = [];
     expect(await readSourcingStream(new Response(JSON.stringify({ ...reply, done: true }) + "\n"), () => {}, value => replies.push(value))).toEqual(reply.questions);
-    expect(replies[0].brief).toEqual(reply.brief);
+    expect(replies[0]!.brief).toEqual(reply.brief);
     expect(sourcingProjectTitle({ id: "test", title: "Original request", turns: [], brief: [...(reply.brief ?? []), { topic: "quantity", value: "5000/month", source: "text" }] })).toBe("Capa-board boxes · 5000/month");
   });
 });
@@ -31,7 +31,7 @@ describe("sourcing matches", () => {
     expect(greeting.stage).toBe("clarify");
     const dismissal = normalizeIntakeReply({ message: "Got it", stage: "design", hasRequirement: true, questions: [] }, "NOTHING", true);
     expect(dismissal.stage).toBe("paused");
-    expect(recordSourcingFollowUp({ id: "test", title: "HEY", turns: [{ query: "NOTHING", matches: [], stage: dismissal.stage }] }).turns[0].followUp).toBeUndefined();
+    expect(recordSourcingFollowUp({ id: "test", title: "HEY", turns: [{ query: "NOTHING", matches: [], stage: dismissal.stage }] }).turns[0]!.followUp).toBeUndefined();
   });
   it("prevents a second quotation round while allowing conversational replies", () => {
     expect(normalizeIntakeReply({ message: "Understood", stage: "quotation", hasRequirement: true, questions: [{ topic: "quantity", question: "How many?" }] }, "5000", true).questions).toEqual([]);
@@ -87,7 +87,7 @@ describe("sourcing matches", () => {
 describe("sourcing photos", () => {
   it("retains design and phone prompts after replies and submission without repeating them", () => {
     const design = recordSourcingFollowUp({ id: "test", title: "Boxes", turns: [{ query: "Boxes", matches: [] }] });
-    expect(design.turns[0].followUp).toBe("design");
+    expect(design.turns[0]!.followUp).toBe("design");
     const phone = recordSourcingFollowUp({ ...design, designDone: true, turns: [...design.turns, { query: "No design yet", matches: [] }] });
     expect(phone.turns.map(t => t.followUp)).toEqual(["design", "phone"]);
     const details = { ...phone, turns: [...phone.turns, { query: "Matte finish", matches: [] }] };
@@ -153,8 +153,8 @@ describe("sourcing response latency", () => {
     controller?.enqueue(new TextEncoder().encode('{"message":"Understood.","stage":"design","hasRequirement":true,"questions":[],"brief":[],"done":true}\n'));
     controller?.close();
     await reading;
-    expect(replies[0].stage).toBe("design");
-    expect(replies[0].message).toBe("Understood.");
+    expect(replies[0]!.stage).toBe("design");
+    expect(replies[0]!.message).toBe("Understood.");
   });
   it("does not call AI again after two questions or an explicit skip", () => {
     expect(needsSourcingQuestions([])).toBe(true);

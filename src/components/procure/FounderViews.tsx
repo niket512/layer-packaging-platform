@@ -93,9 +93,9 @@ export function SuppliersView() {
   useEffect(() => { void load(); }, [load]);
 
   const save = async () => {
-    if (!f.name.trim()) return toast.error("Supplier name is required");
+    if (!f.name.trim()) { toast.error("Supplier name is required"); return; }
     const { error } = await supabase.from("suppliers").insert({ ...f, email: f.email.trim().toLowerCase() || null });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setOpen(false);
     setF({ name: "", category: "", location: "", contact_name: "", email: "", phone: "", notes: "" });
     void load();
@@ -184,9 +184,9 @@ export function RfqsView({ onPoCreated }: { onPoCreated: () => void }) {
       const { draft: d } = await callProcureAi<{ draft: Record<string, unknown> }>({ mode: "draft_rfq", ask });
       setF({
         ...f,
-        title: String(d.title ?? ""), category: String(d.category ?? ""), description: String(d.description ?? ""),
-        specs: String(d.specs ?? ""), quantity: d.quantity ? String(d.quantity) : "", unit: String(d.unit ?? "units"),
-        target_price: d.target_price ? String(d.target_price) : "",
+        title: String(d["title"] ?? ""), category: String(d["category"] ?? ""), description: String(d["description"] ?? ""),
+        specs: String(d["specs"] ?? ""), quantity: d["quantity"] ? String(d["quantity"]) : "", unit: String(d["unit"] ?? "units"),
+        target_price: d["target_price"] ? String(d["target_price"]) : "",
       });
     } catch (e) {
       toast.error((e as Error).message);
@@ -196,13 +196,13 @@ export function RfqsView({ onPoCreated }: { onPoCreated: () => void }) {
   };
 
   const create = async () => {
-    if (!f.title.trim()) return toast.error("Give the RFQ a title");
+    if (!f.title.trim()) { toast.error("Give the RFQ a title"); return; }
     const { data, error } = await supabase.from("rfqs").insert({
       title: f.title, category: f.category || null, description: f.description || null, specs: f.specs || null,
       quantity: f.quantity ? Number(f.quantity) : null, unit: f.unit || "units",
       target_price: f.target_price ? Number(f.target_price) : null, due_date: f.due_date || null,
     }).select().single();
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setOpen(false); setF(emptyRfq); setAsk("");
     await load();
     setActive(data);
@@ -292,13 +292,13 @@ function RfqDetail({ rfq, onClose, onPoCreated }: { rfq: Rfq | null; onClose: ()
   };
 
   const addManual = async () => {
-    if (!manual.supplier_id || !manual.unit_price) return toast.error("Pick a supplier and enter a price");
+    if (!manual.supplier_id || !manual.unit_price) { toast.error("Pick a supplier and enter a price"); return; }
     const { error } = await supabase.from("quotes").upsert({
       rfq_id: rfq.id, supplier_id: manual.supplier_id, unit_price: Number(manual.unit_price),
       moq: manual.moq ? Number(manual.moq) : null, lead_time_days: manual.lead_time_days ? Number(manual.lead_time_days) : null,
       terms: manual.terms || null,
     }, { onConflict: "rfq_id,supplier_id" });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setManual({ supplier_id: "", unit_price: "", moq: "", lead_time_days: "", terms: "" });
     void load();
   };
@@ -328,7 +328,7 @@ function RfqDetail({ rfq, onClose, onPoCreated }: { rfq: Rfq | null; onClose: ()
       rfq_id: rfq.id, quote_id: q.id, supplier_id: q.supplier_id, po_number: nextPoNumber(), title: rfq.title,
       quantity: qty, unit_price: q.unit_price, total: qty ? qty * Number(q.unit_price) : null,
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Quote awarded — a draft purchase order is ready");
     onClose();
     onPoCreated();
@@ -482,13 +482,13 @@ function PoDetail({ po, supplierMode, onClose }: { po: PurchaseOrder | null; sup
 
   const founderSet = async (status: string) => {
     const { error } = await supabase.from("purchase_orders").update({ status, expected_ship_date: ship || null }).eq("id", p.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await supabase.from("po_updates").insert({ po_id: p.id, status, note: note || null });
     setNote(""); void load();
   };
   const supplierSet = async (status: string) => {
-    const { error } = await supabase.rpc("supplier_update_po", { _po_id: p.id, _status: status, _note: note, _ship: ship || null });
-    if (error) return toast.error(error.message);
+    const { error } = await supabase.rpc("supplier_update_po", { _po_id: p.id, _status: status, _note: note || "", _ship: (ship || null) as string });
+    if (error) { toast.error(error.message); return; }
     setNote(""); void load();
   };
   const addNote = async () => {

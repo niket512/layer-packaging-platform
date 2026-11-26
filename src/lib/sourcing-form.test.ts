@@ -3,20 +3,20 @@ import { FORM_FORMATS, FORM_STEPS, NOT_SURE_SIZE, SIZE_SUGGESTIONS, indianMobile
 import { BOX_DESIGNS } from "@/components/sourcing/packaging-catalogue";
 describe("guided packaging requirements", () => {
   it("keeps review progress and entered details when a design is selected", () => {
-    const result = applyDesignToForm("boxes", { format: "Shipping box", quantity: "2000 pieces", size: "20 × 15 × 10 cm", delivery: "Pune" }, [BOX_DESIGNS[0]], 2);
+    const result = applyDesignToForm("boxes", { format: "Shipping box", quantity: "2000 pieces", size: "20 × 15 × 10 cm", delivery: "Pune" }, [BOX_DESIGNS[0]!], 2);
     expect(result?.step).toBe(2);
     expect(result?.values).toMatchObject({ quantity: "2000 pieces", size: "20 × 15 × 10 cm", delivery: "Pune" });
   });
   it("moves a known design past packaging selection without inventing scale", () => {
-    const result = applyDesignToForm("boxes", {}, [BOX_DESIGNS[0]], 0);
+    const result = applyDesignToForm("boxes", {}, [BOX_DESIGNS[0]!], 0);
     expect(result?.step).toBe(1);
-    expect(result?.values.quantity).toBeUndefined();
-    expect(result?.values.size).toBeUndefined();
+    expect(result?.values["quantity"]).toBeUndefined();
+    expect(result?.values["size"]).toBeUndefined();
   });
   it("keeps unknown design styles at packaging selection", () => {
-    const result = applyDesignToForm("boxes", {}, [{ ...BOX_DESIGNS[0], attributes: {} }], 0);
+    const result = applyDesignToForm("boxes", {}, [{ ...BOX_DESIGNS[0]!, attributes: {} }], 0);
     expect(result?.step).toBe(0);
-    expect(result?.values.format).toBeUndefined();
+    expect(result?.values["format"]).toBeUndefined();
   });
   it("uses three steps with WhatsApp right after packaging", () => {
     expect(FORM_STEPS.map(step => step.label)).toEqual(["Packaging", "WhatsApp", "Details"]);
@@ -40,11 +40,11 @@ describe("guided packaging requirements", () => {
     expect(payload?.requirement).toContain("Finish: Matte [buyer]");
   });
   it("prefills supported reference attributes without inventing quantity, size or budget", () => {
-    const result = designFormPrefill([{ ...BOX_DESIGNS[0], family: "pouches", attributes: { style: ["Stand-up"], printing: ["Multicolour"], material: ["Kraft"], features: ["Zipper"] } }]);
+    const result = designFormPrefill([{ ...BOX_DESIGNS[0]!, family: "pouches", attributes: { style: ["Stand-up"], printing: ["Multicolour"], material: ["Kraft"], features: ["Zipper"] } }]);
     expect(result).toEqual({ family: "pouches", values: { format: "Stand-up pouch", printing: "Multicolour", closure: "Zipper" } });
-    expect(result?.values.quantity).toBeUndefined();
-    expect(result?.values.size).toBeUndefined();
-    expect(result?.values.budget).toBeUndefined();
+    expect(result?.values["quantity"]).toBeUndefined();
+    expect(result?.values["size"]).toBeUndefined();
+    expect(result?.values["budget"]).toBeUndefined();
   });
   it("preserves explicit quantity and units without inventing missing details", () => {
     const brief = formBrief("pouches", { format: "Stand-up pouch", quantity: "5000 pieces", size: "250 g", material: "" });

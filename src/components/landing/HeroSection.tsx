@@ -120,7 +120,7 @@ export default function HeroSection() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Describe what you're sourcing…"
-                  className="h-9 min-w-0 flex-1 bg-transparent px-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                  className="h-9 min-w-0 flex-1 bg-transparent px-2 text-sm text-foreground outline-hidden placeholder:text-muted-foreground"
                 />
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
                 <button

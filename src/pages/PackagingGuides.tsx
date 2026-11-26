@@ -1,5 +1,4 @@
-import { Link, useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { Link, useParams } from "@/lib/router-compat";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -19,7 +18,7 @@ export default function PackagingGuides() {
   if (slug && !article) return <NotFound />;
   const sections = article?.body.match(/^## .+$/gm)?.map(line => line.slice(3)) ?? [];
   const schema = article ? [
-    { "@context": "https://schema.org", "@type": "Article", headline: article.heading, description: article.description, mainEntityOfPage: `https://snaplogo.in/blog/${article.slug}`, image: new URL(BOX_DESIGNS[0].image, "https://snaplogo.in").href, datePublished: PUBLISHED, author: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in/about" }, publisher: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in" } },
+    { "@context": "https://schema.org", "@type": "Article", headline: article.heading, description: article.description, mainEntityOfPage: `https://snaplogo.in/blog/${article.slug}`, image: new URL(BOX_DESIGNS[0]?.image ?? "/og-image.png", "https://snaplogo.in").href, datePublished: PUBLISHED, author: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in/about" }, publisher: { "@type": "Organization", name: "Snaplogo", url: "https://snaplogo.in" } },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://snaplogo.in/" },
       { "@type": "ListItem", position: 2, name: "Packaging guides", item: "https://snaplogo.in/blog" },
@@ -27,7 +26,7 @@ export default function PackagingGuides() {
     ] },
   ] : null;
   return <div className="theme-sourcing min-h-screen bg-background text-foreground">
-    {schema && <Helmet><script type="application/ld+json">{JSON.stringify(schema)}</script></Helmet>}
+    {schema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />}
     <header className="sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur">
       <nav aria-label="Main navigation" className="mx-auto flex h-16 max-w-content items-center gap-3 px-4 sm:px-8">
         <Link to="/" className="flex items-center gap-2 font-bold"><img src={logo} alt="" className="h-7 w-7" />snaplogo<span className="text-primary">.</span></Link>

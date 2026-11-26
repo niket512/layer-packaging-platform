@@ -26,7 +26,7 @@ export default function SupplierInvites() {
   const submit = async (inv: Invite) => {
     const r = inv.rfqs!;
     const f = forms[r.id];
-    if (!f?.unit_price) return toast.error("Enter your price per unit");
+    if (!f?.unit_price) { toast.error("Enter your price per unit"); return; }
     const existing = quotes.find((q) => q.rfq_id === r.id);
     const payload = {
       unit_price: Number(f.unit_price), moq: f.moq ? Number(f.moq) : null,
@@ -35,7 +35,7 @@ export default function SupplierInvites() {
     const { error } = existing
       ? await supabase.from("quotes").update(payload).eq("id", existing.id)
       : await supabase.from("quotes").insert({ ...payload, rfq_id: r.id, supplier_id: inv.supplier_id });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(existing ? "Quote revised" : "Quote submitted");
     void load();
   };

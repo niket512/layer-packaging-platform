@@ -40,6 +40,6 @@ describe("Uploaded manufacturer references", () => {
   it("keeps research notes searchable without exposing them as sources", () => {
     const weak = filterNetwork("Vikrama", "");
     expect(weak).toHaveLength(1);
-    expect(weak[0].notes).toContain("partner manufacturing unit");
+    expect(weak[0]!.notes).toContain("partner manufacturing unit");
   });
 });

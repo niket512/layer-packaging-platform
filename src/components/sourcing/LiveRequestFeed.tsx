@@ -38,8 +38,8 @@ export function LiveRequestFeed() {
     return () => clearInterval(t);
   }, [recent.length]);
 
-  if (!activity) return null;
   const item = recent[idx % recent.length];
+  if (!activity || !item) return null;
   const week = (activity.week ?? 0) + 140;
 
   return (

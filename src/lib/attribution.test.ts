@@ -4,12 +4,12 @@ const ctx = { landing: "/?gclid=abc", referrer: "https://www.google.com/", devic
 describe("ad attribution", () => {
   it("saves the matched keyword from utm_term without inventing a search query", () => {
     const a = attributionFromUrl("?utm_source=google&utm_medium=cpc&utm_term=custom%20boxes", ctx);
-    expect(a?.keyword).toBe("custom boxes");
-    expect(a?.search_term).toBeUndefined();
+    expect(a?.["keyword"]).toBe("custom boxes");
+    expect(a?.["search_term"]).toBeUndefined();
   });
   it("ignores unexpanded ad macros and prefers an explicit keyword", () => {
     expect(attributionFromUrl("?keyword={keyword}", ctx)).toBeNull();
-    expect(attributionFromUrl("?keyword=mailer%20box&utm_term=other", ctx)?.keyword).toBe("mailer box");
+    expect(attributionFromUrl("?keyword=mailer%20box&utm_term=other", ctx)?.["keyword"]).toBe("mailer box");
   });
   it("captures Google Ads parameters", () => {
     const a = attributionFromUrl("?gclid=abc&campaignid=11&adgroupid=22&keyword=mailer%20box&matchtype=p&utm_source=google&utm_medium=cpc", ctx)!;
@@ -18,10 +18,10 @@ describe("ad attribution", () => {
   it("ignores pages without ad parameters", () => { expect(attributionFromUrl("?category=boxes", ctx)).toBeNull(); });
   it("internal navigation keeps the original ad click", () => {
     const first = attributionFromUrl("?gclid=abc", ctx)!;
-    expect(nextAttribution(first, null, { ...ctx, landing: "/sourcing" }, true).gclid).toBe("abc");
+    expect(nextAttribution(first, null, { ...ctx, landing: "/sourcing" }, true)["gclid"]).toBe("abc");
   });
   it("a new ad click replaces the old one", () => {
     const first = attributionFromUrl("?gclid=abc", ctx)!;
-    expect(nextAttribution(first, attributionFromUrl("?gclid=xyz", ctx), ctx, false).gclid).toBe("xyz");
+    expect(nextAttribution(first, attributionFromUrl("?gclid=xyz", ctx), ctx, false)["gclid"]).toBe("xyz");
   });
 });

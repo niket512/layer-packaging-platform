@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useHydrated } from "@tanstack/react-router";
+import { useNavigate } from "@/lib/router-compat";
 import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, X, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +22,11 @@ const KEY = "snaplogo.form.v2.draft";
 
 export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const navigate = useNavigate();
+  // The saved draft lives in this browser only, so it is restored after the server-rendered form hydrates.
+  const hydrated = useHydrated();
   const saved = useRef<{ step?: number; e?: BoxEnquiry; id?: string } | null>(null);
-  if (saved.current === null) { try { saved.current = JSON.parse(localStorage.getItem(KEY) ?? "{}"); } catch { saved.current = {}; } }
+  const readDraft = () => { try { saved.current = JSON.parse(localStorage.getItem(KEY) ?? "{}"); } catch { saved.current = {}; } };
+  if (saved.current === null && hydrated) readDraft();
   const [step, setStep] = useState(() => Math.min(2, Math.max(0, saved.current?.step ?? 0)));
   const [e, setE] = useState<BoxEnquiry>(() => singleChoiceEnquiry({ ...emptyEnquiry(), ...saved.current?.e, sizeUnknown: false }));
   const [error, setError] = useState<{ field?: string; message: string } | null>(null);
@@ -35,7 +39,16 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const earlySaved = useRef("");
   const heading = useRef<HTMLHeadingElement>(null);
   const first = useRef(true);
-  useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify({ step, e, id: id.current })); } catch { /* memory only */ } }, [step, e]);
+  useEffect(() => {
+    if (!hydrated || saved.current !== null) return;
+    readDraft();
+    const draft = saved.current ?? {};
+    if (draft.id) id.current = draft.id;
+    if (draft.e) setE(singleChoiceEnquiry({ ...emptyEnquiry(), ...draft.e, sizeUnknown: false }));
+    const restoredStep = Math.min(2, Math.max(0, draft.step ?? 0));
+    if (restoredStep) { first.current = true; setStep(restoredStep); }
+  }, [hydrated]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (saved.current === null) return; try { localStorage.setItem(KEY, JSON.stringify({ step, e, id: id.current })); } catch { /* memory only */ } }, [step, e]);
   useEffect(() => {
     trackJourney({ kind: "form_step", step: String(step + 1), category: "form-v2" });
     if (first.current) { first.current = false; return; }
@@ -114,7 +127,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     <div className="border-b border-border px-4 pb-3 pt-3.5 sm:px-6 sm:pt-4">
       <ol aria-label="Enquiry progress" className="mb-2.5 grid grid-cols-3 gap-2">{STEPS.map((l, i) => <li key={l} aria-current={step === i ? "step" : undefined} className={`min-w-0 border-t-2 pt-1.5 ${i <= step ? "border-primary" : "border-border"}`}><span className={`flex items-center gap-1.5 text-[11px] font-semibold sm:text-xs ${step === i ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground"}`}>{i < step ? <Check className="h-3.5 w-3.5 shrink-0" /> : <span>{i + 1}.</span>}<span className="truncate">{l}</span></span></li>)}</ol>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
-        <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold leading-tight outline-none sm:text-xl">{["What kind of custom box are you looking to create?", "Tell us about your project", "Where should we send your quotes?"][step]}</h2>
+        <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold leading-tight outline-hidden sm:text-xl">{["What kind of custom box are you looking to create?", "Tell us about your project", "Where should we send your quotes?"][step]}</h2>
       </div>
       {step === 2 && <p className="mt-1 text-[13px] leading-5 text-muted-foreground">We coordinate your quotes on WhatsApp — no spam.</p>}
     </div>

@@ -27,7 +27,7 @@ describe("packaging browsing", () => {
     expect(result.map(d => d.id)).toEqual(["reference-flatbottom", "reference-standup"]);
   });
   it("populates all references without invented buyer specifications", () => {
-    const text = selectedDesignRequirement([BOX_DESIGNS[0], POUCH_DESIGNS[0]]);
+    const text = selectedDesignRequirement([BOX_DESIGNS[0]!, POUCH_DESIGNS[0]!]);
     expect(text).toContain("[kraft-ship]"); expect(text).toContain("[reference-standup]");
     expect(text).toContain("corrugated boxes and flexible pouches");
     expect(text).not.toMatch(/5,000|25×|budget.*\d|not decided/);

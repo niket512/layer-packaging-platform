@@ -16,7 +16,7 @@ export function attributionFromUrl(search: string, context: { landing: string; r
     if (value && !/[{}]/.test(value) && !found[key]) found[key] = value.slice(0, 200);
   }
   // ValueTrack supplies the matched advertising keyword, not the user's actual search query.
-  if (!found.keyword && found.utm_term) found.keyword = found.utm_term;
+  if (!found["keyword"] && found["utm_term"]) found["keyword"] = found["utm_term"];
   if (!Object.keys(found).some(key => AD_KEYS.includes(key) || key === "keyword")) return null;
   return { ...found, landing_page: context.landing.slice(0, 300), referrer: context.referrer.slice(0, 300), device: context.device, first_seen: context.now };
 }

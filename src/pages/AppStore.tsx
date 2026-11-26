@@ -58,11 +58,11 @@ export default function AppStore() {
   }
 
   const saveStore = async () => {
-    if (!form.name.trim()) return toast.error("Store name is required");
+    if (!form.name.trim()) { toast.error("Store name is required"); return; }
     setBusy(true);
     if (!roles.length) {
       const { error } = await supabase.from("user_roles").insert({ user_id: user.id, role: "manufacturer" });
-      if (error) { setBusy(false); return toast.error(error.message); }
+      if (error) { setBusy(false); toast.error(error.message); return; }
       await reload();
     }
     const payload = { name: form.name.trim(), location: form.location || null, categories: form.categories || null, description: form.description || null };
@@ -70,21 +70,21 @@ export default function AppStore() {
       ? await supabase.from("stores").update({ ...payload, status: "pending" }).eq("id", store.id)
       : await supabase.from("stores").insert(payload);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(store ? "Store updated and sent for review" : "Store created — it will go live after review");
     void refresh();
   };
 
   const uploadPdf = async (file: File) => {
     if (!store) return;
-    if (file.type !== "application/pdf") return toast.error("Please choose a PDF");
-    if (file.size > 20 * 1024 * 1024) return toast.error("PDF must be under 20 MB");
+    if (file.type !== "application/pdf") { toast.error("Please choose a PDF"); return; }
+    if (file.size > 20 * 1024 * 1024) { toast.error("PDF must be under 20 MB"); return; }
     setBusy(true);
     const path = `${user.id}/${crypto.randomUUID()}.pdf`;
     const { error: upErr } = await supabase.storage.from("catalogue-pdfs").upload(path, file, { contentType: "application/pdf" });
-    if (upErr) { setBusy(false); return toast.error(upErr.message); }
+    if (upErr) { setBusy(false); toast.error(upErr.message); return; }
     const { data: row, error } = await supabase.from("catalogue_uploads").insert({ store_id: store.id, file_path: path, file_name: file.name }).select().single();
-    if (error || !row) { setBusy(false); return toast.error(error?.message ?? "Upload failed"); }
+    if (error || !row) { setBusy(false); toast.error(error?.message ?? "Upload failed"); return; }
     void refresh();
     toast.info("Reading your catalogue with AI — this can take a minute");
     let text = "";
@@ -253,7 +253,7 @@ function ProductEditor({ p, onSave, onCancel }: { p: Product; onSave: (patch: Pa
         {img && <button className="text-sm text-muted-foreground hover:text-destructive" onClick={() => setImg(null)}>Remove</button>}
       </div>
       {FIELDS.map((k) => <div key={k} className="space-y-1"><Label className="capitalize">{k === "moq" ? "MOQ" : k}</Label><Input value={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.value })} /></div>)}
-      <div className="space-y-1 md:col-span-3"><Label>Description</Label><Textarea rows={2} value={v.description} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
+      <div className="space-y-1 md:col-span-3"><Label>Description</Label><Textarea rows={2} value={v["description"]} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
       <div className="flex gap-2 md:col-span-3">
         <Button size="sm" className="rounded-full" onClick={() => onSave({ ...Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === "name" ? x.trim() || "Untitled product" : x.trim() || null])), image_url: img })}>Save</Button>
         <Button size="sm" variant="ghost" onClick={onCancel}>Cancel</Button>

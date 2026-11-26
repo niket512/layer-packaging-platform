@@ -6,7 +6,7 @@ describe("private chat snapshots", () => {
     const snapshot = chatSnapshot({ id: "test", title: "Boxes", turns: [{ query: "500 boxes", matches: [], assistantMessage: "What size?", questions: [{ topic: "size", question: "What size?" }] }] });
     expect(snapshot.status).toBe("ongoing");
     expect(snapshot.contact).toBeNull();
-    expect(snapshot.transcript[0].assistantMessage).toBe("What size?");
+    expect(snapshot.transcript[0]!.assistantMessage).toBe("What size?");
   });
   it("links submitted chats to their saved requests", () => {
     const snapshot = chatSnapshot({ id: "test", title: "Boxes", turns: [{ query: "500 boxes", matches: [] }], submitted: true, phone: "9876543210", submissionId: "saved-request" });
