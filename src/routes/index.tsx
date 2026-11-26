@@ -1,5 +1,8 @@
+import { lazy, Suspense } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import AppHome from "@/pages/AppHome";
+
+// Marketplace home is only for the app. subdomain; keep it out of the box-form bundle.
+const AppHome = lazy(() => import("@/pages/AppHome"));
 import SourcingAgent from "@/pages/SourcingAgent";
 import { currentHost, isAppHostname } from "@/lib/request-host";
 import { initialFormVariant } from "@/lib/form-variant";
@@ -15,5 +18,5 @@ export const Route = createFileRoute("/")({
 
 function HomeRoute() {
   const { appHost, formVariant } = Route.useLoaderData();
-  return appHost ? <AppHome /> : <SourcingAgent requirementMode="form" initialFormVariant={formVariant ?? undefined} />;
+  return appHost ? <Suspense fallback={null}><AppHome /></Suspense> : <SourcingAgent requirementMode="form" initialFormVariant={formVariant ?? undefined} />;
 }
