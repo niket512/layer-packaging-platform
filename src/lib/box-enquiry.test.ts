@@ -123,11 +123,11 @@ describe("box enquiry", () => {
     expect(enquiryText(e, 2)).toContain("Design reference: 2 photos attached");
     expect(enquiryText(e)).not.toContain("Design reference");
   });
-  it("variant is sticky and can be forced", () => {
+  it("everyone gets the new form; classic only when explicitly asked", () => {
     const s = mem();
-    expect(formVariant("", s, () => 0.1)).toBe("v2");
+    s.setItem("snaplogo.form.variant", "classic");
     expect(formVariant("", s, () => 0.9)).toBe("v2");
     expect(formVariant("?form=classic", s)).toBe("classic");
-    expect(formVariant("", s, () => 0.1)).toBe("classic");
+    expect(formVariant("", s)).toBe("v2");
   });
 });

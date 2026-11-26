@@ -109,13 +109,9 @@ export function enquiryText(e: BoxEnquiry, designPhotos = 0) {
 }
 
 export type FormVariant = "classic" | "v2";
-/** Sticky 50/50 split; ?form=v2 or ?form=classic forces a version (also sticky). */
-export function formVariant(search: string, storage: Pick<Storage, "getItem" | "setItem"> | null, random = Math.random): FormVariant {
-  const forced = new URLSearchParams(search).get("form");
-  const KEY = "snaplogo.form.variant";
-  let v: FormVariant | null = forced === "v2" || forced === "classic" ? forced : null;
-  try { if (!v) { const saved = storage?.getItem(KEY); v = saved === "v2" || saved === "classic" ? saved : null; } } catch { /* ignore */ }
-  v ??= random() < 0.5 ? "v2" : "classic";
-  try { storage?.setItem(KEY, v); } catch { /* ignore */ }
+/** New form for everyone; only an explicit ?form=classic shows the old form, and it does not stick. */
+export function formVariant(search: string, storage: Pick<Storage, "getItem" | "setItem"> | null, _random = Math.random): FormVariant {
+  const v: FormVariant = new URLSearchParams(search).get("form") === "classic" ? "classic" : "v2";
+  try { storage?.setItem("snaplogo.form.variant", "v2"); } catch { /* ignore */ }
   return v;
 }

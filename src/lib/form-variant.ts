@@ -10,17 +10,17 @@ const asVariant = (value: string | null | undefined): FormVariant | null => (val
 
 export const initialFormVariant = createIsomorphicFn()
   .server((): FormVariant => {
-    const forced = asVariant(new URL(getRequestUrl()).searchParams.get("form"));
-    const variant = forced ?? asVariant(getCookie(FORM_VARIANT_COOKIE)) ?? (Math.random() < 0.5 ? "v2" : "classic");
-    setCookie(FORM_VARIANT_COOKIE, variant, { path: "/", maxAge: ONE_YEAR, sameSite: "lax" });
+    const variant: FormVariant = new URL(getRequestUrl()).searchParams.get("form") === "classic" ? "classic" : "v2";
+    if (asVariant(getCookie(FORM_VARIANT_COOKIE)) !== "v2") setCookie(FORM_VARIANT_COOKIE, "v2", { path: "/", maxAge: ONE_YEAR, sameSite: "lax" });
     return variant;
   })
   .client((): FormVariant => {
-    try { return formVariant(window.location.search, localStorage); } catch { return "classic"; }
+    try { return formVariant(window.location.search, localStorage); } catch { return "v2"; }
   });
 
 /** Keeps the browser copies (localStorage and cookie) aligned with the version shown. */
 export function rememberFormVariant(variant: FormVariant) {
-  try { localStorage.setItem("snaplogo.form.variant", variant); } catch { /* storage unavailable */ }
-  document.cookie = `${FORM_VARIANT_COOKIE}=${variant}; path=/; max-age=${ONE_YEAR}; samesite=lax`;
+  void variant;
+  try { localStorage.setItem("snaplogo.form.variant", "v2"); } catch { /* storage unavailable */ }
+  document.cookie = `${FORM_VARIANT_COOKIE}=v2; path=/; max-age=${ONE_YEAR}; samesite=lax`;
 }
