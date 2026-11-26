@@ -93,7 +93,7 @@ function PromptTabs({ onPick }: { onPick: (phrase: string) => void }) {
 export default function SourcingAgent({ category, requirementMode = "chat", initialFormVariant }: { category?: SourcingCategory; requirementMode?: "chat" | "form"; initialFormVariant?: FormVariant } = {}) {
   const location = useLocation();
   const boxesOnly = location.pathname === "/" && requirementMode === "form";
-  const [variant] = useState<FormVariant>(() => { if (initialFormVariant) return initialFormVariant; try { return formVariant(location.search, localStorage); } catch { return "classic"; } });
+  const [variant] = useState<FormVariant>(() => { if (initialFormVariant) return initialFormVariant; try { return formVariant(location.search, localStorage); } catch { return "v2"; } });
   useEffect(() => { if (boxesOnly) rememberFormVariant(variant); }, [boxesOnly, variant]);
   const newBoxForm = boxesOnly && variant === "v2";
   useEffect(() => { if (boxesOnly) trackJourney({ kind: "form_step", step: "1", category: `form-${variant}` }); }, [boxesOnly, variant]);
