@@ -10,6 +10,7 @@ import { formVariant, type FormVariant } from "@/lib/box-enquiry";
 import { rememberFormVariant } from "@/lib/form-variant";
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "@/lib/router-compat";
+import { useHydrated } from "@tanstack/react-router";
 import { sourcingLandingFamily } from "@/lib/sourcing-landing";
 import { ArrowLeft, ArrowLeftRight, ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronRight, Loader2, ImagePlus, MessageSquare, Plus, ShieldCheck, User, Users, X, Zap, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";

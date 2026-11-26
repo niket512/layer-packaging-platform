@@ -39,9 +39,10 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
   const formId = useId();
   // The saved draft lives in this browser only, so it is restored after the server-rendered form hydrates.
   const hydrated = useHydrated();
+  const hydratedAtMount = useRef(hydrated).current;
   const draft = useRef<{ step?: number; values?: Record<string, string>; phone?: string; notes?: string; id?: string } | null>(null);
-  const readDraft = () => { try { draft.current = !referenceDesigns.length ? JSON.parse(localStorage.getItem(draftKey()) ?? "{}") : {}; } catch { draft.current = {}; } };
-  if (draft.current === null && hydrated) readDraft();
+  const readDraft = (): { step?: number; values?: Record<string, string>; phone?: string; notes?: string; id?: string } => { try { draft.current = !referenceDesigns.length ? JSON.parse(localStorage.getItem(draftKey()) ?? "{}") ?? {} : {}; } catch { draft.current = {}; } return draft.current ?? {}; };
+  if (draft.current === null && hydratedAtMount) readDraft();
   const [step, setStep] = useState(() => Math.min(2, Math.max(0, draft.current?.step ?? 0)));
   const [values, setValues] = useState<Record<string, string>>(() => draft.current?.values ?? {});
   const [brief, setBrief] = useState<SourcingBriefField[]>([]);
@@ -61,8 +62,7 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
   }, [family]);
   useEffect(() => {
     if (!hydrated || draft.current !== null) return;
-    readDraft();
-    const saved = draft.current ?? {};
+    const saved = readDraft();
     if (saved.id) id.current = saved.id;
     if (saved.values) setValues(saved.values);
     if (saved.notes) setNotes(saved.notes);
@@ -192,13 +192,13 @@ export function RequirementForm({ family, onFamilyChange: setFamily, reference, 
     }}>
       <div className="sticky top-[60px] z-10 flex items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-6"><img src={referenceDesigns[0]?.image} alt="Selected packaging reference" className="h-14 w-14 shrink-0 rounded-md bg-muted object-contain" /><div className="min-w-0"><h2 ref={heading} tabIndex={-1} className="text-base font-semibold outline-hidden">Your packaging request</h2><p className="mt-0.5 break-words text-sm text-muted-foreground">{referenceDesigns.map(design => design.name).join(", ")}</p></div></div>
       <fieldset disabled={busy} className="min-w-0">
-        <section aria-label="Selected specifications" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border px-4 py-3 min-[380px]:grid-cols-2 sm:px-6">
+        <section aria-label="Selected specifications" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border px-4 py-3 xs:grid-cols-2 sm:px-6">
           {([ ["format", "Packaging style", FORM_FORMATS[family]], ...(prefilled["printing"] ? [["printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"]]] : []), ...(prefilled["closure"] ? [["closure", "Closure", ["Heat seal", "Zipper", "Spout", "Not sure"]]] : []) ] as [string, string, string[]][]).map(([topic, label, options]) => <div key={topic}>{compactChoice(topic, label, options, true)}</div>)}
         </section>
         <section aria-label="Details from you" className="min-w-0 space-y-3 px-4 py-3 sm:px-6"><h3 className="text-sm font-semibold">A few details from you</h3>
           <div className="grid gap-3 sm:grid-cols-2"><div>{field("quantity", "Initial quantity", "e.g. 2,000 pieces")}{presets("quantity", ["500 pieces", "1,000 pieces", "5,000 pieces"])}</div>{field("size", family === "boxes" ? "Box dimensions (optional)" : "Dimensions or fill (optional)", family === "boxes" ? "Length × width × height in inches" : "e.g. 250 g or width × height in cm")}</div>
           <div className="grid gap-3 sm:grid-cols-2">{!prefilled["printing"] && compactChoice("printing", "Printing", ["Plain", "Logo only", "Multicolour", "Not sure"])}{compactChoice("material", "Material preference", family === "boxes" ? ["Kraft", "White-top", "Not sure"] : ["Mono-material", "Multilayer", "Paper-based", "Not sure"])}</div>
-          <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">{family === "boxes" ? compactChoice("wall", "Corrugated wall · Optional", ["3-ply", "5-ply", "7-ply", "Not sure"]) : !prefilled["closure"] && compactChoice("closure", "Closure · Optional", ["Heat seal", "Zipper", "Spout", "Not sure"])}{compactChoice("finishing", "Finishing · Optional", ["Matte", "Gloss", "No preference"])}</div>
+          <div className="grid grid-cols-1 gap-3 xs:grid-cols-2">{family === "boxes" ? compactChoice("wall", "Corrugated wall · Optional", ["3-ply", "5-ply", "7-ply", "Not sure"]) : !prefilled["closure"] && compactChoice("closure", "Closure · Optional", ["Heat seal", "Zipper", "Spout", "Not sure"])}{compactChoice("finishing", "Finishing · Optional", ["Matte", "Gloss", "No preference"])}</div>
           <div className="space-y-3 border-t border-border pt-3"><h3 className="text-sm font-semibold">Quote updates</h3><div className="grid gap-3 sm:grid-cols-2">{field("delivery", "Delivery city", "e.g. Pune")}
             <div><label htmlFor={`${formId}-form-phone`} className="mb-1.5 block text-sm font-semibold">WhatsApp number</label><Input id={`${formId}-form-phone`} type="tel" autoComplete="tel" inputMode="tel" className="h-11 rounded-lg text-base" placeholder="+91 98765 43210" maxLength={25} value={phone} onChange={event => { setPhone(event.target.value); trackFormField("phone", Boolean(event.target.value.trim()), step); }} required /><p className="mt-1 text-xs text-muted-foreground">Your quotes will be sent on WhatsApp.</p></div></div>
             <div><label htmlFor={`${formId}-form-notes`} className="mb-1.5 flex items-baseline gap-1.5 text-sm font-semibold">Anything else?<span className="text-xs font-normal text-muted-foreground">Optional</span></label><textarea id={`${formId}-form-notes`} value={notes} onChange={event => setNotes(event.target.value)} maxLength={1500} rows={2} className="block w-full resize-y rounded-lg border border-input bg-card px-3 py-2 text-base outline-hidden focus-visible:ring-2 focus-visible:ring-ring" placeholder="Any other requirements" /></div>

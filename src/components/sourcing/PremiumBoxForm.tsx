@@ -24,9 +24,10 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const navigate = useNavigate();
   // The saved draft lives in this browser only, so it is restored after the server-rendered form hydrates.
   const hydrated = useHydrated();
+  const hydratedAtMount = useRef(hydrated).current;
   const saved = useRef<{ step?: number; e?: BoxEnquiry; id?: string } | null>(null);
-  const readDraft = () => { try { saved.current = JSON.parse(localStorage.getItem(KEY) ?? "{}"); } catch { saved.current = {}; } };
-  if (saved.current === null && hydrated) readDraft();
+  const readDraft = (): { step?: number; e?: BoxEnquiry; id?: string } => { try { saved.current = JSON.parse(localStorage.getItem(KEY) ?? "{}") ?? {}; } catch { saved.current = {}; } return saved.current ?? {}; };
+  if (saved.current === null && hydratedAtMount) readDraft();
   const [step, setStep] = useState(() => Math.min(2, Math.max(0, saved.current?.step ?? 0)));
   const [e, setE] = useState<BoxEnquiry>(() => singleChoiceEnquiry({ ...emptyEnquiry(), ...saved.current?.e, sizeUnknown: false }));
   const [error, setError] = useState<{ field?: string; message: string } | null>(null);
@@ -41,8 +42,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const first = useRef(true);
   useEffect(() => {
     if (!hydrated || saved.current !== null) return;
-    readDraft();
-    const draft = saved.current ?? {};
+    const draft = readDraft();
     if (draft.id) id.current = draft.id;
     if (draft.e) setE(singleChoiceEnquiry({ ...emptyEnquiry(), ...draft.e, sizeUnknown: false }));
     const restoredStep = Math.min(2, Math.max(0, draft.step ?? 0));

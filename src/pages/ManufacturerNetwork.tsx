@@ -18,9 +18,9 @@ function ContactDetails({ entry }: { entry: NetworkManufacturer }) {
 function MinimumOrder({ entry }: { entry: NetworkManufacturer }) {
   const summary = manufacturerMoq(entry.company_name, entry.moq_or_packaging_notes);
   return <div className="min-w-0">
-    {summary.tiers.length ? <dl className="space-y-2">{summary.tiers.map(tier => <div key={tier.label} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 min-[960px]:block">
+    {summary.tiers.length ? <dl className="space-y-2">{summary.tiers.map(tier => <div key={tier.label} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 desk:block">
       <dt className="text-xs leading-snug text-muted-foreground">{tier.label}</dt>
-      <dd className="text-sm font-semibold tabular-nums text-foreground min-[960px]:mt-0.5">{tier.value}</dd>
+      <dd className="text-sm font-semibold tabular-nums text-foreground desk:mt-0.5">{tier.value}</dd>
     </div>)}</dl> : <p className="text-sm text-muted-foreground">Confirm with supplier</p>}
     {summary.note && <p className="mt-1.5 text-xs leading-snug text-muted-foreground">{summary.note}</p>}
   </div>;
@@ -71,7 +71,7 @@ export default function ManufacturerNetwork() {
       <Link to="/" className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary sm:mt-5"><ArrowLeft className="h-3.5 w-3.5" />Back to sourcing</Link>
       <section className="grid gap-3 border-b border-border pb-4 pt-3 sm:gap-5 sm:pb-5 sm:pt-4 md:grid-cols-[1fr_260px] md:items-end">
         <div>
-          <h1 className="text-2xl font-bold leading-tight sm:text-3xl min-[960px]:text-4xl">Manufacturer network</h1>
+          <h1 className="text-2xl font-bold leading-tight sm:text-3xl desk:text-4xl">Manufacturer network</h1>
           <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">Packaging businesses across India</p>
         </div>
         <div className="flex gap-7 md:justify-end">
@@ -84,24 +84,24 @@ export default function ManufacturerNetwork() {
         <div className="mb-3 flex gap-2" aria-label="Packaging categories">
           {([["", "All packaging"], ["boxes", "Boxes"], ["pouches", "Pouches"]] as const).map(([value, label]) => <Button key={value} size="sm" variant={family === value ? "default" : "outline"} aria-pressed={family === value} onClick={() => update("family", value)}>{label}</Button>)}
         </div>
-        <div className={`grid grid-cols-2 gap-2 ${family === "pouches" ? "min-[960px]:grid-cols-[minmax(0,1fr)_180px_180px]" : "min-[960px]:grid-cols-[minmax(0,1fr)_220px]"}`}>
-          <div className="relative col-span-2 min-[960px]:col-span-1"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Search manufacturers" value={query} onChange={event => update("q", event.target.value)} placeholder="Company, city or packaging type" className="h-11 pl-9 min-[960px]:h-10" /></div>
+        <div className={`grid grid-cols-2 gap-2 ${family === "pouches" ? "desk:grid-cols-[minmax(0,1fr)_180px_180px]" : "desk:grid-cols-[minmax(0,1fr)_220px]"}`}>
+          <div className="relative col-span-2 desk:col-span-1"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Search manufacturers" value={query} onChange={event => update("q", event.target.value)} placeholder="Company, city or packaging type" className="h-11 pl-9 desk:h-10" /></div>
           <select aria-label="Filter by state" className="h-10 min-w-0 rounded-md border border-input bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring" value={state} onChange={event => update("state", event.target.value)}><option value="">All states</option>{networkStates.map(value => <option key={value}>{value}</option>)}</select>
           {family === "pouches" && <select aria-label="Filter by pouch style" className="h-10 min-w-0 rounded-md border border-input bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring" value={pouchType} onChange={event => update("type", event.target.value)}><option value="">All pouch styles</option>{pouchTypes.map(value => <option key={value}>{value}</option>)}</select>}
         </div>
         <label className="mt-3 flex w-fit cursor-pointer items-center gap-2 text-xs text-muted-foreground"><Checkbox checked={contactsOnly} onCheckedChange={checked => update("contact", checked === true ? "yes" : "")} />With contact number</label>
         </div>
         <div className="my-3 flex items-center justify-between"><p aria-live="polite" className="text-sm text-muted-foreground">{results.length} businesses{state && ` in ${state}`}</p>{(query || state || family || contactsOnly) && <Button variant="ghost" size="sm" onClick={() => { setParams({}); setLimit(24); }}>Clear filters</Button>}</div>
-        <div className="hidden grid-cols-[1.2fr_1.3fr_1fr_160px] gap-4 border-b border-border bg-muted/40 px-4 py-3 text-xs font-semibold text-muted-foreground min-[960px]:grid"><span>Company & location</span><span>Products</span><span>Minimum order</span><span>Contact</span></div>
-        <div className="grid gap-3 sm:grid-cols-2 min-[960px]:grid-cols-1 min-[960px]:gap-0">
-          {results.slice(0, limit).map(entry => <article key={`${entry.company_name}-${entry.city}`} className="grid min-w-0 content-start gap-3 overflow-hidden rounded-lg border border-border bg-card p-3 sm:p-4 min-[960px]:grid-cols-[1.2fr_1.3fr_1fr_160px] min-[960px]:gap-4 min-[960px]:rounded-none min-[960px]:border-x-0 min-[960px]:border-t-0 min-[960px]:py-4">
+        <div className="hidden grid-cols-[1.2fr_1.3fr_1fr_160px] gap-4 border-b border-border bg-muted/40 px-4 py-3 text-xs font-semibold text-muted-foreground desk:grid"><span>Company & location</span><span>Products</span><span>Minimum order</span><span>Contact</span></div>
+        <div className="grid gap-3 sm:grid-cols-2 desk:grid-cols-1 desk:gap-0">
+          {results.slice(0, limit).map(entry => <article key={`${entry.company_name}-${entry.city}`} className="grid min-w-0 content-start gap-3 overflow-hidden rounded-lg border border-border bg-card p-3 sm:p-4 desk:grid-cols-[1.2fr_1.3fr_1fr_160px] desk:gap-4 desk:rounded-none desk:border-x-0 desk:border-t-0 desk:py-4">
             <div className="flex items-start gap-2.5">
               <div aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary text-xs font-bold text-primary">{entry.company_name.split(/\s+/).slice(0, 2).map(word => word[0]).join("").toUpperCase()}</div>
               <div className="min-w-0"><h2 className="break-words text-base font-semibold leading-snug">{entry.company_name}</h2><p className="mt-1 flex items-start gap-1 text-xs leading-relaxed text-muted-foreground"><MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />{entry.location_label || [entry.city, entry.state].filter(Boolean).join(", ") || "Location not provided"}</p>{entry.business_type && entry.business_type !== "Packaging business" && <p className="mt-1 text-xs font-medium text-primary">{entry.business_type}</p>}</div>
             </div>
             <div className="min-w-0"><ProductSnapshot entry={entry} /></div>
-            <div className="-mx-3 bg-muted/40 px-3 py-2.5 sm:-mx-4 sm:px-4 min-[960px]:mx-0 min-[960px]:bg-transparent min-[960px]:p-0"><p className="mb-1.5 text-[11px] font-semibold uppercase text-muted-foreground min-[960px]:hidden">Minimum order</p><MinimumOrder entry={entry} /></div>
-            <div className="flex flex-wrap items-center justify-between gap-2 min-[960px]:flex-col min-[960px]:items-start min-[960px]:justify-start"><ContactDetails entry={entry} /><Button variant="ghost" size="sm" className="h-11 shrink-0 px-2 text-xs min-[960px]:h-9" onClick={() => setSelected(entry)}>Full details <ArrowRight /></Button></div>
+            <div className="-mx-3 bg-muted/40 px-3 py-2.5 sm:-mx-4 sm:px-4 desk:mx-0 desk:bg-transparent desk:p-0"><p className="mb-1.5 text-[11px] font-semibold uppercase text-muted-foreground desk:hidden">Minimum order</p><MinimumOrder entry={entry} /></div>
+            <div className="flex flex-wrap items-center justify-between gap-2 desk:flex-col desk:items-start desk:justify-start"><ContactDetails entry={entry} /><Button variant="ghost" size="sm" className="h-11 shrink-0 px-2 text-xs desk:h-9" onClick={() => setSelected(entry)}>Full details <ArrowRight /></Button></div>
           </article>)}
         </div>
         {!results.length && <div className="py-12 text-center"><Building2 className="mx-auto h-8 w-8 text-muted-foreground" /><h2 className="mt-3 font-semibold">No matching businesses</h2><p className="mt-1 text-sm text-muted-foreground">Try another city, packaging type or state.</p></div>}
