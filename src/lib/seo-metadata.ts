@@ -15,7 +15,7 @@ const pages: Record<string, { title: string; description: string; noindex?: bool
   },
   ...Object.fromEntries(articles.map(article => [`/blog/${article.slug}`, { title: `${article.title} | Snaplogo`, description: article.description }])),
   "/": {
-    title: "Custom Box Manufacturers in Mumbai & India — Quotes in 6 Hours | Snaplogo",
+    title: "Custom Box Manufacturers in Mumbai & Bangalore — Quotes in 6 Hours | Snaplogo",
     description: "Get custom box quotes from 40+ vetted manufacturers — corrugated, mailer, product and rigid boxes. Compare multiple quotes on WhatsApp within 6 hours, no commission.",
   },
   "/sourcing": {
