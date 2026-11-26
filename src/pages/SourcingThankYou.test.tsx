@@ -33,6 +33,12 @@ describe("thank-you conversion lifecycle", () => {
     render(<MemoryRouter><SourcingThankYou /></MemoryRouter>);
     expect(screen.getByRole("link", { name: /new sourcing request/i }).getAttribute("href")).toBe("/");
   });
+  it("offers the WhatsApp community invite with the saved group link", () => {
+    render(<MemoryRouter><SourcingThankYou /></MemoryRouter>);
+    const invite = screen.getByRole("link", { name: /brands and manufacturers group/i });
+    expect(invite.getAttribute("href")).toBe("https://chat.whatsapp.com/I0vypMLz6bEKIeViw8rwh6");
+    expect(invite.getAttribute("target")).toBe("_blank");
+  });
   it("does not count a direct thank-you visit", () => {
     const gtag = vi.fn(); const rdt = vi.fn(); Object.assign(window, { gtag, rdt });
     render(<MemoryRouter><SourcingThankYou /></MemoryRouter>);
