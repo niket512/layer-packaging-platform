@@ -1,3 +1,4 @@
+import { Logo } from "@/components/brand/Logo";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, MessageSquare, Plus } from "lucide-react";
@@ -8,7 +9,6 @@ import type { SourcingBriefField } from "../../supabase/functions/_shared/sourci
 import { consumeConversion, recordSourcingLead } from "@/lib/sourcing-conversion";
 import { readRedditClickId } from "@/lib/reddit-attribution";
 import { supabase } from "@/integrations/supabase/client";
-import logo from "@/assets/snaplogo-orange.png";
 
 const THANKYOU_KEY = "snaplogo.sourcing.thankyou";
 
@@ -48,8 +48,8 @@ export default function SourcingThankYou() {
     <div className="theme-sourcing min-h-screen bg-background text-foreground">
       <header className="border-b border-border/60 bg-card/80">
         <div className="mx-auto flex max-w-[900px] items-center px-5 py-4 md:px-10">
-          <Link to="/sourcing" className="flex items-center gap-2 text-xl font-bold">
-            <img src={logo} alt="" className="h-8 w-8" />snaplogo<span className="text-primary">.</span>
+          <Link to="/" className="flex items-center">
+            <Logo />
           </Link>
         </div>
       </header>

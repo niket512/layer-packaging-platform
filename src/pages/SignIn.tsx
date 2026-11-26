@@ -1,8 +1,8 @@
+import { Logo } from "@/components/brand/Logo";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { setBrand } from "@/lib/brand-session";
-import logo from "@/assets/snaplogo-orange.png";
 
 export default function SignIn() {
   const [brand, setBrandInput] = useState("");
@@ -23,9 +23,8 @@ export default function SignIn() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-muted px-5 py-16">
       <div className="w-full max-w-[420px] rounded-2xl border border-border bg-card p-7 card-soft md:p-9">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Snaplogo" className="h-7 w-7 object-contain" />
-          <span className="font-heading text-lg font-bold tracking-tight text-foreground">Snaplogo</span>
+        <Link to="/" className="flex items-center">
+          <Logo />
         </Link>
 
         <h1 className="mt-7 font-heading text-[26px] font-semibold tracking-tight text-foreground">

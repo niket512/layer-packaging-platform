@@ -1,7 +1,7 @@
+import { Logo } from "@/components/brand/Logo";
 import { ArrowRight, Clock, Mail, MessageCircle, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/landing/Footer";
-import logo from "@/assets/snaplogo-orange.png";
 
 const WHATSAPP = "https://wa.me/917424960090?text=" + encodeURIComponent("Hi Snaplogo team, I'd like to talk about packaging sourcing.");
 
@@ -16,9 +16,8 @@ export default function Team() {
     <div className="flex min-h-screen flex-col bg-background">
       <header className="border-b border-border bg-background">
         <div className="mx-auto flex h-14 max-w-content items-center justify-between px-5 md:px-8">
-          <a href="/" className="flex items-center gap-2">
-            <img src={logo} alt="Snaplogo" className="h-6 w-6 object-contain" />
-            <span className="font-heading text-base font-bold tracking-tight text-foreground">Snaplogo</span>
+          <a href="/" className="flex items-center">
+            <Logo />
           </a>
           <a href="/sourcing" className="text-sm font-medium text-muted-foreground hover:text-primary">Start a request</a>
         </div>

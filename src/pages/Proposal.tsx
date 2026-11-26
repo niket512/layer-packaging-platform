@@ -1,7 +1,7 @@
+import { Logo } from "@/components/brand/Logo";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, FileText, Clock, MessageCircle, Truck, RefreshCw, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/snaplogo-orange.png";
 
 const deliverables = [
   "A shortlist of trusted, high-quality contract manufacturers within 6 hours",
@@ -30,9 +30,8 @@ export default function Proposal() {
       {/* Header */}
       <header className="border-b border-border bg-background">
         <div className="mx-auto flex h-14 max-w-content items-center justify-between px-5 md:px-8">
-          <a href="/" className="flex items-center gap-2">
-            <img src={logo} alt="Snaplogo" className="h-6 w-6 object-contain" />
-            <span className="font-heading text-base font-bold tracking-tight text-foreground">Snaplogo</span>
+          <a href="/" className="flex items-center">
+            <Logo />
           </a>
           <a href="mailto:contact@snapit.club" className="text-sm font-medium text-muted-foreground hover:text-primary">
             contact@snapit.club
@@ -123,9 +122,8 @@ export default function Proposal() {
       {/* Footer */}
       <footer className="border-t border-border bg-background">
         <div className="mx-auto flex h-12 max-w-content items-center justify-between px-5 md:px-8">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="Snaplogo" className="h-4 w-4 object-contain" />
-            <span className="font-heading text-xs font-bold tracking-tight text-foreground">Snaplogo</span>
+          <div className="flex items-center">
+            <Logo className="h-5 md:h-5" />
           </div>
           <p className="text-[11px] text-muted-foreground">© {new Date().getFullYear()} Snaplogo · Built for India's D2C ecosystem</p>
         </div>
