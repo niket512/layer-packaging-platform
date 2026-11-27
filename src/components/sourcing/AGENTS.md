@@ -1,6 +1,6 @@
 # Manufacturer network map
 - Premium box size uses one draft input parsed into existing length/width/height values; keep entered units and centimetre submission conversion unchanged.
-- Premium box drafts keep one box type and one product selection; normalise only unsent drafts, preserving historical submitted briefs.
+- Premium box drafts keep one box type and drop the retired product question; normalise only unsent drafts, preserving historical submitted briefs.
 - Catalogue photos resolve through `catalogueImage` to compressed CDN WebP assets; keep source records unchanged and reuse the resolved photo in details and attachments so browsing and enquiry handoffs avoid original downloads.
 - Use local state outlines with density tiers derived only from uploaded listing counts; colors indicate reference coverage, not verified partners.
 - Keep the selected map state in ManufacturerNetwork so the list link above the map preserves the selected state filter.

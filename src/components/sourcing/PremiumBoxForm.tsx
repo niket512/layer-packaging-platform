@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useHydrated } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/router-compat";
 import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, X, ImagePlus, Box, Pencil, User } from "lucide-react";
@@ -13,8 +13,6 @@ import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
 import { BOX_TYPES, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepFieldError, type BoxEnquiry } from "@/lib/box-enquiry";
-
-const ProductPicker = lazy(() => import("./ProductPicker"));
 
 const STEPS = ["Box type", "Project details", "Contact"];
 const STEP_ICONS = [Box, Pencil, User];
@@ -67,7 +65,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     onActive(); setError(null);
     setE(prev => ({ ...prev, sizeInput: raw, ...(parseBoxSize(raw) ?? { length: "", width: "", height: "" }) }));
   };
-  const removeProduct = (p: string) => setE(prev => ({ ...prev, products: prev.products.filter(x => x !== p), productOther: p === "Other" ? "" : prev.productOther }));
   const addPhotos = async (files: File[]) => {
     if (!files.length || photos.length >= 3) return;
     setAdding(true); setError(null);
@@ -145,12 +142,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       </Button>; })}</div>{fieldError("boxTypes")}</>, "Tap a box to continue", true)}
       {step === 1 && <>
         <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:gap-x-5 sm:gap-y-3">
-        <div className="order-3 min-w-0 sm:order-4 sm:col-start-2 sm:row-start-3">
-        {group("What product will go inside the box?", <>
-          {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}
-          {e.products.length === 0 && <Suspense fallback={<Input aria-label="Loading product choices" disabled className="h-11 text-base" />}><ProductPicker onChoose={(value, custom) => { onActive(); setError(null); setE(prev => ({ ...prev, products: [custom ? "Other" : value], productOther: custom ? value : "" })); }} /></Suspense>}
-        </>)}
-        </div>
         <div className="order-1 w-full min-w-0 sm:col-start-2 sm:row-start-1"><label htmlFor="v2-size" className="mb-1.5 block text-[13px] font-medium text-muted-foreground">Box size <span className="font-normal">(L × B × H)</span></label>
             <div className="relative">
             <Input id="v2-size" aria-label={`Box size: length × breadth × height (${e.unit ?? "in"})`} disabled={e.sizeUnknown} maxLength={30} placeholder="e.g. 12 × 8 × 6" value={e.sizeInput ?? ([e.length, e.width, e.height].some(Boolean) ? [e.length, e.width, e.height].join(" × ") : "")} onChange={ev => onSize(ev.target.value)} className={`h-11 rounded-lg border-border/60 bg-card pl-3 pr-24 text-base ${error?.field === "size" ? "border-destructive" : ""}`} />
@@ -158,7 +149,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
             </div>
             {fieldError("size")}
             </div>
-          <div className="order-2 min-w-0 sm:col-start-1 sm:row-span-3 sm:row-start-1">
+          <div className="order-2 min-w-0 sm:col-start-1 sm:row-span-2 sm:row-start-1">
             <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
             <div className={`grid h-full min-w-0 items-center gap-2 rounded-lg border border-dashed border-primary/60 bg-accent/50 p-2 sm:flex sm:flex-col sm:p-3 ${photos.length ? "grid-cols-[minmax(0,1fr)_auto]" : "grid-cols-1"}`}>
             <Button type="button" variant="ghost" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Upload your design or reference image, optional, up to 3" className="group h-auto min-h-12 w-full flex-1 justify-start gap-2.5 whitespace-normal rounded-md px-1 py-1 text-left text-foreground hover:bg-accent hover:text-foreground sm:flex-col sm:justify-center sm:gap-2 sm:py-3 sm:text-center">

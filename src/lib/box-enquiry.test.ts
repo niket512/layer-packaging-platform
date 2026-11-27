@@ -22,11 +22,13 @@ describe("box enquiry", () => {
     expect(stepErrors({ ...emptyEnquiry(), boxTypes: ["mailer"] }, 0)).toBeNull();
     expect(stepErrors({ ...emptyEnquiry(), boxTypes: ["mailer", "rigid"] }, 0)).not.toBeNull();
   });
-  it("restores unsent drafts with one box type and one product", () => {
-    const draft = { ...emptyEnquiry(), boxTypes: ["rigid", "mailer"] as const, products: ["Haircare", "Food & snacks"], quantityExact: "1000", wall: "5-ply" };
+  it("restores unsent drafts with one box type and no product answer", () => {
+    const draft = { ...emptyEnquiry(), boxTypes: ["rigid", "mailer"] as const, products: ["Haircare", "Food & snacks"], productOther: "Candles", quantityExact: "1000", wall: "5-ply" };
     const restored = singleChoiceEnquiry({ ...draft, boxTypes: [...draft.boxTypes] });
     expect(restored.boxTypes).toEqual(["rigid"]);
-    expect(restored.products).toEqual(["Haircare"]);
+    // The form no longer asks what goes inside, so an old draft must not submit it unseen.
+    expect(restored.products).toEqual([]);
+    expect(restored.productOther).toBe("");
     expect(restored.quantityExact).toBe("1000");
     expect(restored.wall).toBe("");
     expect(draft.products).toHaveLength(2);
@@ -93,7 +95,7 @@ describe("box enquiry", () => {
     expect(enquiryBrief(e).find(f => f.topic === "quantity")?.value).toBe("2,500");
     expect(enquiryBrief(e).map(f => f.topic)).not.toContain("printing");
   });
-  it("products stay uncapped and the finishing-notes field is gone", () => {
+  it("a product answer saved earlier still serialises; the finishing-notes field is gone", () => {
     const e = { ...emptyEnquiry(), boxTypes: ["rigid" as const], products: ["Haircare", "Other"], productOther: "Candles", pincode: "400001" };
     expect(enquiryDetails(e, "v2").pincode).toBe("400001");
     expect(enquiryDetails(e, "v2")).not.toHaveProperty("product_details");

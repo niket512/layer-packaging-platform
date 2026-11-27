@@ -47,7 +47,8 @@ export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], pro
 export function singleChoiceEnquiry(e: BoxEnquiry): BoxEnquiry {
   // Drafts saved before a style was retired must not submit a style the form no longer offers.
   const known = e.boxTypes.filter(t => BOX_TYPES.some(b => b.id === t));
-  return pruneForTypes({ ...e, boxTypes: known.slice(0, 1), products: e.products.slice(0, 1) });
+  // The product question is no longer asked, so an old draft must not carry it into a new enquiry.
+  return pruneForTypes({ ...e, boxTypes: known.slice(0, 1), products: [], productOther: "" });
 }
 
 /** Drops material choices that no longer apply after box types change. */
