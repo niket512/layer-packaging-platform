@@ -27,6 +27,7 @@ import catBoxes from "@/assets/design-ship-kraft.webp";
 import catPouches from "@/assets/category-stand-up-pouches.webp";
 import catLabels from "@/assets/cat-labels.webp";
 import boxPhoto from "@/assets/snaplogo-box-photo.webp.asset.json";
+import phoneBoxPhoto from "@/assets/box-photo-phone.webp.asset.json";
 import type { IntakeReply } from "@/lib/sourcing-intake";
 // The design gallery (large catalogue data) loads after the form so the form appears sooner on phones.
 const DESIGN_PREFILL_KEY = "snaplogo.design-prefill"; // must match Designs page
@@ -361,8 +362,10 @@ export default function SourcingAgent({ category, requirementMode = "chat", init
 <div ref={intro}>
             <div className="relative text-center">
               {newBoxForm && !landing ? <div className="relative isolate min-h-[200px] overflow-hidden text-left sm:-mx-4 sm:min-h-[280px] sm:px-4 sm:py-7">
-                <img src={boxPhoto.url} alt="Open kraft cardboard box" width={1200} height={675} fetchPriority="high" decoding="async" className="absolute inset-0 -z-10 hidden h-full w-full object-cover sm:block" />
-                <img src={boxPhoto.url} alt="" width={1200} height={675} decoding="async" className="absolute bottom-0 right-0 -z-10 h-32 w-32 rounded-lg object-cover object-right sm:hidden" />
+                <picture>
+                  <source media="(min-width: 640px)" srcSet={boxPhoto.url} />
+                  <img src={phoneBoxPhoto.url} alt="Open kraft cardboard box" width={256} height={256} fetchPriority="high" decoding="async" className="absolute bottom-0 right-0 -z-10 h-32 w-32 rounded-lg object-cover object-right sm:inset-0 sm:h-full sm:w-full sm:rounded-none sm:object-center" />
+                </picture>
                 <h1 className="max-w-[520px] text-[28px] font-bold leading-8 text-foreground sm:max-w-[60%] sm:text-[40px] sm:leading-[1.15]">Custom Boxes from <span className="block text-primary">40+ Vetted Factories</span></h1>
                 <p className="mt-2 max-w-[62%] text-sm leading-5 text-muted-foreground sm:max-w-[52%] sm:text-base sm:leading-6">Compare multiple quotes on WhatsApp <span className="font-semibold text-primary">within 6 hours</span> — no commission, free.</p>
               </div> : <>
