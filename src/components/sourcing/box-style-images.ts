@@ -9,8 +9,6 @@ import rigid160 from "@/assets/box-styles/rigid-160.webp.asset.json";
 import rigid320 from "@/assets/box-styles/rigid-320.webp.asset.json";
 import display160 from "@/assets/box-styles/display-160.webp.asset.json";
 import display320 from "@/assets/box-styles/display-320.webp.asset.json";
-import diecut160 from "@/assets/box-styles/diecut-160.webp.asset.json";
-import diecut320 from "@/assets/box-styles/diecut-320.webp.asset.json";
 import gift160 from "@/assets/box-styles/gift-160.webp.asset.json";
 import gift320 from "@/assets/box-styles/gift-320.webp.asset.json";
 
@@ -21,6 +19,5 @@ export const BOX_STYLE_IMAGES: Partial<Record<BoxType, { src: string; srcSet: st
   product: { src: product160.url, srcSet: `${product160.url} 160w, ${product320.url} 320w` },
   rigid: { src: rigid160.url, srcSet: `${rigid160.url} 160w, ${rigid320.url} 320w` },
   display: { src: display160.url, srcSet: `${display160.url} 160w, ${display320.url} 320w` },
-  diecut: { src: diecut160.url, srcSet: `${diecut160.url} 160w, ${diecut320.url} 320w` },
   gift: { src: gift160.url, srcSet: `${gift160.url} 160w, ${gift320.url} 320w` },
 };
