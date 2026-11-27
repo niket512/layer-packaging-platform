@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Adapt the reference form layout with a desktop upload column and compact phone fields; phone/laptop checks verified image attachment/removal, retained fields and contact progression without submitting an enquiry; eight form tests passed.
 - [x] Migrate directory-search, extract-catalogue, procure-ai and reddit-capi into the app; verified chat, signed-in AI/catalogue paths and mocked one-time conversion reporting without real enquiries or ad events.
 - [x] Fix the reported text-contrast warning without changing the visual direction; final mobile Lighthouse has zero contrast failures and accessibility 100.
 - [x] Recheck the reported 3.8 s LCP and 4.2 s Speed Index; final local mobile Lighthouse measures both at 2.1 s, with live verification still tracked below.
