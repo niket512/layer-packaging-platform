@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useHydrated } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/router-compat";
-import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, X, ImagePlus, Box, Pencil, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, X, ImagePlus, Box, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -14,8 +14,8 @@ import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from 
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
 import { BOX_TYPES, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepFieldError, type BoxEnquiry } from "@/lib/box-enquiry";
 
-const STEPS = ["Box type", "Project details", "Contact"];
-const STEP_ICONS = [Box, Pencil, User];
+const STEPS = ["Box type", "Details & contact"];
+const STEP_ICONS = [Box, Pencil];
 const KEY = "snaplogo.form.v2.draft";
 
 export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
@@ -26,7 +26,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const saved = useRef<{ step?: number; e?: BoxEnquiry; id?: string } | null>(null);
   const readDraft = (): { step?: number; e?: BoxEnquiry; id?: string } => { try { saved.current = JSON.parse(localStorage.getItem(KEY) ?? "{}") ?? {}; } catch { saved.current = {}; } return saved.current ?? {}; };
   if (saved.current === null && hydratedAtMount) readDraft();
-  const [step, setStep] = useState(() => Math.min(2, Math.max(0, saved.current?.step ?? 0)));
+  const [step, setStep] = useState(() => Math.min(1, Math.max(0, saved.current?.step ?? 0)));
   const [e, setE] = useState<BoxEnquiry>(() => singleChoiceEnquiry({ ...emptyEnquiry(), ...saved.current?.e, sizeUnknown: false }));
   const [error, setError] = useState<{ field?: string; message: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -43,12 +43,13 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     const draft = readDraft();
     if (draft.id) id.current = draft.id;
     if (draft.e) setE(singleChoiceEnquiry({ ...emptyEnquiry(), ...draft.e, sizeUnknown: false }));
-    const restoredStep = Math.min(2, Math.max(0, draft.step ?? 0));
+    const restoredStep = Math.min(1, Math.max(0, draft.step ?? 0));
     if (restoredStep) { first.current = true; setStep(restoredStep); }
   }, [hydrated]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (saved.current === null) return; try { localStorage.setItem(KEY, JSON.stringify({ step, e, id: id.current })); } catch { /* memory only */ } }, [step, e]);
   useEffect(() => {
-    trackJourney({ kind: "form_step", step: String(step + 1), category: "form-v2" });
+    trackJourney({ kind: "form_step", step: String(step + 1), category: "form-v2-2step" });
+    if (step === 1) trackFunnel("contact_shown");
     if (first.current) { first.current = false; return; }
     heading.current?.focus({ preventScroll: true });
     const form = heading.current?.closest("form");
@@ -82,25 +83,22 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     const problem = stepFieldError(e, step);
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: String(step + 1), reason: step === 0 ? "format_required" : "details_invalid" }); return; }
     if (step === 0) { trackFormField("format", true, 0); trackFunnel("brief_shown"); }
-    if (step === 1) {
-      trackFormField("quantity", Boolean(e.quantityExact), 1);
-      trackFormField("size", Boolean(e.sizeUnknown || e.length), 1);
-      trackFormField("message", Boolean(e.message.trim()), 1);
-      trackFormField("photos", photos.length > 0, 1);
-      trackFunnel("contact_shown");
-    }
     setStep(s => s + 1);
   };
   const submit = async () => {
     if (busy) return;
+    trackFormField("quantity", Boolean(e.quantityExact), 1);
+    trackFormField("size", Boolean(e.length), 1);
+    trackFormField("message", Boolean(e.message.trim()), 1);
+    trackFormField("photos", photos.length > 0, 1);
     const detailsProblem = stepFieldError(e, 1);
     if (detailsProblem) { setStep(1); setError(detailsProblem); trackJourney({ kind: "form_error", step: "2", reason: "details_invalid" }); return; }
     const contactProblem = stepFieldError(e, 2);
-    if (contactProblem) { setError(contactProblem); trackJourney({ kind: "form_error", step: "3", reason: "phone_invalid" }); return; }
+    if (contactProblem) { setError(contactProblem); trackJourney({ kind: "form_error", step: "2", reason: "phone_invalid" }); return; }
     const number = indianMobile(e.phone);
     if (!number) return;
-    trackFormField("phone", true, 2);
-    trackFormField("delivery", Boolean(e.pincode.trim()), 2);
+    trackFormField("phone", true, 1);
+    trackFormField("delivery", Boolean(e.pincode.trim()), 1);
     const brief = enquiryBrief(e);
     const payload = formSubmission(brief, number, enquiryText(e, photos.length), photos);
     if (!payload) return;
@@ -113,23 +111,29 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       markConversionPending(id.current);
       try { localStorage.removeItem(KEY); localStorage.setItem("snaplogo.sourcing.thankyou", JSON.stringify({ leadId: id.current, submissionId: savedId.current, phone: number, brief })); } catch { /* saved anyway */ }
       navigate("/sourcing/thank-you");
-    } catch (err) { trackJourney({ kind: "form_error", step: "3", reason: "save_failed" }); setError({ message: err instanceof Error ? err.message : "Please try again." }); }
+    } catch (err) { trackJourney({ kind: "form_error", step: "2", reason: "save_failed" }); setError({ message: err instanceof Error ? err.message : "Please try again." }); }
     finally { setBusy(false); }
   };
+
+  useEffect(() => {
+    if (!error?.field) return;
+    const input = document.getElementById(`v2-${error.field}`);
+    input?.focus({ preventScroll: true });
+    input?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [error]);
 
   const fieldError = (field: string) => error?.field === field ? <p role="alert" className="mt-1 text-xs font-medium text-destructive">{error.message}</p> : null;
   const group = (title: string, children: React.ReactNode, hint?: string, required?: boolean) => <fieldset className="min-w-0 space-y-1.5"><legend className={`mb-1.5 flex flex-wrap items-baseline gap-1.5 ${required ? "text-sm font-semibold" : "text-[13px] font-medium text-muted-foreground"}`}>{title}{required && <><span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></>}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</legend>{children}</fieldset>;
   const text = (key: keyof BoxEnquiry, labelText: string, props: React.ComponentProps<typeof Input> = {}, optional?: boolean) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className={`mb-1.5 block ${optional ? "text-[13px] font-medium text-muted-foreground" : "text-sm font-semibold"}`}>{labelText}</label><Input id={`v2-${key}`} className={`h-11 rounded-lg bg-card text-base ${optional ? "border-border/60" : ""} ${error?.field === String(key) ? "border-destructive" : ""}`} value={String(e[key] ?? "")} onChange={ev => set(key, ev.target.value as never)} {...props} />{fieldError(String(key))}</div>;
 
-  return <form aria-label="Box enquiry form" noValidate onSubmit={ev => { ev.preventDefault(); if (step === 2) void submit(); else next(); }} className="enquiry-form mt-2 sm:mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border/70 bg-card text-left sm:rounded-[24px]">
+  return <form aria-label="Box enquiry form" noValidate onSubmit={ev => { ev.preventDefault(); if (step === 1) void submit(); else next(); }} className="enquiry-form mt-2 sm:mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border/70 bg-card text-left sm:rounded-[24px]">
     <div className="border-b border-border px-4 pb-2.5 pt-3 sm:px-6 sm:pb-3 sm:pt-4">
-      <ol aria-label="Enquiry progress" className="-mx-4 -mt-3 mb-2.5 grid grid-cols-[0.9fr_1.3fr_0.8fr] border-b border-border bg-muted/40 sm:mx-0 sm:mt-0 sm:mb-2.5 sm:grid-cols-3 sm:gap-2 sm:border-0 sm:bg-transparent">{STEPS.map((l, i) => { const Icon = STEP_ICONS[i]; return <li key={l} aria-current={step === i ? "step" : undefined} className={`min-w-0 border-b-2 px-1 py-2.5 sm:border-b-0 sm:border-t-2 sm:px-0 sm:py-0 sm:pt-1.5 ${step === i ? "border-primary bg-card sm:bg-transparent" : "border-transparent sm:border-border"}`}><span className={`flex min-w-0 items-center justify-center gap-1.5 text-[11px] font-semibold sm:justify-start sm:text-xs ${step === i ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground"}`}>{Icon && <Icon className="h-4 w-4 shrink-0 sm:hidden" />}<span className="hidden sm:inline-flex">{i < step ? <Check className="h-3.5 w-3.5 shrink-0" /> : <span>{i + 1}.</span>}</span><span className="truncate">{l}</span></span></li>; })}</ol>
+      <ol aria-label="Enquiry progress" className="-mx-4 -mt-3 mb-2.5 grid grid-cols-2 border-b border-border bg-muted/40 sm:mx-0 sm:mt-0 sm:mb-2.5 sm:grid-cols-2 sm:gap-2 sm:border-0 sm:bg-transparent">{STEPS.map((l, i) => { const Icon = STEP_ICONS[i]; return <li key={l} aria-current={step === i ? "step" : undefined} className={`min-w-0 border-b-2 px-1 py-2.5 sm:border-b-0 sm:border-t-2 sm:px-0 sm:py-0 sm:pt-1.5 ${step === i ? "border-primary bg-card sm:bg-transparent" : "border-transparent sm:border-border"}`}><span className={`flex min-w-0 items-center justify-center gap-1.5 text-[11px] font-semibold sm:justify-start sm:text-xs ${step === i ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground"}`}>{Icon && <Icon className="h-4 w-4 shrink-0 sm:hidden" />}<span className="hidden sm:inline-flex">{i < step ? <Check className="h-3.5 w-3.5 shrink-0" /> : <span>{i + 1}.</span>}</span><span className="truncate">{l}</span></span></li>; })}</ol>
       <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
         <span aria-hidden="true" className="h-7 w-1 rounded-full bg-primary" />
-        <h2 ref={heading} tabIndex={-1} className="min-w-0 text-base font-semibold leading-tight outline-hidden sm:text-2xl">{["What kind of packaging are you looking for?", "Tell us about your project", "Where should we send your quotes?"][step]}</h2>
+        <h2 ref={heading} tabIndex={-1} className="min-w-0 text-base font-semibold leading-tight outline-hidden sm:text-2xl">{["What kind of packaging are you looking for?", "Tell us about your project"][step]}</h2>
       </div>
-      <p className="mt-1 pl-4 text-[13px] leading-5 text-muted-foreground sm:text-sm">{["Choose the closest option. Not sure? We’ll help you figure it out.", "Approximate details are absolutely fine. Our team can help you finalise the specifications.", "We’ll connect you with relevant manufacturers and share multiple quotes on WhatsApp within 6 hours."][step]}</p>
-      {step === 2 && <p className="mt-2 pl-4 text-xs font-medium text-foreground">✓ Free sourcing · ✓ No commission · ✓ No obligation to purchase</p>}
+      <p className="mt-1 pl-4 text-[13px] leading-5 text-muted-foreground sm:text-sm">{["Choose the closest option. Not sure? We’ll help you figure it out.", "Approximate details are absolutely fine. Our team can help you finalise the specifications."][step]}</p>
     </div>
     <fieldset disabled={busy} className={`min-w-0 px-4 sm:px-6 ${step === 1 ? "space-y-2.5 py-3" : step === 0 ? "space-y-3 py-3 sm:space-y-4 sm:py-5" : "space-y-4 py-4 sm:py-5"}`}>
       {step === 0 && group("Box type", <><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["display"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => chooseBox(b.id)} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center shadow-xs transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : "border-border bg-card hover:border-primary/50 active:border-primary"}`}>
@@ -161,16 +165,16 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           </div>
         </div>
         <div className="min-w-0"><label htmlFor="v2-message" className="mb-1.5 flex h-6 items-center gap-1 text-[13px] font-medium text-muted-foreground">Message / Project Details</label><textarea id="v2-message" rows={2} maxLength={500} placeholder="e.g. printing, finish, material, board strength" value={e.message} onChange={ev => set("message", ev.target.value)} className={`w-full resize-none rounded-lg bg-card px-3 py-2.5 text-base leading-5 outline-none focus-visible:ring-2 focus-visible:ring-ring ${error?.field === "message" ? "border-destructive" : "border-border/60"} border`} />{fieldError("message")}</div>
-      </>}
-      {step === 2 && <>
+
         <div className="grid gap-3 sm:grid-cols-2">
           {text("brand", "Brand / company name (optional)", { autoComplete: "organization", maxLength: 120 }, true)}
           {text("pincode", "Delivery city / PIN code", { inputMode: "numeric", maxLength: 6, placeholder: "e.g. 400001", autoComplete: "postal-code" }, true)}
         </div>
         <div><label htmlFor="v2-phone" className="mb-1.5 flex items-center gap-1 text-sm font-semibold">WhatsApp number<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><div className={`flex h-11 items-center overflow-hidden rounded-lg border bg-card focus-within:ring-2 focus-within:ring-ring ${error?.field === "phone" ? "border-destructive" : "border-input"}`}><span className="border-r border-border px-3 text-base text-muted-foreground">+91</span><Input id="v2-phone" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={16} value={e.phone} onChange={ev => set("phone", ev.target.value)} placeholder="98765 43210" aria-required="true" className="h-11 rounded-none border-0 bg-transparent text-base focus-visible:ring-0 focus-visible:ring-offset-0" /></div>{error?.field === "phone" ? <p role="alert" className="mt-1 text-xs font-medium text-destructive">{error.message}</p> : <p className="mt-1 text-xs text-muted-foreground">Used only to send your quotes on WhatsApp — no spam.</p>}</div>
+        <p className="text-xs font-medium text-foreground">Free sourcing · No commission · No obligation to purchase</p>
       </>}
     </fieldset>
     {error && !error.field && <p role="alert" className="px-4 pb-4 text-sm text-destructive sm:px-7">{error.message}</p>}
-    <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-7">{step > 0 ? <Button type="button" variant="ghost" disabled={busy} className="h-12 rounded-full px-3" onClick={() => { setStep(s => s - 1); setError(null); }}><ArrowLeft />Back</Button> : <span className="text-xs text-muted-foreground">Free · No commission · <span aria-hidden="true" className="text-primary">*</span> Required</span>}<Button type="submit" disabled={busy} className="h-12 rounded-full px-5 text-sm font-semibold">{busy ? <Loader2 className="animate-spin" /> : <><span className="sm:hidden">{step === 2 ? "Get My Free Quotes" : "Continue"}</span><span className="hidden sm:inline">{["Continue to project details", "Continue to contact", "Get My Free Quotes"][step]}</span><ArrowRight /></>}</Button></div>
+    <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-7">{step > 0 ? <Button type="button" variant="ghost" disabled={busy} className="h-12 rounded-full px-3" onClick={() => { setStep(s => s - 1); setError(null); }}><ArrowLeft />Back</Button> : <span className="text-xs text-muted-foreground">Free · No commission · <span aria-hidden="true" className="text-primary">*</span> Required</span>}<Button type="submit" disabled={busy} className="h-12 rounded-full px-5 text-sm font-semibold">{busy ? <Loader2 className="animate-spin" /> : <><span className="sm:hidden">{step === 1 ? "Get My Free Quotes" : "Continue"}</span><span className="hidden sm:inline">{["Continue to project details", "Get My Free Quotes"][step]}</span><ArrowRight /></>}</Button></div>
   </form>;
 }

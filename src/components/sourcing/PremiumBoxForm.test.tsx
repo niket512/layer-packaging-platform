@@ -49,3 +49,13 @@ it("step 2 no longer asks what goes inside the box", async () => {
   expect(screen.queryByText(/What product will go inside/)).toBeNull();
   expect(screen.getByLabelText(/Quantity/)).toBeTruthy();
 });
+
+it("step 2 combines project details and WhatsApp contact with the submit button", async () => {
+  render(<PremiumBoxForm onActive={vi.fn()} />);
+  await act(async () => { fireEvent.click(boxButton("Mailer box")); });
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: /Continue/ })); });
+  expect(screen.getByLabelText(/Quantity/)).toBeTruthy();
+  expect(screen.getByLabelText(/WhatsApp number/)).toBeTruthy();
+  expect(screen.getAllByRole("listitem")).toHaveLength(2);
+  expect(screen.getByRole("button", { name: /Get My Free Quotes/ })).toBeTruthy();
+});

@@ -26,7 +26,7 @@ export function adminJourneyLabel(event: JourneyEvent) {
   if (event.kind === "page") return `Opened ${adminPageLabel(event.path)}`;
   if (event.kind === "form_step") {
     // Untagged steps cannot reliably identify the form's historical field order.
-    const name = event.category === "form-v2" ? ADMIN_FORM_STEPS[Number(event.step) - 1] : undefined;
+    const name = event.category === "form-v2-2step" ? ["Box type", "Project details & contact"][Number(event.step) - 1] : event.category === "form-v2" ? ADMIN_FORM_STEPS[Number(event.step) - 1] : undefined;
     return `Form step ${event.step}${name ? ` · ${name}` : ""}`;
   }
   if (event.kind === "field") return `${event.filled ? "Filled" : "Cleared"} ${ADMIN_FIELD_LABELS[event.field ?? ""] ?? "field"}`;

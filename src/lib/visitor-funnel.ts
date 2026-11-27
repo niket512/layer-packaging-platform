@@ -19,6 +19,7 @@ export function buildStages(rows: VisitorReportRow[], definitions: StageDefiniti
 export function visitorFunnels(rows: VisitorReportRow[]) {
   const request = rows.filter(row => has(row, "page_opened"));
   const form = rows.filter(row => row.journey?.some(e => e.kind === "form_step"));
+  const combined = form.some(row => row.journey?.some(e => e.kind === "form_step" && e.category === "form-v2-2step"));
   const chat = rows.filter(row => has(row, "first_message") || row.journey?.some(e => e.kind === "page" && e.path === "/request-form") || ["questions_shown", "design_shown"].some(step => has(row, step as keyof VisitorReportRow["steps"])));
   return {
     overall: buildStages(rows, [
@@ -31,8 +32,8 @@ export function visitorFunnels(rows: VisitorReportRow[]) {
     ]),
     form: buildStages(form, [
       { id: "form1", label: "1 · Box type", matches: row => formStep(row, "1") },
-      { id: "form2", label: "2 · Project details", matches: row => formStep(row, "2") },
-      { id: "form3", label: "3 · Contact & submit", matches: row => formStep(row, "3") },
+      { id: "form2", label: combined ? "2 · Project details & contact" : "2 · Project details", matches: row => formStep(row, "2") },
+      ...(!combined || form.some(row => formStep(row, "3")) ? [{ id: "form3", label: combined ? "3 · Contact (previous form)" : "3 · Contact & submit", matches: (row: VisitorReportRow) => formStep(row, "3") }] : []),
       ...(form.some(row => formStep(row, "4")) ? [{ id: "form4", label: "4 · Review (historical visits)", matches: (row: VisitorReportRow) => formStep(row, "4") }] : []),
       { id: "formContact", label: "Submitted contact", matches: row => has(row, "contact_submitted") },
       { id: "formSaved", label: "Enquiry saved", matches: row => has(row, "request_saved") },
