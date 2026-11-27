@@ -67,7 +67,7 @@ export function parseBoxSize(raw: string): Pick<BoxEnquiry, "length" | "width" |
   return { length, width, height };
 }
 
-export type StepError = { field: "boxTypes" | "phone" | "pincode" | "quantityExact" | "size" | "message"; message: string };
+export type StepError = { field: "boxTypes" | "phone" | "pincode" | "quantityExact" | "size"; message: string };
 
 /** The first problem on a step, tagged with the field the message belongs to. */
 export function stepFieldError(e: BoxEnquiry, step: number): StepError | null {
@@ -75,7 +75,6 @@ export function stepFieldError(e: BoxEnquiry, step: number): StepError | null {
   if (step === 1) {
     if (!qty(e.quantityExact)) return { field: "quantityExact", message: "Enter the number of boxes you need, e.g. 12000." };
     if (!e.sizeUnknown && ((e.sizeInput?.trim() && !parseBoxSize(e.sizeInput)) || ([e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)))) return { field: "size", message: "Enter length × breadth × height, e.g. 12 × 8 × 6, or leave box size blank." };
-    if (!e.message.trim()) return { field: "message", message: "Tell us about your project, e.g. finish, material or board strength." };
   }
   if (step === 2) {
     if (!indianMobile(e.phone)) return { field: "phone", message: "Enter a 10-digit Indian WhatsApp number, e.g. 98765 43210." };

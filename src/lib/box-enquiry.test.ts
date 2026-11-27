@@ -125,9 +125,9 @@ describe("box enquiry", () => {
     expect(enquiryText(e, 2)).toContain("Design reference: 2 photos attached");
     expect(enquiryText(e)).not.toContain("Design reference");
   });
-  it("a project-details message is required and travels with the enquiry", () => {
+  it("a project-details message is optional and travels with the enquiry when given", () => {
     const e = { ...emptyEnquiry(), boxTypes: ["mailer" as const], quantityExact: "500", message: "  " };
-    expect(stepErrors(e, 1)).not.toBeNull();
+    expect(stepErrors(e, 1)).toBeNull();
     const withMsg = { ...e, message: "Soft-touch finish, 350gsm SBS board" };
     expect(stepErrors(withMsg, 1)).toBeNull();
     expect(enquiryDetails(withMsg, "v2").message).toBe("Soft-touch finish, 350gsm SBS board");

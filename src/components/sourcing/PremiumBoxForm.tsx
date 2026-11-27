@@ -163,7 +163,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
             {fieldError("quantityExact")}
           </div>
         </div>
-        <div className="min-w-0"><label htmlFor="v2-message" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Message / Project Details<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><textarea id="v2-message" rows={2} maxLength={500} aria-required="true" placeholder="e.g. finish, material, board strength" value={e.message} onChange={ev => set("message", ev.target.value)} className={`w-full resize-none rounded-lg bg-card px-3 py-2.5 text-base leading-5 outline-none focus-visible:ring-2 focus-visible:ring-ring ${error?.field === "message" ? "border-destructive" : "border-border/60"} border`} />{fieldError("message")}</div>
+        <div className="min-w-0"><label htmlFor="v2-message" className="mb-1.5 flex h-6 items-center gap-1 text-[13px] font-medium text-muted-foreground">Message / Project Details</label><textarea id="v2-message" rows={2} maxLength={500} placeholder="e.g. finish, material, board strength" value={e.message} onChange={ev => set("message", ev.target.value)} className={`w-full resize-none rounded-lg bg-card px-3 py-2.5 text-base leading-5 outline-none focus-visible:ring-2 focus-visible:ring-ring ${error?.field === "message" ? "border-destructive" : "border-border/60"} border`} />{fieldError("message")}</div>
       </>}
       {step === 2 && <>
         <div className="grid gap-3 sm:grid-cols-2">
