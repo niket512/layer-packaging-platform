@@ -56,6 +56,12 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (form && form.getBoundingClientRect().top < 64) form.scrollIntoView({ block: "start", behavior: "smooth" });
   }, [step]);
   const set = <K extends keyof BoxEnquiry>(key: K, value: BoxEnquiry[K]) => { onActive(); setError(null); setE(prev => key === "boxTypes" ? pruneForTypes({ ...prev, [key]: value }) : { ...prev, [key]: value }); };
+  const chooseBox = (type: BoxEnquiry["boxTypes"][number]) => {
+    set("boxTypes", [type]);
+    trackFormField("format", true, 0);
+    trackFunnel("brief_shown");
+    setStep(1);
+  };
   const onSize = (raw: string) => {
     onActive(); setError(null);
     setE(prev => ({ ...prev, sizeInput: raw, ...(parseBoxSize(raw) ?? { length: "", width: "", height: "" }) }));
@@ -131,7 +137,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       {step === 2 && <p className="mt-1 text-[13px] leading-5 text-muted-foreground">We coordinate your quotes on WhatsApp — no spam.</p>}
     </div>
     <fieldset disabled={busy} className={`min-w-0 px-4 sm:px-6 ${step === 1 ? "space-y-2.5 py-3" : "space-y-4 py-4 sm:py-5"}`}>
-      {step === 0 && group("Box type", <><div className="grid grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["display"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => set("boxTypes", [b.id])} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : "border-border hover:border-primary/40"}`}>
+      {step === 0 && group("Box type", <><div className="grid grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["display"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => chooseBox(b.id)} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : "border-border hover:border-primary/40"}`}>
         <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg photo-frame isolate sm:h-20">{BOX_STYLE_IMAGES[b.id] ? <img src={BOX_STYLE_IMAGES[b.id]?.src} srcSet={BOX_STYLE_IMAGES[b.id]?.srcSet} sizes="(max-width: 639px) 80px, 160px" alt="" loading={desktopOnly ? "lazy" : "eager"} decoding="async" width={160} height={160} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : <HelpCircle className="h-6 w-6 text-muted-foreground" />}</span>
         <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>{b.use && <span className="-mt-0.5 hidden text-[10px] leading-3 text-muted-foreground sm:block">{b.use}</span>}
         <span className={`absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full border ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{on && <Check className="h-2.5 w-2.5" />}</span>
