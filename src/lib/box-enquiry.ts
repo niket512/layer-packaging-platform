@@ -10,7 +10,7 @@ export const BOX_TYPES: { id: BoxType; label: string; description: string; use?:
   { id: "display", use: "Counter retail", label: "Display / counter box", description: "Retail counter and shelf-ready displays" },
   { id: "diecut", use: "Shapes & windows", label: "Die-cut box", description: "Custom shapes, windows and structures" },
   { id: "gift", use: "Hampers", label: "Gift box", description: "Hampers and gifting with inserts" },
-  { id: "unsure", label: "Not sure — help me choose", description: "We’ll suggest the right box" },
+  { id: "unsure", label: "Others", description: "We’ll suggest the right box" },
 ];
 export const PRODUCT_CATEGORIES = ["Beauty & skincare", "Cosmetics & makeup", "Haircare", "Perfumes & fragrances", "Food & snacks", "Chocolates & confectionery", "Dry fruits & nuts", "Bakery & sweets", "Health & wellness", "Pharmaceuticals", "Apparel & fashion", "Footwear", "Jewellery & accessories", "Electronics & gadgets", "Home & lifestyle", "Gifts & hampers", "Subscription boxes", "Other"];
 export const WALLS = ["3-ply", "5-ply", "7-ply", "Not sure"];
