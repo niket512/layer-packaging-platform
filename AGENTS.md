@@ -1,4 +1,5 @@
 # Architecture rules
+- Admin Chats keeps reporting and conversations in separate tab views; shared admin journey labels name tagged current form steps and leave untagged step order neutral, preserving stored events and funnel counts.
 - Keep the box-enquiry reference restyling presentation-only: a compressed desktop hero photo and compact phone form share the existing fields, single-size parser and submission/tracking flow, so visual changes cannot alter enquiry rules.
 - Keep first-screen box style photos in a small responsive asset module and select the hero's phone crop through a single picture element; mount the homepage gallery/map near the viewport and load the reply renderer only for actual chat replies, so oversized or hidden images and catalogue code do not delay form entry.
 <!-- LOVABLE:BEGIN -->

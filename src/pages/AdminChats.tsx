@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { MessageSquare, RefreshCw, Search, ShieldCheck, ArrowLeft, Phone } from "lucide-react";
+import { MessageSquare, RefreshCw, Search, ShieldCheck, ArrowLeft, Phone, BarChart3, Activity } from "lucide-react";
 import AppShell, { SignInBox, useSession } from "@/components/market/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import type { SourcingTurn } from "@/lib/sourcing";
 import { BRIEF_LABELS } from "@/lib/sourcing";
 import type { SourcingBriefField } from "@/lib/sourcing-intake";
@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ADMIN_SOURCES, matchesAdminSource } from "@/lib/admin-source-filter";
 
 type Chat = { id: string; title: string; status: string; contact: string | null; updated_at: string; created_at: string; transcript: SourcingTurn[]; brief: SourcingBriefField[]; requirement?: string; images?: string[]; session_id?: string | null; cataloguesViewed?: number; designsUsed?: number; source?: string };
-const date = (value: string) => new Date(value).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const date = (value: string) => new Date(value).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" });
 
 export default function AdminChats() {
   const { user, roles, loading } = useSession();
@@ -31,6 +31,7 @@ export default function AdminChats() {
   const [lastUpdated, setLastUpdated] = useState("");
   const [dateRange, setDateRange] = useState({ from: "", to: "" });
   const [source, setSource] = useState("all");
+  const [view, setView] = useState("activity");
 
   const refresh = async () => {
     if (!isAdmin) return;
@@ -85,36 +86,45 @@ export default function AdminChats() {
   const visible = datedChats.filter(chat => (filter === "all" || chat.status === filter) && `${chat.title} ${chat.contact ?? ""} ${chat.requirement ?? ""} ${chat.transcript.map(t => t.query).join(" ")}`.toLowerCase().includes(search.toLowerCase()));
   const selected = visible.find(chat => chat.id === selectedId);
   return <AppShell user={user} isAdmin>
-    <div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><p className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase text-primary"><ShieldCheck className="h-3.5 w-3.5" />Private workspace</p><h1 className="text-3xl font-bold">Chats <span className="text-lg font-normal text-muted-foreground">{chats.length}</span></h1></div><div className="flex items-center gap-3"><span className="text-xs text-muted-foreground">{lastUpdated && `Updated ${lastUpdated}`}</span><Button variant="outline" size="icon" onClick={() => void refresh()} disabled={refreshing} aria-label="Refresh chats" title="Refresh chats"><RefreshCw className={refreshing ? "animate-spin" : ""} /></Button></div></div>
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><p className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase text-primary"><ShieldCheck className="h-3.5 w-3.5" />Private workspace</p><h1 className="text-3xl font-bold">Chats & visitor journeys</h1><p className="mt-1 text-sm text-muted-foreground">{chats.length} conversation records · All times in IST</p></div><div className="flex items-center gap-3"><span className="text-xs text-muted-foreground">{lastUpdated && `Updated ${lastUpdated}`}</span><Button variant="outline" size="icon" onClick={() => void refresh()} disabled={refreshing} aria-label="Refresh chats" title="Refresh chats"><RefreshCw className={refreshing ? "animate-spin" : ""} /></Button></div></div>
     {error && <p role="alert" className="mb-3 text-sm text-destructive">{error}</p>}
-    <div aria-label="Report date range" className="mb-5 flex flex-wrap items-end gap-3">
-      <div className="w-full sm:w-52"><label className="mb-1 block text-sm font-medium" htmlFor="admin-source">Visitor source</label><Select value={source} onValueChange={value => { setSource(value); setSelectedId(null); }}><SelectTrigger id="admin-source" aria-label="Visitor source"><SelectValue /></SelectTrigger><SelectContent>{ADMIN_SOURCES.map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent></Select></div>
+    <div aria-label="Report date range" className="mb-5 flex flex-wrap items-end gap-3 border-y border-border py-4">
+      <div className="w-full sm:w-52"><label className="mb-1 block text-sm font-medium" htmlFor="admin-source">Traffic source</label><Select value={source} onValueChange={value => { setSource(value); setSelectedId(null); }}><SelectTrigger id="admin-source" aria-label="Visitor source"><SelectValue /></SelectTrigger><SelectContent>{ADMIN_SOURCES.map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent></Select></div>
       <div><label htmlFor="admin-date-from" className="mb-1 block text-sm font-medium">From date (IST)</label><Input id="admin-date-from" type="date" value={dateRange.from} max={dateRange.to || undefined} onChange={e => { setDateRange(range => ({ ...range, from: e.target.value })); setSelectedId(null); }} /></div>
       <div><label htmlFor="admin-date-to" className="mb-1 block text-sm font-medium">To date (IST)</label><Input id="admin-date-to" type="date" value={dateRange.to} min={dateRange.from || undefined} onChange={e => { setDateRange(range => ({ ...range, to: e.target.value })); setSelectedId(null); }} /></div>
       <Button variant="outline" onClick={() => { const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }); setDateRange({ from: today, to: today }); setSelectedId(null); }}>Today</Button>
-      <Button variant="ghost" disabled={!dateRange.from && !dateRange.to} onClick={() => setDateRange({ from: "", to: "" })}>Clear dates</Button>
+      <Button variant="ghost" disabled={!dateRange.from && !dateRange.to} onClick={() => setDateRange({ from: "", to: "" })}>All dates</Button>
       <span className="text-sm text-muted-foreground">{datedChats.length} chats · by start date</span>
     </div>
     {dateRange.from && dateRange.to && dateRange.from > dateRange.to && <p role="alert" className="mb-3 text-sm text-destructive">Choose an end date on or after the start date.</p>}
-    <ChatAnalytics chats={datedChats} />
-    <VisitorAnalytics dateRange={dateRange} sourceFilter={source} onSourceChange={value => { setSource(value); setSelectedId(null); }} sessionId={chats.find(chat => chat.id === selectedId)?.session_id} />
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><Tabs value={filter} onValueChange={setFilter}><TabsList><TabsTrigger value="all">All</TabsTrigger><TabsTrigger value="ongoing">Ongoing</TabsTrigger><TabsTrigger value="submitted">Submitted</TabsTrigger></TabsList></Tabs><div className="relative w-full sm:w-72"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search chats or contact…" aria-label="Search chats" className="pl-9" /></div></div>
-    <div className="grid min-h-[600px] overflow-hidden rounded-lg border border-border bg-background md:grid-cols-[320px_minmax(0,1fr)]">
+    <Tabs value={view} onValueChange={setView}>
+      <TabsList aria-label="Admin workspace views" className="mb-5 grid h-auto w-full grid-cols-3 gap-1 rounded-none border-b border-border bg-transparent p-0 pb-2 sm:flex sm:justify-start">
+        <TabsTrigger value="activity" className="gap-1 px-2 py-3 text-xs sm:gap-2 sm:px-3 sm:text-sm data-[state=active]:bg-accent data-[state=active]:text-primary"><Activity className="h-4 w-4" />Visitor funnel</TabsTrigger>
+        <TabsTrigger value="conversations" className="gap-1 px-2 py-3 text-xs sm:gap-2 sm:px-3 sm:text-sm data-[state=active]:bg-accent data-[state=active]:text-primary"><MessageSquare className="h-4 w-4" />Conversations</TabsTrigger>
+        <TabsTrigger value="insights" className="gap-1 px-2 py-3 text-xs sm:gap-2 sm:px-3 sm:text-sm data-[state=active]:bg-accent data-[state=active]:text-primary"><BarChart3 className="h-4 w-4" />Chat insights</TabsTrigger>
+      </TabsList>
+      <TabsContent value="activity" forceMount className="data-[state=inactive]:hidden"><VisitorAnalytics dateRange={dateRange} sourceFilter={source} onSourceChange={value => { setSource(value); setSelectedId(null); }} sessionId={chats.find(chat => chat.id === selectedId)?.session_id} /></TabsContent>
+      <TabsContent value="insights"><ChatAnalytics chats={datedChats} /></TabsContent>
+      <TabsContent value="conversations">
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><Tabs value={filter} onValueChange={setFilter}><TabsList><TabsTrigger value="all">All records</TabsTrigger><TabsTrigger value="ongoing">Not submitted</TabsTrigger><TabsTrigger value="submitted">Enquiry saved</TabsTrigger></TabsList></Tabs><div className="relative w-full sm:w-72"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search chats or contact…" aria-label="Search chats" className="pl-9" /></div></div>
+    <div className="grid min-h-[600px] overflow-hidden rounded-lg border border-border bg-background md:grid-cols-[300px_minmax(0,1fr)]">
       <aside aria-label="Chat list" className={`max-h-[750px] overflow-y-auto border-border md:border-r ${selected ? "hidden md:block" : ""}`}>
         {!visible.length && <p className="p-6 text-sm text-muted-foreground">{!loaded ? "Loading chats…" : search || filter !== "all" ? "No matching chats." : "No chats yet."}</p>}
-        {visible.map(chat => <Button variant="ghost" key={chat.id} onClick={() => setSelectedId(chat.id)} className={`h-auto w-full justify-start rounded-none border-b border-border p-4 text-left ${selectedId === chat.id ? "bg-accent" : ""}`}><span className="block min-w-0 w-full"><span className="mb-2 flex items-center justify-between gap-2 text-xs"><span className={chat.status === "submitted" ? "text-primary" : "text-muted-foreground"}>{chat.status === "submitted" ? "Submitted" : "Ongoing"}</span><span className="font-normal text-muted-foreground">{date(chat.updated_at)}</span></span><span className="block whitespace-normal break-words text-sm font-semibold">{chat.title}</span><span className="mt-2 block truncate text-xs font-normal text-muted-foreground">{chat.contact ?? "Contact not shared"}</span></span></Button>)}
+        {visible.map(chat => <Button variant="ghost" key={chat.id} onClick={() => setSelectedId(chat.id)} className={`h-auto w-full justify-start rounded-none border-b border-border p-4 text-left ${selectedId === chat.id ? "bg-accent" : ""}`}><span className="block min-w-0 w-full"><span className="mb-2 flex items-center justify-between gap-2 text-xs"><span className={chat.status === "submitted" ? "text-primary" : "text-muted-foreground"}>{chat.status === "submitted" ? "Enquiry saved" : "Not submitted"}</span><span className="font-normal text-muted-foreground">{date(chat.updated_at)}</span></span><span className="block whitespace-normal break-words text-sm font-semibold">{chat.title}</span><span className="mt-2 block truncate text-xs font-normal text-muted-foreground">{chat.contact ?? "Contact not shared"}</span></span></Button>)}
       </aside>
       <section aria-label="Conversation" className={`min-w-0 ${selected ? "" : "hidden md:flex md:items-center md:justify-center"}`}>
-        {!selected ? <div className="p-8 text-center text-muted-foreground"><MessageSquare className="mx-auto mb-3 h-8 w-8" /><p>Select a conversation</p></div> : <>
-          <header className="border-b border-border p-4"><Button variant="ghost" size="sm" className="mb-2 md:hidden" onClick={() => setSelectedId(null)}><ArrowLeft />All chats</Button><h2 className="break-words text-lg font-semibold">{selected.title}</h2><div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><span>Started {date(selected.created_at)}</span>{(() => { const st = chatStats(selected); return <span>{st.messages} messages · {st.photos} photos · {st.questions} questions asked · {st.briefFields} details · {st.minutes} min · stopped at: {st.lastStage}</span>; })()}{selected.cataloguesViewed !== undefined && <span>{selected.cataloguesViewed} catalogues viewed · {selected.designsUsed ?? 0} designs used</span>}{selected.contact && <a className="flex items-center gap-1 text-primary" href={`tel:${selected.contact.replace(/[^+\d]/g, "")}`}><Phone className="h-3 w-3" />{selected.contact}</a>}</div></header>
+        {!selected ? <div className="p-8 text-center text-muted-foreground"><MessageSquare className="mx-auto mb-3 h-8 w-8" /><p>Select a conversation to view its messages</p></div> : <>
+          <header className="border-b border-border p-4"><Button variant="ghost" size="sm" className="mb-2 md:hidden" onClick={() => setSelectedId(null)}><ArrowLeft />All chats</Button><h2 className="break-words text-lg font-semibold">{selected.title}</h2><div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><span>Started {date(selected.created_at)}</span>{(() => { const st = chatStats(selected); return <span>{st.messages} messages · {st.photos} photos · {st.questions} questions asked · {st.briefFields} details · {st.minutes} min · last recorded: {st.lastStage}</span>; })()}{selected.cataloguesViewed !== undefined && <span>{selected.cataloguesViewed} catalogues viewed · {selected.designsUsed ?? 0} designs used</span>}{selected.session_id && <Button variant="outline" size="sm" onClick={() => setView("activity")}><Activity className="h-3.5 w-3.5" />View visit journey</Button>}{selected.contact && <a className="flex items-center gap-1 text-primary" href={`tel:${selected.contact.replace(/[^+\d]/g, "")}`}><Phone className="h-3 w-3" />{selected.contact}</a>}</div></header>
           <div className="max-h-[650px] space-y-5 overflow-y-auto p-4 sm:p-6">
             {selected.brief.length > 0 && <details className="border-b border-border pb-4"><summary className="cursor-pointer text-sm font-semibold">Packaging brief</summary><dl className="mt-3 space-y-2 text-sm">{selected.brief.map(field => <div key={field.topic}><dt className="text-xs text-muted-foreground">{BRIEF_LABELS[field.topic] ?? field.topic}</dt><dd className="break-words">{field.value}</dd></div>)}</dl></details>}
-            {selected.requirement && <><p className="text-xs text-muted-foreground">Historical saved request · full assistant replies may not be available.</p><p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{selected.requirement}</p><Photos images={selected.images} /></>}
+            {selected.requirement && <><p className="text-xs text-muted-foreground">Saved request · no conversation transcript available.</p><p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{selected.requirement}</p><Photos images={selected.images} /></>}
             {selected.transcript.map((turn, i) => <div key={i} className="space-y-3"><div className="ml-auto max-w-[90%] rounded-lg bg-accent p-3"><p className="mb-1 text-xs font-semibold text-primary">Customer</p><p className="whitespace-pre-wrap break-words text-sm">{turn.query}</p><Photos images={turn.images} /></div>{(turn.assistantMessage || turn.questions?.length || turn.followUp) && <div className="mr-auto max-w-[95%] rounded-lg border border-border p-3"><p className="mb-1 text-xs font-semibold text-muted-foreground">Snaplogo</p>{turn.assistantMessage && <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{turn.assistantMessage}</p>}{turn.questions?.map(question => <p key={question.topic} className="mt-2 text-sm">{question.question}</p>)}{turn.followUp && <p className="mt-2 text-sm">{turn.followUp === "design" ? "Do you have any design with you? (optional)" : "We’ll take your requirements to our manufacturer network and share quotations from multiple manufacturers within 6 hours. Kindly share your phone number to keep you updated."}</p>}</div>}</div>)}
           </div>
         </>}
       </section>
     </div>
+      </TabsContent>
+    </Tabs>
   </AppShell>;
 }
 
