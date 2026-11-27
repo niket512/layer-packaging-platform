@@ -11,11 +11,11 @@ describe("box enquiry", () => {
     expect(size?.length).toBe("12.5");
     expect(enquiryDetails({ ...emptyEnquiry(), ...size }, "v2").dimensions_cm).toEqual([31.8, 20.3, 15.2]);
   });
-  it("rejects incomplete size input but lets users leave it blank", () => {
+  it("no longer asks for box size, so a stray size answer never blocks the step", () => {
     expect(parseBoxSize("12 x 8")).toBeNull();
     expect(parseBoxSize("12 x 0 x 6")).toBeNull();
     expect(parseBoxSize("12 x 8 x 6 x 4")).toBeNull();
-    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", message: "Matte finish", sizeInput: "12 x 8" }, 1)).not.toBeNull();
+    expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", message: "Matte finish", sizeInput: "12 x 8" }, 1)).toBeNull();
     expect(stepErrors({ ...emptyEnquiry(), quantityExact: "1000", message: "Matte finish", sizeInput: "" }, 1)).toBeNull();
   });
   it("allows exactly one box type", () => {
@@ -23,12 +23,17 @@ describe("box enquiry", () => {
     expect(stepErrors({ ...emptyEnquiry(), boxTypes: ["mailer", "rigid"] }, 0)).not.toBeNull();
   });
   it("restores unsent drafts with one box type and no product answer", () => {
-    const draft = { ...emptyEnquiry(), boxTypes: ["rigid", "mailer"] as const, products: ["Haircare", "Food & snacks"], productOther: "Candles", quantityExact: "1000", wall: "5-ply" };
+    const draft = { ...emptyEnquiry(), boxTypes: ["rigid", "mailer"] as const, products: ["Haircare", "Food & snacks"], productOther: "Candles", quantityExact: "1000", wall: "5-ply", length: "12", width: "8", height: "6", sizeInput: "12 x 8 x 6" };
     const restored = singleChoiceEnquiry({ ...draft, boxTypes: [...draft.boxTypes] });
     expect(restored.boxTypes).toEqual(["rigid"]);
     // The form no longer asks what goes inside, so an old draft must not submit it unseen.
     expect(restored.products).toEqual([]);
     expect(restored.productOther).toBe("");
+    // Box size is no longer asked, so an old draft must not submit dimensions unseen either.
+    expect(restored.length).toBe("");
+    expect(restored.width).toBe("");
+    expect(restored.height).toBe("");
+    expect(restored.sizeInput).toBe("");
     expect(restored.quantityExact).toBe("1000");
     expect(restored.wall).toBe("");
     expect(draft.products).toHaveLength(2);
@@ -104,10 +109,11 @@ describe("box enquiry", () => {
     expect(enquiryBrief(e).map(f => f.topic)).not.toContain("customisation");
     expect(enquiryBrief(e).find(f => f.topic === "product")?.value).toBe("Haircare, Other: Candles");
   });
-  it("inches are the default dimension unit and convert to cm on save", () => {
+  it("box size is no longer shown, but the stored dimensions field keeps its shape", () => {
     expect(emptyEnquiry().unit).toBe("in");
     const e = { ...emptyEnquiry(), boxTypes: ["mailer" as const], length: "12", width: "8", height: "6" };
-    expect(enquirySummary(e).find(([k]) => k === "Dimensions (L × W × H)")?.[1]).toBe("12 × 8 × 6 in");
+    expect(enquirySummary(e).some(([k]) => k === "Dimensions (L × W × H)")).toBe(false);
+    expect(enquiryBrief(e).map(f => f.topic)).not.toContain("size");
     const details = enquiryDetails(e, "v2") as Record<string, unknown>;
     expect(details["dimensions_unit_entered"]).toBe("in");
     expect(details["dimensions_cm"]).toEqual([30.5, 20.3, 15.2]);
@@ -115,7 +121,6 @@ describe("box enquiry", () => {
     expect(enquiryDetails(cm, "v2").dimensions_cm).toEqual([12, 8, 6]);
     expect(enquiryDetails(cm, "v2").dimensions_unit_entered).toBe("cm");
     const legacy = { ...e, unit: undefined };
-    expect(enquirySummary(legacy).find(([k]) => k === "Dimensions (L × W × H)")?.[1]).toBe("12 × 8 × 6 in");
     expect(enquiryDetails(legacy, "v2").dimensions_unit_entered).toBe("in");
   });
   it("records how many design photos were attached", () => {

@@ -46,7 +46,8 @@ export function singleChoiceEnquiry(e: BoxEnquiry): BoxEnquiry {
   // Drafts saved before a style was retired must not submit a style the form no longer offers.
   const known = e.boxTypes.filter(t => BOX_TYPES.some(b => b.id === t));
   // The product question is no longer asked, so an old draft must not carry it into a new enquiry.
-  return pruneForTypes({ ...e, boxTypes: known.slice(0, 1), products: [], productOther: "" });
+  // Box size is no longer asked either, so an old draft must not submit dimensions the visitor can no longer see.
+  return pruneForTypes({ ...e, boxTypes: known.slice(0, 1), products: [], productOther: "", length: "", width: "", height: "", sizeInput: "", sizeUnknown: false });
 }
 
 /** Drops material choices that no longer apply after box types change. */
@@ -65,15 +66,12 @@ export function parseBoxSize(raw: string): Pick<BoxEnquiry, "length" | "width" |
   return { length, width, height };
 }
 
-export type StepError = { field: "boxTypes" | "phone" | "pincode" | "quantityExact" | "size"; message: string };
+export type StepError = { field: "boxTypes" | "phone" | "pincode" | "quantityExact"; message: string };
 
 /** The first problem on a step, tagged with the field the message belongs to. */
 export function stepFieldError(e: BoxEnquiry, step: number): StepError | null {
   if (step === 0 && e.boxTypes.length !== 1) return { field: "boxTypes", message: "Choose one box type, or pick “Others”." };
-  if (step === 1) {
-    if (!qty(e.quantityExact)) return { field: "quantityExact", message: "Enter the number of boxes you need, e.g. 12000." };
-    if (!e.sizeUnknown && ((e.sizeInput?.trim() && !parseBoxSize(e.sizeInput)) || ([e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)))) return { field: "size", message: "Enter length × breadth × height, e.g. 12 × 8 × 6, or leave box size blank." };
-  }
+  if (step === 1 && !qty(e.quantityExact)) return { field: "quantityExact", message: "Enter the number of boxes you need, e.g. 12000." };
   if (step === 2) {
     if (!indianMobile(e.phone)) return { field: "phone", message: "Enter a 10-digit Indian WhatsApp number, e.g. 98765 43210." };
     if (e.pincode.trim() && !validPincode(e.pincode)) return { field: "pincode", message: "Enter a 6-digit Indian PIN code, e.g. 400001." };
@@ -87,18 +85,17 @@ export function stepErrors(e: BoxEnquiry, step: number): string | null {
 const label = (id: BoxType) => BOX_TYPES.find(b => b.id === id)?.label ?? id;
 export function enquirySummary(e: BoxEnquiry): [string, string][] {
   const products = e.products.map(p => p === "Other" && e.productOther.trim() ? `Other: ${e.productOther.trim()}` : p);
-  const size = e.sizeUnknown ? "Not decided yet" : [e.length, e.width, e.height].every(dim) ? `${e.length} × ${e.width} × ${e.height} ${e.unit === "cm" ? "cm" : "in"}` : "";
   const material = e.material === "Other" && e.materialOther.trim() ? `Other: ${e.materialOther.trim()}` : e.material;
   return ([
     ["Box type", e.boxTypes.map(label).join(", ")], ["Product inside", products.join(", ")],
     ["Quantity", e.quantityExact.trim()],
-    ["Dimensions (L × W × H)", size], ["Material", material], ["Corrugated wall", e.wall],
+    ["Material", material], ["Corrugated wall", e.wall],
     ["Delivery PIN code", e.pincode.trim()], ["Message / Project Details", e.message.trim()],
   ] as [string, string][]).filter(([, v]) => v);
 }
 export function enquiryBrief(e: BoxEnquiry): SourcingBriefField[] {
   const s = Object.fromEntries(enquirySummary(e));
-  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s["Quantity"]], ["size", s["Dimensions (L × W × H)"]], ["material", s["Material"]], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`]];
+  const map: [string, string | undefined][] = [["format", s["Box type"] && `Boxes — ${s["Box type"]}`], ["product", s["Product inside"]], ["quantity", s["Quantity"]], ["material", s["Material"]], ["wall", s["Corrugated wall"]], ["delivery", s["Delivery PIN code"] && `PIN ${s["Delivery PIN code"]}`]];
   return map.filter((m): m is [string, string] => Boolean(m[1])).map(([topic, value]) => ({ topic, value, source: "buyer" as const }));
 }
 export function enquiryDetails(e: BoxEnquiry, variant: string, designPhotos = 0) {

@@ -12,7 +12,7 @@ import { markConversionPending } from "@/lib/sourcing-conversion";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
-import { BOX_TYPES, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepFieldError, type BoxEnquiry } from "@/lib/box-enquiry";
+import { BOX_TYPES, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, pruneForTypes, singleChoiceEnquiry, stepFieldError, type BoxEnquiry } from "@/lib/box-enquiry";
 
 const STEPS = ["Box type", "Details & contact"];
 const STEP_ICONS = [Box, Pencil];
@@ -27,7 +27,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const readDraft = (): { step?: number; e?: BoxEnquiry; id?: string } => { try { saved.current = JSON.parse(localStorage.getItem(KEY) ?? "{}") ?? {}; } catch { saved.current = {}; } return saved.current ?? {}; };
   if (saved.current === null && hydratedAtMount) readDraft();
   const [step, setStep] = useState(() => Math.min(1, Math.max(0, saved.current?.step ?? 0)));
-  const [e, setE] = useState<BoxEnquiry>(() => singleChoiceEnquiry({ ...emptyEnquiry(), ...saved.current?.e, sizeUnknown: false }));
+  const [e, setE] = useState<BoxEnquiry>(() => singleChoiceEnquiry({ ...emptyEnquiry(), ...saved.current?.e }));
   const [error, setError] = useState<{ field?: string; message: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
@@ -42,7 +42,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (!hydrated || saved.current !== null) return;
     const draft = readDraft();
     if (draft.id) id.current = draft.id;
-    if (draft.e) setE(singleChoiceEnquiry({ ...emptyEnquiry(), ...draft.e, sizeUnknown: false }));
+    if (draft.e) setE(singleChoiceEnquiry({ ...emptyEnquiry(), ...draft.e }));
     const restoredStep = Math.min(1, Math.max(0, draft.step ?? 0));
     if (restoredStep) { first.current = true; setStep(restoredStep); }
   }, [hydrated]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -57,10 +57,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   }, [step]);
   const set = <K extends keyof BoxEnquiry>(key: K, value: BoxEnquiry[K]) => { onActive(); setError(null); setE(prev => key === "boxTypes" ? pruneForTypes({ ...prev, [key]: value }) : { ...prev, [key]: value }); };
   const chooseBox = (type: BoxEnquiry["boxTypes"][number]) => set("boxTypes", [type]);
-  const onSize = (raw: string) => {
-    onActive(); setError(null);
-    setE(prev => ({ ...prev, sizeInput: raw, ...(parseBoxSize(raw) ?? { length: "", width: "", height: "" }) }));
-  };
   const addPhotos = async (files: File[]) => {
     if (!files.length || photos.length >= 3) return;
     setAdding(true); setError(null);
@@ -88,7 +84,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
   const submit = async () => {
     if (busy) return;
     trackFormField("quantity", Boolean(e.quantityExact), 1);
-    trackFormField("size", Boolean(e.length), 1);
     trackFormField("message", Boolean(e.message.trim()), 1);
     trackFormField("photos", photos.length > 0, 1);
     const detailsProblem = stepFieldError(e, 1);
@@ -143,14 +138,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       </Button>; })}</div>{fieldError("boxTypes")}<p className="text-xs leading-4 text-muted-foreground">Don’t know the exact box type? That’s okay. We’ll help you find the right packaging.</p></>, undefined, true)}
       {step === 1 && <>
         <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:gap-x-5 sm:gap-y-3">
-        <div className="order-1 w-full min-w-0 sm:col-start-2 sm:row-start-1"><label htmlFor="v2-size" className="mb-1.5 block text-[13px] font-medium text-muted-foreground">Box size <span className="font-normal">(L × B × H)</span></label>
-            <div className="relative">
-            <Input id="v2-size" aria-label={`Box size: length × breadth × height (${e.unit ?? "in"})`} disabled={e.sizeUnknown} maxLength={30} placeholder="e.g. 12 × 10 × 8" value={e.sizeInput ?? ([e.length, e.width, e.height].some(Boolean) ? [e.length, e.width, e.height].join(" × ") : "")} onChange={ev => onSize(ev.target.value)} className={`h-11 rounded-lg border-border/60 bg-card pl-3 pr-24 text-base ${error?.field === "size" ? "border-destructive" : ""}`} />
-            <span role="group" aria-label="Unit" className="absolute inset-y-0 right-1 flex items-center gap-0.5">{(["in", "cm"] as const).map(u => <Button key={u} type="button" variant="ghost" size="icon" aria-label={u === "in" ? "Inches" : "Centimetres"} aria-pressed={(e.unit ?? "in") === u} disabled={e.sizeUnknown} onClick={() => set("unit", u)} className={`h-9 w-10 rounded-md text-xs ${(e.unit ?? "in") === u ? "bg-accent font-semibold text-accent-foreground hover:bg-accent" : "text-muted-foreground hover:bg-muted"}`}>{u}</Button>)}</span>
-            </div>
-            {fieldError("size")}
-            </div>
-          <div className="order-2 min-w-0 sm:col-start-1 sm:row-span-2 sm:row-start-1">
+          <div className="order-1 min-w-0 sm:col-start-1 sm:row-start-1">
             <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
             <div className={`grid h-full min-w-0 items-center gap-2 rounded-lg border border-dashed border-primary/60 bg-accent/50 p-2 sm:flex sm:flex-col sm:p-3 ${photos.length ? "grid-cols-[minmax(0,1fr)_auto]" : "grid-cols-1"}`}>
             <Button type="button" variant="ghost" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Upload your design or reference image, optional, up to 3" className="group h-auto min-h-12 w-full flex-1 justify-start gap-2.5 whitespace-normal rounded-md px-1 py-1 text-left text-foreground hover:bg-accent hover:text-foreground sm:flex-col sm:justify-center sm:gap-2 sm:py-3 sm:text-center">
@@ -160,7 +148,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
             {photos.length > 0 && <div aria-label="Attached design images" className={`flex flex-wrap items-center gap-3 px-1 pb-1 pt-2 sm:justify-center ${photos.length > 1 ? "col-span-2" : ""}`}>{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-11 w-11 rounded-md border border-border object-cover sm:h-16 sm:w-16" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-7 w-7 rounded-full bg-card"><X className="h-3.5 w-3.5" /></Button></span>)}{photos.length < 3 && <Button type="button" variant="outline" disabled={adding} aria-label="Add more reference images" onClick={() => file.current?.click()} className="hidden h-16 w-16 flex-col gap-0.5 rounded-md border-dashed bg-transparent p-1 text-muted-foreground sm:flex"><ImagePlus className="h-5 w-5" /><span className="text-[10px]">Add more</span></Button>}</div>}
             </div>
           </div>
-          <div className="order-4 min-w-0 sm:order-3 sm:col-start-2 sm:row-start-2"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><div className="relative"><Input id="v2-quantityExact" className={`h-11 rounded-lg bg-card pr-16 text-base ${error?.field === "quantityExact" ? "border-destructive" : ""}`} inputMode="numeric" placeholder="e.g. 1,000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" /><span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-muted-foreground">boxes</span></div>
+          <div className="order-2 min-w-0 sm:col-start-2 sm:row-start-1"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><div className="relative"><Input id="v2-quantityExact" className={`h-11 rounded-lg bg-card pr-16 text-base ${error?.field === "quantityExact" ? "border-destructive" : ""}`} inputMode="numeric" placeholder="e.g. 1,000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" /><span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-muted-foreground">boxes</span></div>
             {fieldError("quantityExact")}
           </div>
         </div>

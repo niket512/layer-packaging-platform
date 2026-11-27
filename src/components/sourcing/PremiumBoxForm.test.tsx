@@ -50,6 +50,15 @@ it("step 2 no longer asks what goes inside the box", async () => {
   expect(screen.getByLabelText(/Quantity/)).toBeTruthy();
 });
 
+it("step 2 no longer asks for box size", async () => {
+  render(<PremiumBoxForm onActive={vi.fn()} />);
+  await act(async () => { fireEvent.click(boxButton("Mailer box")); });
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: /Continue/ })); });
+  expect(screen.queryByLabelText(/Box size/)).toBeNull();
+  expect(screen.queryByLabelText(/length × breadth × height/)).toBeNull();
+  expect(screen.getByLabelText(/Quantity/)).toBeTruthy();
+});
+
 it("step 2 combines project details and WhatsApp contact with the submit button", async () => {
   render(<PremiumBoxForm onActive={vi.fn()} />);
   await act(async () => { fireEvent.click(boxButton("Mailer box")); });
