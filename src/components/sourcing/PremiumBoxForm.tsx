@@ -86,6 +86,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (step === 1) {
       trackFormField("quantity", Boolean(e.quantityExact), 1);
       trackFormField("size", Boolean(e.sizeUnknown || e.length), 1);
+      trackFormField("message", Boolean(e.message.trim()), 1);
       trackFormField("photos", photos.length > 0, 1);
       trackFunnel("contact_shown");
     }
@@ -164,6 +165,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           </div>
           {photos.length > 0 && <div aria-label="Attached design images" className="order-2 flex flex-wrap items-center gap-2 sm:order-3 sm:col-start-1">{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-10 w-10 rounded-lg border border-border object-cover" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-card"><X className="h-3 w-3" /></Button></span>)}</div>}
         </div>
+        <div className="min-w-0"><label htmlFor="v2-message" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Message / Project Details<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><textarea id="v2-message" rows={2} maxLength={500} aria-required="true" placeholder="e.g. finish, material, board strength" value={e.message} onChange={ev => set("message", ev.target.value)} className={`w-full resize-none rounded-lg bg-card px-3 py-2.5 text-base leading-5 outline-none focus-visible:ring-2 focus-visible:ring-ring ${error?.field === "message" ? "border-destructive" : "border-border/60"} border`} />{fieldError("message")}</div>
       </>}
       {step === 2 && <>
         <div className="grid gap-3 sm:grid-cols-2">

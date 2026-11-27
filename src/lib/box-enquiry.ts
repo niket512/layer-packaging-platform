@@ -38,9 +38,10 @@ export type BoxEnquiry = {
   quantityExact: string;
   length: string; width: string; height: string; sizeInput?: string; sizeUnknown: boolean; unit?: "cm" | "in";
   material: string; materialOther: string; wall: string;
+  message: string;
   pincode: string; brand: string; phone: string;
 };
-export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], productOther: "", quantityExact: "", length: "", width: "", height: "", sizeUnknown: false, unit: "in", material: "", materialOther: "", wall: "", pincode: "", brand: "", phone: "" });
+export const emptyEnquiry = (): BoxEnquiry => ({ boxTypes: [], products: [], productOther: "", quantityExact: "", length: "", width: "", height: "", sizeUnknown: false, unit: "in", material: "", materialOther: "", wall: "", message: "", pincode: "", brand: "", phone: "" });
 
 /** Normalise unsent drafts only; historical saved briefs remain unchanged. */
 export function singleChoiceEnquiry(e: BoxEnquiry): BoxEnquiry {
@@ -65,7 +66,7 @@ export function parseBoxSize(raw: string): Pick<BoxEnquiry, "length" | "width" |
   return { length, width, height };
 }
 
-export type StepError = { field: "boxTypes" | "phone" | "pincode" | "quantityExact" | "size"; message: string };
+export type StepError = { field: "boxTypes" | "phone" | "pincode" | "quantityExact" | "size" | "message"; message: string };
 
 /** The first problem on a step, tagged with the field the message belongs to. */
 export function stepFieldError(e: BoxEnquiry, step: number): StepError | null {
@@ -73,6 +74,7 @@ export function stepFieldError(e: BoxEnquiry, step: number): StepError | null {
   if (step === 1) {
     if (!qty(e.quantityExact)) return { field: "quantityExact", message: "Enter the number of boxes you need, e.g. 12000." };
     if (!e.sizeUnknown && ((e.sizeInput?.trim() && !parseBoxSize(e.sizeInput)) || ([e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)))) return { field: "size", message: "Enter length × breadth × height, e.g. 12 × 8 × 6, or leave box size blank." };
+    if (!e.message.trim()) return { field: "message", message: "Tell us about your project, e.g. finish, material or board strength." };
   }
   if (step === 2) {
     if (!indianMobile(e.phone)) return { field: "phone", message: "Enter a 10-digit Indian WhatsApp number, e.g. 98765 43210." };
@@ -93,7 +95,7 @@ export function enquirySummary(e: BoxEnquiry): [string, string][] {
     ["Box type", e.boxTypes.map(label).join(", ")], ["Product inside", products.join(", ")],
     ["Quantity", e.quantityExact.trim()],
     ["Dimensions (L × W × H)", size], ["Material", material], ["Corrugated wall", e.wall],
-    ["Delivery PIN code", e.pincode.trim()],
+    ["Delivery PIN code", e.pincode.trim()], ["Message / Project Details", e.message.trim()],
   ] as [string, string][]).filter(([, v]) => v);
 }
 export function enquiryBrief(e: BoxEnquiry): SourcingBriefField[] {
@@ -102,7 +104,7 @@ export function enquiryBrief(e: BoxEnquiry): SourcingBriefField[] {
   return map.filter((m): m is [string, string] => Boolean(m[1])).map(([topic, value]) => ({ topic, value, source: "buyer" as const }));
 }
 export function enquiryDetails(e: BoxEnquiry, variant: string, designPhotos = 0) {
-  return { form_variant: variant, box_types: e.boxTypes, products: e.products, product_other: e.productOther.trim() || null, quantity_exact: e.quantityExact.trim() || null, design_photos: designPhotos > 0 ? designPhotos : null, dimensions_cm: !e.sizeUnknown && [e.length, e.width, e.height].every(dim) ? [e.length, e.width, e.height].map(v => e.unit === "cm" ? Number(v) : Math.round(Number(v) * 2.54 * 10) / 10) : null, dimensions_unit_entered: e.unit === "cm" ? "cm" : "in", size_unknown: e.sizeUnknown, material: e.material || null, wall: e.wall || null, pincode: e.pincode.trim() || null, brand: e.brand.trim().slice(0, 120) || null };
+  return { form_variant: variant, box_types: e.boxTypes, products: e.products, product_other: e.productOther.trim() || null, quantity_exact: e.quantityExact.trim() || null, design_photos: designPhotos > 0 ? designPhotos : null, dimensions_cm: !e.sizeUnknown && [e.length, e.width, e.height].every(dim) ? [e.length, e.width, e.height].map(v => e.unit === "cm" ? Number(v) : Math.round(Number(v) * 2.54 * 10) / 10) : null, dimensions_unit_entered: e.unit === "cm" ? "cm" : "in", size_unknown: e.sizeUnknown, material: e.material || null, wall: e.wall || null, message: e.message.trim().slice(0, 500) || null, pincode: e.pincode.trim() || null, brand: e.brand.trim().slice(0, 120) || null };
 }
 export function enquiryText(e: BoxEnquiry, designPhotos = 0) {
   return ["Premium box enquiry (new form)", ...enquirySummary(e).map(([k, v]) => `${k}: ${v}`), designPhotos > 0 && `Design reference: ${designPhotos} photo${designPhotos > 1 ? "s" : ""} attached`, e.brand.trim() && `Brand: ${e.brand.trim()}`].filter(Boolean).join("\n");
