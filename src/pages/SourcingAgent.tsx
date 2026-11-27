@@ -356,24 +356,24 @@ export default function SourcingAgent({ category, requirementMode = "chat", init
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
           <div className="mx-auto pb-4 text-center">
-            <section aria-label={requirementMode === "form" ? "Guided sourcing request" : "Sourcing chat"} className={`mx-auto flex max-w-[820px] flex-col text-left ${requirementMode === "form" ? "pt-4 pb-2 sm:pt-4 sm:pb-3" : "pt-4 pb-3 sm:pt-6 sm:pb-4"}`}>
+            <section aria-label={requirementMode === "form" ? "Guided sourcing request" : "Sourcing chat"} className={`mx-auto flex max-w-[820px] flex-col text-left ${requirementMode === "form" ? "pt-2 pb-1 sm:pt-4 sm:pb-3" : "pt-4 pb-3 sm:pt-6 sm:pb-4"}`}>
             <div className="text-center">
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
             <div className="relative text-center">
-              {newBoxForm && !landing ? <div className="relative isolate min-h-[200px] overflow-hidden text-left sm:-mx-4 sm:min-h-[280px] sm:px-4 sm:py-7">
+              {newBoxForm && !landing ? <div className="relative isolate overflow-hidden text-left sm:-mx-4 sm:min-h-[280px] sm:px-4 sm:py-7">
                 <picture>
                   <source media="(min-width: 640px)" srcSet={boxPhoto.url} />
-                  <img src={phoneBoxPhoto.url} alt="Open kraft cardboard box" width={256} height={256} fetchPriority="high" decoding="async" className="absolute bottom-0 right-0 -z-10 h-32 w-32 rounded-lg object-cover object-right sm:inset-0 sm:h-full sm:w-full sm:rounded-none sm:object-center" />
+                  <img src={phoneBoxPhoto.url} alt="Open kraft cardboard box" width={256} height={256} fetchPriority="high" decoding="async" className="absolute bottom-0 right-0 -z-10 h-14 w-14 rounded-lg object-cover object-right sm:inset-0 sm:h-full sm:w-full sm:rounded-none sm:object-center" />
                 </picture>
                 <h1 className="max-w-[520px] text-[28px] font-bold leading-8 text-foreground sm:max-w-[60%] sm:text-[40px] sm:leading-[1.15]">Custom Boxes from <span className="block text-primary">40+ Vetted Factories</span></h1>
-                <p className="mt-2 max-w-[62%] text-sm leading-5 text-muted-foreground sm:max-w-[52%] sm:text-base sm:leading-6">Compare multiple quotes on WhatsApp <span className="font-semibold text-primary">within 6 hours</span> — no commission, free.</p>
+                <p className="mt-1.5 max-w-[78%] text-sm leading-5 text-muted-foreground sm:max-w-[52%] sm:text-base sm:leading-6">Compare multiple quotes on WhatsApp <span className="font-semibold text-primary">within 6 hours</span> — no commission, free.</p>
               </div> : <>
               {landing && requirementMode === "chat" && <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />40+ vetted manufacturers across India</span>}
               <h1 className={`mx-auto max-w-[720px] font-bold tracking-normal text-foreground ${requirementMode === "form" ? "mt-3 text-[28px] leading-[32px] sm:mt-3 sm:text-[32px] sm:leading-[1.15]" : "mt-3 text-[28px] leading-[32px] sm:mt-4 sm:text-[48px] sm:leading-[1.15]"}`}>{landing ? landing.headline : requirementMode === "chat" ? <>Compare Quotes from 40+ Vetted Factories&nbsp;<span className="text-primary">on WhatsApp&nbsp;in 6 Hours</span></> : <>Custom Boxes from <span className="text-primary">40+ Vetted Factories</span></>}</h1>{!landing && requirementMode === "form" && <p className="mx-auto mt-2 max-w-[620px] text-sm text-muted-foreground sm:text-base">Compare multiple quotes on WhatsApp <span className="font-semibold text-primary">within 6 hours</span> — no commission, free.</p>}
               {landing && <p className="mx-auto mt-3 max-w-[580px] text-sm leading-relaxed text-muted-foreground sm:text-base">{landing.copy}</p>}
               </>}
-              <ol className={`mx-auto grid max-w-[720px] grid-cols-3 text-center ${requirementMode === "form" ? "mb-4 mt-4 sm:mb-5 sm:mt-5" : "mb-3 mt-4 sm:mb-4"}`} aria-label="How it works">{["Tell us your needs", "We find manufacturers", "Compare multiple quotes within 6 hours"].map((t, i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className={`absolute left-1/2 h-px w-full bg-border ${requirementMode === "form" ? "top-3" : "top-4"}`} />}<span className={`relative mx-auto flex items-center justify-center rounded-full border border-primary/30 bg-card font-bold text-primary ${requirementMode === "form" ? "h-6 w-6 text-xs" : "h-8 w-8 text-sm"}`}>{i + 1}</span><p className={`font-semibold text-foreground ${requirementMode === "form" ? "mt-1 text-xs leading-4" : "mt-1 text-xs sm:text-sm"}`}>{t}</p></li>)}</ol>
+              <ol className={`mx-auto grid max-w-[720px] grid-cols-3 text-center ${requirementMode === "form" ? "mb-2 mt-3 sm:mb-5 sm:mt-5" : "mb-3 mt-4 sm:mb-4"}`} aria-label="How it works">{["Tell us your needs", "We find manufacturers", "Compare multiple quotes within 6 hours"].map((t, i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className={`absolute left-1/2 h-px w-full bg-border ${requirementMode === "form" ? "top-3" : "top-4"}`} />}<span className={`relative mx-auto flex items-center justify-center rounded-full border border-primary/30 bg-card font-bold text-primary ${requirementMode === "form" ? "h-6 w-6 text-xs" : "h-8 w-8 text-sm"}`}>{i + 1}</span><p className={`font-semibold text-foreground ${requirementMode === "form" ? "mt-1 text-xs leading-4" : "mt-1 text-xs sm:text-sm"}`}>{t}</p></li>)}</ol>
             </div>
             </div>
             {requirementMode === "chat" && (current || busy) && (
