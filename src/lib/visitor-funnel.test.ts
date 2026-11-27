@@ -8,11 +8,18 @@ describe("full visitor funnel", () => {
     expect(result.form[0]!.rows).toHaveLength(1);
     expect(result.overall[2]!.rows).toHaveLength(0);
   });
-  it("keeps four form stages separate from chat and counts field interaction", () => {
+  it("keeps three form stages separate from chat and counts field interaction", () => {
     const result = visitorFunnels([row({ journey: [{ kind: "form_step", step: "1", path: "/", at: 1 }, { kind: "field", field: "format", filled: true, step: "1", path: "/", at: 2 }, { kind: "form_step", step: "2", path: "/", at: 3 }] }), row({ steps: { page_opened: 1, first_message: 2 } })]);
-    expect(result.form.slice(0, 4).map(stage => stage.rows.length)).toEqual([1, 1, 0, 0]);
+    expect(result.form.slice(0, 3).map(stage => stage.rows.length)).toEqual([1, 1, 0]);
+    expect(result.form.some(stage => stage.id === "form4")).toBe(false);
     expect(result.chatCount).toBe(1);
     expect(result.overall[2]!.rows).toHaveLength(2);
+  });
+  it("includes the historical fourth step only when the filtered visits reached it", () => {
+    const historical = row({ journey: [{ kind: "form_step", step: "4", path: "/", at: 1 }] });
+    const result = visitorFunnels([historical]);
+    expect(result.form.find(stage => stage.id === "form4")?.rows).toEqual([historical]);
+    expect(visitorFunnels([]).form.some(stage => stage.id === "form4")).toBe(false);
   });
   it("does not mark bypassed optional chat questions as drop-offs", () => {
     const result = visitorFunnels([row({ steps: { page_opened: 1, first_message: 2, questions_shown: 3, contact_shown: 4 } })]);
