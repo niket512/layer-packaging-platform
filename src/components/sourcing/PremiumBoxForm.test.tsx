@@ -9,23 +9,43 @@ vi.mock("@/lib/router-compat", () => ({ useNavigate: () => vi.fn() }));
 vi.mock("@/lib/chat-monitoring", () => ({ syncSourcingChat: vi.fn() }));
 vi.mock("@/lib/visitor-tracking", () => ({ flushVisitorTracking: vi.fn(), trackFormField: vi.fn(), trackFunnel: vi.fn(), trackJourney: vi.fn() }));
 
+const boxButton = (label: string) => screen.getByRole("button", { name: new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) });
+const draft = () => JSON.parse(localStorage.getItem("snaplogo.form.v2.draft") ?? "{}");
+
 beforeEach(() => { HTMLElement.prototype.scrollIntoView = vi.fn(); });
 afterEach(() => { cleanup(); localStorage.clear(); });
 
-it.each(BOX_TYPES)("selecting $id advances directly to step 2 and preserves the selected box", async ({ id, label }) => {
+it.each(BOX_TYPES)("selecting $id keeps step 1 open and marks the box selected", async ({ id, label }) => {
   render(<PremiumBoxForm onActive={vi.fn()} />);
-  await act(async () => { fireEvent.click(screen.getByRole("button", { name: new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) })); });
+  await act(async () => { fireEvent.click(boxButton(label)); });
+  expect(screen.queryByLabelText(/Quantity/)).toBeNull();
+  expect(boxButton(label).getAttribute("aria-pressed")).toBe("true");
+  expect(draft().step).toBe(0);
+  expect(draft().e.boxTypes).toEqual([id]);
+});
+
+it.each(BOX_TYPES)("Continue on step 1 moves to step 2 with the selected box", async ({ id, label }) => {
+  render(<PremiumBoxForm onActive={vi.fn()} />);
+  await act(async () => { fireEvent.click(boxButton(label)); });
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: /Continue/ })); });
   expect(screen.getByLabelText(/Quantity/)).toBeTruthy();
-  const draft = JSON.parse(localStorage.getItem("snaplogo.form.v2.draft") ?? "{}");
-  expect(draft.step).toBe(1);
-  expect(draft.e.boxTypes).toEqual([id]);
+  expect(draft().step).toBe(1);
+  expect(draft().e.boxTypes).toEqual([id]);
   fireEvent.click(screen.getByRole("button", { name: /Back/ }));
-  expect(screen.getByRole("button", { name: new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) }).getAttribute("aria-pressed")).toBe("true");
+  expect(boxButton(label).getAttribute("aria-pressed")).toBe("true");
+});
+
+it("Continue on step 1 asks for a box type when none is selected", async () => {
+  render(<PremiumBoxForm onActive={vi.fn()} />);
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: /Continue/ })); });
+  expect(screen.getByRole("alert")).toBeTruthy();
+  expect(screen.queryByLabelText(/Quantity/)).toBeNull();
 });
 
 it("step 2 no longer asks what goes inside the box", async () => {
   render(<PremiumBoxForm onActive={vi.fn()} />);
-  await act(async () => { fireEvent.click(screen.getByRole("button", { name: /Mailer box/ })); });
+  await act(async () => { fireEvent.click(boxButton("Mailer box")); });
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: /Continue/ })); });
   expect(screen.queryByText(/What product will go inside/)).toBeNull();
   expect(screen.getByLabelText(/Quantity/)).toBeTruthy();
 });

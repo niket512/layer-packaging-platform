@@ -69,7 +69,7 @@ export type StepError = { field: "boxTypes" | "phone" | "pincode" | "quantityExa
 
 /** The first problem on a step, tagged with the field the message belongs to. */
 export function stepFieldError(e: BoxEnquiry, step: number): StepError | null {
-  if (step === 0 && e.boxTypes.length !== 1) return { field: "boxTypes", message: "Choose one box type, or pick “Not sure — help me choose”." };
+  if (step === 0 && e.boxTypes.length !== 1) return { field: "boxTypes", message: "Choose one box type, or pick “Others”." };
   if (step === 1) {
     if (!qty(e.quantityExact)) return { field: "quantityExact", message: "Enter the number of boxes you need, e.g. 12000." };
     if (!e.sizeUnknown && ((e.sizeInput?.trim() && !parseBoxSize(e.sizeInput)) || ([e.length, e.width, e.height].some(v => v.trim()) && ![e.length, e.width, e.height].every(dim)))) return { field: "size", message: "Enter length × breadth × height, e.g. 12 × 8 × 6, or leave box size blank." };

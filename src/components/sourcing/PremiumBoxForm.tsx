@@ -55,12 +55,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (form && form.getBoundingClientRect().top < 64) form.scrollIntoView({ block: "start", behavior: "smooth" });
   }, [step]);
   const set = <K extends keyof BoxEnquiry>(key: K, value: BoxEnquiry[K]) => { onActive(); setError(null); setE(prev => key === "boxTypes" ? pruneForTypes({ ...prev, [key]: value }) : { ...prev, [key]: value }); };
-  const chooseBox = (type: BoxEnquiry["boxTypes"][number]) => {
-    set("boxTypes", [type]);
-    trackFormField("format", true, 0);
-    trackFunnel("brief_shown");
-    setStep(1);
-  };
+  const chooseBox = (type: BoxEnquiry["boxTypes"][number]) => set("boxTypes", [type]);
   const onSize = (raw: string) => {
     onActive(); setError(null);
     setE(prev => ({ ...prev, sizeInput: raw, ...(parseBoxSize(raw) ?? { length: "", width: "", height: "" }) }));
@@ -139,7 +134,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       {step === 0 && group("Box type", <><div className="grid grid-cols-3 gap-1.5 sm:gap-2 sm:grid-cols-4">{BOX_TYPES.map(b => { const on = e.boxTypes.includes(b.id); const desktopOnly = ["display"].includes(b.id); return <Button key={b.id} type="button" variant="ghost" aria-pressed={on} onClick={() => chooseBox(b.id)} className={`relative h-auto min-w-0 flex-col items-center justify-start gap-1 whitespace-normal rounded-xl border p-1.5 text-center transition-colors sm:p-2 sm:pb-2.5 ${desktopOnly ? "hidden sm:flex" : "flex"} ${on ? "border-primary bg-accent/60 text-foreground ring-1 ring-primary hover:bg-accent" : "border-border hover:border-primary/40"}`}>
          <span className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg photo-frame isolate sm:h-28">{BOX_STYLE_IMAGES[b.id] ? <img src={BOX_STYLE_IMAGES[b.id]?.src} srcSet={BOX_STYLE_IMAGES[b.id]?.srcSet} sizes="(max-width: 639px) 120px, 260px" alt="" loading={desktopOnly ? "lazy" : "eager"} decoding="async" width={160} height={160} className={`h-full w-full object-contain mix-blend-multiply ${b.id === "corrugated" ? "translate-y-1 scale-[1.35]" : ""}`} /> : <HelpCircle className="h-8 w-8 text-muted-foreground sm:h-10 sm:w-10" />}</span>
         <span className={`text-xs font-semibold leading-4 ${on ? "text-primary" : ""}`}>{b.label}</span>{b.use && <span className="-mt-0.5 hidden text-[10px] leading-3 text-muted-foreground sm:block">{b.use}</span>}
-      </Button>; })}</div>{fieldError("boxTypes")}</>, "Tap a box to continue", true)}
+      </Button>; })}</div>{fieldError("boxTypes")}</>, "Select the box you need", true)}
       {step === 1 && <>
         <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:gap-x-5 sm:gap-y-3">
         <div className="order-1 w-full min-w-0 sm:col-start-2 sm:row-start-1"><label htmlFor="v2-size" className="mb-1.5 block text-[13px] font-medium text-muted-foreground">Box size <span className="font-normal">(L × B × H)</span></label>
@@ -174,6 +169,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       </>}
     </fieldset>
     {error && !error.field && <p role="alert" className="px-4 pb-4 text-sm text-destructive sm:px-7">{error.message}</p>}
-    <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-7">{step > 0 ? <Button type="button" variant="ghost" disabled={busy} className="h-12 rounded-full px-3" onClick={() => { setStep(s => s - 1); setError(null); }}><ArrowLeft />Back</Button> : <span className="text-xs text-muted-foreground">Free · No commission · <span aria-hidden="true" className="text-primary">*</span> Required</span>}{step > 0 && <Button type="submit" disabled={busy} className="h-12 rounded-full px-5 text-sm font-semibold">{busy ? <Loader2 className="animate-spin" /> : <><span className="sm:hidden">{step === 2 ? "Submit my enquiry" : "Continue"}</span><span className="hidden sm:inline">{["Continue to project details", "Continue to contact", "Submit my enquiry"][step]}</span><ArrowRight /></>}</Button>}</div>
+    <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t border-border bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-7">{step > 0 ? <Button type="button" variant="ghost" disabled={busy} className="h-12 rounded-full px-3" onClick={() => { setStep(s => s - 1); setError(null); }}><ArrowLeft />Back</Button> : <span className="text-xs text-muted-foreground">Free · No commission · <span aria-hidden="true" className="text-primary">*</span> Required</span>}<Button type="submit" disabled={busy} className="h-12 rounded-full px-5 text-sm font-semibold">{busy ? <Loader2 className="animate-spin" /> : <><span className="sm:hidden">{step === 2 ? "Submit my enquiry" : "Continue"}</span><span className="hidden sm:inline">{["Continue to project details", "Continue to contact", "Submit my enquiry"][step]}</span><ArrowRight /></>}</Button></div>
   </form>;
 }
