@@ -1,5 +1,5 @@
 # Manufacturer network
-- [ ] Combine Premium Box project details/contact into step 2, preserve fields, early phone capture and saved-enquiry flow; verify tests and phone/laptop progression.
+- [x] Combine Premium Box project details/contact into step 2, preserve fields, early phone capture and saved-enquiry flow; verify tests and phone/laptop progression.
 - [x] Refresh Admin Chats with focused report/inbox views and consistent current-form labels; verified real admin reports, session drill-down, tabs and phone layout; 21 reporting tests passed.
 - [x] Match the phone reference with a compact box photo, icon step tabs, product entry and inline uploaded previews; verified narrow phones and laptop progression, attachments and preserved required fields with eight tests, without submitting an enquiry.
 - [x] Match the supplied page reference with an 11.6 KB box photograph, warm surfaces and clearer form framing; verified 320/393px phones and laptop upload/removal and contact progression, keeping single size entry and required fields; eight tests passed, no enquiry submitted.
