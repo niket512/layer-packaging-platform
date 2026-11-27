@@ -1,10 +1,9 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useHydrated } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/router-compat";
 import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, X, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
 import { BOX_STYLE_IMAGES } from "./box-style-images";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +12,7 @@ import { markConversionPending } from "@/lib/sourcing-conversion";
 import { syncSourcingChat } from "@/lib/chat-monitoring";
 import { flushVisitorTracking, trackFormField, trackFunnel, trackJourney } from "@/lib/visitor-tracking";
 import { indianMobile, formSubmission } from "@/lib/sourcing-form";
-import { BOX_TYPES, WALLS, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, materialOptions, needsWall, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepFieldError, type BoxEnquiry } from "@/lib/box-enquiry";
+import { BOX_TYPES, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, parseBoxSize, pruneForTypes, singleChoiceEnquiry, stepFieldError, type BoxEnquiry } from "@/lib/box-enquiry";
 
 const ProductPicker = lazy(() => import("./ProductPicker"));
 
@@ -57,7 +56,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (form && form.getBoundingClientRect().top < 64) form.scrollIntoView({ block: "start", behavior: "smooth" });
   }, [step]);
   const set = <K extends keyof BoxEnquiry>(key: K, value: BoxEnquiry[K]) => { onActive(); setError(null); setE(prev => key === "boxTypes" ? pruneForTypes({ ...prev, [key]: value }) : { ...prev, [key]: value }); };
-  const materials = useMemo(() => materialOptions(e.boxTypes), [e.boxTypes]);
   const onSize = (raw: string) => {
     onActive(); setError(null);
     setE(prev => ({ ...prev, sizeInput: raw, ...(parseBoxSize(raw) ?? { length: "", width: "", height: "" }) }));
@@ -86,7 +84,8 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
     if (problem) { setError(problem); trackJourney({ kind: "form_error", step: String(step + 1), reason: step === 0 ? "format_required" : "details_invalid" }); return; }
     if (step === 0) { trackFormField("format", true, 0); trackFunnel("brief_shown"); }
     if (step === 1) {
-      (["quantity", "size", "material", "wall"] as const).forEach((f, i) => trackFormField(f, Boolean([e.quantityExact, e.sizeUnknown || e.length, e.material, e.wall][i]), 1));
+      trackFormField("quantity", Boolean(e.quantityExact), 1);
+      trackFormField("size", Boolean(e.sizeUnknown || e.length), 1);
       trackFormField("photos", photos.length > 0, 1);
       trackFunnel("contact_shown");
     }
@@ -120,7 +119,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
 
   const fieldError = (field: string) => error?.field === field ? <p role="alert" className="mt-1 text-xs font-medium text-destructive">{error.message}</p> : null;
   const group = (title: string, children: React.ReactNode, hint?: string, required?: boolean) => <fieldset className="min-w-0 space-y-1.5"><legend className={`mb-1.5 flex flex-wrap items-baseline gap-1.5 ${required ? "text-sm font-semibold" : "text-[13px] font-medium text-muted-foreground"}`}>{title}{required && <><span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></>}{hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}</legend>{children}</fieldset>;
-  const single = (key: "material" | "wall", label: string, options: string[]) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className="mb-1.5 block text-[13px] font-medium text-muted-foreground">{label}</label><Select value={e[key]} onValueChange={value => set(key, value === "clear" ? "" : value)}><SelectTrigger id={`v2-${key}`} className="h-11 rounded-lg border-border/60 bg-card text-base"><SelectValue placeholder="Choose" /></SelectTrigger><SelectContent>{options.map(o => <SelectItem key={o} value={o} className="min-h-11">{o}</SelectItem>)}</SelectContent></Select></div>;
   const text = (key: keyof BoxEnquiry, labelText: string, props: React.ComponentProps<typeof Input> = {}, optional?: boolean) => <div className="min-w-0"><label htmlFor={`v2-${key}`} className={`mb-1.5 block ${optional ? "text-[13px] font-medium text-muted-foreground" : "text-sm font-semibold"}`}>{labelText}</label><Input id={`v2-${key}`} className={`h-11 rounded-lg bg-card text-base ${optional ? "border-border/60" : ""} ${error?.field === String(key) ? "border-destructive" : ""}`} value={String(e[key] ?? "")} onChange={ev => set(key, ev.target.value as never)} {...props} />{fieldError(String(key))}</div>;
 
   return <form aria-label="Box enquiry form" noValidate onSubmit={ev => { ev.preventDefault(); if (step === 2) void submit(); else next(); }} className="mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border bg-card text-left shadow-lg shadow-primary/5">
@@ -145,7 +143,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
           {e.products.length === 0 && <Suspense fallback={<Input aria-label="Loading product choices" disabled className="h-11 text-base" />}><ProductPicker onChoose={(value, custom) => { onActive(); setError(null); setE(prev => ({ ...prev, products: [custom ? "Other" : value], productOther: custom ? value : "" })); }} /></Suspense>}
         </>)}
         </div>
-        <div className="grid min-w-0 items-end gap-2.5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
         <div className="w-full min-w-0"><label htmlFor="v2-size" className="mb-1.5 block text-[13px] font-medium text-muted-foreground">Box size <span className="font-normal">(L × B × H)</span></label>
             <div className="relative">
             <Input id="v2-size" aria-label={`Box size: length × breadth × height (${e.unit ?? "in"})`} disabled={e.sizeUnknown} maxLength={30} placeholder="e.g. 12 × 8 × 6" value={e.sizeInput ?? ([e.length, e.width, e.height].some(Boolean) ? [e.length, e.width, e.height].join(" × ") : "")} onChange={ev => onSize(ev.target.value)} className={`h-11 rounded-lg border-border/60 bg-card pl-3 pr-24 text-base ${error?.field === "size" ? "border-destructive" : ""}`} />
@@ -153,12 +150,6 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
             </div>
             {fieldError("size")}
             </div>
-        <div className={`grid min-w-0 gap-2.5 ${needsWall(e.boxTypes) ? "grid-cols-2" : "grid-cols-1"}`}>
-          {single("material", "Material", materials)}
-          {needsWall(e.boxTypes) && single("wall", "Board strength", WALLS)}
-        </div>
-        </div>
-        {e.material === "Other" && <Input autoFocus aria-label="Which material?" placeholder="Which material? e.g. metallic board" maxLength={120} value={e.materialOther} onChange={ev => set("materialOther", ev.target.value)} className="h-11 rounded-lg border-border/60 bg-card text-base" />}
         <div className="grid min-w-0 items-end gap-2.5 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           <div className="min-w-0">
             <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
