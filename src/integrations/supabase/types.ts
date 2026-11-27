@@ -357,6 +357,7 @@ export type Database = {
           details: Json | null
           id: string
           images: string[]
+          landing_version: string | null
           manufacturers: Json
           requirement: string
         }
@@ -367,6 +368,7 @@ export type Database = {
           details?: Json | null
           id?: string
           images?: string[]
+          landing_version?: string | null
           manufacturers?: Json
           requirement: string
         }
@@ -377,6 +379,7 @@ export type Database = {
           details?: Json | null
           id?: string
           images?: string[]
+          landing_version?: string | null
           manufacturers?: Json
           requirement?: string
         }
@@ -648,8 +651,12 @@ export type Database = {
           created_at: string
           device: string
           id: string
+          internal: boolean
           journey: Json
+          landing_version: string | null
+          lp_events: Json
           opened_designs: string[]
+          perf: Json | null
           revision: number
           scroll_depth: Json
           selected_designs: string[]
@@ -664,8 +671,12 @@ export type Database = {
           created_at?: string
           device: string
           id: string
+          internal?: boolean
           journey?: Json
+          landing_version?: string | null
+          lp_events?: Json
           opened_designs?: string[]
+          perf?: Json | null
           revision?: number
           scroll_depth?: Json
           selected_designs?: string[]
@@ -680,8 +691,12 @@ export type Database = {
           created_at?: string
           device?: string
           id?: string
+          internal?: boolean
           journey?: Json
+          landing_version?: string | null
+          lp_events?: Json
           opened_designs?: string[]
+          perf?: Json | null
           revision?: number
           scroll_depth?: Json
           selected_designs?: string[]
@@ -711,6 +726,15 @@ export type Database = {
       is_supplier_contact: { Args: { _supplier_id: string }; Returns: boolean }
       owns_rfq: { Args: { _rfq_id: string }; Returns: boolean }
       recent_request_activity: { Args: never; Returns: Json }
+      save_lp_behaviour: {
+        Args: {
+          _id: string
+          _revision: number
+          _snapshot: Json
+          _token: string
+        }
+        Returns: undefined
+      }
       save_sourcing_chat: {
         Args: {
           _id: string

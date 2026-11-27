@@ -71,6 +71,13 @@
       "when": 1795606162760,
       "tag": "0009_enquiry_structured_details",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795811270388,
+      "tag": "0010_landing_page_tracking",
+      "breakpoints": true
     }
   ]
 }
