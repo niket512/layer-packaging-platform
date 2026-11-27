@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useHydrated } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/router-compat";
-import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, X, ImagePlus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, HelpCircle, Loader2, X, ImagePlus, Box, Pencil, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { imageFileToDataUrl } from "@/lib/image-data-url";
@@ -17,6 +17,7 @@ import { BOX_TYPES, emptyEnquiry, enquiryBrief, enquiryDetails, enquiryText, par
 const ProductPicker = lazy(() => import("./ProductPicker"));
 
 const STEPS = ["Box type", "Project details", "Contact"];
+const STEP_ICONS = [Box, Pencil, User];
 const KEY = "snaplogo.form.v2.draft";
 
 export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
@@ -130,7 +131,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
 
   return <form aria-label="Box enquiry form" noValidate onSubmit={ev => { ev.preventDefault(); if (step === 2) void submit(); else next(); }} className="enquiry-form mt-3 scroll-mt-20 overflow-hidden rounded-2xl border border-border/70 bg-card text-left sm:rounded-[24px]">
     <div className="border-b border-border px-4 pb-3 pt-3.5 sm:px-6 sm:pt-4">
-      <ol aria-label="Enquiry progress" className="mb-2.5 grid grid-cols-3 gap-2">{STEPS.map((l, i) => <li key={l} aria-current={step === i ? "step" : undefined} className={`min-w-0 border-t-2 pt-1.5 ${i <= step ? "border-primary" : "border-border"}`}><span className={`flex items-center gap-1.5 text-[11px] font-semibold sm:text-xs ${step === i ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground"}`}>{i < step ? <Check className="h-3.5 w-3.5 shrink-0" /> : <span>{i + 1}.</span>}<span className="truncate">{l}</span></span></li>)}</ol>
+      <ol aria-label="Enquiry progress" className="-mx-4 -mt-3.5 mb-3 grid grid-cols-[0.9fr_1.3fr_0.8fr] border-b border-border bg-muted/40 sm:mx-0 sm:mt-0 sm:mb-2.5 sm:grid-cols-3 sm:gap-2 sm:border-0 sm:bg-transparent">{STEPS.map((l, i) => { const Icon = STEP_ICONS[i]; return <li key={l} aria-current={step === i ? "step" : undefined} className={`min-w-0 border-b-2 px-1 py-3 sm:border-b-0 sm:border-t-2 sm:px-0 sm:py-0 sm:pt-1.5 ${step === i ? "border-primary bg-card sm:bg-transparent" : "border-transparent sm:border-border"}`}><span className={`flex min-w-0 items-center justify-center gap-1.5 text-[11px] font-semibold sm:justify-start sm:text-xs ${step === i ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground"}`}>{Icon && <Icon className="h-4 w-4 shrink-0 sm:hidden" />}<span className="hidden sm:inline-flex">{i < step ? <Check className="h-3.5 w-3.5 shrink-0" /> : <span>{i + 1}.</span>}</span><span className="truncate">{l}</span></span></li>; })}</ol>
       <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
         <span aria-hidden="true" className="h-7 w-1 rounded-full bg-primary" />
         <h2 ref={heading} tabIndex={-1} className="min-w-0 text-lg font-semibold leading-tight outline-hidden sm:text-2xl">{["What kind of custom box are you looking to create?", "Tell us about your project", "Where should we send your quotes?"][step]}</h2>
@@ -144,8 +145,7 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
       </Button>; })}</div>{fieldError("boxTypes")}</>, "Tap a box to continue", true)}
       {step === 1 && <>
         <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:gap-x-5 sm:gap-y-3">
-        {/* Hidden on phones to keep the step short; still asked on larger screens. */}
-        <div className="hidden sm:order-4 sm:col-start-2 sm:row-start-3 sm:block">
+        <div className="order-3 min-w-0 sm:order-4 sm:col-start-2 sm:row-start-3">
         {group("What product will go inside the box?", <>
           {e.products.length > 0 && <div className="flex flex-wrap gap-2">{e.products.map(p => <span key={p} className="inline-flex min-h-9 items-center gap-1 rounded-full border border-primary bg-accent py-1 pl-3 pr-1 text-sm font-medium text-primary">{p === "Other" ? e.productOther || "Other" : p}<button type="button" aria-label={`Remove ${p === "Other" ? e.productOther || "Other" : p}`} onClick={() => removeProduct(p)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-primary/10"><X className="h-3.5 w-3.5" /></button></span>)}</div>}
           {e.products.length === 0 && <Suspense fallback={<Input aria-label="Loading product choices" disabled className="h-11 text-base" />}><ProductPicker onChoose={(value, custom) => { onActive(); setError(null); setE(prev => ({ ...prev, products: [custom ? "Other" : value], productOther: custom ? value : "" })); }} /></Suspense>}
@@ -160,15 +160,15 @@ export function PremiumBoxForm({ onActive }: { onActive: () => void }) {
             </div>
           <div className="order-2 min-w-0 sm:col-start-1 sm:row-span-3 sm:row-start-1">
             <input ref={file} type="file" accept="image/*" multiple hidden onChange={ev => void addPhotos(Array.from(ev.target.files ?? []))} />
-            <div className="flex h-full min-w-0 flex-col rounded-lg border border-dashed border-primary/60 bg-accent/50 p-2 sm:p-3">
+            <div className={`grid h-full min-w-0 items-center gap-2 rounded-lg border border-dashed border-primary/60 bg-accent/50 p-2 sm:flex sm:flex-col sm:p-3 ${photos.length ? "grid-cols-[minmax(0,1fr)_auto]" : "grid-cols-1"}`}>
             <Button type="button" variant="ghost" disabled={adding || photos.length >= 3} onClick={() => file.current?.click()} aria-label="Upload your design or reference image, optional, up to 3" className="group h-auto min-h-12 w-full flex-1 justify-start gap-2.5 whitespace-normal rounded-md px-1 py-1 text-left text-foreground hover:bg-accent hover:text-foreground sm:flex-col sm:justify-center sm:gap-2 sm:py-3 sm:text-center">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent text-primary sm:h-12 sm:w-12">{adding ? <Loader2 className="h-5 w-5 animate-spin" /> : <ImagePlus className="h-5 w-5 sm:h-7 sm:w-7" />}</span>
-              <span className="min-w-0 break-words leading-5"><span className="block text-sm font-semibold">{adding ? "Uploading…" : photos.length >= 3 ? "3 images attached" : photos.length ? "Add another image" : "Upload box reference images"}</span><span className="block text-xs font-normal leading-4 text-muted-foreground">Logo, dieline or reference photo</span><span className="hidden pt-1 text-xs font-normal text-muted-foreground sm:block">{photos.length ? `${photos.length} of 3 attached` : "Optional · Up to 3 images"}</span></span>
+              <span className="min-w-0 break-words leading-5"><span className="block text-sm font-semibold">{adding ? "Uploading…" : photos.length >= 3 ? "3 images attached" : photos.length ? "Add another image" : "Upload box reference images"}</span><span className="block text-xs font-normal leading-4 text-muted-foreground">{photos.length ? `${photos.length} of 3 attached` : "Logo, dieline or reference photo"}</span><span className="hidden pt-1 text-xs font-normal text-muted-foreground sm:block">Optional · Up to 3 images</span></span>
             </Button>
-            {photos.length > 0 && <div aria-label="Attached design images" className="flex flex-wrap items-center gap-3 px-1 pb-1 pt-2 sm:justify-center">{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-11 w-11 rounded-md border border-border object-cover sm:h-16 sm:w-16" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-7 w-7 rounded-full bg-card"><X className="h-3.5 w-3.5" /></Button></span>)}{photos.length < 3 && <Button type="button" variant="outline" disabled={adding} aria-label="Add more reference images" onClick={() => file.current?.click()} className="hidden h-16 w-16 flex-col gap-0.5 rounded-md border-dashed bg-transparent p-1 text-muted-foreground sm:flex"><ImagePlus className="h-5 w-5" /><span className="text-[10px]">Add more</span></Button>}</div>}
+            {photos.length > 0 && <div aria-label="Attached design images" className={`flex flex-wrap items-center gap-3 px-1 pb-1 pt-2 sm:justify-center ${photos.length > 1 ? "col-span-2" : ""}`}>{photos.map((src, i) => <span key={i} className="relative inline-flex"><img src={src} alt={`Design reference ${i + 1}`} className="h-11 w-11 rounded-md border border-border object-cover sm:h-16 sm:w-16" /><Button type="button" variant="outline" size="icon" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos(p => p.filter((_, j) => j !== i))} className="absolute -right-2 -top-2 h-7 w-7 rounded-full bg-card"><X className="h-3.5 w-3.5" /></Button></span>)}{photos.length < 3 && <Button type="button" variant="outline" disabled={adding} aria-label="Add more reference images" onClick={() => file.current?.click()} className="hidden h-16 w-16 flex-col gap-0.5 rounded-md border-dashed bg-transparent p-1 text-muted-foreground sm:flex"><ImagePlus className="h-5 w-5" /><span className="text-[10px]">Add more</span></Button>}</div>}
             </div>
           </div>
-          <div className="order-3 min-w-0 sm:col-start-2 sm:row-start-2"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><div className="relative"><Input id="v2-quantityExact" className={`h-11 rounded-lg bg-card pr-16 text-base ${error?.field === "quantityExact" ? "border-destructive" : ""}`} inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" /><span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-muted-foreground">boxes</span></div>
+          <div className="order-4 min-w-0 sm:order-3 sm:col-start-2 sm:row-start-2"><label htmlFor="v2-quantityExact" className="mb-1.5 flex h-6 items-center gap-1 text-sm font-semibold">Quantity<span aria-hidden="true" className="text-primary">*</span><span className="sr-only">required</span></label><div className="relative"><Input id="v2-quantityExact" className={`h-11 rounded-lg bg-card pr-16 text-base ${error?.field === "quantityExact" ? "border-destructive" : ""}`} inputMode="numeric" placeholder="e.g. 1000" maxLength={12} value={e.quantityExact} onChange={ev => set("quantityExact", ev.target.value)} aria-required="true" /><span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-muted-foreground">boxes</span></div>
             {fieldError("quantityExact")}
           </div>
         </div>
