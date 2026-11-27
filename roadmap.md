@@ -1,4 +1,5 @@
 # Manufacturer network
+- [x] Match the supplied page reference with an 11.6 KB box photograph, warm surfaces and clearer form framing; verified 320/393px phones and laptop upload/removal and contact progression, keeping single size entry and required fields; eight tests passed, no enquiry submitted.
 - [x] Adapt the reference form layout with a desktop upload column and compact phone fields; phone/laptop checks verified image attachment/removal, retained fields and contact progression without submitting an enquiry; eight form tests passed.
 - [x] Migrate directory-search, extract-catalogue, procure-ai and reddit-capi into the app; verified chat, signed-in AI/catalogue paths and mocked one-time conversion reporting without real enquiries or ad events.
 - [x] Fix the reported text-contrast warning without changing the visual direction; final mobile Lighthouse has zero contrast failures and accessibility 100.

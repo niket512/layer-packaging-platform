@@ -55,6 +55,7 @@
   --color-heading: hsl(var(--text-heading));
   --color-body: hsl(var(--text-body));
   --color-body-muted: hsl(var(--text-muted));
+  --color-enquiry-page: var(--enquiry-page);
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -156,8 +157,11 @@
     --sourcing-warning: 35 92% 40%;
     --sourcing-warning-soft: 44 96% 94%;
     --primary-strong: 20 90% 40%;
+    --enquiry-page: oklch(0.985 0.008 50);
+    --enquiry-shadow: 0 12px 36px -16px hsl(var(--primary) / 0.2);
   }
   .sourcing-composer { box-shadow: var(--sourcing-shadow); }
+  .enquiry-form { box-shadow: var(--enquiry-shadow); }
 
   .theme-directory {
     --background: 220 15% 7%;

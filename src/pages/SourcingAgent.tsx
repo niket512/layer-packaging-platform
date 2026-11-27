@@ -26,6 +26,7 @@ import logo from "@/assets/snaplogo-orange.png";
 import catBoxes from "@/assets/design-ship-kraft.webp";
 import catPouches from "@/assets/category-stand-up-pouches.webp";
 import catLabels from "@/assets/cat-labels.webp";
+import boxPhoto from "@/assets/snaplogo-box-photo.webp.asset.json";
 import type { IntakeReply } from "@/lib/sourcing-intake";
 // The design gallery (large catalogue data) loads after the form so the form appears sooner on phones.
 const DESIGN_PREFILL_KEY = "snaplogo.design-prefill"; // must match Designs page
@@ -339,17 +340,17 @@ export default function SourcingAgent({ category, requirementMode = "chat", init
             </section>
   );
   return (
-    <div className="theme-sourcing min-h-screen bg-background text-foreground">
+    <div className={`theme-sourcing min-h-screen text-foreground ${newBoxForm ? "bg-enquiry-page" : "bg-background"}`}>
       <div>
         <header className="sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur">
-          <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-3 px-4 md:h-16 md:px-8">
+          <div className="mx-auto grid h-14 max-w-[1200px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 md:flex md:h-16 md:justify-between md:px-8">
             <Link to="/" className="flex shrink-0 items-center"><Logo /></Link>
             <nav aria-label="Main" className="hidden items-center gap-1 text-sm font-medium md:flex">
               <Link to="/designs" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Designs</Link>
               <Link to="/blog" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">Guides</Link>
               <Link to="/about" className="rounded-full px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">About</Link>
             </nav>
-            <div className="flex items-center gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New Request — new sourcing request" className="h-9 rounded-full px-4 text-sm"><Plus /><span>New Request</span></Button></div>
+            <div className="flex shrink-0 items-center gap-2"><Button onClick={startNew} disabled={busy || submitting} size="sm" aria-label="New Request — new sourcing request" className="h-9 rounded-full px-4 text-sm"><Plus /><span>New Request</span></Button></div>
           </div>
         </header>
         <main className="mx-auto max-w-[1280px] px-4 pb-12 md:px-8">
@@ -359,9 +360,15 @@ export default function SourcingAgent({ category, requirementMode = "chat", init
             <div className={`relative mx-auto w-full max-w-[820px] `}>
 <div ref={intro}>
             <div className="relative text-center">
+              {newBoxForm && !landing ? <div className="relative isolate overflow-hidden text-left sm:-mx-4 sm:min-h-[280px] sm:px-4 sm:py-7">
+                <img src={boxPhoto.url} alt="Open kraft cardboard box" width={1200} height={675} fetchPriority="high" decoding="async" className="absolute inset-0 -z-10 hidden h-full w-full object-cover sm:block" />
+                <h1 className="max-w-[520px] text-[28px] font-bold leading-8 text-foreground sm:max-w-[60%] sm:text-[40px] sm:leading-[1.15]">Custom Boxes from <span className="block text-primary">40+ Vetted Factories</span></h1>
+                <p className="mt-2 max-w-[440px] text-sm leading-5 text-muted-foreground sm:max-w-[52%] sm:text-base sm:leading-6">Compare multiple quotes on WhatsApp <span className="font-semibold text-primary">within 6 hours</span> — no commission, free.</p>
+              </div> : <>
               {landing && requirementMode === "chat" && <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-3 py-1 text-[11px] font-semibold text-primary sm:text-xs"><span className="h-1.5 w-1.5 rounded-full bg-primary" />40+ vetted manufacturers across India</span>}
               <h1 className={`mx-auto max-w-[720px] font-bold tracking-normal text-foreground ${requirementMode === "form" ? "mt-3 text-[28px] leading-[32px] sm:mt-3 sm:text-[32px] sm:leading-[1.15]" : "mt-3 text-[28px] leading-[32px] sm:mt-4 sm:text-[48px] sm:leading-[1.15]"}`}>{landing ? landing.headline : requirementMode === "chat" ? <>Compare Quotes from 40+ Vetted Factories&nbsp;<span className="text-primary">on WhatsApp&nbsp;in 6 Hours</span></> : <>Custom Boxes from <span className="text-primary">40+ Vetted Factories</span></>}</h1>{!landing && requirementMode === "form" && <p className="mx-auto mt-2 max-w-[620px] text-sm text-muted-foreground sm:text-base">Compare multiple quotes on WhatsApp <span className="font-semibold text-primary">within 6 hours</span> — no commission, free.</p>}
               {landing && <p className="mx-auto mt-3 max-w-[580px] text-sm leading-relaxed text-muted-foreground sm:text-base">{landing.copy}</p>}
+              </>}
               <ol className={`mx-auto grid max-w-[720px] grid-cols-3 text-center ${requirementMode === "form" ? "mb-4 mt-4 sm:mb-5 sm:mt-5" : "mb-3 mt-4 sm:mb-4"}`} aria-label="How it works">{["Tell us your needs", "We find manufacturers", "Compare multiple quotes within 6 hours"].map((t, i) => <li key={t} className="relative px-1">{i < 2 && <span aria-hidden="true" className={`absolute left-1/2 h-px w-full bg-border ${requirementMode === "form" ? "top-3" : "top-4"}`} />}<span className={`relative mx-auto flex items-center justify-center rounded-full border border-primary/30 bg-card font-bold text-primary ${requirementMode === "form" ? "h-6 w-6 text-xs" : "h-8 w-8 text-sm"}`}>{i + 1}</span><p className={`font-semibold text-foreground ${requirementMode === "form" ? "mt-1 text-xs leading-4" : "mt-1 text-xs sm:text-sm"}`}>{t}</p></li>)}</ol>
             </div>
             </div>
